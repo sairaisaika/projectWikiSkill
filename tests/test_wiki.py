@@ -37,7 +37,7 @@ class WikiTests(unittest.TestCase):
     def test_fixture_structure_and_honest_missing_ts_tests(self):
         report = wiki.audit(self.root, self.manifest)
         self.assertTrue(report['ready'])
-        self.assertEqual(report['route_count'], 4)
+        self.assertEqual(report['route_count'], 7)
         scores = {row['id']: row['score']['total'] for row in report['routes']}
         self.assertEqual(scores['external-source'], 92)
         self.assertEqual(scores['public-api'], 100)
@@ -46,9 +46,9 @@ class WikiTests(unittest.TestCase):
     def test_routing_questions_and_unknown_controls(self):
         report = wiki.evaluate(self.root, self.manifest, wiki.read_json(REPO / 'evals/tasks.json'))
         self.assertTrue(report['passed'])
-        self.assertEqual(report['top1']['numerator'], 10)
-        self.assertEqual(report['top1']['denominator'], 10)
-        self.assertEqual(report['unknown_rejection']['numerator'], 2)
+        self.assertEqual(report['top1']['numerator'], 20)
+        self.assertEqual(report['top1']['denominator'], 20)
+        self.assertEqual(report['unknown_rejection']['numerator'], 4)
         self.assertLessEqual(report['max_response_words'], 450)
 
     def test_moved_python_symbol_resolves_new_position(self):
@@ -190,6 +190,7 @@ class WikiTests(unittest.TestCase):
     def test_plan_cannot_claim_live_verification(self):
         row = copy.deepcopy(self.manifest['routes'][0])
         row.update(kind='plan', sources=[], rules=[dict(id='proposal', statement='Proposed new result API.', source_ids=[], proposed=True)])
+        row.pop('diagrams', None)  # Implemented diagram bindings do not belong to this source-free plan.
         row['plan'] = dict(outcomes=['Preserve detailed errors'], dependencies=[], interfaces=['Proposed additive client result'], deliverables=['Client and compatibility cases'], exit_evidence=['Offline compatibility tests'], unknowns=['Error union undecided'])
         row['evidence']['implementation'] = 'planned'
         row['evidence']['observations'] = []
@@ -219,8 +220,8 @@ class WikiTests(unittest.TestCase):
         tasks = wiki.read_json(REPO / 'evals/tasks.json')
         tasks['tasks'][0]['expected_routes'] = ['tagger']
         report = wiki.evaluate(self.root, self.manifest, tasks)
-        self.assertEqual(report['top1']['numerator'], 9)
-        self.assertEqual(report['top1']['denominator'], 10)
+        self.assertEqual(report['top1']['numerator'], 19)
+        self.assertEqual(report['top1']['denominator'], 20)
         tasks['thresholds']['min_top1'] = 1
         self.assertFalse(wiki.evaluate(self.root, self.manifest, tasks)['passed'])
 

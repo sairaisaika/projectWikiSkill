@@ -1,0 +1,59 @@
+{
+  "renderer": "Mermaid 11 via isolated headless Chrome",
+  "requested_url": "https://cdn.jsdelivr.net/npm/mermaid@11.17.2/dist/mermaid.min.js",
+  "resolved_mermaid_version": "11.17.2",
+  "browser_version": "155.0.8059.41",
+  "diagrams": [
+    {
+      "diagram": 1,
+      "file": "docs/wiki/project-views.md",
+      "parsed": true,
+      "rendered": true,
+      "source_sha256": "e14177c35be184c274f9a91b363ba64402290250e18973d31aaf0faa788d8bb6",
+      "screenshot": "diagram-0.png"
+    },
+    {
+      "diagram": 2,
+      "file": "docs/wiki/project-views.md",
+      "parsed": true,
+      "rendered": true,
+      "source_sha256": "2a307f21c74c2e2c38a2ecbfc167151a62e6f631db6e4b3e580f1ae1125d3581",
+      "screenshot": "diagram-1.png"
+    },
+    {
+      "diagram": 3,
+      "file": "docs/wiki/project-views.md",
+      "parsed": true,
+      "rendered": true,
+      "source_sha256": "b8de92234e0b6dfd04c2533d67e004f476f3583e460598eb699cb8794e34df78",
+      "screenshot": "diagram-2.png"
+    },
+    {
+      "diagram": 4,
+      "file": "docs/wiki/project-views.md",
+      "parsed": true,
+      "rendered": true,
+      "source_sha256": "2cf064c4c14dc7f169801496e0a0c1347cffd73ed9199efb57c0ad04501d37f9",
+      "screenshot": "diagram-3.png"
+    },
+    {
+      "diagram": 5,
+      "file": "docs/wiki/engineering-contracts.md",
+      "parsed": true,
+      "rendered": true,
+      "source_sha256": "5960ab3c03265f09c8586705911612fa6dd658bdf35e4278d338518d46fa707d",
+      "screenshot": "diagram-4.png"
+    },
+    {
+      "diagram": 6,
+      "file": "docs/wiki/engineering-contracts.md",
+      "parsed": true,
+      "rendered": true,
+      "source_sha256": "9ed16699f1c58a3926fdc4f15a8253ac0b534197e8d407d4627fc3a1696ef819",
+      "screenshot": "diagram-5.png"
+    }
+  ],
+  "rendered": 6,
+  "total": 6,
+  "scope": "Syntax/render only. Readability and code semantics need separate review."
+}

@@ -36,6 +36,18 @@ The report includes average and minimum; a high average never hides one failing 
 Generated timestamps do not reset reviewed_at. Dates are validated, not assumed current;
 scheduled review cadence is a project choice, not automatically imposed.
 
+Optional engineering profiles have a separate depth report: source-linked fields,
+declared state/event-pair coverage and gaps, configured/target/measured limits, and
+decision records. They do not inflate the 100-point baseline or penalize routes
+where they are irrelevant. “Complete” pair enumeration is scoped to the declared
+model; it is not proof that implementation, races or timing are complete. See
+[engineering depth](engineering-depth.md) for the exact criteria and limits.
+
+Six-view coverage is another separate metric: required vs documented diagram kinds,
+missing views and explicit applicability waivers. Do not count a waiver as a drawn
+view or six diagram files as evidence of six correct perspectives. Rendering and
+cross-view semantic review remain separate; see [the diagram framework](diagram-framework.md).
+
 ## Pilot routing thresholds
 
 Start with at least **10 representative change/debug questions**, including ambiguity

@@ -7,6 +7,8 @@
 - [结构契约](project-wiki/references/route-contract.md)：接口声明、实现、消费者、规则来源、失败与兼容、精确定位。
 - [量化模型](project-wiki/references/quality-model.md)：100 分结构量表、任务命中率与独立演练指标。
 - [持续维护](project-wiki/references/maintenance.md)：改动触发、计划交付、漂移检查、CI 与交接。
+- [六图框架](project-wiki/references/diagram-framework.md)：架构、流程、时序、数据模型、部署、状态六种视角的职责与项目级覆盖检查。
+- [工程深度](project-wiki/references/engineering-depth.md)：字段/单位/字节布局、状态守卫与上下文、重试和资源边界、轻量决策记录。
 
 ## 使用
 
@@ -29,6 +31,8 @@ python project-wiki/scripts/wiki.py build --root evals/fixture-project
 python project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --tasks evals/tasks.json
 python -m unittest discover -s tests -v
 ```
+
+六图样例的可选渲染验收使用 `node evals/render-diagrams.mjs`，需要可用的 Playwright 与 Chrome；可用 `WIKI_PLAYWRIGHT_MODULE` 指向已有模块、`WIKI_BROWSER_CHANNEL` 选择浏览器。工具不自动安装依赖，默认输出到临时目录；Mermaid CDN 可由 `WIKI_MERMAID_URL` 指定固定版本。核心 Python 工具仍无第三方依赖。
 
 结构分、合成样例、自己演练和陌生执行者盲测分别报告；它们均不等于真实业务、部署或外部 API 已验证。仅 `build` 写生成索引；其余命令不执行目标项目或清单中的检查命令。
 

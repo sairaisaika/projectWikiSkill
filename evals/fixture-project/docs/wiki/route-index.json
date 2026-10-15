@@ -15,7 +15,9 @@
         "legacy client",
         "ArticleSource",
         "HTTP 错误",
-        "外部接口"
+        "外部接口",
+        "业务流程",
+        "流程图"
       ],
       "sources": [
         {
@@ -104,6 +106,19 @@
           }
         ]
       },
+      "diagrams": [
+        {
+          "path": "docs/wiki/project-views.md#flow",
+          "kind": "flow",
+          "question": "How do empty data, returned unavailable and thrown errors differ?",
+          "scope": "Article client/service/dependency flow only; no HTTP server.",
+          "source_ids": [
+            "port",
+            "service",
+            "client"
+          ]
+        }
+      ],
       "locations": [
         {
           "id": "port",
@@ -387,8 +402,8 @@
           "path": "tests/test_contracts.py",
           "symbol": "ContractTests.test_model_failure_is_not_an_empty_suggestion",
           "reason": "Only current caller is an offline test, not a production tagging pipeline",
-          "line": 31,
-          "sha256": "ad083273f0fc080561f1fd31d8d809c99ce3e644a315eb66c72ee1f37ef8e94e"
+          "line": 44,
+          "sha256": "19bbe8bbf1614d1f9f6272a1b1dde8cef00a522d0121de4ade7d2e3f11f9939c"
         }
       ]
     },
@@ -522,6 +537,1163 @@
           "symbol": "effective_tag",
           "line": 27,
           "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
+        }
+      ]
+    },
+    {
+      "id": "recovery",
+      "title": "Timeout and bounded recovery decisions",
+      "kind": "behavior",
+      "aliases": [
+        "recovery",
+        "timeout",
+        "retry bound",
+        "late reply",
+        "状态转移",
+        "重试边界",
+        "超时恢复",
+        "时序图",
+        "状态图"
+      ],
+      "sources": [
+        {
+          "id": "handler",
+          "role": "implementation",
+          "path": "src/recovery.py",
+          "reason": "Pure action decision and exhaustion guard",
+          "symbol": "next_action"
+        },
+        {
+          "id": "delay",
+          "role": "contract",
+          "path": "src/recovery.py",
+          "reason": "Configured bounded backoff calculation",
+          "symbol": "retry_delay"
+        },
+        {
+          "id": "limit",
+          "role": "contract",
+          "path": "src/recovery.py",
+          "reason": "Attempt limit, not measured behavior",
+          "needle": "MAX_RETRIES = 2"
+        },
+        {
+          "id": "base-delay",
+          "role": "contract",
+          "path": "src/recovery.py",
+          "reason": "Base configured delay in milliseconds",
+          "needle": "BACKOFF_MS = 25"
+        },
+        {
+          "id": "caller",
+          "role": "consumer",
+          "path": "tests/test_engineering_contracts.py",
+          "reason": "Offline boundary test, not a runtime timer",
+          "symbol": "EngineeringContracts.test_timeout_then_retry_has_bounded_decision_and_backoff"
+        }
+      ],
+      "docs": [
+        "docs/wiki/engineering-contracts.md#recovery"
+      ],
+      "interface": {
+        "inputs": [
+          "Declared state, event and caller-owned attempt"
+        ],
+        "outputs": [
+          "Next state and action token; retry delay in milliseconds or None"
+        ],
+        "errors": [
+          "Invalid state/event/attempt may raise ValueError; unsupported declared pairs are ignored"
+        ],
+        "failure_modes": {
+          "returned": [
+            "Terminal states and unsupported pairs return the same state and ignored."
+          ],
+          "thrown": [
+            "Unknown state/event or invalid checked attempt raises ValueError."
+          ],
+          "unsupported": [
+            "No actual timer, request, concurrency or event-loop scheduler."
+          ]
+        },
+        "compatibility": "This synthetic contract is current; incompatible changes require updating consumers and vectors."
+      },
+      "rules": [
+        {
+          "id": "bounded-retry",
+          "statement": "At attempt 2, a backoff retry becomes failed/exhausted; late terminal events are ignored.",
+          "source_ids": [
+            "handler",
+            "delay",
+            "limit"
+          ],
+          "tests": [
+            "tests/test_engineering_contracts.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Caller owns execution and attempt bookkeeping; changing transitions affects late-reply and boundary tests."
+      ],
+      "tests": [
+        "tests/test_engineering_contracts.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests",
+          "scope": "Synthetic pure recovery and byte-vector checks only; no IO or native ABI verification."
+        }
+      ],
+      "boundary": "Declared constraints and synthetic offline tests do not establish real timing, hardware or live behavior.",
+      "unknowns": [
+        "No real network, device, concurrency or performance observations exist.",
+        "No request/generation identity: an old ok can commit after retry resumes running.",
+        "Repeatedly passing attempt 0 bypasses a cumulative bound; only the supplied attempt is checked."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "src/recovery.py",
+            "claim": "The named synthetic implementation exists.",
+            "revision": "fixture-engineering-v1",
+            "observed_at": "2026-10-14"
+          }
+        ]
+      },
+      "reviewed_at": "2026-10-14",
+      "engineering": {
+        "scope": "Pure action selection for declared states/events; no real timing or network.",
+        "status": "current",
+        "lifecycle": {
+          "states": [
+            "idle",
+            "running",
+            "backoff",
+            "done",
+            "failed"
+          ],
+          "events": [
+            "start",
+            "ok",
+            "timeout",
+            "retry",
+            "cancel"
+          ],
+          "initial": "idle",
+          "terminal": [
+            "done",
+            "failed"
+          ],
+          "coverage_claim": "complete",
+          "transitions": [
+            {
+              "id": "step-0",
+              "from": "idle",
+              "event": "start",
+              "guard": "always",
+              "to": "running",
+              "action": "send",
+              "source_ids": [
+                "handler"
+              ],
+              "tests": [
+                "tests/test_engineering_contracts.py"
+              ]
+            },
+            {
+              "id": "step-1",
+              "from": "running",
+              "event": "ok",
+              "guard": "always",
+              "to": "done",
+              "action": "commit",
+              "source_ids": [
+                "handler"
+              ],
+              "tests": [
+                "tests/test_engineering_contracts.py"
+              ]
+            },
+            {
+              "id": "step-2",
+              "from": "running",
+              "event": "timeout",
+              "guard": "always",
+              "to": "backoff",
+              "action": "schedule_retry",
+              "source_ids": [
+                "handler"
+              ],
+              "tests": [
+                "tests/test_engineering_contracts.py"
+              ]
+            },
+            {
+              "id": "step-3",
+              "from": "backoff",
+              "event": "retry",
+              "guard": "type(attempt) is int and 0 <= attempt < 2",
+              "to": "running",
+              "action": "send",
+              "source_ids": [
+                "handler",
+                "delay"
+              ],
+              "tests": [
+                "tests/test_engineering_contracts.py"
+              ]
+            },
+            {
+              "id": "step-4",
+              "from": "running",
+              "event": "cancel",
+              "guard": "always",
+              "to": "failed",
+              "action": "stop",
+              "source_ids": [
+                "handler"
+              ],
+              "tests": [
+                "tests/test_engineering_contracts.py"
+              ]
+            },
+            {
+              "id": "step-5",
+              "from": "backoff",
+              "event": "cancel",
+              "guard": "always",
+              "to": "failed",
+              "action": "stop",
+              "source_ids": [
+                "handler"
+              ],
+              "tests": [
+                "tests/test_engineering_contracts.py"
+              ]
+            },
+            {
+              "id": "exhausted",
+              "from": "backoff",
+              "event": "retry",
+              "guard": "type(attempt) is int and attempt >= 2",
+              "to": "failed",
+              "action": "exhausted",
+              "source_ids": [
+                "handler",
+                "delay",
+                "limit"
+              ],
+              "tests": [
+                "tests/test_engineering_contracts.py"
+              ]
+            }
+          ],
+          "rejected": [
+            {
+              "from": "idle",
+              "event": "ok",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "idle",
+              "event": "timeout",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "idle",
+              "event": "retry",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "idle",
+              "event": "cancel",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "running",
+              "event": "start",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "running",
+              "event": "retry",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "backoff",
+              "event": "start",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "backoff",
+              "event": "ok",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "backoff",
+              "event": "timeout",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "done",
+              "event": "start",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "done",
+              "event": "ok",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "done",
+              "event": "timeout",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "done",
+              "event": "retry",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "done",
+              "event": "cancel",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "failed",
+              "event": "start",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "failed",
+              "event": "ok",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "failed",
+              "event": "timeout",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "failed",
+              "event": "retry",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            },
+            {
+              "from": "failed",
+              "event": "cancel",
+              "reason": "Explicitly ignored with same state and ignored action.",
+              "source_ids": [
+                "handler"
+              ]
+            }
+          ],
+          "unknown": [],
+          "parameters": [
+            {
+              "name": "attempt",
+              "domain": "Exact nonnegative integer when checked; no global validation for ignored events.",
+              "validation_scope": "Validated only by retry_delay on backoff/retry; caller owns cumulative bookkeeping.",
+              "source_ids": [
+                "handler",
+                "delay"
+              ]
+            }
+          ]
+        },
+        "execution": {
+          "ownership": [
+            {
+              "resource": "Retry attempt scalar",
+              "owner": "Caller",
+              "lifetime": "Passed into one pure decision call",
+              "release": "No allocation or resource release performed by this function",
+              "source_ids": [
+                "handler"
+              ]
+            }
+          ],
+          "ordering": [
+            {
+              "before": "Retry exhaustion check",
+              "after": "Return permission to send",
+              "reason": "A retry at the configured limit must not request another send.",
+              "source_ids": [
+                "handler",
+                "delay"
+              ]
+            }
+          ],
+          "limits": [
+            {
+              "id": "max-retries",
+              "value": 2,
+              "unit": "attempts",
+              "kind": "configured",
+              "scope": "Caller-supplied attempt in pure retry decision",
+              "source_ids": [
+                "limit"
+              ]
+            },
+            {
+              "id": "base-delay",
+              "value": 25,
+              "unit": "ms",
+              "kind": "configured",
+              "scope": "Base backoff value, not observed wall time",
+              "source_ids": [
+                "base-delay",
+                "delay"
+              ]
+            }
+          ]
+        },
+        "decisions": [
+          {
+            "id": "bounded-pure-retry",
+            "path": "docs/wiki/engineering-contracts.md#decisions",
+            "status": "accepted",
+            "context": "Offline fixture must expose late-retry and exhaustion behavior without IO.",
+            "decision": "Use pure action selection with a limit conditional on correctly advanced caller-owned attempts.",
+            "alternatives": [
+              "Unlimited retries",
+              "Caller-only exhaustion check"
+            ],
+            "consequences": [
+              "Repeatable boundary tests",
+              "Caller must execute actions and track attempts"
+            ],
+            "revisit_when": "A real transport, scheduler or workload is introduced.",
+            "source_ids": [
+              "handler",
+              "delay"
+            ]
+          }
+        ]
+      },
+      "diagrams": [
+        {
+          "path": "docs/wiki/engineering-contracts.md#recovery-state",
+          "kind": "state-machine",
+          "question": "What are the accepted transitions and terminal outcomes?",
+          "scope": "Projection omits ignored pairs; complete pair table is in the route.",
+          "source_ids": [
+            "handler",
+            "delay"
+          ]
+        },
+        {
+          "path": "docs/wiki/engineering-contracts.md#recovery-sequence",
+          "kind": "sequence",
+          "question": "Does retry exhaustion precede permission to send?",
+          "scope": "Timeout/retry decision only; no real transport or timer.",
+          "source_ids": [
+            "handler",
+            "delay"
+          ]
+        }
+      ],
+      "locations": [
+        {
+          "id": "handler",
+          "role": "implementation",
+          "path": "src/recovery.py",
+          "reason": "Pure action decision and exhaustion guard",
+          "symbol": "next_action",
+          "line": 23,
+          "sha256": "c8620f0d907410003176b2de51fcc7219f3850e9fe308aa40484f9ee11d4ae74"
+        },
+        {
+          "id": "delay",
+          "role": "contract",
+          "path": "src/recovery.py",
+          "reason": "Configured bounded backoff calculation",
+          "symbol": "retry_delay",
+          "line": 17,
+          "sha256": "c8620f0d907410003176b2de51fcc7219f3850e9fe308aa40484f9ee11d4ae74"
+        },
+        {
+          "id": "limit",
+          "role": "contract",
+          "path": "src/recovery.py",
+          "reason": "Attempt limit, not measured behavior",
+          "needle": "MAX_RETRIES = 2",
+          "line": 5,
+          "sha256": "c8620f0d907410003176b2de51fcc7219f3850e9fe308aa40484f9ee11d4ae74"
+        },
+        {
+          "id": "base-delay",
+          "role": "contract",
+          "path": "src/recovery.py",
+          "reason": "Base configured delay in milliseconds",
+          "needle": "BACKOFF_MS = 25",
+          "line": 6,
+          "sha256": "c8620f0d907410003176b2de51fcc7219f3850e9fe308aa40484f9ee11d4ae74"
+        },
+        {
+          "id": "caller",
+          "role": "consumer",
+          "path": "tests/test_engineering_contracts.py",
+          "reason": "Offline boundary test, not a runtime timer",
+          "symbol": "EngineeringContracts.test_timeout_then_retry_has_bounded_decision_and_backoff",
+          "line": 25,
+          "sha256": "39d7c8543847b8c98d5e44264700431a159792a0438e4791d3c33788a327b051"
+        }
+      ],
+      "engineering_metrics": {
+        "scope": "Pure action selection for declared states/events; no real timing or network.",
+        "status": "current",
+        "profiles": [
+          "decisions",
+          "execution",
+          "lifecycle"
+        ],
+        "verification": "declared model consistency only; code equivalence and runtime behavior not verified",
+        "lifecycle": {
+          "specified_pairs": 25,
+          "total_pairs": 25,
+          "unknown_pairs": 0,
+          "unclassified_pairs": 0,
+          "transitions": 7,
+          "source_linked_transitions": 7,
+          "unreachable_declared_states": [],
+          "coverage_claim": "complete",
+          "guard_exhaustiveness": "not verified",
+          "context_parameters": 1,
+          "coverage_scope": "Declared state/event pairs only; parameter combinations, invalid inputs and races are not exhaustively covered"
+        },
+        "execution": {
+          "ownership_records": 1,
+          "ordering_constraints": 1,
+          "limits_by_kind": {
+            "target": 0,
+            "configured": 2,
+            "measured": 0
+          },
+          "performance_or_measurement_truth": "not verified"
+        },
+        "decisions": {
+          "records": 1,
+          "by_status": {
+            "proposed": 0,
+            "accepted": 1,
+            "superseded": 0
+          },
+          "rationale_accuracy": "not verified"
+        }
+      }
+    },
+    {
+      "id": "wire-format",
+      "title": "Heartbeat serializer layout",
+      "kind": "interface",
+      "aliases": [
+        "wire format",
+        "byte offset",
+        "endian",
+        "reserved flags",
+        "字节布局",
+        "大小端",
+        "标志位",
+        "数据模型图"
+      ],
+      "sources": [
+        {
+          "id": "frame",
+          "role": "declaration",
+          "path": "src/heartbeat.py",
+          "reason": "Authoritative explicit network-order serializer",
+          "needle": "FRAME = struct.Struct('!BBHI')"
+        },
+        {
+          "id": "encode",
+          "role": "implementation",
+          "path": "src/heartbeat.py",
+          "reason": "Checks fields and serializes",
+          "symbol": "encode_heartbeat"
+        },
+        {
+          "id": "decode",
+          "role": "consumer",
+          "path": "src/heartbeat.py",
+          "reason": "Validates frame size, version, flags and declared length",
+          "symbol": "decode_heartbeat"
+        }
+      ],
+      "docs": [
+        "docs/wiki/engineering-contracts.md#wire-format"
+      ],
+      "interface": {
+        "inputs": [
+          "Flags and sequence accepted by Python comparisons/Struct; bool sequence currently encodes as 0/1, not strict type validation.",
+          "An 8-byte frame for decoding."
+        ],
+        "outputs": [
+          "8-byte big-endian frame, or decoded fields"
+        ],
+        "errors": [
+          "Known length/version/reserved-mask violations raise ValueError"
+        ],
+        "failure_modes": {
+          "returned": [
+            "Decoder returns validated fields on success."
+          ],
+          "thrown": [
+            "Bad frame/field values raise ValueError; other type errors may propagate."
+          ],
+          "unsupported": [
+            "No native ABI, shared bitfields, alignment guarantee or external peer."
+          ]
+        },
+        "compatibility": "This synthetic contract is current; incompatible changes require updating consumers and vectors."
+      },
+      "rules": [
+        {
+          "id": "explicit-serializer",
+          "statement": "Use the authoritative 8-byte network-order Struct and reject reserved flag bits.",
+          "source_ids": [
+            "frame",
+            "encode",
+            "decode"
+          ],
+          "tests": [
+            "tests/test_engineering_contracts.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Changing the serializer affects decoder, fixed byte vector and external version compatibility."
+      ],
+      "tests": [
+        "tests/test_engineering_contracts.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests",
+          "scope": "Synthetic pure recovery and byte-vector checks only; no IO or native ABI verification."
+        }
+      ],
+      "boundary": "Declared constraints and synthetic offline tests do not establish real timing, hardware or live behavior.",
+      "unknowns": [
+        "No real network, device, concurrency or performance observations exist."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "src/heartbeat.py",
+            "claim": "The named synthetic implementation exists.",
+            "revision": "fixture-engineering-v1",
+            "observed_at": "2026-10-14"
+          }
+        ]
+      },
+      "reviewed_at": "2026-10-14",
+      "engineering": {
+        "scope": "Synthetic serializer geometry and constraints; not a native memory ABI.",
+        "status": "current",
+        "data_contract": {
+          "authority": {
+            "kind": "typed-source",
+            "path": "src/heartbeat.py",
+            "source_ids": [
+              "frame"
+            ]
+          },
+          "layout": {
+            "size_bytes": 8,
+            "byte_order": "big"
+          },
+          "fields": [
+            {
+              "name": "version",
+              "type": "u8",
+              "unit": "dimensionless",
+              "nullable": false,
+              "offset_bytes": 0,
+              "size_bytes": 1,
+              "constraints": [
+                "Must equal 1"
+              ],
+              "source_ids": [
+                "frame",
+                "encode",
+                "decode"
+              ]
+            },
+            {
+              "name": "flags",
+              "type": "u8",
+              "unit": "bitmask",
+              "nullable": false,
+              "offset_bytes": 1,
+              "size_bytes": 1,
+              "constraints": [
+                "Only bits in 0x03 are allowed"
+              ],
+              "source_ids": [
+                "frame",
+                "encode",
+                "decode"
+              ]
+            },
+            {
+              "name": "length",
+              "type": "u16",
+              "unit": "bytes",
+              "nullable": false,
+              "offset_bytes": 2,
+              "size_bytes": 2,
+              "constraints": [
+                "Must equal 8"
+              ],
+              "source_ids": [
+                "frame",
+                "encode",
+                "decode"
+              ]
+            },
+            {
+              "name": "sequence",
+              "type": "u32",
+              "unit": "count",
+              "nullable": false,
+              "offset_bytes": 4,
+              "size_bytes": 4,
+              "constraints": [
+                "0 <= value <= 0xffffffff",
+                "Wire uint32 does not imply exact Python input type; bool currently accepted as 0/1."
+              ],
+              "source_ids": [
+                "frame",
+                "encode",
+                "decode"
+              ]
+            }
+          ]
+        },
+        "decisions": [
+          {
+            "id": "explicit-wire-serializer",
+            "path": "docs/wiki/engineering-contracts.md#decisions",
+            "status": "accepted",
+            "context": "Fixture needs deterministic wire bytes without native padding.",
+            "decision": "Use an explicit network-order Struct as authority.",
+            "alternatives": [
+              "Native-aligned binary pack",
+              "JSON text"
+            ],
+            "consequences": [
+              "Stable 8-byte vector",
+              "New fields require version and compatibility review"
+            ],
+            "revisit_when": "Fields change or a real external device is introduced.",
+            "source_ids": [
+              "frame",
+              "encode",
+              "decode"
+            ]
+          }
+        ]
+      },
+      "diagrams": [
+        {
+          "path": "docs/wiki/project-views.md#data-model",
+          "kind": "data-model",
+          "question": "Which fields and types form the wire value record?",
+          "scope": "Conceptual serialized record, not a Python class, database table or native ABI.",
+          "source_ids": [
+            "frame",
+            "encode",
+            "decode"
+          ]
+        }
+      ],
+      "locations": [
+        {
+          "id": "frame",
+          "role": "declaration",
+          "path": "src/heartbeat.py",
+          "reason": "Authoritative explicit network-order serializer",
+          "needle": "FRAME = struct.Struct('!BBHI')",
+          "line": 4,
+          "sha256": "cf3b21f6c788668114cd56823061422cce711b024680ab17dc4f9a832d3d9790"
+        },
+        {
+          "id": "encode",
+          "role": "implementation",
+          "path": "src/heartbeat.py",
+          "reason": "Checks fields and serializes",
+          "symbol": "encode_heartbeat",
+          "line": 8,
+          "sha256": "cf3b21f6c788668114cd56823061422cce711b024680ab17dc4f9a832d3d9790"
+        },
+        {
+          "id": "decode",
+          "role": "consumer",
+          "path": "src/heartbeat.py",
+          "reason": "Validates frame size, version, flags and declared length",
+          "symbol": "decode_heartbeat",
+          "line": 14,
+          "sha256": "cf3b21f6c788668114cd56823061422cce711b024680ab17dc4f9a832d3d9790"
+        }
+      ],
+      "engineering_metrics": {
+        "scope": "Synthetic serializer geometry and constraints; not a native memory ABI.",
+        "status": "current",
+        "profiles": [
+          "data_contract",
+          "decisions"
+        ],
+        "verification": "declared model consistency only; code equivalence and runtime behavior not verified",
+        "data_contract": {
+          "fields": 4,
+          "source_linked_fields": 4,
+          "authority_kind": "typed-source",
+          "layout_declared": true,
+          "geometry_only": true,
+          "semantic_conformance": "not verified"
+        },
+        "decisions": {
+          "records": 1,
+          "by_status": {
+            "proposed": 0,
+            "accepted": 1,
+            "superseded": 0
+          },
+          "rationale_accuracy": "not verified"
+        }
+      }
+    },
+    {
+      "id": "project-views",
+      "title": "Fixture architecture and offline deployment",
+      "kind": "architecture",
+      "aliases": [
+        "architecture",
+        "deployment",
+        "system structure",
+        "runtime environment",
+        "架构图",
+        "部署图"
+      ],
+      "sources": [
+        {
+          "id": "service",
+          "role": "implementation",
+          "path": "src/service.py",
+          "symbol": "get_articles",
+          "reason": "Article service uses injected dependency"
+        },
+        {
+          "id": "port",
+          "role": "declaration",
+          "path": "src/ports.py",
+          "symbol": "ArticleSource",
+          "reason": "Required dependency shape"
+        },
+        {
+          "id": "client",
+          "role": "consumer",
+          "path": "src/client.py",
+          "symbol": "read_articles",
+          "reason": "Legacy in-process client"
+        },
+        {
+          "id": "tagger",
+          "role": "implementation",
+          "path": "src/tagging.py",
+          "symbol": "sanitize_suggestions",
+          "reason": "Independent suggestion example"
+        },
+        {
+          "id": "tags",
+          "role": "implementation",
+          "path": "src/tagging.py",
+          "symbol": "effective_tag",
+          "reason": "Independent effective-tag example"
+        },
+        {
+          "id": "recovery",
+          "role": "implementation",
+          "path": "src/recovery.py",
+          "symbol": "next_action",
+          "reason": "Pure recovery decisions"
+        },
+        {
+          "id": "wire",
+          "role": "implementation",
+          "path": "src/heartbeat.py",
+          "symbol": "encode_heartbeat",
+          "reason": "Explicit serializer example"
+        },
+        {
+          "id": "contracts",
+          "role": "caller",
+          "path": "tests/test_contracts.py",
+          "symbol": "ContractTests",
+          "reason": "Offline Python test consumer"
+        },
+        {
+          "id": "engineering-tests",
+          "role": "caller",
+          "path": "tests/test_engineering_contracts.py",
+          "symbol": "EngineeringContracts",
+          "reason": "Offline recovery and serializer tests"
+        },
+        {
+          "id": "typescript",
+          "role": "contract",
+          "path": "src/provider.ts",
+          "needle": "export interface ExternalSource",
+          "reason": "Static TS shape, not executed by Python fixture tests"
+        }
+      ],
+      "docs": [
+        "docs/wiki/project-views.md#architecture",
+        "docs/wiki/project-views.md#deployment"
+      ],
+      "interface": {
+        "inputs": [
+          "Unittest discovery and independent injected library calls"
+        ],
+        "outputs": [
+          "Offline fixture results; no shared end-to-end pipeline"
+        ],
+        "errors": [
+          "Exceptions remain scoped to each documented function"
+        ],
+        "failure_modes": {
+          "returned": [
+            "See feature contracts for returned failure meanings."
+          ],
+          "thrown": [
+            "No runtime orchestrator catches all fixture exceptions."
+          ],
+          "unsupported": [
+            "No production server, container, network peer or live provider."
+          ]
+        },
+        "compatibility": "Feature routes retain their own public contracts; diagrams do not introduce services."
+      },
+      "rules": [
+        {
+          "id": "libraries-not-services",
+          "statement": "Python fixture modules run in the unittest process; the TS shape is not run by that runner.",
+          "source_ids": [
+            "contracts",
+            "engineering-tests",
+            "typescript"
+          ]
+        }
+      ],
+      "impact": [
+        "Changes to process/IO boundaries require reviewing both architecture and deployment views."
+      ],
+      "tests": [
+        "tests/test_contracts.py",
+        "tests/test_engineering_contracts.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests",
+          "scope": "Offline fixture execution only, not production installation."
+        }
+      ],
+      "boundary": "Responsibility and offline-runtime views are not evidence of live deployment.",
+      "unknowns": [
+        "Any production topology or real external integration remains undesigned."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "tests/test_contracts.py",
+            "claim": "The test module imports and calls the fixture source in-process.",
+            "revision": "fixture-six-views-v1",
+            "observed_at": "2026-10-14"
+          }
+        ]
+      },
+      "reviewed_at": "2026-10-14",
+      "diagrams": [
+        {
+          "path": "docs/wiki/project-views.md#architecture",
+          "kind": "architecture",
+          "question": "Which responsibilities depend on which interfaces?",
+          "scope": "Independent fixture components, not a single runtime pipeline.",
+          "source_ids": [
+            "service",
+            "port",
+            "client",
+            "tagger",
+            "tags",
+            "recovery",
+            "wire",
+            "contracts",
+            "engineering-tests",
+            "typescript"
+          ]
+        },
+        {
+          "path": "docs/wiki/project-views.md#deployment",
+          "kind": "deployment",
+          "question": "What runs in the offline fixture test process?",
+          "scope": "Current offline execution only; no production deployment claim.",
+          "source_ids": [
+            "contracts",
+            "engineering-tests"
+          ]
+        }
+      ],
+      "locations": [
+        {
+          "id": "service",
+          "role": "implementation",
+          "path": "src/service.py",
+          "symbol": "get_articles",
+          "reason": "Article service uses injected dependency",
+          "line": 4,
+          "sha256": "bc11b983be14dbe2f219a98da6bf93963355f3266cbf8ad4c0474ad70f75d786"
+        },
+        {
+          "id": "port",
+          "role": "declaration",
+          "path": "src/ports.py",
+          "symbol": "ArticleSource",
+          "reason": "Required dependency shape",
+          "line": 5,
+          "sha256": "039afac6ce19d88d0638111d3c4201a609d78c9d21add0b1ab51932a240c6028"
+        },
+        {
+          "id": "client",
+          "role": "consumer",
+          "path": "src/client.py",
+          "symbol": "read_articles",
+          "reason": "Legacy in-process client",
+          "line": 4,
+          "sha256": "f97d14a3cd5188902208f5aaa3b458544f9740e5537f298468f2db0decf00388"
+        },
+        {
+          "id": "tagger",
+          "role": "implementation",
+          "path": "src/tagging.py",
+          "symbol": "sanitize_suggestions",
+          "reason": "Independent suggestion example",
+          "line": 9,
+          "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
+        },
+        {
+          "id": "tags",
+          "role": "implementation",
+          "path": "src/tagging.py",
+          "symbol": "effective_tag",
+          "reason": "Independent effective-tag example",
+          "line": 27,
+          "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
+        },
+        {
+          "id": "recovery",
+          "role": "implementation",
+          "path": "src/recovery.py",
+          "symbol": "next_action",
+          "reason": "Pure recovery decisions",
+          "line": 23,
+          "sha256": "c8620f0d907410003176b2de51fcc7219f3850e9fe308aa40484f9ee11d4ae74"
+        },
+        {
+          "id": "wire",
+          "role": "implementation",
+          "path": "src/heartbeat.py",
+          "symbol": "encode_heartbeat",
+          "reason": "Explicit serializer example",
+          "line": 8,
+          "sha256": "cf3b21f6c788668114cd56823061422cce711b024680ab17dc4f9a832d3d9790"
+        },
+        {
+          "id": "contracts",
+          "role": "caller",
+          "path": "tests/test_contracts.py",
+          "symbol": "ContractTests",
+          "reason": "Offline Python test consumer",
+          "line": 12,
+          "sha256": "19bbe8bbf1614d1f9f6272a1b1dde8cef00a522d0121de4ade7d2e3f11f9939c"
+        },
+        {
+          "id": "engineering-tests",
+          "role": "caller",
+          "path": "tests/test_engineering_contracts.py",
+          "symbol": "EngineeringContracts",
+          "reason": "Offline recovery and serializer tests",
+          "line": 11,
+          "sha256": "39d7c8543847b8c98d5e44264700431a159792a0438e4791d3c33788a327b051"
+        },
+        {
+          "id": "typescript",
+          "role": "contract",
+          "path": "src/provider.ts",
+          "needle": "export interface ExternalSource",
+          "reason": "Static TS shape, not executed by Python fixture tests",
+          "line": 2,
+          "sha256": "1295ffcfec7cbbe6e0756b47d45b942fa580219c6fcbf90a8501618cab4370aa"
         }
       ]
     }
