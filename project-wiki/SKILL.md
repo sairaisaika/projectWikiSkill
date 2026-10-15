@@ -19,7 +19,9 @@ actionable location** for a task, and a correct system model for orientation, no
 - **Use a wiki:** read its short engineering entry, select a task route, then read
   only the relevant section. Before editing, verify the named implementation.
   Split compound changes into interface/feature questions; a top-two result is not
-  a complete impact inventory. Preserve the helper's truncation warning.
+  a complete impact inventory. A feature entry must also expose relevant variants
+  (owner/viewer, role, account partition, deployment, rollout and client), even
+  when the user did not name them; see change navigation below. Preserve the helper's truncation warning.
   For recurring compound work, use a declared task map before selecting routes;
   see [change navigation](references/change-navigation.md).
 - **Create or repair:** start with representative user questions, inspect current
