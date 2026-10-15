@@ -54,6 +54,13 @@ completion while required capabilities or acceptance remain missing. Preserve th
 project's native representation and separate structural enforcement from semantic
 and runtime review. This rule applies beyond the examples that revealed it.
 
+For every functional partition or subfeature, expose **all scoped producers and
+consumers in both text and a rendered diagram**, including indirect and cross-client
+consumers. Use [producer–consumer views](references/producer-consumer-views.md)
+for the shared-ID ledger, source discovery, local projections, research rationale
+and a reproducible evaluation. A summary workflow diagram is not a complete impact
+inventory. Record unreviewed scope; do not report migration as source completeness.
+
 ## Deliver an actionable route
 
 Connect **question → declaration/implementation → local explanation or diagram →

@@ -64,3 +64,8 @@ reviewed migration, not a silent downgrade to evade validation.
 SoulNest's native implementation uses its existing wikiModel parser, check-wiki-touch
 and COVERAGE generator. It exemplifies enforcement without requiring this skill's
 Python manifest or copying its TypeScript parser into unrelated repositories.
+
+For each functional unit, the producer/consumer dimension needs both a complete
+scoped textual inventory and an identity-matched rendered relationship graph; see
+[producer–consumer views](producer-consumer-views.md). A summary link alone cannot
+stand in for the actual endpoints and relations.

@@ -1,0 +1,113 @@
+# Producer and consumer views
+
+Apply when documenting a functional partition, feature, subfeature or cross-domain
+bridge. Goal: an agent can trace who creates what, who persists/transforms it, and
+all known direct/indirect readers, displays and effects, then find the edit seams.
+
+## Representation decision
+
+Use a hybrid, progressively disclosed view: a short responsibility overview → typed
+relation ledger plus its local rendered graph → exact source and failure detail.
+Keep Mermaid text accessible to text-only agents. Render it for visual readers;
+Mermaid source alone is not image verification. No evidence establishes one
+universally fastest notation, or that Mermaid outperforms Graphviz for agents.
+
+Research checked 2026-10-15; distinguish evidence from the proposed method:
+
+- [SeeRepo, 2026, paper v1](https://arxiv.org/html/2606.14061v1): repository issue
+  resolution experiments support supplementary structural images with text; image-only
+  access degraded results. Effects vary by model and layout, and include accuracy
+  tradeoffs. This is evidence for trying hybrid local views, not a wiki benchmark,
+  complete runtime dataflow extraction, or a promised saving on this project.
+- [Talk like a Graph, ICLR 2024](https://research.google/pubs/talk-like-a-graph-encoding-graphs-for-large-language-models/):
+  graph encoding affects reasoning and depends on task/structure. Explicit typed text
+  relations are a candidate, not a proven universal optimum for current coding agents.
+- [C4 notation](https://c4model.com/diagrams/notation): explicit responsibilities,
+  directional labelled relations and a legend inform readable engineering diagrams.
+  This is notation guidance, not measured agent performance.
+- [Anthropic context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents):
+  compact references and just-in-time retrieval inform progressive disclosure;
+  vendor guidance is not an independent comparison of wiki formats.
+
+The ledger and generated projection below are our engineering hypothesis. Evaluate
+them locally; do not copy these sources' percentages into project claims.
+
+## Shared identity, one editable representation
+
+Use native wiki tables/schema when available. Do not introduce a parallel manifest
+or duplicate business types. Assign stable IDs within each functional scope:
+
+- **Endpoint ledger:** ID, type (producer/interface/store/consumer/gap), short name,
+  responsibility and actor/environment/client conditions, exact evidence locator.
+- **Relation ledger:** ID, source ID, target ID, relation type, data/event, conditions
+  and failure/delivery semantics, source-reviewed/gap/unverified status, evidence.
+- **Local graph:** the same endpoint IDs and relation IDs, direction, meaningful data
+  labels and types. Show unimplemented/unverified relations distinctly with a legend.
+  Shared-rule edges, calls, events and navigation are different relationships.
+
+Prefer generating the graph from the ledger with the project's own model. Otherwise
+check set equality of endpoint IDs and typed relations, including gap edges. IDs do
+not substitute for readable names. Graph metadata links to table/source detail;
+expand a local subgraph rather than drawing an unreadable site-wide graph. Each
+partition overview must index its child functional scopes, cross-partition bridges
+and their ledgers; split large scopes without hiding endpoints from the inventory.
+A sequence diagram supplements ordering/partial-commit detail; it does not replace
+an exhaustive relationship inventory.
+
+## Source discovery and completeness
+
+1. Declare the functional result, boundary, reviewed revision/repositories, parent and
+   child scopes. Define what "all" covers. APIs/types alone are not the inventory.
+2. Walk producers → reachable writers → store/transport → readers → visible/effect
+   consumers. Also reverse-search each output field, table/topic and shared rule.
+   Search actual calls/imports/routes/registries and dynamic hooks; inspect call sites,
+   not just symbol presence. Record commands and exclusions for reproduction.
+3. Consider relevant web owner/viewer roles, anonymous users, test partition versus
+   deployment, rollout, mobile, cron, webhook, notification, export, MCP and external
+   clients. These are discovery prompts, not a requirement to invent each one.
+   A direct API consumer and a rendered UI consumer may be distinct endpoints.
+4. For missing capability draw the missing end/edge and link debt. For unverified
+   consumers show uncertainty and a ledger item; for inapplicable categories state
+   why. Never mark an unexamined client absent. Put other-domain details behind a
+   bridge with an exact link; external boundary endpoints remain visible locally.
+5. Reconcile discovered evidence against both ledgers and diagram. Manual review
+   still checks guards, transformations, failures and stale output. Static references
+   and matched IDs cannot establish all dynamic/external consumers or live behavior.
+
+"Complete" means complete within the declared reviewed scope and evidence. If scope
+still excludes necessary consumers, say the inventory is partial. Keep migration
+coverage, source semantic review, runtime acceptance and agent efficiency separate.
+Old pages require an explicit migration inventory; no blind backfilling of "verified".
+
+## Experiment protocol
+
+Freeze source revision, questions and expected evidence before changing presentation.
+Compare the existing view with ledger-only and ledger-plus-local-image when a genuine
+independent model trial is available and authorized. Use matched tasks/models/budgets,
+repeat trials and record failures, not just successes. Score endpoint/typed-edge recall,
+false relationships, correct edit locations and failure/role/environment answers;
+measure actual tool calls, input tokens/cost and wall time only when logged.
+
+Without independent trials, run an explicitly labelled familiar-reader semantic audit
+and structural experiment: count discovered endpoints/relations, inject missing-node,
+missing-edge, wrong-target/type/status, duplicate-ID and removed-projection mutants;
+check that the real gate rejects them. Render and inspect images and source links.
+Record UTF-8 bytes and graph size as context-size proxies, not token savings or agent
+speed. Preserve baseline artifacts, raw results and unresolved discovery scope.
+Do not infer that generated equality makes the author-written ledger complete.
+
+## SoulNest pilot feedback (2026-10-15)
+
+Two local scopes (journal sharing and public calendar) adopted 30 endpoints and 35
+relations, retaining missing/unverified edges. Reverse call-site search found an
+additional slots consumer (AvailabilityEditor), and payload inspection corrected
+an old "prefilled interval" claim to a date-only event. Thus checking image/text
+agreement must be followed by inspecting actual producer and consumer bodies.
+
+Native checks rejected node/edge omissions, bad IDs/types/evidence and removed
+records; six real Git-gate fixtures included five rejections and a valid control.
+Browser SVG and links were checked. This tests enforcement and exposes real wiki
+errors, but is a familiar-reader pilot: no independent agent timing/token experiment.
+The added text increases page size. Keep local extraction and evaluate that tradeoff;
+do not market diagram coverage as efficiency. 212 other pages remain unreviewed for
+this representation, including non-functional pages needing applicability decisions.
