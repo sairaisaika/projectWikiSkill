@@ -51,6 +51,13 @@ not substitute for readable names. Graph metadata links to table/source detail;
 expand a local subgraph rather than drawing an unreadable site-wide graph. Each
 partition overview must index its child functional scopes, cross-partition bridges
 and their ledgers; split large scopes without hiding endpoints from the inventory.
+Inspect the rendered diagram at the intended reading width, not just its SVG node
+count. Wide fan-in/fan-out can shrink every label into unreadable text; choose a
+suitable direction, scrollable readable export or smaller linked scopes. If layout
+is generated, make the choice explicit and validate allowed values while preserving
+node/edge identities. Layout choice is a readability decision, not a claimed agent
+speed improvement.
+
 A sequence diagram supplements ordering/partial-commit detail; it does not replace
 an exhaustive relationship inventory.
 
@@ -70,7 +77,17 @@ an exhaustive relationship inventory.
    consumers show uncertainty and a ledger item; for inapplicable categories state
    why. Never mark an unexamined client absent. Put other-domain details behind a
    bridge with an exact link; external boundary endpoints remain visible locally.
-5. Reconcile discovered evidence against both ledgers and diagram. Manual review
+5. For shared state, distinguish **snapshot producers**, **invalidation/refresh
+   triggers** and **local cache writers**. An event asking for a refresh does not
+   produce the refreshed value; a successful local patch does not prove persistence.
+   Inspect optimistic-before-request versus patch-after-success ordering. A GET or
+   polling endpoint can write heartbeats, streaks or receipts: inspect its complete
+   call path before treating it as a read-only runtime probe.
+6. Scope failure claims to the layer: source fallback, HTTP failure, cached stale
+   data and caller-level rejection handling are different. A contract comment saying
+   "IDs only" or "no sensitive text" needs actual projection/allowlist verification;
+   excluding top-level fields does not establish that nested metadata is filtered.
+7. Reconcile discovered evidence against both ledgers and diagram. Manual review
    still checks guards, transformations, failures and stale output. Static references
    and matched IDs cannot establish all dynamic/external consumers or live behavior.
 
@@ -111,3 +128,12 @@ errors, but is a familiar-reader pilot: no independent agent timing/token experi
 The added text increases page size. Keep local extraction and evaluate that tradeoff;
 do not market diagram coverage as efficiency. 212 other pages remain unreviewed for
 this representation, including non-functional pages needing applicability decisions.
+
+Further SoulNest review split state assembly from client consumers. The polling GET
+also triggers heartbeat/streak writes; direct client imports include readers,
+refresh-only callers and local patch writers. The server forwards nested metadata
+and announcement text, contradicting an overly broad small-signal description.
+These findings motivated the layer and cache-writer checks above; they are source
+facts and documentation corrections, not proof of an unauthorized disclosure or an
+independent-agent efficiency gain. Native coverage remains the current migration
+inventory; the earlier 212-page number is a historical pilot snapshot.
