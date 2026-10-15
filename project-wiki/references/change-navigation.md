@@ -111,3 +111,34 @@ The helper's source reads for line resolution differ from exploratory source sea
 Report both accurately. Prefer fewer relevant reads to a full-wiki ceremonial pass.
 Generate numeric summaries from report fields or check them against saved reports;
 handwritten maximums and counts can drift even when code locations remain valid.
+
+
+## Can a feature entrance reveal its important variants?
+
+Start from the user's words and one real feature entrance, without supplying the
+hidden file/symbol or the expected variants. Before code search, write what a
+worker can infer about the path, data ownership, fields, partial success and scope.
+Then verify against the actual writer and consumer. Familiar self-review is useful
+but is not an independent developer trial.
+
+For each relevant feature, ask whether its own page reveals distinctions that
+change a plan: resource owner versus viewer, producer versus consumer, role versus
+account partition, deployment environment versus rollout audience, and Web versus
+mobile implementation. Do not demand every axis for every feature or turn the
+list into a permission checklist. Link to the existing authority and put a compact
+comparison where the user enters; definitions buried in another chapter are not
+sufficient discoverability.
+
+Trace user-visible fields individually. “Share to blog” may mean automatic abstract
+crossposting, independent link citation, or opening a prefilled text-and-image
+composer. Existing pieces do not prove the combined entry exists. Show which
+fields are copied, entered, uploaded, omitted and actually rendered, and distinguish
+primary success, secondary write success and backlink persistence. A fallback or
+rollback rule for a linked derivative does not apply to every independent citation.
+
+Evaluate the entry-to-explanation path, not only search ranking. A reader starting
+at a public calendar should discover whose calendar it is, who can view it, where
+each role edits its own time, and how test partitions and rollout gates combine.
+A passing source-presence test or admin observation cannot prove another viewer's
+access. Keep source checks, browser navigation, unit tests and real workflow
+acceptance separate; document missing product capability instead of inventing it.
