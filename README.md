@@ -5,6 +5,7 @@
 可安装 skill 在 [`project-wiki/`](project-wiki/SKILL.md)，名称为 `$project-wiki`。它将问题、精确源码位置、接口契约、规则、影响面、检查与证据边界连接起来；分别量化结构完整度、任务路由表现、语义核验和实际使用效果，避免一个总分掩盖未知。
 
 - [了解项目与导读](project-wiki/references/learning-and-orientation.md)：从产品、角色和跨域例子建立理解；区分全文阅读与导语巡读，理解验收与任务定位分别评价。
+- [功能闭环规则](project-wiki/references/feature-completeness.md)：所有功能按用户结果核必要能力与八维证据；文档结构、实现接通、运行验收分别判，缺口不能当完成。
 - [结构契约](project-wiki/references/route-contract.md)：接口声明、实现、消费者、规则来源、失败与兼容、精确定位。
 - [量化模型](project-wiki/references/quality-model.md)：100 分结构量表、任务命中率与独立演练指标。
 - [持续维护](project-wiki/references/maintenance.md)：改动触发、计划交付、漂移检查、CI 与交接。

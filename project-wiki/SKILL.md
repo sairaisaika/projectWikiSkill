@@ -41,6 +41,19 @@ does not prove that a rule has a writer, a consumer or a deployed implementation
 For a missing task route, use one targeted search and repair that route. Do not require
 full-site reading for routine task lookup, block unrelated work, or claim wiki prose outranks actual source.
 
+## Apply the feature completion rule
+
+For feature creation, changes and wiki delivery, derive necessary capabilities
+from the user's intended result, then apply
+[feature completeness](references/feature-completeness.md). Every feature entrance
+must expose purpose/completion, actors/access, environment/rollout, fields,
+producers/consumers, state/failures, edit/verification and outstanding capabilities.
+Use evidence, gaps, unknowns or justified non-applicability for each dimension;
+existing components do not establish an integrated workflow. Do not claim feature
+completion while required capabilities or acceptance remain missing. Preserve the
+project's native representation and separate structural enforcement from semantic
+and runtime review. This rule applies beyond the examples that revealed it.
+
 ## Deliver an actionable route
 
 Connect **question → declaration/implementation → local explanation or diagram →
