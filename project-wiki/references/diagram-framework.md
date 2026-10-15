@@ -77,6 +77,8 @@ The helper validates source/doc references and declared type coverage. It does n
 parse Mermaid, infer semantic edges or prove cross-view consistency. Render available
 diagrams and inspect labels/clipping; review semantics against cited code separately.
 Split crowded diagrams by scenario instead of shrinking them into unreadable images.
+Use [page anatomy](page-anatomy.md) for local diagram versus section source blocks,
+message-level traceability, polling/cursor contracts and manual review counts.
 
 ## Project-level coverage policy
 

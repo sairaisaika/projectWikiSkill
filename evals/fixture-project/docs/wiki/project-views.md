@@ -23,6 +23,11 @@ flowchart TD
   end
 ```
 
+**Diagram sources:** `project-views` source IDs `service`, `port`, `client`,
+`tagger`, `tags`, `recovery`, `wire`, `contracts`, `engineering-tests`,
+`typescript`. These locate the responsibilities, consumers and static declaration.
+
+
 These are independent fixture examples, not one implemented end-to-end pipeline.
 The TypeScript shape is not executed by the Python checks. ArticleSource is an
 injected dependency, not an existing hosted API. Arrows show current call/dependency
@@ -43,6 +48,11 @@ flowchart LR
     TS["TypeScript source file: not executed by this fixture runner"]
   end
 ```
+
+**Diagram sources:** `project-views` source IDs `contracts` and
+`engineering-tests` locate the unittest consumers and their imports. The displayed
+unittest process is the documented invocation, not a source-proven host topology.
+
 
 No database, network service, container or transport peer is started. This diagram
 describes the process used by offline unittest invocation; it does not assert any
@@ -66,6 +76,10 @@ flowchart TD
   Success --> Rows["Legacy client returns list, including empty list"]
 ```
 
+**Diagram sources:** `project-views` source IDs `client`, `service`, `port`
+locate the call chain and distinguish returned None from propagated exceptions.
+
+
 This flow separates returned unavailable from successful empty data and uncaught
 exceptions. No HTTP handler or new result-style client exists in the fixture.
 
@@ -84,6 +98,10 @@ classDiagram
   note for WireFrame "8 bytes, big endian; conceptual wire record, not a Python class or database table"
 ```
 
+**Diagram sources:** `wire-format` source ID `frame` locates `src/heartbeat.py`
+`FRAME`; source IDs `encode` and `decode` locate the serialized field use.
+
+
 There are no entity relations or persistence claims to invent. The authoritative
 Struct, byte offsets, units, masks and independent vector are in the
 [wire contract](engineering-contracts.md#wire-format). This view explains data
@@ -99,3 +117,8 @@ structure; the field table explains physical serialization. Neither is a native 
 
 Six view kinds are declared across the project routes. Each answers its own question;
 the helper checks their references/type coverage, not diagram syntax or semantic truth.
+
+**Section sources:** Responsibility and call-direction prose uses the
+`project-views` route locators; serialization prose uses `wire-format`. Resolve
+current positions with the helper or the [generated route index](route-index.md).
+These blocks identify source scope; semantic support is reviewed separately.
