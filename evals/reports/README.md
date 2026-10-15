@@ -11,6 +11,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 | engineering-and-six-view-trials.md | Two fresh read-only trials used wiki-first plans and surfaced concrete missing constraints | Synthetic tasks; no time/speedup baseline or live product acceptance |
 | diagram-rendering.json | Six current Mermaid sources parsed/rendered; source hashes checked in tests | Screenshots are temporary; core Python helper does not render or prove diagram semantics |
 | [soulnest-native-audit.md](soulnest-native-audit.md) | Existing native wiki recovery, source/runtime corrections, real packaging failure and a 12-question search self-test | Familiar reviewer; native schema is not ingested by wiki.py; no full semantic certification or timing baseline |
+| [soulnest-learning-review.md](soulnest-learning-review.md) | Learning entrance, cross-feature narrative and reciprocal orientation mode | Familiar entry survey and selected source checks; not a full-page reading or independent comprehension trial |
 
 The current fixture also declares a four-surface task map. One expected-scope case
 checks all four surfaces/routes separately from ranking. Eight mutation/read-boundary
