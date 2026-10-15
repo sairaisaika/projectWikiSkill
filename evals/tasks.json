@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "thresholds": {"min_top1": 0.8, "min_top2": 0.9, "min_tasks": 10, "min_unknown": 2},
+  "tasks": [
+    {"id": "api-errors", "query": "Keep client failures distinguishable from empty article data", "expected_routes": ["public-api"]},
+    {"id": "api-compatibility", "query": "How would we extend the legacy client without breaking users?", "expected_routes": ["public-api"]},
+    {"id": "api-port", "query": "Change the ArticleSource failure contract", "expected_routes": ["public-api"]},
+    {"id": "provider-optional", "query": "What if an external source has no counts capability?", "expected_routes": ["external-source"]},
+    {"id": "provider-change", "query": "换文献源后怎样处理可选计数", "expected_routes": ["external-source"]},
+    {"id": "model-suggestions", "query": "换模型接口还需要更新谁", "expected_routes": ["tagger"]},
+    {"id": "model-failure", "query": "How do model suggestions handle a failure rather than no tags?", "expected_routes": ["tagger"]},
+    {"id": "tag-conflict", "query": "修改同级争议的标签裁决规则", "expected_routes": ["tag-rules"]},
+    {"id": "tag-effective", "query": "Should effective tags count a disputed assertion?", "expected_routes": ["tag-rules"]},
+    {"id": "tag-policy", "query": "Where does the trust policy choose a winning tier?", "expected_routes": ["tag-rules"]},
+    {"id": "unknown-payments", "query": "refund invoice settlement", "expected_routes": []},
+    {"id": "unknown-audio", "query": "render orchestral multitrack stems", "expected_routes": []}
+  ]
+}
