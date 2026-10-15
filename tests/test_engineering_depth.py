@@ -175,6 +175,7 @@ class EngineeringDepthTests(unittest.TestCase):
     def test_policy_is_optional_for_simple_existing_routes(self):
         manifest = wiki.load(self.root)
         manifest.pop('diagram_policy')
+        manifest.pop('task_maps')  # This test reduces the fixture to one independent route.
         manifest['routes'] = [row for row in manifest['routes'] if row['id'] == 'tagger']
         report = wiki.audit(self.root, manifest)
         self.assertTrue(report['ready'])

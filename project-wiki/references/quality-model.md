@@ -68,6 +68,11 @@ Suggested pilot criteria, configurable per task file:
   sections. Split compound queries; truncated top-two results are not total coverage.
 
 `evaluate` reports ranking and structural location checks using curated expected IDs.
+Optional task-map cases compare all expected surfaces/routes, separately from
+top-1/top-2. A missing or unexpected work surface fails even when every individual
+query ranks correctly. Located `edit_for` targets are reported separately and do
+not inflate the baseline score. Neither metric proves semantic sufficiency; see
+[change navigation](change-navigation.md).
 It does not label those results independent or semantic. Alias-based routing has no
 semantic model: a known synonym may fail until added; an absent match is preferable
 to a made-up location. Record failures rather than relaxing thresholds to claim success.
@@ -96,6 +101,9 @@ Record in a project-local evaluation report (only real observations):
 | entry_used | Whether AGENTS/README led to the wiki before exploratory source search |
 | route_ids and source positions | Exact route and whether it was the correct edit surface |
 | docs consumed | Actual entry/sections and bytes or words, measurement method included |
+| read completeness | Local sections vs whole pages; truncated output remains unread |
+| compound scope | Expected vs declared work surfaces/routes; missing or extra IDs |
+| edit seams | Declared change concern, exact located helper and internal/public boundary |
 | exploratory searches | Repo-wide/targeted searches before and after plan |
 | plan coverage | 0–6: outcome, dependencies, interfaces, deliverables, exit evidence, unknowns |
 | semantic findings | Wrong rule/caller, missing failure mode, invented implementation |

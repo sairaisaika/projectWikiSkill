@@ -22,3 +22,5 @@ views that answer their question; six kinds are checked at project scope.
 Query the skill helper against this fixture root. The generated
 [route index](route-index.md) shows current positions. Read the relevant section,
 draft a plan, then inspect only the cited implementation before editing.
+
+For a compound interface change, `python <skill>/scripts/wiki.py task interface-change --root <fixture>` lists all four declared work surfaces and their routes without reading source files. Query only the chosen route next. This scope is curated, not an inferred complete dependency graph.

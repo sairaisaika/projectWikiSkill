@@ -167,5 +167,23 @@
         "recovery"
       ]
     }
+  ],
+  "task_map_cases": [
+    {
+      "id": "compound-interface-scope",
+      "task_map": "interface-change",
+      "expected_surfaces": [
+        "public",
+        "dependency",
+        "model",
+        "policy"
+      ],
+      "expected_routes": [
+        "public-api",
+        "external-source",
+        "tagger",
+        "tag-rules"
+      ]
+    }
   ]
 }

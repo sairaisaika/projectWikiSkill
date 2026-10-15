@@ -31,6 +31,10 @@ Example entry text (adapt to the project's existing instructions):
 | Test/install/live result observed | Append the actual claim, revision/date and durable reference; preserve old scope |
 | New query misses | Add a supported synonym/route after evidence-based discovery; keep unknown-query controls |
 | False-positive route | Narrow aliases or split layers; do not just lower acceptance thresholds |
+| Compound scope is missing | Update the playbook/task map and independent expected-scope cases; single-route accuracy is not completeness |
+| Location stops at a large factory | Add the relevant internal edit seam, purpose and consumer; verify catch/commit/shared-rule boundaries |
+| Query grows over budget | Remove duplicate locations/prose or split concerns; preserve scope and rerun all questions without raising limits just to pass |
+| Human summary disagrees with JSON | Recompute counts/maxima from the report; preserve historical trial scope instead of silently relabeling old results |
 | Serialization/state/timing changes | Update authoritative schema, field/transition tables, source-linked local diagrams and relevant decision rationale; rerun actual conformance/recovery tests |
 
 Review changed source as a signal, not as proof that all prose is stale. Normalized

@@ -54,6 +54,9 @@ Adapt records to actual code; do not populate fields with guessed paths.
   state a justified non-applicability in impact/unknowns and report the scoring limit.
 - Source IDs are unique within a route. Roles: declaration, implementation, caller,
   consumer, contract. `reason` explains why the editor should open that position.
+  Optional `visibility` (public/internal) and nonempty `edit_for` string arrays
+  identify declared edit seams; they do not prove sufficient impact coverage or
+  increase the baseline score. See [change navigation](change-navigation.md).
 - Choose exactly one `symbol` or `needle`. Python symbols use class/function
   qualification (`Repository.load`). Other languages use an exact declaration-line
   substring with one match. Duplicate needles fail; do not silently use the first.
@@ -92,6 +95,11 @@ Adapt records to actual code; do not populate fields with guessed paths.
 The optional root `diagram_policy` declares required view kinds and explicit
 not_applicable reasons. See the [six-view framework](diagram-framework.md). Coverage
 counts only diagrams on structurally valid routes; it is not render or semantic proof.
+
+Optional root `task_maps` declare compound work surfaces and existing route IDs;
+their docs/scope are checked and enter snapshots. Use `task` to list them and
+`task <id>` to expand all declared surfaces without application source reads.
+See [change navigation](change-navigation.md) for schema and scope evaluation.
 
 ## Existing schema 1 wikis
 

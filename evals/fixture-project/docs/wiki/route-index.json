@@ -304,7 +304,11 @@
           "role": "implementation",
           "path": "src/tagging.py",
           "reason": "Normalizes successful suggestions without resolving effective tags",
-          "symbol": "sanitize_suggestions"
+          "symbol": "sanitize_suggestions",
+          "edit_for": [
+            "Change suggestion sanitization without treating the model declaration as the implementation"
+          ],
+          "visibility": "internal"
         },
         {
           "id": "test-consumer",
@@ -393,6 +397,10 @@
           "path": "src/tagging.py",
           "reason": "Normalizes successful suggestions without resolving effective tags",
           "symbol": "sanitize_suggestions",
+          "edit_for": [
+            "Change suggestion sanitization without treating the model declaration as the implementation"
+          ],
+          "visibility": "internal",
           "line": 9,
           "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
         },
@@ -1696,6 +1704,87 @@
           "sha256": "1295ffcfec7cbbe6e0756b47d45b942fa580219c6fcbf90a8501618cab4370aa"
         }
       ]
+    }
+  ],
+  "task_maps": [
+    {
+      "id": "interface-change",
+      "title": "Plan a change across the fixture interfaces",
+      "scope": "Four declared synthetic work surfaces, not a production impact graph",
+      "docs": [
+        "docs/wiki/engineering-entry.md"
+      ],
+      "surfaces": [
+        {
+          "id": "public",
+          "question": "How should public failure behavior change?",
+          "route_ids": [
+            "public-api"
+          ],
+          "why": "Keep dependency errors distinct from legacy client behavior."
+        },
+        {
+          "id": "dependency",
+          "question": "Which provider capabilities may be absent?",
+          "route_ids": [
+            "external-source"
+          ],
+          "why": "Optional counts must not become assumed required capabilities."
+        },
+        {
+          "id": "model",
+          "question": "Where are model suggestions sanitized?",
+          "route_ids": [
+            "tagger"
+          ],
+          "why": "Locate the implementation as well as the model declaration."
+        },
+        {
+          "id": "policy",
+          "question": "How do effective-tag rules change?",
+          "route_ids": [
+            "tag-rules"
+          ],
+          "why": "Policy outcomes must agree with consumer filtering."
+        }
+      ],
+      "route_ids": [
+        "public-api",
+        "external-source",
+        "tagger",
+        "tag-rules"
+      ],
+      "routes": [
+        {
+          "id": "public-api",
+          "title": "Public article service and legacy client",
+          "docs": [
+            "docs/wiki/interfaces.md#public-api"
+          ]
+        },
+        {
+          "id": "external-source",
+          "title": "External provider capabilities",
+          "docs": [
+            "docs/wiki/interfaces.md#external-source"
+          ]
+        },
+        {
+          "id": "tagger",
+          "title": "Model suggestion interface",
+          "docs": [
+            "docs/wiki/interfaces.md#tagger"
+          ]
+        },
+        {
+          "id": "tag-rules",
+          "title": "Effective tags and trust policy",
+          "docs": [
+            "docs/wiki/interfaces.md#tag-rules"
+          ]
+        }
+      ],
+      "evidence_boundary": "Declared task scope, not inferred full-project completeness; source locations/semantics require query and review"
     }
   ]
 }

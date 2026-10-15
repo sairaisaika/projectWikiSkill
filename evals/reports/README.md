@@ -11,7 +11,14 @@ These reports describe measured runs, not expected scores to copy into a new pro
 | engineering-and-six-view-trials.md | Two fresh read-only trials used wiki-first plans and surfaced concrete missing constraints | Synthetic tasks; no time/speedup baseline or live product acceptance |
 | diagram-rendering.json | Six current Mermaid sources parsed/rendered; source hashes checked in tests | Screenshots are temporary; core Python helper does not render or prove diagram semantics |
 
-Local validation of this skill: 58 helper/package test cases, 57 passing and one
+The current fixture also declares a four-surface task map. One expected-scope case
+checks all four surfaces/routes separately from ranking. Eight mutation/read-boundary
+tests cover omitted/replaced surfaces, duplicate/missing references, document gaps,
+snapshot drift and internal edit-target metadata. A task outline works even after
+fixture source files are removed; queries still require source to resolve positions.
+These results do not constitute a new independent adoption trial.
+
+Local validation of this skill: 66 helper/package test cases, 65 passing and one
 symlink case skipped because Windows disallows unprivileged symlink creation;
 12 fixture application contract tests pass. Skill Creator's frontmatter validator
 passes. Python 3.13 on Windows was executed locally; the GitHub workflow configures
