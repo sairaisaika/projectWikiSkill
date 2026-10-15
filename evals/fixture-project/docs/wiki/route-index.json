@@ -1,0 +1,529 @@
+{
+  "schema_version": 2,
+  "project": "Synthetic interface fixture",
+  "routes": [
+    {
+      "reviewed_at": "2026-10-14",
+      "unknowns": [
+        "No deployed runtime or live provider has been verified."
+      ],
+      "id": "public-api",
+      "title": "Public article service and legacy client",
+      "kind": "interface",
+      "aliases": [
+        "client failures",
+        "legacy client",
+        "ArticleSource",
+        "HTTP 错误",
+        "外部接口"
+      ],
+      "sources": [
+        {
+          "id": "port",
+          "role": "declaration",
+          "path": "src/ports.py",
+          "reason": "Source dependency return contract",
+          "symbol": "ArticleSource.list_articles"
+        },
+        {
+          "id": "service",
+          "role": "implementation",
+          "path": "src/service.py",
+          "reason": "Maps unavailable separately from empty",
+          "symbol": "get_articles"
+        },
+        {
+          "id": "client",
+          "role": "consumer",
+          "path": "src/client.py",
+          "reason": "Legacy data/None consumer loses precise errors",
+          "symbol": "read_articles"
+        }
+      ],
+      "docs": [
+        "docs/wiki/interfaces.md#public-api"
+      ],
+      "interface": {
+        "inputs": [
+          "Injected source and query"
+        ],
+        "outputs": [
+          "Service Result(data/error); legacy client data/None"
+        ],
+        "errors": [
+          "None from source is unavailable; [] is success"
+        ],
+        "compatibility": "Keep legacy read_articles behavior; a result-style API would be additive.",
+        "failure_modes": {
+          "returned": [
+            "None from dependency becomes unavailable; [] remains successful empty."
+          ],
+          "thrown": [
+            "Dependency exceptions propagate; no exception mapping exists."
+          ],
+          "unsupported": [
+            "No HTTP, authorization or result-style client is implemented."
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "failure-not-empty",
+          "statement": "Unavailable must not become an empty article list.",
+          "source_ids": [
+            "service",
+            "client"
+          ],
+          "tests": [
+            "tests/test_contracts.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Changing errors affects read_articles and its compatibility contract."
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests",
+          "scope": "Runs only the synthetic Python fixture contracts; no live network."
+        }
+      ],
+      "boundary": "Synthetic fixture source and offline checks do not establish deployment or live behavior.",
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "src/service.py",
+            "claim": "The named implementation exists in this synthetic fixture.",
+            "revision": "fixture-v1",
+            "observed_at": "2026-10-14"
+          }
+        ]
+      },
+      "locations": [
+        {
+          "id": "port",
+          "role": "declaration",
+          "path": "src/ports.py",
+          "reason": "Source dependency return contract",
+          "symbol": "ArticleSource.list_articles",
+          "line": 6,
+          "sha256": "039afac6ce19d88d0638111d3c4201a609d78c9d21add0b1ab51932a240c6028"
+        },
+        {
+          "id": "service",
+          "role": "implementation",
+          "path": "src/service.py",
+          "reason": "Maps unavailable separately from empty",
+          "symbol": "get_articles",
+          "line": 4,
+          "sha256": "bc11b983be14dbe2f219a98da6bf93963355f3266cbf8ad4c0474ad70f75d786"
+        },
+        {
+          "id": "client",
+          "role": "consumer",
+          "path": "src/client.py",
+          "reason": "Legacy data/None consumer loses precise errors",
+          "symbol": "read_articles",
+          "line": 4,
+          "sha256": "f97d14a3cd5188902208f5aaa3b458544f9740e5537f298468f2db0decf00388"
+        }
+      ]
+    },
+    {
+      "reviewed_at": "2026-10-14",
+      "unknowns": [
+        "There is no real provider, global budget, cancellation or retry implementation.",
+        "No TypeScript runner or capability test is supplied in this fixture."
+      ],
+      "id": "external-source",
+      "title": "External provider capabilities",
+      "kind": "interface",
+      "aliases": [
+        "external source",
+        "provider capabilities",
+        "换文献源",
+        "可选计数",
+        "依赖接口"
+      ],
+      "sources": [
+        {
+          "id": "port",
+          "role": "declaration",
+          "path": "src/provider.ts",
+          "reason": "Required suggestion and optional counts shape",
+          "needle": "export interface ExternalSource"
+        },
+        {
+          "id": "implementation",
+          "role": "implementation",
+          "path": "src/provider.ts",
+          "reason": "Detects optional capability",
+          "needle": "export function providerCapabilities"
+        },
+        {
+          "id": "consumer",
+          "role": "consumer",
+          "path": "src/provider.ts",
+          "reason": "Consumes the feature list",
+          "needle": "export function nodeFeatures"
+        }
+      ],
+      "docs": [
+        "docs/wiki/interfaces.md#external-source"
+      ],
+      "interface": {
+        "inputs": [
+          "ExternalSource with required suggestTopics and optional counts"
+        ],
+        "outputs": [
+          "Available feature names"
+        ],
+        "errors": [
+          "Null means unavailable; missing counts is unsupported rather than zero"
+        ],
+        "compatibility": "Keep suggest support when counts is absent.",
+        "failure_modes": {
+          "returned": [
+            "Provider methods may return null; capability helper returns feature names."
+          ],
+          "thrown": [
+            "Rejected promises and thrown provider behavior are unspecified by this shape."
+          ],
+          "unsupported": [
+            "Missing optional counts leaves suggest capability available."
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "optional-counts",
+          "statement": "Missing counts must not disable suggestions.",
+          "source_ids": [
+            "port",
+            "implementation"
+          ]
+        }
+      ],
+      "impact": [
+        "Node feature menus depend on providerCapabilities."
+      ],
+      "tests": [],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests",
+          "scope": "Python contracts only; does not verify TypeScript capability behavior. A TS contract test is still required."
+        }
+      ],
+      "boundary": "Synthetic fixture source and offline checks do not establish deployment or live behavior.",
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "src/provider.ts",
+            "claim": "The named implementation exists in this synthetic fixture.",
+            "revision": "fixture-v1",
+            "observed_at": "2026-10-14"
+          }
+        ]
+      },
+      "locations": [
+        {
+          "id": "port",
+          "role": "declaration",
+          "path": "src/provider.ts",
+          "reason": "Required suggestion and optional counts shape",
+          "needle": "export interface ExternalSource",
+          "line": 2,
+          "sha256": "1295ffcfec7cbbe6e0756b47d45b942fa580219c6fcbf90a8501618cab4370aa"
+        },
+        {
+          "id": "implementation",
+          "role": "implementation",
+          "path": "src/provider.ts",
+          "reason": "Detects optional capability",
+          "needle": "export function providerCapabilities",
+          "line": 7,
+          "sha256": "1295ffcfec7cbbe6e0756b47d45b942fa580219c6fcbf90a8501618cab4370aa"
+        },
+        {
+          "id": "consumer",
+          "role": "consumer",
+          "path": "src/provider.ts",
+          "reason": "Consumes the feature list",
+          "needle": "export function nodeFeatures",
+          "line": 11,
+          "sha256": "1295ffcfec7cbbe6e0756b47d45b942fa580219c6fcbf90a8501618cab4370aa"
+        }
+      ]
+    },
+    {
+      "reviewed_at": "2026-10-14",
+      "unknowns": [
+        "No deployed runtime or live provider has been verified."
+      ],
+      "id": "tagger",
+      "title": "Model suggestion interface",
+      "kind": "interface",
+      "aliases": [
+        "model suggestions",
+        "模型接口",
+        "模型贡献",
+        "模型建议"
+      ],
+      "sources": [
+        {
+          "id": "port",
+          "role": "declaration",
+          "path": "src/tagging.py",
+          "reason": "Replaceable model call shape",
+          "symbol": "Tagger.suggest"
+        },
+        {
+          "id": "sanitize",
+          "role": "implementation",
+          "path": "src/tagging.py",
+          "reason": "Normalizes successful suggestions without resolving effective tags",
+          "symbol": "sanitize_suggestions"
+        },
+        {
+          "id": "test-consumer",
+          "role": "consumer",
+          "path": "tests/test_contracts.py",
+          "symbol": "ContractTests.test_model_failure_is_not_an_empty_suggestion",
+          "reason": "Only current caller is an offline test, not a production tagging pipeline"
+        }
+      ],
+      "docs": [
+        "docs/wiki/interfaces.md#tagger"
+      ],
+      "interface": {
+        "inputs": [
+          "Tagger and article title"
+        ],
+        "outputs": [
+          "Sorted unique normalized suggestions, or None"
+        ],
+        "errors": [
+          "None is model failure; [] is successful absence of suggestions"
+        ],
+        "compatibility": "Suggestions stay separate from effective tags; confidence fields are not implemented.",
+        "failure_modes": {
+          "returned": [
+            "None means model failure; [] means no suggestions."
+          ],
+          "thrown": [
+            "Model exceptions propagate; non-string elements can raise; arbitrary JSON is not validated."
+          ],
+          "unsupported": [
+            "Confidence fields, hosted models and production assertion pipeline are absent."
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "suggestion-not-decision",
+          "statement": "Sanitizing suggestions does not apply tag policy or persist assertions.",
+          "source_ids": [
+            "sanitize"
+          ],
+          "tests": [
+            "tests/test_contracts.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Only fixture tests currently consume this function; integrating a production caller remains work."
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests",
+          "scope": "Runs only the synthetic Python fixture contracts; no live network."
+        }
+      ],
+      "boundary": "Synthetic fixture source and offline checks do not establish deployment or live behavior.",
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "src/tagging.py",
+            "claim": "The named implementation exists in this synthetic fixture.",
+            "revision": "fixture-v1",
+            "observed_at": "2026-10-14"
+          }
+        ]
+      },
+      "locations": [
+        {
+          "id": "port",
+          "role": "declaration",
+          "path": "src/tagging.py",
+          "reason": "Replaceable model call shape",
+          "symbol": "Tagger.suggest",
+          "line": 5,
+          "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
+        },
+        {
+          "id": "sanitize",
+          "role": "implementation",
+          "path": "src/tagging.py",
+          "reason": "Normalizes successful suggestions without resolving effective tags",
+          "symbol": "sanitize_suggestions",
+          "line": 9,
+          "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
+        },
+        {
+          "id": "test-consumer",
+          "role": "consumer",
+          "path": "tests/test_contracts.py",
+          "symbol": "ContractTests.test_model_failure_is_not_an_empty_suggestion",
+          "reason": "Only current caller is an offline test, not a production tagging pipeline",
+          "line": 31,
+          "sha256": "ad083273f0fc080561f1fd31d8d809c99ce3e644a315eb66c72ee1f37ef8e94e"
+        }
+      ]
+    },
+    {
+      "reviewed_at": "2026-10-14",
+      "unknowns": [
+        "No identities, per-person latest stance, review requests or persistent ledger are implemented."
+      ],
+      "id": "tag-rules",
+      "title": "Effective tags and trust policy",
+      "kind": "interface",
+      "aliases": [
+        "标签裁决",
+        "标签规则",
+        "同级争议",
+        "effective tags",
+        "trust policy",
+        "接口规则"
+      ],
+      "sources": [
+        {
+          "id": "policy",
+          "role": "declaration",
+          "path": "src/tagging.py",
+          "reason": "Function input and state return contract",
+          "symbol": "resolve_tags"
+        },
+        {
+          "id": "resolve",
+          "role": "implementation",
+          "path": "src/tagging.py",
+          "reason": "Highest tier and conflict rule",
+          "symbol": "resolve_tags"
+        },
+        {
+          "id": "apply",
+          "role": "consumer",
+          "path": "src/tagging.py",
+          "reason": "Counts only present",
+          "symbol": "effective_tag"
+        }
+      ],
+      "docs": [
+        "docs/wiki/interfaces.md#tag-rules"
+      ],
+      "interface": {
+        "inputs": [
+          "Assertions with numeric tier and add/remove operation"
+        ],
+        "outputs": [
+          "present, absent or disputed"
+        ],
+        "errors": [
+          "No assertions produce absent; equal-tier conflict is disputed"
+        ],
+        "compatibility": "Changing policy changes effective_tag; latest-person/review workflows do not exist.",
+        "failure_modes": {
+          "returned": [
+            "No assertions gives absent; equal-tier conflict gives disputed."
+          ],
+          "thrown": [
+            "Missing assertion keys can raise; no explicit malformed-input validator."
+          ],
+          "unsupported": [
+            "Per-person latest stance, review requests and persistence are absent."
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "conflict-excluded",
+          "statement": "Equal-tier conflict is disputed, and disputed is not an effective tag.",
+          "source_ids": [
+            "resolve",
+            "apply"
+          ],
+          "tests": [
+            "tests/test_contracts.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Policy changes affect effective_tag and offline tests."
+      ],
+      "tests": [
+        "tests/test_contracts.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests",
+          "scope": "Runs only the synthetic Python fixture contracts; no live network."
+        }
+      ],
+      "boundary": "Synthetic fixture source and offline checks do not establish deployment or live behavior.",
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "src/tagging.py",
+            "claim": "The named implementation exists in this synthetic fixture.",
+            "revision": "fixture-v1",
+            "observed_at": "2026-10-14"
+          }
+        ]
+      },
+      "locations": [
+        {
+          "id": "policy",
+          "role": "declaration",
+          "path": "src/tagging.py",
+          "reason": "Function input and state return contract",
+          "symbol": "resolve_tags",
+          "line": 16,
+          "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
+        },
+        {
+          "id": "resolve",
+          "role": "implementation",
+          "path": "src/tagging.py",
+          "reason": "Highest tier and conflict rule",
+          "symbol": "resolve_tags",
+          "line": 16,
+          "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
+        },
+        {
+          "id": "apply",
+          "role": "consumer",
+          "path": "src/tagging.py",
+          "reason": "Counts only present",
+          "symbol": "effective_tag",
+          "line": 27,
+          "sha256": "44c2cac79e2b8f7d187ac79bdf60509e464dfeb1bfa8c57b85c2b70e5d74ea19"
+        }
+      ]
+    }
+  ]
+}

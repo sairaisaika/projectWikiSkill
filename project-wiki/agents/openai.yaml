@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Wiki"
+  short_description: "Build measurable, source-backed engineering wikis"
+  default_prompt: "Use $project-wiki to improve this project wiki with task routes, measurable acceptance, and sustainable maintenance."

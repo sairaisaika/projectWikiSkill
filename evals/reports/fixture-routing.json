@@ -1,0 +1,247 @@
+{
+  "evaluation": "curated routing self-test; not an independent semantic/adoption trial",
+  "passed": true,
+  "thresholds": {
+    "min_top1": 0.8,
+    "min_top2": 0.9,
+    "min_tasks": 10,
+    "min_unknown": 2
+  },
+  "task_count": 12,
+  "top1": {
+    "numerator": 10,
+    "denominator": 10,
+    "rate": 1.0
+  },
+  "top2": {
+    "numerator": 10,
+    "denominator": 10,
+    "rate": 1.0
+  },
+  "unknown_rejection": {
+    "numerator": 2,
+    "denominator": 2,
+    "rate": 1.0
+  },
+  "location_success": {
+    "numerator": 12,
+    "denominator": 12,
+    "rate": 1.0
+  },
+  "max_response_words": 344,
+  "word_count_method": "whitespace proxy; not a tokenizer or cross-language segmentation measure",
+  "semantic_accuracy": "not measured",
+  "independent_adoption": "not measured",
+  "time_savings": "not measured",
+  "tasks": [
+    {
+      "id": "api-errors",
+      "query": "Keep client failures distinguishable from empty article data",
+      "expected": [
+        "public-api"
+      ],
+      "actual": [
+        "public-api"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 158,
+      "response_bytes": 1380,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "api-compatibility",
+      "query": "How would we extend the legacy client without breaking users?",
+      "expected": [
+        "public-api"
+      ],
+      "actual": [
+        "public-api"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 158,
+      "response_bytes": 1380,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "api-port",
+      "query": "Change the ArticleSource failure contract",
+      "expected": [
+        "public-api"
+      ],
+      "actual": [
+        "public-api"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 158,
+      "response_bytes": 1380,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "provider-optional",
+      "query": "What if an external source has no counts capability?",
+      "expected": [
+        "external-source"
+      ],
+      "actual": [
+        "external-source"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 178,
+      "response_bytes": 1521,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "provider-change",
+      "query": "换文献源后怎样处理可选计数",
+      "expected": [
+        "external-source"
+      ],
+      "actual": [
+        "external-source"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 178,
+      "response_bytes": 1521,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "model-suggestions",
+      "query": "换模型接口还需要更新谁",
+      "expected": [
+        "tagger"
+      ],
+      "actual": [
+        "tagger"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 180,
+      "response_bytes": 1559,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "model-failure",
+      "query": "How do model suggestions handle a failure rather than no tags?",
+      "expected": [
+        "tagger"
+      ],
+      "actual": [
+        "tagger",
+        "tag-rules"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 344,
+      "response_bytes": 2977,
+      "candidate_count": 2,
+      "truncated": false
+    },
+    {
+      "id": "tag-conflict",
+      "query": "修改同级争议的标签裁决规则",
+      "expected": [
+        "tag-rules"
+      ],
+      "actual": [
+        "tag-rules"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 164,
+      "response_bytes": 1417,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "tag-effective",
+      "query": "Should effective tags count a disputed assertion?",
+      "expected": [
+        "tag-rules"
+      ],
+      "actual": [
+        "tag-rules"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 164,
+      "response_bytes": 1417,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "tag-policy",
+      "query": "Where does the trust policy choose a winning tier?",
+      "expected": [
+        "tag-rules"
+      ],
+      "actual": [
+        "tag-rules"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 164,
+      "response_bytes": 1417,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "unknown-payments",
+      "query": "refund invoice settlement",
+      "expected": [],
+      "actual": [],
+      "top1": null,
+      "top2": null,
+      "unknown_rejected": true,
+      "locations_ok": true,
+      "response_words": 17,
+      "response_bytes": 105,
+      "candidate_count": 0,
+      "truncated": false
+    },
+    {
+      "id": "unknown-audio",
+      "query": "render orchestral multitrack stems",
+      "expected": [],
+      "actual": [],
+      "top1": null,
+      "top2": null,
+      "unknown_rejected": true,
+      "locations_ok": true,
+      "response_words": 17,
+      "response_bytes": 105,
+      "candidate_count": 0,
+      "truncated": false
+    }
+  ]
+}

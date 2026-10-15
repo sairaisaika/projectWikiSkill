@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "mode": "legacy-gap-analysis",
+  "ready": false,
+  "routes": [
+    {
+      "id": "external-source",
+      "valid": true,
+      "score": null,
+      "locations": 4,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "external-transport",
+      "valid": true,
+      "score": null,
+      "locations": 3,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "host-ports",
+      "valid": true,
+      "score": null,
+      "locations": 6,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "public-api",
+      "valid": true,
+      "score": null,
+      "locations": 7,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "tag-normalization",
+      "valid": true,
+      "score": null,
+      "locations": 4,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "tagger-contribution",
+      "valid": true,
+      "score": null,
+      "locations": 5,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "ledger-policy",
+      "valid": true,
+      "score": null,
+      "locations": 6,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "ledger-integration",
+      "valid": true,
+      "score": null,
+      "locations": 5,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "settings-contract",
+      "valid": true,
+      "score": null,
+      "locations": 6,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    },
+    {
+      "id": "compatibility",
+      "valid": true,
+      "score": null,
+      "locations": 2,
+      "gaps": [
+        "kind",
+        "interface",
+        "rules",
+        "impact",
+        "unknowns",
+        "evidence",
+        "reviewed_at"
+      ]
+    }
+  ],
+  "route_count": 10,
+  "structural_average": null,
+  "structural_minimum": null,
+  "required_per_route": 85,
+  "semantic_accuracy": "not measured",
+  "independent_adoption": "not measured"
+}

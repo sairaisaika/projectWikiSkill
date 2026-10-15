@@ -1,0 +1,93 @@
+{
+  "schema_version": 2,
+  "mode": "structural",
+  "ready": true,
+  "routes": [
+    {
+      "id": "public-api",
+      "valid": true,
+      "score": {
+        "total": 100,
+        "categories": {
+          "location": 20,
+          "contract": 15,
+          "rules": 15,
+          "impact": 15,
+          "validation": 15,
+          "boundary": 10,
+          "findability": 5,
+          "freshness": 5
+        }
+      },
+      "locations": 3,
+      "plan_coverage": null,
+      "gaps": []
+    },
+    {
+      "id": "external-source",
+      "valid": true,
+      "score": {
+        "total": 92,
+        "categories": {
+          "location": 20,
+          "contract": 15,
+          "rules": 15,
+          "impact": 15,
+          "validation": 7,
+          "boundary": 10,
+          "findability": 5,
+          "freshness": 5
+        }
+      },
+      "locations": 3,
+      "plan_coverage": null,
+      "gaps": []
+    },
+    {
+      "id": "tagger",
+      "valid": true,
+      "score": {
+        "total": 100,
+        "categories": {
+          "location": 20,
+          "contract": 15,
+          "rules": 15,
+          "impact": 15,
+          "validation": 15,
+          "boundary": 10,
+          "findability": 5,
+          "freshness": 5
+        }
+      },
+      "locations": 3,
+      "plan_coverage": null,
+      "gaps": []
+    },
+    {
+      "id": "tag-rules",
+      "valid": true,
+      "score": {
+        "total": 100,
+        "categories": {
+          "location": 20,
+          "contract": 15,
+          "rules": 15,
+          "impact": 15,
+          "validation": 15,
+          "boundary": 10,
+          "findability": 5,
+          "freshness": 5
+        }
+      },
+      "locations": 3,
+      "plan_coverage": null,
+      "gaps": []
+    }
+  ],
+  "route_count": 4,
+  "structural_average": 98.0,
+  "structural_minimum": 92,
+  "required_per_route": 85,
+  "semantic_accuracy": "not measured",
+  "independent_adoption": "not measured"
+}
