@@ -521,4 +521,7 @@ def main(argv=None):
 
 
 if __name__ == '__main__':
+    # Redirected Windows stdout may default to cp1252; reports include CJK queries.
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
     raise SystemExit(main())
