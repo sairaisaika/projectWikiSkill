@@ -1,8 +1,11 @@
 """Keep the distributed skill self-contained and its entry resources reachable."""
 import importlib.util
 import json
+import os
 from pathlib import Path
 import re
+import subprocess
+import sys
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -54,6 +57,18 @@ class SkillPackageTests(unittest.TestCase):
             with self.subTest(report=name):
                 saved = json.loads((ROOT / 'evals/reports' / (name + '.json')).read_text(encoding='utf-8'))
                 self.assertEqual(current, saved)
+
+    def test_cli_emits_utf8_even_with_legacy_windows_stdout_encoding(self):
+        environment = dict(os.environ, PYTHONIOENCODING='cp1252')
+        result = subprocess.run(
+            [sys.executable, str(SKILL / 'scripts/wiki.py'), 'evaluate',
+             '--root', str(ROOT / 'evals/fixture-project'), '--tasks', str(ROOT / 'evals/tasks.json')],
+            capture_output=True, env=environment, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr.decode('utf-8', errors='replace'))
+        report = json.loads(result.stdout.decode('utf-8'))
+        self.assertTrue(report['passed'])
+        self.assertTrue(any('换文献源' in item['query'] for item in report['tasks']))
 
 
 if __name__ == '__main__':
