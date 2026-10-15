@@ -138,7 +138,7 @@
       "unknown_rejected": null,
       "locations_ok": true,
       "response_words": 180,
-      "response_bytes": 1559,
+      "response_bytes": 1568,
       "candidate_count": 1,
       "truncated": false
     },
@@ -157,7 +157,7 @@
       "unknown_rejected": null,
       "locations_ok": true,
       "response_words": 344,
-      "response_bytes": 2977,
+      "response_bytes": 2986,
       "candidate_count": 2,
       "truncated": false
     },
@@ -451,5 +451,16 @@
       "candidate_count": 1,
       "truncated": false
     }
-  ]
+  ],
+  "task_map_cases": [
+    {
+      "id": "compound-interface-scope",
+      "passed": true,
+      "missing_surfaces": [],
+      "missing_routes": [],
+      "unexpected_surfaces": [],
+      "unexpected_routes": []
+    }
+  ],
+  "task_map_scope": "Declared expected IDs only; not semantic impact completeness"
 }

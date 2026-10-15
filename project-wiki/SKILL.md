@@ -14,6 +14,8 @@ actionable location**, not page count, diagram count, or an impressive aggregate
   only the relevant section. Before editing, verify the named implementation.
   Split compound changes into interface/feature questions; a top-two result is not
   a complete impact inventory. Preserve the helper's truncation warning.
+  For recurring compound work, use a declared task map before selecting routes;
+  see [change navigation](references/change-navigation.md).
 - **Create or repair:** start with representative user questions, inspect current
   source and constraints, then document the smallest useful routes. Never infer
   implementation from a README, package name, type declaration, or planned feature.
@@ -33,6 +35,9 @@ inputs/outputs/failures → rules → downstream impact → focused checks → u
 Distinguish returned failure values, thrown exceptions and unsupported capabilities;
 record unknown behavior rather than implying the whole boundary is validated.
 Keep a stable route ID; compute line positions rather than maintaining manual numbers.
+Locate the task's actual edit seam as well as its declaration: a large factory is
+often too broad. Mark internal seams; documenting one does not make it public API.
+Review catch boundaries and shared rule consumers before generalizing failures.
 For plans, name outcomes, causal dependencies, affected interfaces, deliverables,
 exit evidence, and unresolved decisions. Mark proposed APIs as proposed.
 
@@ -83,6 +88,8 @@ inside the target repository. `<skill>` means this skill's actual directory:
 ```sh
 python <skill>/scripts/wiki.py query --root <project> "external source"
 python <skill>/scripts/wiki.py list --root <project>
+python <skill>/scripts/wiki.py task --root <project>
+python <skill>/scripts/wiki.py task <task-id> --root <project>
 python <skill>/scripts/wiki.py audit --root <project>
 python <skill>/scripts/wiki.py build --root <project>
 python <skill>/scripts/wiki.py check --root <project>

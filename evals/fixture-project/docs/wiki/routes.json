@@ -250,7 +250,11 @@
           "role": "implementation",
           "path": "src/tagging.py",
           "reason": "Normalizes successful suggestions without resolving effective tags",
-          "symbol": "sanitize_suggestions"
+          "symbol": "sanitize_suggestions",
+          "edit_for": [
+            "Change suggestion sanitization without treating the model declaration as the implementation"
+          ],
+          "visibility": "internal"
         },
         {
           "id": "test-consumer",
@@ -1361,5 +1365,49 @@
       "state-machine"
     ],
     "not_applicable": []
-  }
+  },
+  "task_maps": [
+    {
+      "id": "interface-change",
+      "title": "Plan a change across the fixture interfaces",
+      "scope": "Four declared synthetic work surfaces, not a production impact graph",
+      "docs": [
+        "docs/wiki/engineering-entry.md"
+      ],
+      "surfaces": [
+        {
+          "id": "public",
+          "question": "How should public failure behavior change?",
+          "route_ids": [
+            "public-api"
+          ],
+          "why": "Keep dependency errors distinct from legacy client behavior."
+        },
+        {
+          "id": "dependency",
+          "question": "Which provider capabilities may be absent?",
+          "route_ids": [
+            "external-source"
+          ],
+          "why": "Optional counts must not become assumed required capabilities."
+        },
+        {
+          "id": "model",
+          "question": "Where are model suggestions sanitized?",
+          "route_ids": [
+            "tagger"
+          ],
+          "why": "Locate the implementation as well as the model declaration."
+        },
+        {
+          "id": "policy",
+          "question": "How do effective-tag rules change?",
+          "route_ids": [
+            "tag-rules"
+          ],
+          "why": "Policy outcomes must agree with consumer filtering."
+        }
+      ]
+    }
+  ]
 }

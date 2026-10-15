@@ -20,6 +20,10 @@
         }
       },
       "locations": 3,
+      "edit_targets": {
+        "located": 0,
+        "semantic_accuracy": "not verified"
+      },
       "plan_coverage": null,
       "engineering": null,
       "gaps": []
@@ -41,6 +45,10 @@
         }
       },
       "locations": 3,
+      "edit_targets": {
+        "located": 0,
+        "semantic_accuracy": "not verified"
+      },
       "plan_coverage": null,
       "engineering": null,
       "gaps": []
@@ -62,6 +70,10 @@
         }
       },
       "locations": 3,
+      "edit_targets": {
+        "located": 1,
+        "semantic_accuracy": "not verified"
+      },
       "plan_coverage": null,
       "engineering": null,
       "gaps": []
@@ -83,6 +95,10 @@
         }
       },
       "locations": 3,
+      "edit_targets": {
+        "located": 0,
+        "semantic_accuracy": "not verified"
+      },
       "plan_coverage": null,
       "engineering": null,
       "gaps": []
@@ -104,6 +120,10 @@
         }
       },
       "locations": 5,
+      "edit_targets": {
+        "located": 0,
+        "semantic_accuracy": "not verified"
+      },
       "plan_coverage": null,
       "engineering": {
         "scope": "Pure action selection for declared states/events; no real timing or network.",
@@ -166,6 +186,10 @@
         }
       },
       "locations": 3,
+      "edit_targets": {
+        "located": 0,
+        "semantic_accuracy": "not verified"
+      },
       "plan_coverage": null,
       "engineering": {
         "scope": "Synthetic serializer geometry and constraints; not a native memory ABI.",
@@ -212,6 +236,10 @@
         }
       },
       "locations": 10,
+      "edit_targets": {
+        "located": 0,
+        "semantic_accuracy": "not verified"
+      },
       "plan_coverage": null,
       "engineering": null,
       "gaps": []
@@ -252,6 +280,14 @@
     "reference_validation": "Only valid route references are counted; semantic and rendering checks are separate",
     "renderer_verification": "not performed by helper"
   },
+  "task_maps": [
+    {
+      "id": "interface-change",
+      "valid": true,
+      "surfaces": 4,
+      "routes": 4
+    }
+  ],
   "semantic_accuracy": "not measured",
   "independent_adoption": "not measured"
 }

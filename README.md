@@ -9,6 +9,7 @@
 - [持续维护](project-wiki/references/maintenance.md)：改动触发、计划交付、漂移检查、CI 与交接。
 - [六图框架](project-wiki/references/diagram-framework.md)：架构、流程、时序、数据模型、部署、状态六种视角的职责与项目级覆盖检查。
 - [工程深度](project-wiki/references/engineering-depth.md)：字段/单位/字节布局、状态守卫与上下文、重试和资源边界、轻量决策记录。
+- [复合改动定位](project-wiki/references/change-navigation.md)：任务地图、内部编辑接缝、捕获范围、共用规则与完整工作面验收。
 
 ## 使用
 
@@ -18,6 +19,8 @@ Python 3.10+ 即可运行工具，无第三方依赖：
 
 ```sh
 python project-wiki/scripts/wiki.py query --root <project> "外部源端口"
+python project-wiki/scripts/wiki.py task --root <project>
+python project-wiki/scripts/wiki.py task <task-id> --root <project>
 python project-wiki/scripts/wiki.py audit --root <project>
 python project-wiki/scripts/wiki.py build --root <project>
 python project-wiki/scripts/wiki.py check --root <project>
