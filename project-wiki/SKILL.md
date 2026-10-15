@@ -1,14 +1,20 @@
 ---
 name: project-wiki
-description: Build, audit, and maintain source-backed engineering wikis that route project questions to exact interfaces, rules, impacts, checks, and implementation plans. Use for wiki creation, engineering knowledge handoffs, documentation drift, or evaluating whether a wiki can replace exploratory code search.
+description: Build, audit, and maintain source-backed engineering wikis that route project questions to exact interfaces, rules, impacts, checks, and implementation plans. Use for wiki creation, project orientation, engineering knowledge handoffs, documentation drift, or evaluating whether a wiki can replace exploratory code search.
 ---
 
 # Project Wiki
 
 Make the wiki cheaper to use than guessing filenames. Optimize **time to a correct,
-actionable location**, not page count, diagram count, or an impressive aggregate score.
+actionable location** for a task, and a correct system model for orientation, not page count, diagram count, or an impressive aggregate score.
 
 ## Choose the work
+
+- **Understand a project:** start with purpose, actors, core activities and responsibility
+  boundaries, then follow connected examples into chapters. Use
+  [learning and orientation](references/learning-and-orientation.md). Evaluate whether
+  the reader can explain the system, separately from finding edit locations. If a
+  full reading is requested, keep that scope; do not silently substitute search trials.
 
 - **Use a wiki:** read its short engineering entry, select a task route, then read
   only the relevant section. Before editing, verify the named implementation.
@@ -30,8 +36,8 @@ For an established wiki with its own parser, indexes and gates, first use
 representation before proposing another manifest. A passing symbol-presence gate
 does not prove that a rule has a writer, a consumer or a deployed implementation.
 
-For a missing route, use one targeted search and repair that route. Do not require
-full-site reading, block unrelated work, or claim wiki prose outranks actual source.
+For a missing task route, use one targeted search and repair that route. Do not require
+full-site reading for routine task lookup, block unrelated work, or claim wiki prose outranks actual source.
 
 ## Deliver an actionable route
 
