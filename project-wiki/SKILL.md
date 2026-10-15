@@ -25,6 +25,11 @@ actionable location**, not page count, diagram count, or an impressive aggregate
 - **Maintain:** update affected routes alongside code changes; retain evidence
   boundaries, regenerate locations, and rerun the relevant navigation scenarios.
 
+For an established wiki with its own parser, indexes and gates, first use
+[native wiki adoption](references/native-wiki-adoption.md). Audit its actual
+representation before proposing another manifest. A passing symbol-presence gate
+does not prove that a rule has a writer, a consumer or a deployed implementation.
+
 For a missing route, use one targeted search and repair that route. Do not require
 full-site reading, block unrelated work, or claim wiki prose outranks actual source.
 

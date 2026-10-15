@@ -10,6 +10,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 | smv-legacy-audit.json | Existing real project's 10 schema-1 routes resolve; schema-2 precision gaps are reported | Read-only audit; not migrated, not awarded a schema-2 score |
 | engineering-and-six-view-trials.md | Two fresh read-only trials used wiki-first plans and surfaced concrete missing constraints | Synthetic tasks; no time/speedup baseline or live product acceptance |
 | diagram-rendering.json | Six current Mermaid sources parsed/rendered; source hashes checked in tests | Screenshots are temporary; core Python helper does not render or prove diagram semantics |
+| [soulnest-native-audit.md](soulnest-native-audit.md) | Existing native wiki recovery, source/runtime corrections, real packaging failure and a 12-question search self-test | Familiar reviewer; native schema is not ingested by wiki.py; no full semantic certification or timing baseline |
 
 The current fixture also declares a four-surface task map. One expected-scope case
 checks all four surfaces/routes separately from ranking. Eight mutation/read-boundary
