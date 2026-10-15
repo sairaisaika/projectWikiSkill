@@ -11,6 +11,7 @@ import ast
 from datetime import date
 import hashlib
 import json
+import math
 from pathlib import Path, PureWindowsPath
 import re
 import sys
@@ -24,6 +25,7 @@ ROLES = {'declaration', 'implementation', 'caller', 'consumer', 'contract'}
 KINDS = {'interface', 'behavior', 'architecture', 'plan'}
 STATES = {'planned', 'implemented', 'mixed', 'unknown'}
 LEVELS = {'source', 'offline-tested', 'installed', 'live-verified'}
+DIAGRAM_KINDS = {'architecture', 'flow', 'sequence', 'data-model', 'deployment', 'state-machine'}
 STOP = {'a', 'an', 'the', 'to', 'of', 'for', 'and', 'or', 'is', 'it', 'in', 'on',
         'i', 'we', 'how', 'what', 'does', 'do', 'can', 'this', 'that', 'with', 'my'}
 
@@ -75,6 +77,20 @@ def load(root):
         value = quality.get(key, default)
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not low <= value <= high:
             raise Invalid(f'Invalid quality.{key}')
+    policy = manifest.get('diagram_policy')
+    if policy is not None:
+        if not isinstance(policy, dict) or not text(policy.get('scope')):
+            raise Invalid('diagram_policy requires a scope')
+        required = policy.get('required_kinds')
+        if not strings(required) or not required or len(set(required)) != len(required) or not set(required) <= DIAGRAM_KINDS:
+            raise Invalid('diagram_policy required_kinds must be unique supported diagram kinds')
+        exceptions, seen = policy.get('not_applicable', []), set()
+        if not isinstance(exceptions, list):
+            raise Invalid('diagram_policy not_applicable must be an array')
+        for exception in exceptions:
+            if not isinstance(exception, dict) or exception.get('kind') not in required or exception['kind'] in seen or not text(exception.get('reason')):
+                raise Invalid('Diagram exceptions require a unique required kind and explicit reason')
+            seen.add(exception['kind'])
     return manifest
 
 
@@ -152,6 +168,200 @@ def valid_date(value):
         return True
     except ValueError:
         return False
+
+
+def engineering_metrics(root, row, source_ids):
+    """Validate optional declared engineering models, never infer code equivalence."""
+    model = row.get('engineering')
+    if model is None:
+        return None
+    profiles = {'data_contract', 'lifecycle', 'execution', 'decisions'}
+    if not isinstance(model, dict) or set(model) - (profiles | {'scope', 'status'}):
+        raise Invalid('Unknown engineering profile or malformed engineering object')
+    if not text(model.get('scope')) or model.get('status') not in {'current', 'proposed', 'partial'}:
+        raise Invalid('Engineering model requires scope and current/proposed/partial status')
+    selected = sorted(profiles & set(model))
+    if not selected:
+        raise Invalid('Engineering model must select at least one profile')
+    proposed = model['status'] == 'proposed'
+    if row.get('evidence', {}).get('implementation') == 'planned' and not proposed:
+        raise Invalid('A planned route cannot claim current engineering detail')
+
+    def references(item):
+        refs = item.get('source_ids', [])
+        if not strings(refs) or any(ref not in source_ids for ref in refs) or (not refs and not proposed):
+            raise Invalid('Engineering claim requires valid route source_ids')
+        tests = item.get('tests', [])
+        if not strings(tests):
+            raise Invalid('Engineering tests must be local references')
+        for reference in tests:
+            verify_ref(root, reference)
+
+    def records(value, label):
+        if not isinstance(value, list) or any(not isinstance(item, dict) for item in value):
+            raise Invalid(f'{label} must be an array of objects')
+        return value
+
+    def named(value, label):
+        if not strings(value) or not value or len(set(value)) != len(value):
+            raise Invalid(f'{label} must contain unique nonempty names')
+        return set(value)
+
+    def integer(value, label, minimum=0):
+        if type(value) is not int or value < minimum:
+            raise Invalid(f'{label} must be an integer >= {minimum}')
+
+    report = {'scope': model['scope'], 'status': model['status'], 'profiles': selected,
+              'verification': 'declared model consistency only; code equivalence and runtime behavior not verified'}
+    if 'data_contract' in model:
+        data = model['data_contract']
+        if not isinstance(data, dict):
+            raise Invalid('data_contract must be an object')
+        authority = data.get('authority', {})
+        if not isinstance(authority, dict) or authority.get('kind') not in {'typed-source', 'idl', 'schema', 'manual'}:
+            raise Invalid('Data contract requires explicit authority kind')
+        verify_ref(root, authority.get('path'))
+        references(authority)
+        fields = records(data.get('fields'), 'Data fields')
+        if not fields:
+            raise Invalid('Data contract needs fields')
+        names, spans = set(), []
+        layout = data.get('layout')
+        if layout is not None:
+            if not isinstance(layout, dict) or layout.get('byte_order') not in {'big', 'little'}:
+                raise Invalid('Binary layout needs explicit big/little byte_order')
+            integer(layout.get('size_bytes'), 'layout.size_bytes', 1)
+        for field in fields:
+            if not all(text(field.get(key)) for key in ('name', 'type', 'unit')) or field['name'] in names:
+                raise Invalid('Fields need unique name, type and unit')
+            names.add(field['name'])
+            if type(field.get('nullable')) is not bool or not strings(field.get('constraints')) or not field['constraints']:
+                raise Invalid('Fields need explicit nullability and nonempty constraints')
+            references(field)
+            if layout is not None:
+                integer(field.get('offset_bytes'), 'field.offset_bytes')
+                integer(field.get('size_bytes'), 'field.size_bytes', 1)
+                start, end = field['offset_bytes'], field['offset_bytes'] + field['size_bytes']
+                if end > layout['size_bytes'] or any(start < other_end and other_start < end for other_start, other_end in spans):
+                    raise Invalid('Binary field overlaps or exceeds declared layout; unions need a specialized verifier')
+                spans.append((start, end))
+            elif 'offset_bytes' in field or 'size_bytes' in field:
+                raise Invalid('Byte offsets/sizes require a declared layout')
+        report['data_contract'] = {'fields': len(fields), 'source_linked_fields': sum(bool(item.get('source_ids')) for item in fields),
+                                   'authority_kind': authority['kind'], 'layout_declared': layout is not None,
+                                   'geometry_only': layout is not None, 'semantic_conformance': 'not verified'}
+    if 'lifecycle' in model:
+        lifecycle = model['lifecycle']
+        if not isinstance(lifecycle, dict):
+            raise Invalid('lifecycle must be an object')
+        states, events = named(lifecycle.get('states'), 'states'), named(lifecycle.get('events'), 'events')
+        if lifecycle.get('initial') not in states or not strings(lifecycle.get('terminal')) or not set(lifecycle['terminal']) <= states:
+            raise Invalid('Lifecycle initial/terminal states must be declared')
+        if lifecycle.get('coverage_claim') not in {'partial', 'complete'}:
+            raise Invalid('Lifecycle coverage_claim must be partial or complete')
+        parameters = records(lifecycle.get('parameters', []), 'lifecycle parameters')
+        parameter_names = set()
+        for parameter in parameters:
+            if not all(text(parameter.get(key)) for key in ('name', 'domain', 'validation_scope')) or parameter['name'] in parameter_names:
+                raise Invalid('Lifecycle parameters need unique name, domain and validation_scope')
+            parameter_names.add(parameter['name'])
+            references(parameter)
+        transitions = records(lifecycle.get('transitions'), 'transitions')
+        rejected = records(lifecycle.get('rejected'), 'rejected')
+        unknown = records(lifecycle.get('unknown'), 'unknown')
+        specified, gaps, transition_ids, guards = set(), set(), set(), {}
+        graph = {state: set() for state in states}
+
+        def pair(item):
+            if item.get('from') not in states or item.get('event') not in events:
+                raise Invalid('Lifecycle transition/rejection uses an undeclared state or event')
+            return item['from'], item['event']
+
+        for item in transitions:
+            key = pair(item)
+            if not text(item.get('id')) or item['id'] in transition_ids or item.get('to') not in states:
+                raise Invalid('Transitions need unique IDs and declared target states')
+            if not text(item.get('guard')) or not text(item.get('action')) or item['guard'] in guards.get(key, set()):
+                raise Invalid('Transitions require nonempty distinct guards and actions')
+            transition_ids.add(item['id'])
+            guards.setdefault(key, set()).add(item['guard'])
+            specified.add(key)
+            graph[item['from']].add(item['to'])
+            references(item)
+        for items, target in ((rejected, specified), (unknown, gaps)):
+            for item in items:
+                key = pair(item)
+                if key in specified or key in gaps or not text(item.get('reason')):
+                    raise Invalid('Lifecycle pairs must not overlap classifications and need reasons')
+                target.add(key)
+                if items is rejected:
+                    references(item)
+        total = len(states) * len(events)
+        missing = total - len(specified | gaps)
+        if lifecycle['coverage_claim'] == 'complete' and (gaps or missing):
+            raise Invalid('Complete lifecycle claim has unknown or unclassified state/event pairs')
+        reached, pending = set(), [lifecycle['initial']]
+        while pending:
+            state = pending.pop()
+            if state not in reached:
+                reached.add(state)
+                pending.extend(graph[state] - reached)
+        report['lifecycle'] = {'specified_pairs': len(specified), 'total_pairs': total,
+                               'unknown_pairs': len(gaps), 'unclassified_pairs': missing,
+                               'transitions': len(transitions), 'source_linked_transitions': sum(bool(item.get('source_ids')) for item in transitions),
+                               'unreachable_declared_states': sorted(states - reached),
+                               'coverage_claim': lifecycle['coverage_claim'], 'guard_exhaustiveness': 'not verified',
+                               'context_parameters': len(parameters),
+                               'coverage_scope': 'Declared state/event pairs only; parameter combinations, invalid inputs and races are not exhaustively covered'}
+    if 'execution' in model:
+        execution = model['execution']
+        if not isinstance(execution, dict) or set(execution) - {'ownership', 'ordering', 'limits'}:
+            raise Invalid('Execution supports ownership, ordering and limits')
+        groups = {name: records(execution.get(name, []), name) for name in ('ownership', 'ordering', 'limits')}
+        if not any(groups.values()):
+            raise Invalid('Execution profile must record an actual constraint or proposed requirement')
+        for name, keys in [('ownership', ('resource', 'owner', 'lifetime', 'release')), ('ordering', ('before', 'after', 'reason'))]:
+            for item in groups[name]:
+                if not all(text(item.get(key)) for key in keys):
+                    raise Invalid(f'{name} requires {", ".join(keys)}')
+                references(item)
+        kinds = {'target': 0, 'configured': 0, 'measured': 0}
+        limit_ids = set()
+        for item in groups['limits']:
+            value = item.get('value')
+            if not text(item.get('id')) or item['id'] in limit_ids or item.get('kind') not in kinds:
+                raise Invalid('Limits need unique id and configured/target/measured kind')
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not all(text(item.get(key)) for key in ('unit', 'scope')):
+                raise Invalid('Limits need finite numeric value, unit and scope')
+            references(item)
+            limit_ids.add(item['id'])
+            kinds[item['kind']] += 1
+            if item['kind'] == 'measured':
+                refs = item.get('evidence_refs')
+                if not text(item.get('method')) or not strings(refs) or not refs:
+                    raise Invalid('Measured limits require method and evidence_refs, not just a constant')
+                for reference in refs:
+                    verify_ref(root, reference)
+        report['execution'] = {'ownership_records': len(groups['ownership']), 'ordering_constraints': len(groups['ordering']),
+                               'limits_by_kind': kinds, 'performance_or_measurement_truth': 'not verified'}
+    if 'decisions' in model:
+        decisions = records(model['decisions'], 'decisions')
+        if not decisions:
+            raise Invalid('Decisions profile requires decision records')
+        ids, statuses = set(), {'proposed': 0, 'accepted': 0, 'superseded': 0}
+        for item in decisions:
+            if not all(text(item.get(key)) for key in ('id', 'context', 'decision', 'revisit_when')) or item['id'] in ids or item.get('status') not in statuses:
+                raise Invalid('Decisions need unique ID, context, decision, status and revisit_when')
+            if not all(strings(item.get(key)) and item[key] for key in ('alternatives', 'consequences')):
+                raise Invalid('Decisions need explicit alternatives and consequences')
+            if proposed and item['status'] == 'accepted':
+                raise Invalid('A proposed engineering model cannot claim an accepted decision')
+            verify_ref(root, item.get('path'))
+            references(item)
+            ids.add(item['id'])
+            statuses[item['status']] += 1
+        report['decisions'] = {'records': len(decisions), 'by_status': statuses, 'rationale_accuracy': 'not verified'}
+    return report
 
 
 def resolve_route(root, row, version):
@@ -242,12 +452,15 @@ def resolve_route(root, row, version):
     if not isinstance(row.get('diagrams', []), list):
         raise Invalid('diagrams must be an array')
     for diagram in row.get('diagrams', []):
-        if not isinstance(diagram, dict) or diagram.get('kind') not in {'architecture', 'flow', 'sequence', 'data-model', 'deployment', 'state-machine'}:
+        if not isinstance(diagram, dict) or diagram.get('kind') not in DIAGRAM_KINDS:
             raise Invalid('Unsupported diagram kind')
         if not text(diagram.get('question')) or not text(diagram.get('scope')):
             raise Invalid('Diagrams must explain their question and scope')
         verify_ref(root, diagram.get('path'))
-    return dict(row, locations=locations)
+        if 'source_ids' in diagram and (not strings(diagram['source_ids']) or not diagram['source_ids'] or any(ref not in ids for ref in diagram['source_ids'])):
+            raise Invalid('Diagram source_ids must refer to located route sources')
+    depth = engineering_metrics(root, row, ids)
+    return dict(row, locations=locations, **({'engineering_metrics': depth} if depth is not None else {}))
 
 
 def score(row):
@@ -276,23 +489,40 @@ def score(row):
 def audit(root, manifest):
     version = manifest['schema_version']
     reports = []
+    diagram_counts = {kind: 0 for kind in sorted(DIAGRAM_KINDS)}
     for row in manifest['routes']:
         try:
             resolved = resolve_route(root, row, version)
+            if version == 2:
+                for diagram in resolved.get('diagrams', []):
+                    diagram_counts[diagram['kind']] += 1
             quality = score(resolved) if version == 2 else None
             reports.append({'id': row['id'], 'valid': True, 'score': quality,
                             'locations': len(resolved['locations']),
                             'plan_coverage': {'numerator': 6, 'denominator': 6} if version == 2 and row.get('kind') == 'plan' else None,
+                            'engineering': resolved.get('engineering_metrics'),
                             'gaps': [field for field in ('kind', 'interface', 'rules', 'impact', 'unknowns', 'evidence', 'reviewed_at') if field not in row]})
         except (ValueError, OSError, SyntaxError, TypeError) as error:
             reports.append({'id': row['id'], 'valid': False, 'error': str(error), 'score': None})
     totals = [item['score']['total'] for item in reports if item['score'] is not None]
     floor = manifest.get('quality', {}).get('min_structural_score', 85)
-    ready = version == 2 and bool(reports) and all(item['valid'] and item['score']['total'] >= floor for item in reports)
+    policy = manifest.get('diagram_policy', {})
+    required = set(policy.get('required_kinds', []))
+    waived = {item['kind'] for item in policy.get('not_applicable', [])}
+    documented = {kind for kind, count in diagram_counts.items() if count}
+    missing = sorted(required - documented - waived)
+    coverage = {'scope': policy.get('scope', 'No project-level diagram requirement configured'),
+                'required_kinds': sorted(required), 'documented_kinds': sorted(documented),
+                'counts_by_kind': diagram_counts, 'missing_kinds': missing,
+                'not_applicable': policy.get('not_applicable', []),
+                'reference_validation': 'Only valid route references are counted; semantic and rendering checks are separate',
+                'renderer_verification': 'not performed by helper'}
+    ready = version == 2 and bool(reports) and not missing and all(item['valid'] and item['score']['total'] >= floor for item in reports)
     return {'schema_version': version, 'mode': 'structural' if version == 2 else 'legacy-gap-analysis',
             'ready': ready, 'routes': reports, 'route_count': len(reports),
             'structural_average': round(sum(totals) / len(totals), 2) if totals else None,
             'structural_minimum': min(totals) if totals else None, 'required_per_route': floor,
+            'diagram_coverage': coverage,
             'semantic_accuracy': 'not measured', 'independent_adoption': 'not measured'}
 
 
@@ -356,6 +586,9 @@ def query_text(results, total_candidates=None):
             lines.append('  rule: ' + rule['statement'])
         if row.get('impact'):
             lines.append('  impact: ' + ' | '.join(row['impact']))
+        if row.get('engineering_metrics'):
+            depth = row['engineering_metrics']
+            lines.append('  engineering: ' + ', '.join(depth['profiles']) + ' :: ' + depth['scope'])
         lines.append('  tests: ' + ' '.join(row.get('tests', [])))
         for check in row.get('checks', []):
             lines.append('  check: ' + (check if isinstance(check, str) else check['command'] + ' :: ' + check['scope']))
@@ -513,6 +746,7 @@ def main(argv=None):
         stale = is_stale(root, current)
         emit({'valid': True, 'snapshot_stale': stale, 'ready': not stale,
               'route_count': len(current['routes']), 'structural_minimum': report['structural_minimum'],
+              'diagram_coverage': report['diagram_coverage'],
               'scope': 'structure and drift, not semantic truth or runtime acceptance'})
         return 1 if stale else 0
     except (ValueError, OSError, SyntaxError, TypeError, KeyError) as error:

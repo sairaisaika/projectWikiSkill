@@ -10,6 +10,19 @@ from tagging import effective_tag, resolve_tags, sanitize_suggestions
 
 
 class ContractTests(unittest.TestCase):
+    def test_nonempty_success_and_uncaught_dependency_exception(self):
+        class Source:
+            def list_articles(self, query):
+                return [{'id': 'example'}]
+
+        class BrokenSource:
+            def list_articles(self, query):
+                raise RuntimeError('fixture dependency failed')
+
+        self.assertEqual(read_articles(get_articles, Source(), {}), [{'id': 'example'}])
+        with self.assertRaisesRegex(RuntimeError, 'dependency failed'):
+            read_articles(get_articles, BrokenSource(), {})
+
     def test_unavailable_differs_from_empty_and_legacy_client_is_preserved(self):
         class Source:
             def __init__(self, rows):

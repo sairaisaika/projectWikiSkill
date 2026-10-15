@@ -21,6 +21,7 @@
       },
       "locations": 3,
       "plan_coverage": null,
+      "engineering": null,
       "gaps": []
     },
     {
@@ -41,6 +42,7 @@
       },
       "locations": 3,
       "plan_coverage": null,
+      "engineering": null,
       "gaps": []
     },
     {
@@ -61,6 +63,7 @@
       },
       "locations": 3,
       "plan_coverage": null,
+      "engineering": null,
       "gaps": []
     },
     {
@@ -81,13 +84,174 @@
       },
       "locations": 3,
       "plan_coverage": null,
+      "engineering": null,
+      "gaps": []
+    },
+    {
+      "id": "recovery",
+      "valid": true,
+      "score": {
+        "total": 100,
+        "categories": {
+          "location": 20,
+          "contract": 15,
+          "rules": 15,
+          "impact": 15,
+          "validation": 15,
+          "boundary": 10,
+          "findability": 5,
+          "freshness": 5
+        }
+      },
+      "locations": 5,
+      "plan_coverage": null,
+      "engineering": {
+        "scope": "Pure action selection for declared states/events; no real timing or network.",
+        "status": "current",
+        "profiles": [
+          "decisions",
+          "execution",
+          "lifecycle"
+        ],
+        "verification": "declared model consistency only; code equivalence and runtime behavior not verified",
+        "lifecycle": {
+          "specified_pairs": 25,
+          "total_pairs": 25,
+          "unknown_pairs": 0,
+          "unclassified_pairs": 0,
+          "transitions": 7,
+          "source_linked_transitions": 7,
+          "unreachable_declared_states": [],
+          "coverage_claim": "complete",
+          "guard_exhaustiveness": "not verified",
+          "context_parameters": 1,
+          "coverage_scope": "Declared state/event pairs only; parameter combinations, invalid inputs and races are not exhaustively covered"
+        },
+        "execution": {
+          "ownership_records": 1,
+          "ordering_constraints": 1,
+          "limits_by_kind": {
+            "target": 0,
+            "configured": 2,
+            "measured": 0
+          },
+          "performance_or_measurement_truth": "not verified"
+        },
+        "decisions": {
+          "records": 1,
+          "by_status": {
+            "proposed": 0,
+            "accepted": 1,
+            "superseded": 0
+          },
+          "rationale_accuracy": "not verified"
+        }
+      },
+      "gaps": []
+    },
+    {
+      "id": "wire-format",
+      "valid": true,
+      "score": {
+        "total": 100,
+        "categories": {
+          "location": 20,
+          "contract": 15,
+          "rules": 15,
+          "impact": 15,
+          "validation": 15,
+          "boundary": 10,
+          "findability": 5,
+          "freshness": 5
+        }
+      },
+      "locations": 3,
+      "plan_coverage": null,
+      "engineering": {
+        "scope": "Synthetic serializer geometry and constraints; not a native memory ABI.",
+        "status": "current",
+        "profiles": [
+          "data_contract",
+          "decisions"
+        ],
+        "verification": "declared model consistency only; code equivalence and runtime behavior not verified",
+        "data_contract": {
+          "fields": 4,
+          "source_linked_fields": 4,
+          "authority_kind": "typed-source",
+          "layout_declared": true,
+          "geometry_only": true,
+          "semantic_conformance": "not verified"
+        },
+        "decisions": {
+          "records": 1,
+          "by_status": {
+            "proposed": 0,
+            "accepted": 1,
+            "superseded": 0
+          },
+          "rationale_accuracy": "not verified"
+        }
+      },
+      "gaps": []
+    },
+    {
+      "id": "project-views",
+      "valid": true,
+      "score": {
+        "total": 100,
+        "categories": {
+          "location": 20,
+          "contract": 15,
+          "rules": 15,
+          "impact": 15,
+          "validation": 15,
+          "boundary": 10,
+          "findability": 5,
+          "freshness": 5
+        }
+      },
+      "locations": 10,
+      "plan_coverage": null,
+      "engineering": null,
       "gaps": []
     }
   ],
-  "route_count": 4,
-  "structural_average": 98.0,
+  "route_count": 7,
+  "structural_average": 98.86,
   "structural_minimum": 92,
   "required_per_route": 85,
+  "diagram_coverage": {
+    "scope": "Six complementary project-level views of the synthetic offline fixture; not six diagrams per route.",
+    "required_kinds": [
+      "architecture",
+      "data-model",
+      "deployment",
+      "flow",
+      "sequence",
+      "state-machine"
+    ],
+    "documented_kinds": [
+      "architecture",
+      "data-model",
+      "deployment",
+      "flow",
+      "sequence",
+      "state-machine"
+    ],
+    "counts_by_kind": {
+      "architecture": 1,
+      "data-model": 1,
+      "deployment": 1,
+      "flow": 1,
+      "sequence": 1,
+      "state-machine": 1
+    },
+    "missing_kinds": [],
+    "not_applicable": [],
+    "reference_validation": "Only valid route references are counted; semantic and rendering checks are separate",
+    "renderer_verification": "not performed by helper"
+  },
   "semantic_accuracy": "not measured",
   "independent_adoption": "not measured"
 }

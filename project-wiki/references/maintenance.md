@@ -31,6 +31,7 @@ Example entry text (adapt to the project's existing instructions):
 | Test/install/live result observed | Append the actual claim, revision/date and durable reference; preserve old scope |
 | New query misses | Add a supported synonym/route after evidence-based discovery; keep unknown-query controls |
 | False-positive route | Narrow aliases or split layers; do not just lower acceptance thresholds |
+| Serialization/state/timing changes | Update authoritative schema, field/transition tables, source-linked local diagrams and relevant decision rationale; rerun actual conformance/recovery tests |
 
 Review changed source as a signal, not as proof that all prose is stale. Normalized
 whole-file hashes intentionally flag conservative review; only update reviewed_at

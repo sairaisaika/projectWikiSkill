@@ -7,25 +7,25 @@
     "min_tasks": 10,
     "min_unknown": 2
   },
-  "task_count": 12,
+  "task_count": 24,
   "top1": {
-    "numerator": 10,
-    "denominator": 10,
+    "numerator": 20,
+    "denominator": 20,
     "rate": 1.0
   },
   "top2": {
-    "numerator": 10,
-    "denominator": 10,
+    "numerator": 20,
+    "denominator": 20,
     "rate": 1.0
   },
   "unknown_rejection": {
-    "numerator": 2,
-    "denominator": 2,
+    "numerator": 4,
+    "denominator": 4,
     "rate": 1.0
   },
   "location_success": {
-    "numerator": 12,
-    "denominator": 12,
+    "numerator": 24,
+    "denominator": 24,
     "rate": 1.0
   },
   "max_response_words": 344,
@@ -241,6 +241,214 @@
       "response_words": 17,
       "response_bytes": 105,
       "candidate_count": 0,
+      "truncated": false
+    },
+    {
+      "id": "deep-timeout",
+      "query": "超时恢复的重试边界在哪里",
+      "expected": [
+        "recovery"
+      ],
+      "actual": [
+        "recovery"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 255,
+      "response_bytes": 2194,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "deep-late-reply",
+      "query": "Can a late reply repeat a commit after recovery is terminal?",
+      "expected": [
+        "recovery"
+      ],
+      "actual": [
+        "recovery"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 255,
+      "response_bytes": 2194,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "deep-byte-layout",
+      "query": "Where are endian and byte offset constraints defined?",
+      "expected": [
+        "wire-format"
+      ],
+      "actual": [
+        "wire-format"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 204,
+      "response_bytes": 1806,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "deep-flags",
+      "query": "What happens with reserved flags in the wire format?",
+      "expected": [
+        "wire-format"
+      ],
+      "actual": [
+        "wire-format"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 204,
+      "response_bytes": 1806,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "deep-unknown-analog",
+      "query": "physical pin voltage impedance",
+      "expected": [],
+      "actual": [],
+      "top1": null,
+      "top2": null,
+      "unknown_rejected": true,
+      "locations_ok": true,
+      "response_words": 17,
+      "response_bytes": 105,
+      "candidate_count": 0,
+      "truncated": false
+    },
+    {
+      "id": "deep-unknown-invoice",
+      "query": "quantum billing forecast",
+      "expected": [],
+      "actual": [],
+      "top1": null,
+      "top2": null,
+      "unknown_rejected": true,
+      "locations_ok": true,
+      "response_words": 17,
+      "response_bytes": 105,
+      "candidate_count": 0,
+      "truncated": false
+    },
+    {
+      "id": "view-architecture",
+      "query": "架构图的模块职责是什么",
+      "expected": [
+        "project-views"
+      ],
+      "actual": [
+        "project-views"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 227,
+      "response_bytes": 2182,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "view-flow",
+      "query": "流程图里返回失败和抛异常有什么区别",
+      "expected": [
+        "public-api"
+      ],
+      "actual": [
+        "public-api"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 158,
+      "response_bytes": 1380,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "view-sequence",
+      "query": "时序图里谁先检查重试上限",
+      "expected": [
+        "recovery"
+      ],
+      "actual": [
+        "recovery"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 255,
+      "response_bytes": 2194,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "view-data",
+      "query": "数据模型图对应哪些序列化字段",
+      "expected": [
+        "wire-format"
+      ],
+      "actual": [
+        "wire-format"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 204,
+      "response_bytes": 1806,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "view-deployment",
+      "query": "部署图显示哪些东西在同一进程",
+      "expected": [
+        "project-views"
+      ],
+      "actual": [
+        "project-views"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 227,
+      "response_bytes": 2182,
+      "candidate_count": 1,
+      "truncated": false
+    },
+    {
+      "id": "view-state",
+      "query": "状态图中迟到回应会进入什么状态",
+      "expected": [
+        "recovery"
+      ],
+      "actual": [
+        "recovery"
+      ],
+      "top1": true,
+      "top2": true,
+      "unknown_rejected": null,
+      "locations_ok": true,
+      "response_words": 255,
+      "response_bytes": 2194,
+      "candidate_count": 1,
       "truncated": false
     }
   ]

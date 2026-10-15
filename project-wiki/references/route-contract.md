@@ -85,6 +85,13 @@ Adapt records to actual code; do not populate fields with guessed paths.
 - Optional `diagrams`: objects with path (Markdown anchor), kind, question and scope.
   Choose architecture, flow, sequence, data-model, deployment or state-machine only
   when it clarifies the task. Do not demand six diagrams for every feature.
+- Optional `engineering` profiles and diagram `source_ids` are specified in
+  [engineering depth](engineering-depth.md). They add checkable lifecycle, data,
+  execution and decision detail without making hardware constraints universal.
+
+The optional root `diagram_policy` declares required view kinds and explicit
+not_applicable reasons. See the [six-view framework](diagram-framework.md). Coverage
+counts only diagrams on structurally valid routes; it is not render or semantic proof.
 
 ## Existing schema 1 wikis
 
