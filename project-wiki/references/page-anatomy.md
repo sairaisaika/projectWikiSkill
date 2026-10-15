@@ -13,7 +13,9 @@ entry; the hierarchy is an alternate route, not a requirement to read every pare
 Avoid mirroring the folder tree or repeating the same architecture chapter under
 different headings. Small projects can retain a flat task map.
 
-A useful feature section usually provides:
+Feature entrances follow the mandatory [feature completion contract](feature-completeness.md); mechanism leaves may link to their parent contract. This is the minimum content standard even when no automatic validator is installed.
+
+A useful feature section provides:
 
 1. Responsibility and current implementation status, with a brief component/file map.
 2. The scenario's contract and a relevant diagram.
