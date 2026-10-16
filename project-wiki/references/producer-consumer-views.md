@@ -87,7 +87,18 @@ an exhaustive relationship inventory.
    data and caller-level rejection handling are different. A contract comment saying
    "IDs only" or "no sensitive text" needs actual projection/allowlist verification;
    excluding top-level fields does not establish that nested metadata is filtered.
-7. Reconcile discovered evidence against both ledgers and diagram. Manual review
+7. At producer/consumer handoffs, compare the full match: message/event discriminator,
+   field path (top-level versus nested metadata), identifier domain, required joins
+   and guards. A counter and detail card with the same feature name may query
+   different sets. No current application writer is not proof that historical or
+   manually inserted runtime rows are absent.
+8. Name the acknowledgement stage precisely: accepted, queued, persisted, transport
+   accepted, delivered and read are distinct. Inspect the actual success predicate,
+   not a field called "sent" or "delivered". Check independent channel idempotency:
+   a failed/disabled external channel can leave a successful in-app channel retrying,
+   while queued success may suppress retries before final delivery. A mocked caller
+   probe can verify these branches; label transport/runtime behavior untested.
+9. Reconcile discovered evidence against both ledgers and diagram. Manual review
    still checks guards, transformations, failures and stale output. Static references
    and matched IDs cannot establish all dynamic/external consumers or live behavior.
 
@@ -137,3 +148,11 @@ These findings motivated the layer and cache-writer checks above; they are sourc
 facts and documentation corrections, not proof of an unauthorized disclosure or an
 independent-agent efficiency gain. Native coverage remains the current migration
 inventory; the earlier 212-page number is a historical pilot snapshot.
+
+Reminder follow-up (SoulNest): the detail query required a different message type,
+field location and appointment link from the questionnaire writer. The reminder
+engine treated deferred queue acceptance as success and independently attempted an
+in-app bell even when external channels were disabled. Two isolated mocked caller
+probes confirmed the branch behavior, without live messages. This reinforces the
+handoff and acknowledgement checks; it does not establish real delivery or database
+contents. The migration counts above remain historical snapshots.
