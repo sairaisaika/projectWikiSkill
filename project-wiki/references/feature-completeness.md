@@ -69,3 +69,8 @@ For each functional unit, the producer/consumer dimension needs both a complete
 scoped textual inventory and an identity-matched rendered relationship graph; see
 [producer–consumer views](producer-consumer-views.md). A summary link alone cannot
 stand in for the actual endpoints and relations.
+
+For framework/design audits, also assess design fitness independently from code
+completion; use [systematic design review](systematic-design-review.md). Necessary
+capabilities may require completing an already reasonable framework, correcting a
+weak boundary, or a dependency-triggered decision. A gap list alone is not a design.

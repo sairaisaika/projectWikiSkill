@@ -61,6 +61,16 @@ for the shared-ID ledger, source discovery, local projections, research rational
 and a reproducible evaluation. A summary workflow diagram is not a complete impact
 inventory. Record unreviewed scope; do not report migration as source completeness.
 
+## Review design as well as facts
+
+For framework audits and consequential feature design, use
+[systematic design review](references/systematic-design-review.md). Assess design
+fitness, implementation completion, evidence and decision maturity separately.
+Explain what to retain, what needs design, what to implement within an accepted
+framework, and what must return for a dependency-triggered decision. A correct
+wiki of an incomplete system is not a sufficient design review. Keep routine
+lookup/edit tasks proportional; do not force a platform redesign for every change.
+
 ## Deliver an actionable route
 
 Connect **question → declaration/implementation → local explanation or diagram →
