@@ -101,3 +101,36 @@ compare a local caller fix against a full receipt ledger before choosing the lat
 G-72 deliberately retains two questionnaire sets: a broken producer/consumer match
 is a wiring gap, not automatic authorization to merge the sets. Keep these as source-
 bounded examples, not rules imposing SoulNest's architecture on other projects.
+
+## Re-enter a decision with evidence, not another deferral
+
+For fan-out, queues or side-effect dispatch, enumerate actual production call sites,
+including dynamic imports, aliases and wrappers; separately inspect unused imports,
+non-call references and registry-only entries. Record the discovery scope and
+snapshot. Syntax counts establish an inventory, not runtime reachability. Follow
+results through wrappers and caller writes/counters as well as through catches:
+a fulfilled failure value, an empty result, a rejection and an ignored promise have
+different effects. Ignoring a best-effort notification must not automatically cause
+an already committed payment or message to be replayed.
+
+Validate the bottom of the result chain before designing a shared status model.
+Local spool/log success, queue acceptance, provider acceptance, partial-device
+success and user receipt/read are different evidence. Require positive response
+shape where the adapter contract needs it; read failures are unknown, not empty.
+Compare the actual serializer with the client consumer: a declared deep-link field
+may live at the wrong nesting level and never survive to the click handler.
+
+For coalescing queues, distinguish business occurrence identity, coalescing key,
+message version, send attempt and consumer claim. A unique pending-row key is not
+proof of single delivery. Review concurrent drains, upsert during an in-flight send,
+stale acknowledgements deleting a newer version, post-send persistence failure,
+lease recovery and uncertain provider outcomes. A process lock can reduce overlapping
+workers while failing to protect a row replaced by a producer; compare costs before
+choosing a claim/version protocol. Avoid holding a DB transaction across network IO
+or claiming exactly-once from an atomic claim alone.
+
+When named dependencies finish, replace the old pending question with the actual
+finding and recommendation. A wider ledger can be unwarranted even when local
+protocol fixes are necessary. Reuse existing domain ledgers and logs; reopen the
+wider option for named consumer needs or a concrete insufficiency, not because a
+proposal remains in a document. Keep formal adoption and implementation separate.
