@@ -102,6 +102,14 @@ scope before reporting restoration. Lost before-state followed by an explicit
 fixture reset is not recovery of that state. Preserve functional success and
 cleanup failure as separate evidence.
 
+Choose runtime witnesses with explicit actor, flag and data predicates. A
+conditional consumer that is absent because its list contains data is not a
+rendering failure. Preflight the actual state, keep that failed assumption as
+negative evidence, and use a reachable consumer for the intended boundary; do not
+delete content or change unrelated flags merely to force the expected picture.
+Document concrete consumer locations and their predicates beside an aggregate
+resource interface, so the next agent can select a valid integration check.
+
 For a multi-commit change, exercise the same base/range that CI will inspect, not
 only the final incremental diff. Keep machine-parsed section keys intact and put
 historical or current-status qualifiers in their prose; do not relax the parser
