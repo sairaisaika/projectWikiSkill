@@ -74,3 +74,20 @@ For framework/design audits, also assess design fitness independently from code
 completion; use [systematic design review](systematic-design-review.md). Necessary
 capabilities may require completing an already reasonable framework, correcting a
 weak boundary, or a dependency-triggered decision. A gap list alone is not a design.
+
+## Configuration that changes presentation
+
+For configurable presentation (themes, page builders, skins), trace selection,
+effective configuration and actual rendering separately. A registered resource,
+typed option or provider is not evidence that the selected resource is consumed.
+Record ownership and precedence: platform default, viewer preference, public
+owner configuration and temporary preview may have different write and render scopes.
+Where applicable, inspect CSS inheritance, component context and portal destinations
+independently; a boundary in one does not establish the others. Check pre-paint and
+live updates against the same policy, and preserve deliberate reading preferences
+rather than silently changing a null/default contract during isolation work.
+
+If local recipes are generated from source tokens, verify all relevant declaration
+blocks and test freshness; exclude responsive and accessibility rules that must keep
+cascading. A new skin in a showcase establishes framework adoption there, not every
+legacy page, cross-device persistence, another client or production rollout.
