@@ -123,3 +123,22 @@ its eventual runtime result belongs in the project audit. The skill now requires
 reachable actor/flag/data predicates and concrete consumers beside aggregates.
 This is a self-review informed by known source, not a blind navigation trial.
 
+Further actual staging probes exposed two composed-consumer gaps. Holding 52
+external JavaScript chunks left an SSR appearance selector enabled: choosing a
+template emitted no save, and hydration reset it; a later ordinary interaction
+saved correctly. The candidate gates input until the owner-bound writer exists.
+The existing real-component browser regression failed before the patch and all
+27 hydration cases passed afterward; a new built-artifact positive remains a
+separate gate. This does not establish the cause of an earlier single timeout.
+The probe's raw default-key versus effective-paper mismatch flag was explicitly
+corrected; independently observed lost input is not based on that flag.
+
+A second probe read actual notice foreground alpha and the opaque/tinted
+background for two templates in light/dark. Dark 14px title/body contrast was
+2.24 to 3.49 despite producer-token checks; the consumer's extra opacity mattered.
+The narrow candidate removes that text alpha, with actual new-artifact
+measurement still pending. The original lifecycle diagram also rendered with
+overlapping labels; grouping the active owner states was reviewed in the reader.
+Renderer success, semantic correctness, contrast composition and release
+adoption remain different claims, with no independent efficiency score inferred.
+
