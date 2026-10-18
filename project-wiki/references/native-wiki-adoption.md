@@ -109,3 +109,19 @@ write methods and traversal alongside normal reading. Use metadata-only process
 and configuration probes: raw arguments, environment dumps and connector logs may
 contain credentials. A test passing through an outer 403 does not establish the
 origin's authorization behavior.
+
+Verify a reading site's **source identity and refresh inputs** as well as its
+links. Show which selected repository/worktree revisions supply prose and source
+views, including controlled modifications, untracked/ignored-state limits and
+unknown Git state. Compute this once per generation, not once per page. Label it
+as a source snapshot rather than deployment, review or feature-acceptance evidence.
+A docs-only mtime watcher misses source-only edits, companion changes, deletions
+and restored timestamps. Derive a conservative input signature or a complete
+native dependency set, state the refresh interval and module-restart boundary,
+and compare inputs before/after generation rather than attaching a new identity
+to mixed output. This is not a transactional filesystem snapshot. Test actual
+served source bytes after a source-only edit and a second edit while already
+dirty; restore original bytes and verify the clean label. Keep probe markers out
+of commits and preserve the authoring wiki during the source-only test. Use
+metadata and bounded status summaries without exposing credentials or raw status
+records; a healthy page alone does not prove refresh behavior.
