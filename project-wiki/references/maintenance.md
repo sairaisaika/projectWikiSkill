@@ -63,6 +63,13 @@ mutable "awaiting deployment" claim into every satellite. File-change gates do
 not cover a deployment, activation or rollback that changes behavior without a
 source edit; review the relevant feature routes and consumers for those events too.
 
+For a live generated reader, check source closure and input stability before replacing
+the last complete output. Test a failed generation and recovery, not only a healthy
+page. Choose whether failure serves an explicitly stale snapshot or refuses it;
+retaining old files does not itself communicate freshness. Give actionable errors
+without reflecting raw exceptions or credentials. Distinguish a synchronous
+single-process promotion from cross-process or crash-atomic publication.
+
 Resolve referenced debt/decision IDs to their actual title and scope before carrying
 them into another page or handoff. Existence alone is insufficient: a valid ticket
 number can belong to an unrelated feature. Separate a supported topology from an
