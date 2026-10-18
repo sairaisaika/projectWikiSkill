@@ -156,3 +156,14 @@ in-app bell even when external channels were disabled. Two isolated mocked calle
 probes confirmed the branch behavior, without live messages. This reinforces the
 handoff and acknowledgement checks; it does not establish real delivery or database
 contents. The migration counts above remain historical snapshots.
+## Interactive reading projections
+
+For dense connection maps, offer local exploration over the same endpoint/edge
+ledger: choose a node, see immediate neighbors, filter relation kinds, and inspect
+conditions, failure, state and evidence. Reflow the local graph instead of merely
+shrinking the whole graph; keep stable IDs, full text/JSON and the complete graph.
+Display visible/total node and edge counts so a projection cannot impersonate full
+coverage. Keyboard controls, reset, empty filters and mobile source-path wrapping
+belong in the rendered trial. Static parsing alone misses graph framing and SVG
+integration errors. These are optional reader projections, not another truth store.
+

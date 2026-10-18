@@ -80,6 +80,11 @@ entries accidentally placed in unrelated sections before they vanish from the
 native parser. Keep prose references and fenced examples distinguishable from
 actual registration. A passing file-existence check does not cover these cases.
 
+An explicitly declared fact-source header is different from an ordinary body link:
+it states authority for the page and should participate in the same native impact
+model even without a duplicated symbol entry. Test a real contract edit against
+its feature page; a viewer page alone does not establish that dependency.
+
 If agents bypass the wiki, first investigate its task-facing cost: guessed search
 terms, competing entrances, long rule preambles, late impact reports, incomplete
 satellites, broken reader links or prose that confuses a target with implemented
