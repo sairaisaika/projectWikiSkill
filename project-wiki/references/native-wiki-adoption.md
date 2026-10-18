@@ -132,3 +132,16 @@ their owning feature/design pages. Within those constraints, let agents propose
 and implement layout, density, type and resource choices, inspect the actual result,
 and record the adopted rationale there. Historical examples and screenshots are
 evidence of an iteration, not a permanent style ban or an implicit approval gate.
+
+Verify that a native parser actually adopted the intended model, not just that its
+generator exited successfully. Inspect the parsed record's stable IDs and expected
+endpoint/relation counts. A valid-looking heading can silently leave a table outside
+the parser's grammar. Check which sections feed symbol validation and file satellites:
+evidence in a diagram ledger may not be indexed as chapter sources. Register the
+necessary source records in the native representation, then check their resolution.
+
+An imported component or retained conditional branch does not establish active use.
+Trace the calling route, passed props, defaults and effective role/account/rollout
+predicates. Render the actual reachable variant for each affected audience. Keep
+inactive references visible as gaps, rather than describing them as deployed
+consumers or activating them merely to make documentation match an assumption.
