@@ -81,6 +81,15 @@ QA can change the result despite an unchanged source/version label; use the veri
 artifact or retest the final one. Trace draft promotion and downstream Latest/public
 distribution separately, and reject overwriting a published identity with new bytes.
 
+For asynchronous state or preference links, document who owns the decision when an
+older read arrives after a newer choice, including time spent waiting on upstream
+locks. A successful persistence response does not prove that the visible state and
+device cache converge to it. Vary delivery order using actual bounded payloads and
+check stored, cached and rendered values separately; include change-back sequences
+and independent fields when relevant. A held-response reproduction is controlled
+timing evidence, not a real-network or outage test. Preserve that counterexample
+even if an ordinary flow passes after adding a read-back or synchronization barrier.
+
 Resolve referenced debt/decision IDs to their actual title and scope before carrying
 them into another page or handoff. Existence alone is insufficient: a valid ticket
 number can belong to an unrelated feature. Separate a supported topology from an
