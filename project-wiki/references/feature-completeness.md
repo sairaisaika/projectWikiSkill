@@ -117,6 +117,15 @@ keep unresolved consumers visible in the text and graph. Audit distributed clien
 artifacts separately from the current source branch before choosing a minimum
 version or enabling a shared rule.
 
+For those automation consumers, inspect each protected operation, not just login;
+signup, recovery and resend may share a transport but need their own policy read.
+An isolated fixture mode should reject unknown configuration before credentials
+are submitted and preserve the disabled request shape. Keep browser-only DNS or
+storage transports intact. Bootstrap tools may delete/recreate fixtures before
+their first grant: put prerequisites before those mutations, and distinguish
+construction from reuse of an existing fixture. These are separate acceptance
+cases; a mocked guard test is not a live authentication result.
+
 For packaged-client delivery, follow the accepted artifact through each distribution
 consumer. A development client tested with a local bundle is not an independently
 runnable release package. Bind source, build profile, effective backend, channel,

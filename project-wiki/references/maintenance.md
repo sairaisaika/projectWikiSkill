@@ -57,6 +57,13 @@ Track planned, implemented, offline-tested, installed and live-verified as disti
 claims. Reconcile final code against the plan and remove abandoned promises from
 current documentation. Do not turn source completeness into deployment acceptance.
 
+Configuration also has consumers at parse/build time. A Compose file may interpolate
+all services during an app-only build: a required production connector credential
+can therefore break isolated staging before that connector ever starts. Check the
+actual build without unrelated production secrets, then separately validate the
+running service's required credentials. Never satisfy a build-only dependency by
+borrowing a production credential or inventing a dummy value.
+
 ## CI and ownership
 
 Use a stable feature/route ID as the lightweight ownership unit. Coordinate only
