@@ -126,6 +126,13 @@ their first grant: put prerequisites before those mutations, and distinguish
 construction from reuse of an existing fixture. These are separate acceptance
 cases; a mocked guard test is not a live authentication result.
 
+Check the fixture's actual resulting state rather than inferring it from omitted
+inputs: providers may generate defaults, and session bootstrap may consume mail
+cooldowns or quotas before the tested action. Record those effects and honour the
+real interval. Isolate pre-command I/O too: mocking a command does not intercept
+shell redirections or lock-file opens. Keep unit probes in temporary resources
+without adding an operational override that bypasses shared coordination.
+
 For packaged-client delivery, follow the accepted artifact through each distribution
 consumer. A development client tested with a local bundle is not an independently
 runnable release package. Bind source, build profile, effective backend, channel,
