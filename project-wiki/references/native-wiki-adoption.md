@@ -72,6 +72,12 @@ If source-view pages depend on a provenance registry, check that the exact path 
 registered in a parser-recognized source section. A valid filesystem or Markdown
 link alone does not establish that the reading site has generated that source page.
 
+For paired worktrees, bind the reader, source validator and test runner to the same
+explicit companion checkout. A convenient sibling-directory default can silently
+show main while documenting a candidate branch. Record both revisions, use the
+native checkout override if available, and test an added companion-source link;
+do not modify the canonical checkout merely to make documentation tests pass.
+
 Verify the generated link closure as well: every emitted source-view URL must
 have a generated destination. Ordinary body/fact-source links may need reader
 pages even when they are not architecture dependencies; generating their views
