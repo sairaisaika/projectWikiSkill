@@ -57,6 +57,12 @@ Track planned, implemented, offline-tested, installed and live-verified as disti
 claims. Reconcile final code against the plan and remove abandoned promises from
 current documentation. Do not turn source completeness into deployment acceptance.
 
+Resolve referenced debt/decision IDs to their actual title and scope before carrying
+them into another page or handoff. Existence alone is insufficient: a valid ticket
+number can belong to an unrelated feature. Separate a supported topology from an
+observed active route; a Compose network named for ingress does not establish a
+remote-managed tunnel hostname, DNS record or public reachability.
+
 Configuration also has consumers at parse/build time. A Compose file may interpolate
 all services during an app-only build: a required production connector credential
 can therefore break isolated staging before that connector ever starts. Check the
