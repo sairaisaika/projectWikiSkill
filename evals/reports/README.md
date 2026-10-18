@@ -37,3 +37,8 @@ Regenerate synthetic JSON reports by importing `wiki.py` and calling audit/evalu
 or capture their CLI JSON output. Preserve UTF-8; reports intentionally exclude
 host paths, credentials, private project facts and raw operational logs. Do not
 overwrite the historical independent trial with an inferred new result.
+
+[State consumers and projection maintenance, 2026-10-18](soulnest-state-consumers-20261018.md)
+records a familiar-reader project follow-up. It informs caller-specific predicates,
+snapshot provenance and native-ID-based projection checks; it is not another blind
+agent trial or an efficiency result.
