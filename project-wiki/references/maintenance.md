@@ -57,6 +57,12 @@ Track planned, implemented, offline-tested, installed and live-verified as disti
 claims. Reconcile final code against the plan and remove abandoned promises from
 current documentation. Do not turn source completeness into deployment acceptance.
 
+Keep fixed audit/test receipts separate from current release and rollout state.
+Point feature pages to the existing owner of that state, rather than copying a
+mutable "awaiting deployment" claim into every satellite. File-change gates do
+not cover a deployment, activation or rollback that changes behavior without a
+source edit; review the relevant feature routes and consumers for those events too.
+
 Resolve referenced debt/decision IDs to their actual title and scope before carrying
 them into another page or handoff. Existence alone is insufficient: a valid ticket
 number can belong to an unrelated feature. Separate a supported topology from an
