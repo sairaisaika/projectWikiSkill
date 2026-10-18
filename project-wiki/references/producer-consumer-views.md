@@ -183,3 +183,10 @@ independent extraction/oracle and omission mutants so a shared clipping bug cann
 make producer and checker agree. Historical trial counts stay attached to their
 original revision; append current evidence instead of rewriting the old result.
 
+When reviewing a platform rule, reverse-search the intercepted protocol operation
+as well as the shared SDK/helper. Raw HTTP requests and settings reauthentication
+can bypass the expected helper while remaining consumers of the same policy.
+Register their real paths in the native impact index and show the current missing
+handoffs explicitly; a diagram of the proposed chain must not replace current
+connection status. Keep resource provisioning and effective activation separate.
+
