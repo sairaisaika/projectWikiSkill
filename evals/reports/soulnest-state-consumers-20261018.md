@@ -91,3 +91,10 @@ Web low-privilege execution and coordinated main adoption remain separate claims
 Six publisher Git fixtures and fourteen shell/Git cases support these bounded
 source/failure properties, not general authorization or independent agent adoption.
 
+The reader follow-up retained the existing relationship explorer and added a
+chapter-diagram zoom view linking to it. Actual desktop observation selected the
+account-sync endpoint: 19 endpoints/27 relations became 4/3, with all three rules
+and source needles still available; reset restored the full counts. Zoom/Escape
+returned to the initiating chapter control. Narrow touch layouts and other
+browsers remain unmeasured, and no agent-efficiency claim follows from this check.
+
