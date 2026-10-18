@@ -102,6 +102,16 @@ an exhaustive relationship inventory.
    still checks guards, transformations, failures and stale output. Static references
    and matched IDs cannot establish all dynamic/external consumers or live behavior.
 
+For state-bearing helpers, follow every caller, including settings and consent pages,
+not only the callers mentioned in comments. Record each consumer's predicate: the
+same enrollment state can require a challenge for one consumer and prohibit another
+capability even after the challenge. Do not unify distinct policies merely because
+they read the same property. Separate absent, pending, enabled and completed states;
+identify whether a snapshot belongs to the current identity and whether it comes
+from validated remote state or an older session cache. An SDK method name is not
+evidence of freshness. Register newly found helper dependencies in the native source
+index so the next change's satellite list includes them.
+
 "Complete" means complete within the declared reviewed scope and evidence. If scope
 still excludes necessary consumers, say the inventory is partial. Keep migration
 coverage, source semantic review, runtime acceptance and agent efficiency separate.
@@ -166,4 +176,10 @@ Display visible/total node and edge counts so a projection cannot impersonate fu
 coverage. Keyboard controls, reset, empty filters and mobile source-path wrapping
 belong in the rendered trial. Static parsing alone misses graph framing and SVG
 integration errors. These are optional reader projections, not another truth store.
+
+Derive projection counts and current ID-set expectations from the native ledger;
+do not maintain another list of counts in captions or browser tests. Keep an
+independent extraction/oracle and omission mutants so a shared clipping bug cannot
+make producer and checker agree. Historical trial counts stay attached to their
+original revision; append current evidence instead of rewriting the old result.
 

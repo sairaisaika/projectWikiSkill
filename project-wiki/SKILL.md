@@ -80,6 +80,9 @@ Connect **question → declaration/implementation → local explanation or diagr
 inputs/outputs/failures → rules → downstream impact → focused checks → unknowns**.
 Distinguish returned failure values, thrown exceptions and unsupported capabilities;
 record unknown behavior rather than implying the whole boundary is validated.
+For shared state, record each consumer's actual predicate and the snapshot's
+identity/freshness; the same property need not mean the same policy. Distinguish
+absent/default, pending, enabled and completed states where they affect behavior.
 Keep a stable route ID; compute line positions rather than maintaining manual numbers.
 Locate the task's actual edit seam as well as its declaration: a large factory is
 often too broad. Mark internal seams; documenting one does not make it public API.
