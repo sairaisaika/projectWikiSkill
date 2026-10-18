@@ -39,6 +39,16 @@ source-backed methodology findings, not an independent efficiency trial or proof
 that the downstream integration is complete. Operational details remain in the
 project's internal audit.
 
+Follow-up implementation kept the Mobile script as the sole byte-comparison rule.
+Thirteen actual shell/temporary-Git cases and six Web delegation checks distinguish
+unavailable, failed and compared-equal results, including dirty equal copies and a
+stale cached tree. Running the original rule against the missing-source regression
+produced its erroneous successful status and made the new assertion fail. Four
+workflow consumers now request fixed sparse sources without persistent checkout
+credentials; private-source configuration and real automatic matching remain open.
+These are bounded implementation tests and a negative control, not independent
+wiki adoption or measured agent speed evidence.
+
 ## Follow-up: account preferences and the gate's own consumer environment
 
 The same implementation audit followed template preferences through the existing
