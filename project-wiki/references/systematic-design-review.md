@@ -52,6 +52,20 @@ missing privacy/role/partition boundary, migration without a backward path, and
 observability that cannot distinguish failure from empty or accepted from delivered.
 These are review prompts, not universal requirements for every trivial mechanism.
 
+For a server policy shared by Web and native clients, distinguish implementation,
+deployment, activation and acceptance. Include already-distributed clients and their
+actual update path in the consumer inventory: wiring the new App does not make an
+old App compatible with a global authentication switch. Derive activation order
+from that matrix and preserve independent authentication flows. A vendor's dummy
+success fixture establishes integration behavior, not real challenge acceptance,
+replay rejection or availability under a vendor outage.
+
+Keep historical incident reports as dated evidence. Route readers first to current
+implementation and deployment observations; do not reuse old content counts,
+ownership-verification claims, causal percentages or search-index snapshots as a
+current diagnosis. Technical output and an external consumer's acceptance require
+different evidence, for example rendered SEO metadata versus search-console coverage.
+
 ## Ready work, decisions and re-entry
 
 Separate documentation correction, implementation under established design,
