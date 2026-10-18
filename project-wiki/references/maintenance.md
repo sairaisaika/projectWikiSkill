@@ -70,6 +70,17 @@ retaining old files does not itself communicate freshness. Give actionable error
 without reflecting raw exceptions or credentials. Distinguish a synchronous
 single-process promotion from cross-process or crash-atomic publication.
 
+Across source/wiki repositories, include each selected checkout and change range in
+the impact inventory. A gate scanning only the wiki repository does not cover edits
+in its sibling source repository; a missing peer is unverified, not an empty diff.
+Keep complete developer-facing impacts visible when saving machine JSON, without
+contaminating its stdout contract. Saving a report does not establish that it was read.
+
+Bind release acceptance to the actual artifact and evidence bytes. Rebuilding after
+QA can change the result despite an unchanged source/version label; use the verified
+artifact or retest the final one. Trace draft promotion and downstream Latest/public
+distribution separately, and reject overwriting a published identity with new bytes.
+
 Resolve referenced debt/decision IDs to their actual title and scope before carrying
 them into another page or handoff. Existence alone is insufficient: a valid ticket
 number can belong to an unrelated feature. Separate a supported topology from an
