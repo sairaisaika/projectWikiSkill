@@ -89,6 +89,11 @@ does not prove this run obtained its intended source. Exercise absent/empty sour
 wrong revisions, read errors, real byte drift and a real matching pair, checking
 both the script's exit status and its consumer's classification. Repair the source
 and reporting boundary without widening unrelated credentials or host access.
+Before asking for new credentials, inspect the actual consumer identity and existing
+scoped source access; a private peer need not require another token. Prefer the
+smallest authorized source path and document its ownership/read boundary. For PR
+jobs, distinguish branch head from the actual synthetic merge checkout; record
+the compared commit, not a convenient label from the run summary.
 
 Bind release acceptance to the actual artifact and evidence bytes. Rebuilding after
 QA can change the result despite an unchanged source/version label; use the verified
