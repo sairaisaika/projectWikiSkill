@@ -59,3 +59,12 @@ to erase a founder's existing review requirements.
 
 For a concrete application and remaining limits, see the repository's
 `evals/reports/soulnest-native-audit.md`.
+
+## Verify the reading surface
+
+When a wiki has a generated reading site, identify the serving process/repository,
+build input and page revision before concluding that edits reach the reader. A Git
+Markdown file and a local or hosted wiki may be projections of one source or divergent
+copies; verify which. After a relevant update, inspect a changed rendered page,
+diagram and source-view link. Record stale server/build state separately from wrong
+content; successful parsing or indexing alone does not prove the displayed revision.
