@@ -68,3 +68,6 @@ Markdown file and a local or hosted wiki may be projections of one source or div
 copies; verify which. After a relevant update, inspect a changed rendered page,
 diagram and source-view link. Record stale server/build state separately from wrong
 content; successful parsing or indexing alone does not prove the displayed revision.
+If source-view pages depend on a provenance registry, check that the exact path is
+registered in a parser-recognized source section. A valid filesystem or Markdown
+link alone does not establish that the reading site has generated that source page.
