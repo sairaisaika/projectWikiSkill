@@ -98,3 +98,17 @@ and source needles still available; reset restored the full counts. Zoom/Escape
 returned to the initiating chapter control. Narrow touch layouts and other
 browsers remain unmeasured, and no agent-efficiency claim follows from this check.
 
+Explicit public-owner font and preview follow-ups produced eleven actual browser
+checks. The first run failed during cleanup and skipped another subject's restore;
+its in-memory baseline had not been retained. The audit preserves that failure,
+labels a synthetic default reset rather than claiming the unknown state recovered,
+and reruns with private pre-write snapshots and independent scoped restoration.
+Existing guarded staging database access confirms the rerun's scoped readback.
+An apparent dark-card contrast issue was a transition frame: settled actual colours
+gave 12.57/7.58 for the sampled texts, not a site-wide accessibility claim.
+
+A subsequent full CI range also rejected a task log whose required headings had
+been editorially renamed. The canonical keys were restored, historical qualifiers
+moved to prose and the full PR range became the next local check. Neither failure
+was waived or relabelled as successful acceptance.
+
