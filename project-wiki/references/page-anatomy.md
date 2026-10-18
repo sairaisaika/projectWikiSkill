@@ -22,6 +22,14 @@ A useful feature section provides:
 3. Local source references and explanation of branches, ownership and exceptions.
 4. Downstream impacts, focused verification and unresolved behavior.
 
+For dense connections, combine a local explanatory view with the existing full
+inventory and, where available, endpoint/type filtering. Zoom makes labels readable;
+filtering narrows the question. Neither replaces conditions, failure states and
+source evidence. Preserve shared IDs, show the subset against the full counts and
+provide a clear reset and route back to prose. Reuse an existing reader/model before
+adding another graph index. Inspect the actual viewport and keyboard return path;
+rendering and diagram counts alone do not establish usability.
+
 ## Keep chapter and diagram evidence distinct
 
 Place a **diagram sources / 图表来源** block immediately beside each diagram, and
