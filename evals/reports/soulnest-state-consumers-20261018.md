@@ -81,3 +81,13 @@ now in maintenance guidance; no new global manifest, score or independent trial
 was invented. Exact revisions, test receipts and access details stay in the
 project's internal audit.
 
+The follow-up checked the two runner identities instead of assuming a new private
+repository token was necessary. Existing maintainer access can publish a fixed,
+contracts-only Git source with a separate CI read boundary; the dedicated-token
+proposal was withdrawn. Real Mobile CI then prepared that source and compared all
+57 contract files, followed by its remaining checks. Its PR comparison used the
+synthetic merge commit, distinct from the branch head reported by run metadata.
+Web low-privilege execution and coordinated main adoption remain separate claims.
+Six publisher Git fixtures and fourteen shell/Git cases support these bounded
+source/failure properties, not general authorization or independent agent adoption.
+
