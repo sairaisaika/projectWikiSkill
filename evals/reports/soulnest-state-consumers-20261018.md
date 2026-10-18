@@ -39,3 +39,35 @@ source-backed methodology findings, not an independent efficiency trial or proof
 that the downstream integration is complete. Operational details remain in the
 project's internal audit.
 
+## Follow-up: account preferences and the gate's own consumer environment
+
+The same implementation audit followed template preferences through the existing
+profile write, serial save queue, account read, device cache, pre-paint projection
+and root resource provider. Five-axis revisions and session generations distinguish
+new choices from old reads, including account change-back. Source-generated types
+were compared structurally before accepting large formatting diffs; an unmapped
+database-trigger field was adapted at its actual insert seam, rather than editing
+the generated file. Empty-schema rehearsal, real staging operations, unit tests
+and production adoption remain different claims.
+
+The native relation ledger grew to 19 endpoints/27 relations. An actual narrow
+reader screenshot exposed small labels in one projection; separating the write
+path from read/cache flow retained the same IDs and complete union. More diagrams
+alone do not establish readability or independent agent efficiency.
+
+Actual staging tests exercised two roles, Cookie/Bearer, direct data privileges,
+NULL/default/live and preview rejection, cache/reload, a held real write response,
+HTTP failure/retry and a fresh browser. A separate public-owner check preserved
+palette, title and shape while the NULL owner body followed viewer reading font.
+These do not prove a second released template, all owner-font branches, native
+apps or production template rollout.
+
+Reading the real Web CI step then contradicted the wiki's same-host assumption:
+the peer repository was missing and the script skipped with exit zero, which the
+aggregate counted as a pass. The selected local pair had genuinely passed a byte
+comparison; that does not mean CI ran it. The project records the counterexample
+and source-pair/NOTRUN design debt. This transferable execution-context check is
+now in maintenance guidance; no new global manifest, score or independent trial
+was invented. Exact revisions, test receipts and access details stay in the
+project's internal audit.
+
