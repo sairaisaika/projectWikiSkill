@@ -71,3 +71,18 @@ content; successful parsing or indexing alone does not prove the displayed revis
 If source-view pages depend on a provenance registry, check that the exact path is
 registered in a parser-recognized source section. A valid filesystem or Markdown
 link alone does not establish that the reading site has generated that source page.
+
+Verify the generated link closure as well: every emitted source-view URL must
+have a generated destination. Ordinary body/fact-source links may need reader
+pages even when they are not architecture dependencies; generating their views
+must not silently add them to the impact registry. Detect provenance-shaped
+entries accidentally placed in unrelated sections before they vanish from the
+native parser. Keep prose references and fenced examples distinguishable from
+actual registration. A passing file-existence check does not cover these cases.
+
+If agents bypass the wiki, first investigate its task-facing cost: guessed search
+terms, competing entrances, long rule preambles, late impact reports, incomplete
+satellites, broken reader links or prose that confuses a target with implemented
+behavior. Improve the useful default path and test it before prescribing more
+attestations. Preserve authorized project requirements; the improvement is to
+make them executable and informative, not to remove truthful review.

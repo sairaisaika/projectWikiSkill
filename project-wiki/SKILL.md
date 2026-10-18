@@ -24,6 +24,9 @@ actionable location** for a task, and a correct system model for orientation, no
   when the user did not name them; see change navigation below. Preserve the helper's truncation warning.
   For recurring compound work, use a declared task map before selecting routes;
   see [change navigation](references/change-navigation.md).
+  If agents repeatedly bypass the wiki, audit the cost and usefulness of this
+  first task read before adding more compliance rules. Provide task context and
+  planned-file satellites before the post-commit maintenance gate.
 - **Create or repair:** start with representative user questions, inspect current
   source and constraints, then document the smallest useful routes. Never infer
   implementation from a README, package name, type declaration, or planned feature.
