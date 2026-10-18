@@ -116,3 +116,12 @@ actual token/credential behavior, target guards and permitted fixture configurat
 keep unresolved consumers visible in the text and graph. Audit distributed client
 artifacts separately from the current source branch before choosing a minimum
 version or enabling a shared rule.
+
+For packaged-client delivery, follow the accepted artifact through each distribution
+consumer. A development client tested with a local bundle is not an independently
+runnable release package. Bind source, build profile, effective backend, channel,
+native fingerprint, file hash and signer to the tested binary; then verify the
+uploaded release asset. Private repository access can coexist with a later job
+copying a stable asset into public storage. Include that job, its promotion rules
+and size/version checks in the same feature inventory. Keep platform-specific
+acceptance scoped: an Android result does not establish iOS behavior.

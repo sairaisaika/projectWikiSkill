@@ -97,3 +97,15 @@ satellites, broken reader links or prose that confuses a target with implemented
 behavior. Improve the useful default path and test it before prescribing more
 attestations. Preserve authorized project requirements; the improvement is to
 make them executable and informative, not to remove truthful review.
+
+An engineering reader can expose source text as well as prose. Record its actual
+listener addresses, SSH or proxy path, authentication boundary and exported-file
+policy; a localhost URL, noindex or a product's admin session alone establishes
+none of the other controls. Check runtime proxy/tunnel routes separately from
+repository configuration. Export only intended, version-controlled sources within
+the selected checkouts, resolving symlinks and excluding credential paths; being
+tracked is not proof that a file contains no secrets. Exercise wrong Host/Origin,
+write methods and traversal alongside normal reading. Use metadata-only process
+and configuration probes: raw arguments, environment dumps and connector logs may
+contain credentials. A test passing through an outer 403 does not establish the
+origin's authorization behavior.
