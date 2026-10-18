@@ -1,5 +1,31 @@
 # Compound changes and actual edit locations
 
+## Make the first wiki read useful
+
+An instruction to read a wiki is not a usable task entrance. Starting from the
+user's words, the native entry should return the functional page, its local
+sections/diagrams, ownership and variant constraints, recorded producers and
+consumers, gaps, and the next verification seam. Once planned files are known,
+return **every registered satellite per file**, with the relation that brought it
+into scope. Recheck the actual working delta during development; a post-commit
+touch gate cannot substitute for this planning aid. Keep the ordinary first read
+short and make the deeper records directly reachable.
+
+For an established wiki, derive this view from native metadata and prose rather
+than maintaining a second task manifest. Distinguish functional relations,
+explicit source dependencies, ordinary prose links and shared-file similarity.
+Do not recursively expand all common infrastructure and call that a causal impact
+graph. State when candidates are truncated; never silently truncate a file's
+registered satellite inventory or treat an absent inventory as no consumers.
+
+Test real task phrasing as well as canonical keywords. Domain nouns and action
+terms are useful anchors alongside long exact phrases and identifiers. Unknown
+queries must expose missing navigation, not produce a plausible guess. Save the
+first failed query before repairing metadata; adding the same query to regression
+is a self-test, not an independent usability trial. Include compound tasks,
+negative controls, a high-fan-out change and variants the user did not explicitly
+name. A tool call proves neither reading nor semantic coverage.
+
 Use this when a request spans multiple interfaces or a route stops at a large
 factory. Keep ordinary one-surface queries simple.
 
