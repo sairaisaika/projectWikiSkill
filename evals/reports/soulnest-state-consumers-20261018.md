@@ -112,3 +112,14 @@ been editorially renamed. The canonical keys were restored, historical qualifier
 moved to prose and the full PR range became the next local check. Neither failure
 was waived or relabelled as successful acceptance.
 
+The actual two-live candidate passed a later full CI (83 static gates, 906 suites,
+11,952 passing cases and 57 contract/type comparisons). Its first runtime harness
+selected the wrong Card variant and was corrected without changing application
+styles. A later witness assumed a journal studio was empty, but a read-only probe
+confirmed fifteen existing article links, no empty text and an enabled studio.
+Both failed attempts retained exact scoped fixture restoration. The next check
+uses the public footer divider, whose presence does not depend on article count;
+its eventual runtime result belongs in the project audit. The skill now requires
+reachable actor/flag/data predicates and concrete consumers beside aggregates.
+This is a self-review informed by known source, not a blind navigation trial.
+
