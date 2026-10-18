@@ -175,3 +175,9 @@ task, entry and skill without expected route IDs, suspected bug or proposed answ
 Maintain a small regression set plus held-out paraphrases; distinguish fitting an
 alias from an independent behavior improvement. A review cadence or automation must
 follow the user's project preferences, not be scheduled silently by this skill.
+
+Maintain one clearly authoritative current checkpoint per active goal or feature.
+Older appended checkpoints keep their evidence but must not still say they outrank
+newer state. Separate current source/CI, the built and installed artifact, observed
+behavior and pending capabilities in that checkpoint. A new reader should not need
+to reconcile several contradictory “current” sections before deciding what to do.

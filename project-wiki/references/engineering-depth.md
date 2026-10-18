@@ -147,3 +147,21 @@ before strengthening a predicate. A stricter negative test can reject a legitima
 provider response; require a known-good end-to-end positive at that boundary. A
 verified generic OTP claim is not automatically proof of a specific recovery purpose
 or a current email channel. Record that distinction rather than renaming the claim.
+
+For an intermittent save, distinguish no accepted input, no emitted request, a
+failed or unfinished transport/body, a test's unmatched-response wait, and a saved
+value later overwritten by a reader. Capture the action's enabled/owner readiness,
+change event, request, response/failure and persisted/rendered result using bounded,
+non-secret traces. An old response-wait timeout without that timeline cannot be
+retroactively assigned to a later reproduced race. Keep both receipts and state
+what the counterexample actually proves. Bound a real request and its response
+body; define visible failure, retained latest intent, explicit retry and disposal.
+Client abort or timeout does not prove the server rolled back or never committed.
+
+For dense responsive interfaces, review text size together with available column
+width, row height, clipping and navigation. Do not compress a wide time grid until
+labels become unreadable, or call a no-overflow assertion a usability acceptance.
+If using a local scroll viewport, verify pinned context, keyboard/touch access,
+pointer geometry after scrolling and absence of accidental business writes. Keep
+configured minimum dimensions separate from measured rendered values and label
+which roles, languages, fonts, device/browser modes and legacy variants were tested.
