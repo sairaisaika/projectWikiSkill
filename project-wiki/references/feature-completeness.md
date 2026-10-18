@@ -107,3 +107,12 @@ caller and deployed client version has been checked. Document the rollout order,
 compatibility decision, missing/error/retry behavior and positive/negative exit
 evidence before enabling the shared policy. One-use artifacts must have a single
 final consumer; a preliminary check may consume the artifact needed downstream.
+
+Include non-interactive callers in that activation inventory: ordinary E2E helpers,
+independent authorization probes, seed/bootstrap tools and legacy integration
+scripts can call the same protocol without going through the new UI helper. A
+dedicated feature probe does not make those consumers compatible. Record their
+actual token/credential behavior, target guards and permitted fixture configuration;
+keep unresolved consumers visible in the text and graph. Audit distributed client
+artifacts separately from the current source branch before choosing a minimum
+version or enabling a shared rule.
