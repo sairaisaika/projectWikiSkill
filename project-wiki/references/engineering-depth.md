@@ -133,3 +133,17 @@ silence CI. Retain simple routes for tasks that do not need deep profiles.
 Runnable examples in the repository fixture are `recovery` (bounded pure action
 selection) and `wire-format` (8-byte serializer). Their diagrams, byte vectors and
 recovery tests are synthetic demonstrations, not a specification of any user's device.
+
+For recovery flows, examine SDK initialization before the page-level guard: an
+initializer may consume a URL or clear stored sessions before the intended identity
+check runs. Test the existing different-identity case as well as an empty browser,
+then refresh the recovered page with a new account that has not completed business
+onboarding or consent. Do not auto-complete those prerequisites to hide an identity
+recovery dead end. Distinguish a usable recovery form from a completed password
+change and a headless Web result from a system-browser handoff on an actual device.
+
+Pin the provider's actual wire semantics, including signed claims and error wrapping,
+before strengthening a predicate. A stricter negative test can reject a legitimate
+provider response; require a known-good end-to-end positive at that boundary. A
+verified generic OTP claim is not automatically proof of a specific recovery purpose
+or a current email channel. Record that distinction rather than renaming the claim.
