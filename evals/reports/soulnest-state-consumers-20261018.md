@@ -28,3 +28,14 @@ agents spend fewer tokens. Older 13/15 audit results remain historical snapshots
 The reusable lessons are caller-specific predicates, identity/freshness, missing
 dependency registration, and projection checks that tolerate legitimate additions
 without requiring duplicated count edits. No new parallel wiki manifest was added.
+## Follow-up: policy activation scope
+
+A later familiar-reader audit found that a service-wide rule would also affect
+settings and raw protocol callers outside the named entry screen. It also found
+that public build configuration and runtime service configuration were separate
+handoffs. The skill now requires an operation-level inventory, deployed-client
+compatibility and explicit provisioned/wired/enabled/accepted states. These are
+source-backed methodology findings, not an independent efficiency trial or proof
+that the downstream integration is complete. Operational details remain in the
+project's internal audit.
+

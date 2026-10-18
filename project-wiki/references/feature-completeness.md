@@ -91,3 +91,19 @@ If local recipes are generated from source tokens, verify all relevant declarati
 blocks and test freshness; exclude responsive and accessibility rules that must keep
 cascading. A new skin in a showcase establishes framework adoption there, not every
 legacy page, cross-device persistence, another client or production rollout.
+
+## Platform policy activation
+
+For a service-wide toggle, inventory the actual protocol operations it intercepts,
+not just screens labelled with the feature name. Include SDK calls, server-side
+raw requests, background clients and other applications; a settings form can
+consume the same operation as an anonymous entry form. Trace build-time public
+configuration separately from runtime secrets and the effective service policy.
+
+Distinguish provisioned resource, wired client, enabled policy and accepted runtime
+behavior. A dashboard success or an env file is evidence only for its own stage.
+Avoid claims such as "configuration only" or "zero risk" until every affected
+caller and deployed client version has been checked. Document the rollout order,
+compatibility decision, missing/error/retry behavior and positive/negative exit
+evidence before enabling the shared policy. One-use artifacts must have a single
+final consumer; a preliminary check may consume the artifact needed downstream.
