@@ -110,6 +110,14 @@ delete content or change unrelated flags merely to force the expected picture.
 Document concrete consumer locations and their predicates beside an aggregate
 resource interface, so the next agent can select a valid integration check.
 
+Separate an exposed interface from the readiness of its consumer. A visible
+control, mounted subscription or replayed input can run before an owner-bound
+writer or service is installed. Exercise that real lifecycle window and show the
+readiness/ownership transition; then verify the built artifact rather than only
+an isolated handler. Also test transformations at the consuming seam: a valid
+producer token can fail after opacity, composition, truncation or normalization.
+Do not compare a default selector key directly with its resolved effective value.
+
 For a multi-commit change, exercise the same base/range that CI will inspect, not
 only the final incremental diff. Keep machine-parsed section keys intact and put
 historical or current-status qualifiers in their prose; do not relax the parser
