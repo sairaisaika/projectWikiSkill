@@ -83,6 +83,12 @@ skip that exits successfully is still unverified. Record NOTRUN separately and
 bind cross-repository comparisons to the exact source pair. A matching historical
 version or a commit-time approximation is not exact equivalence. A real local
 paired check remains useful evidence, but cannot be relabelled as a CI execution.
+An exact commit label also requires the compared inputs to match that commit;
+equal dirty copies do not prove a fixed revision pair. A cached matching directory
+does not prove this run obtained its intended source. Exercise absent/empty sources,
+wrong revisions, read errors, real byte drift and a real matching pair, checking
+both the script's exit status and its consumer's classification. Repair the source
+and reporting boundary without widening unrelated credentials or host access.
 
 Bind release acceptance to the actual artifact and evidence bytes. Rebuilding after
 QA can change the result despite an unchanged source/version label; use the verified
