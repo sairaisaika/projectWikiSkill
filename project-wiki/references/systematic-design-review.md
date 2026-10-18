@@ -60,6 +60,17 @@ from that matrix and preserve independent authentication flows. A vendor's dummy
 success fixture establishes integration behavior, not real challenge acceptance,
 replay rejection or availability under a vendor outage.
 
+Trace cross-client flows through the storage that owns each proof, not just their
+HTTP endpoints: a verifier generated in an App cannot automatically be redeemed
+by a browser with different storage. Include runtime capability requirements and
+native binary fingerprints where a JS dependency needs native support. Verify the
+entire user outcome (for example, mail request, delivered link and usable recovery
+form), and record exactly where the observed journey stops. A successful login
+does not establish that signup or password recovery uses the same primitives.
+Check fixture semantics against actual behavior: an always-pass provider key may
+accept arbitrary responses, and a forced duplicate-error fixture does not prove
+that a real token was consumed once. Keep these assertions separate in the wiki.
+
 Keep historical incident reports as dated evidence. Route readers first to current
 implementation and deployment observations; do not reuse old content counts,
 ownership-verification claims, causal percentages or search-index snapshots as a
