@@ -76,6 +76,14 @@ in its sibling source repository; a missing peer is unverified, not an empty dif
 Keep complete developer-facing impacts visible when saving machine JSON, without
 contaminating its stdout contract. Saving a report does not establish that it was read.
 
+For a CI or deployment consumer, verify its actual invocation, selected sources and
+step output, not only the aggregate green result or the fact that jobs share a host.
+Different users, HOME directories and permissions can make a peer unavailable; a
+skip that exits successfully is still unverified. Record NOTRUN separately and
+bind cross-repository comparisons to the exact source pair. A matching historical
+version or a commit-time approximation is not exact equivalence. A real local
+paired check remains useful evidence, but cannot be relabelled as a CI execution.
+
 Bind release acceptance to the actual artifact and evidence bytes. Rebuilding after
 QA can change the result despite an unchanged source/version label; use the verified
 artifact or retest the final one. Trace draft promotion and downstream Latest/public
