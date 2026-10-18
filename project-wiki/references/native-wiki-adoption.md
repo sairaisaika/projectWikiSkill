@@ -125,3 +125,10 @@ dirty; restore original bytes and verify the clean label. Keep probe markers out
 of commits and preserve the authoring wiki during the source-only test. Use
 metadata and bounded status summaries without exposing credentials or raw status
 records; a healthy page alone does not prove refresh behavior.
+
+An agent entry routes design work; it should not prescribe a single visual answer.
+Put brand semantics, ownership, accessibility and shared component constraints in
+their owning feature/design pages. Within those constraints, let agents propose
+and implement layout, density, type and resource choices, inspect the actual result,
+and record the adopted rationale there. Historical examples and screenshots are
+evidence of an iteration, not a permanent style ban or an implicit approval gate.
