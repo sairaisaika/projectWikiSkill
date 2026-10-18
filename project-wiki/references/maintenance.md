@@ -95,6 +95,18 @@ smallest authorized source path and document its ownership/read boundary. For PR
 jobs, distinguish branch head from the actual synthetic merge checkout; record
 the compared commit, not a convenient label from the run summary.
 
+For live stateful checks, persist a scoped restorable baseline before the first
+write, and clean independent subjects even if an earlier cleanup fails. Reversing
+one UI choice may materialize defaults in companion fields; read back the actual
+scope before reporting restoration. Lost before-state followed by an explicit
+fixture reset is not recovery of that state. Preserve functional success and
+cleanup failure as separate evidence.
+
+For a multi-commit change, exercise the same base/range that CI will inspect, not
+only the final incremental diff. Keep machine-parsed section keys intact and put
+historical or current-status qualifiers in their prose; do not relax the parser
+to accommodate an editorial rename.
+
 Bind release acceptance to the actual artifact and evidence bytes. Rebuilding after
 QA can change the result despite an unchanged source/version label; use the verified
 artifact or retest the final one. Trace draft promotion and downstream Latest/public
