@@ -97,3 +97,58 @@ as a bounded, revision-labelled packet because the older isolated checkout did
 not contain them. Report receipt, source review, Linux tests, stored participation
 and actual reader UI remain separate milestones; no comment or tagging runtime
 availability is inferred from the pure core.
+
+
+## Live release state and actual native follow-up
+
+A later read-only recovery found that the normal auto runner had already promoted
+cde89ce at 18:18:20Z, while a handoff still described production981/staginga975 as
+current. The prior snapshots were valid historical evidence, but their "current"
+wording had expired. Container source, image, BUILD_ID, version API and stored
+promotion/report hashes were reconciled before any shared staging replacement.
+The feature pages now date those observations. Later, the normal runner staged
+dd9 and passed its own six-spec/23-test and SEO gates; the native homework
+experiment waited for the original release lock, then recorded an unchanged dd9
+container before and after. This is a concrete recovery check, not a reason to
+require live infrastructure access for every documentation edit.
+
+The baseline release gate did not include the new homework-history or
+confirmation-snapshot journeys. Each owning candidate now registers its own
+formal spec in the existing candidate manifest and Playwright project, preserving
+the host security floor, identity checks and original budget. Actual cde staging
+negative controls reached a settled therapist destination without the completed
+history, and accepted a stale patient confirmation with HTTP200 after one
+concurrent reschedule won. Candidate code and these negative controls do not
+establish a new positive integrated release; each exact candidate still needs
+its full CI and staged evidence. A green baseline report is not evidence for an
+unregistered feature.
+
+EAS0161 subsequently compiled embedded source241a579. The coordinator downloaded
+the official APK, compared its certificate to the installed backup, confirmed the
+staging origin/disabled OTA, and actually installed it on MuMu. Under the dd9
+lease, a Web therapist form created a synthetic assignment; the patient used the
+native notification and task button; the therapist used the native completion
+notification to reach readonly history showing the same stored completion
+instant. Cold launch preserved the patient session. An actual disconnected
+refresh showed an error and kept the previous history window. The automatic
+approval review rejected reopening the loopback QA forward; restored-network
+Retry therefore remains unverified, as do native CAS, physical push/video,
+browser recovery and the official release gates.
+
+The completion notification was an older read item reused by the existing daily
+merge, with an old body/date. Successful navigation to history is evidence of
+reachability, not of a fresh unread alert or of timely therapist awareness. That
+remaining user-journey gap stays explicit in the feature's existing TD entry.
+No new global reading requirement or parallel wiki schema was added.
+
+Fixed evidence pointers:
+- Web candidate gate and cde failure: mindbridge851c564a77837624d8e67eded08629bfd963129b,
+  docs/audit/feature-release-gates-20261019/confirmation-snapshot/cde-negative.json.
+- Native runtime: mobile1c5426ffaa9a1076b302a4bc6d4ea17ced855707,
+  docs/audit/native-assignment-entry-20261019/0161-runtime/runtime-proof.json.
+- Paired feature page: mindbridge91eabbd8c014e0c376aede878c7c944e3a15da5e,
+  docs/wiki/24-mobile-features/06-daily-life.md.
+
+These are bounded familiar-coordinator observations, not independent comprehension
+or time-saving measurements.
+
