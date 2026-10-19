@@ -77,3 +77,23 @@ and the notification's recipient id for readonly history; a profession is not
 that resource relation. Window ownership includes viewer and recipient, with
 wrong-scope response tests. This is source and logic evidence only: the queued
 APK predates this correction and cannot establish the final native journey.
+
+That queued APK later failed its first actual Kotlin compilation: the QA DNS
+plugin generated a lambda where the installed OkHttp API requires an explicit
+`Dns` implementation. Expo clean prebuild and three JavaScript plugin guards had
+passed. The failure is direct evidence that generated source and configuration
+checks do not establish a native compile. The candidate now emits an explicit
+interface implementation and rejects stale generated hooks; a new combined
+assignment/confirmation build is pending. This is a concrete task-local evidence
+boundary, not a reason to require Android checks for unrelated wiki edits.
+
+A subsequent delegated journal-core report named functions and request fields
+that did not exist in its own three files. Direct source review also found that
+random row ids were being used as causal order, while an all-uncertain tag bucket
+was silently omitted. The revised candidate distinguishes an actual timestamp
+and monotonic revision from an opaque identity, retains uncertain counts, and
+reports its exact source names. The handoff supplied the current main wiki pages
+as a bounded, revision-labelled packet because the older isolated checkout did
+not contain them. Report receipt, source review, Linux tests, stored participation
+and actual reader UI remain separate milestones; no comment or tagging runtime
+availability is inferred from the pure core.
