@@ -86,6 +86,14 @@ entries accidentally placed in unrelated sections before they vanish from the
 native parser. Keep prose references and fenced examples distinguishable from
 actual registration. A passing file-existence check does not cover these cases.
 
+Validate authored fragments against the reader's actual rendered heading IDs,
+including its curated root navigation documents. File existence and a guessed
+GitHub-style slug do not prove a usable link; punctuation, Unicode encoding and
+duplicate headings can differ. Reuse the renderer and its document set in native
+Jest/change-touch checks, demonstrate a real wrong-fragment negative, then verify
+the corrected link in the reading UI. Keep source-file and external fragments
+under their own contracts rather than treating them as wiki headings.
+
 An explicitly declared fact-source header is different from an ordinary body link:
 it states authority for the page and should participate in the same native impact
 model even without a duplicated symbol entry. Test a real contract edit against
