@@ -190,3 +190,14 @@ Register their real paths in the native impact index and show the current missin
 handoffs explicitly; a diagram of the proposed chain must not replace current
 connection status. Keep resource provisioning and effective activation separate.
 
+For visual preferences, trace preference → resolved role → delivered resource →
+actual rendered glyph/image → failure fallback. A selected font-family string does
+not prove the font supplies the language's glyphs: a Latin-only face can leave CJK
+silently using the same system fallback as another choice. Where this is the reported
+failure, inspect actual browser font use and missing-glyph fallback, alongside scoped
+owner/viewer rules. Treat asset coverage, licensing, delivered-byte integrity and
+measured page downloads as different evidence. Demand-loaded subsets can still be
+expensive when a short phrase spans many ranges; whole-font bytes are not page cost.
+An isolated resource browser probe does not establish deployed settings or native
+client adoption. Preserve that boundary when linking the result back to the graph.
+
