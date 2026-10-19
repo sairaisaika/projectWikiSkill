@@ -57,6 +57,17 @@ Track planned, implemented, offline-tested, installed and live-verified as disti
 claims. Reconcile final code against the plan and remove abandoned promises from
 current documentation. Do not turn source completeness into deployment acceptance.
 
+When delegating a bounded implementation, give the worker the existing feature
+route and its actual source revision or read-only snapshot, not just a separate
+design copy. At return, compare the changed producers/consumers and remaining
+gaps with that same route. Verify cited input files exist; repair invented page
+paths or duplicate debt suggestions before adoption. The coordinator owns the
+final wiki update when the worker cannot edit shared documentation. Link a new
+feature from the old entry users already follow, and state whether its reader
+shows main or a candidate checkout. A report or local preview alone does not
+establish that the shared wiki contains the change. Reuse native task and debt
+records instead of creating another progress registry.
+
 Keep fixed audit/test receipts separate from current release and rollout state.
 Point feature pages to the existing owner of that state, rather than copying a
 mutable "awaiting deployment" claim into every satellite. File-change gates do
