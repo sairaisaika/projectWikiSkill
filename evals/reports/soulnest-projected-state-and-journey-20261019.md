@@ -67,3 +67,13 @@ server still used the default App checkout. The visible reader rejected the sour
 links instead of silently showing stale bytes. Restarting that candidate server
 with the same explicit paired checkout restored the page and its source views.
 A build environment choice alone did not configure the serving process.
+
+The user-boundary dictionary also led to a concrete consumer correction. The
+assignment DAL returns rows where the caller is issuer OR recipient. An App
+comment called that unscoped read 'my patient tasks', which would mix a
+practitioner's issued assignments into their own care view. The candidate now
+uses the authenticated session id as the explicit recipient for personal tasks,
+and the notification's recipient id for readonly history; a profession is not
+that resource relation. Window ownership includes viewer and recipient, with
+wrong-scope response tests. This is source and logic evidence only: the queued
+APK predates this correction and cannot establish the final native journey.
