@@ -201,3 +201,13 @@ expensive when a short phrase spans many ranges; whole-font bytes are not page c
 An isolated resource browser probe does not establish deployed settings or native
 client adoption. Preserve that boundary when linking the result back to the graph.
 
+For editor/preview geometry, include indirect shell consumers and the existing
+measurement owner before adding local compensation. A shared drawer-to-inset-to-shell
+path can already reserve space even when the feature component contains no padding;
+a second reservation is another policy source. Test that the canvas actually fills
+the remaining width, not merely that it does not overlap the panel. Wait for observable
+measurement/transition convergence after resizing, inspect the screenshots, and
+distinguish viewport breakpoints from the space available inside an open editor.
+Keep rejected real-browser evidence: a geometrically weak green test is not visual
+acceptance, and a new diagram is not evidence that all indirect owners were found.
+
