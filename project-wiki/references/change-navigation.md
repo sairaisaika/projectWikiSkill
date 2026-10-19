@@ -11,6 +11,14 @@ into scope. Recheck the actual working delta during development; a post-commit
 touch gate cannot substitute for this planning aid. Keep the ordinary first read
 short and make the deeper records directly reachable.
 
+An actor dictionary link alone may leave the task response ambiguous. When the
+feature has an authored behavior-scope section, project its actual resource,
+operator/owner/viewer relationship, relevant axes and unverified limits into the
+first task card and machine output. Reuse the native prose/table; do not infer
+permissions from role labels or create a second actor registry. A missing scope
+must remain visible. Test that a real feature scope, including its limits, survives
+the projection and that headings inside fenced examples do not become declarations.
+
 For an established wiki, derive this view from native metadata and prose rather
 than maintaining a second task manifest. Distinguish functional relations,
 explicit source dependencies, ordinary prose links and shared-file similarity.
