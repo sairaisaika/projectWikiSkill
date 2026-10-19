@@ -45,3 +45,25 @@ from the candidate tree and safely served an unavailable page. Binding that
 reference to its verified historical revision restored the actual build and
 rendered feature diagram. Structure, source-link closure, visible rendering,
 product journey and deployment remain different evidence layers.
+
+The native follow-up exposed another bounded packet gap. A two-round delegated
+candidate registered the correct routes but still let a target-reset effect
+invalidate its own focus load, let a refresh invalidate a pending PATCH lock, and
+unpaused an unknown older-row write after reading an unrelated first page. Source
+string assertions and a packet-only `web/` fixture path did not establish those
+behaviors. The coordinator replaced them with actual asynchronous window tests
+covering duplicate clicks, reads during writes, missing affected rows and failed
+second-page refresh. Those tests still did not establish Android acceptance.
+
+The native QA environment also had a valid Let's Encrypt certificate but no public
+DNS. A queued build with the right backend string could not establish device
+reachability. The task-local plan now distinguishes host SSH/TLS reachability,
+Android QA DNS routing, standalone artifact startup and the system browser's
+separate DNS stack. No global reading rule was added: supply these concrete seams
+when delegating an environment-bound task, then keep pending edges visible.
+
+A candidate reader build used the intended App worktree, while its already-running
+server still used the default App checkout. The visible reader rejected the source
+links instead of silently showing stale bytes. Restarting that candidate server
+with the same explicit paired checkout restored the page and its source views.
+A build environment choice alone did not configure the serving process.
