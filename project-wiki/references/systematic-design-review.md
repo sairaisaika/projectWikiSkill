@@ -159,3 +159,21 @@ finding and recommendation. A wider ledger can be unwarranted even when local
 protocol fixes are necessary. Reuse existing domain ledgers and logs; reopen the
 wider option for named consumer needs or a concrete insufficiency, not because a
 proposal remains in a document. Keep formal adoption and implementation separate.
+
+## Compare the user's workflow before retiring an implementation
+
+Use the existing role's business tasks and conveniences as the baseline, not the
+name of a Legacy file or a list of newly implemented CRUD controls. Route to the
+product journey and cross-domain map before selecting the old/new components.
+For each actor record a starting state, intent, command, authoritative result,
+other party's visible state/next action, and the failure or unanswered path.
+Trace connected messaging, preparation, reminders and completion where required;
+a page opening or a queue accepting work is only one edge of that journey.
+
+When authorized and source evidence is insufficient, actually use the legacy
+workflow in the appropriate role/environment and preserve a same-data comparison.
+Classify parity per capability as equivalent, improved, missing or deliberately
+inapplicable with a reason. Opposite sides of one workflow need connected outcomes,
+not identical permissions. Retiring a redundant adapter and completing the whole
+feature are separate claims; do not delete until the scoped retirement evidence
+is met. Mark role-playing/design scenarios as analysis, not user-study evidence.
