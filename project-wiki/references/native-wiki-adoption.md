@@ -37,6 +37,13 @@ Separate proposed, written, tested, built, deployed and observed. An older live
 observation remains tied to its older revision; neither a review date nor a source
 hash upgrades it. Direct database grants and app projection are separate controls.
 
+Name the deployed unit when several executables evolve separately: an application,
+release controller, reader or native package can each run a different revision.
+Enforcement in a candidate controller does not establish host adoption, and a
+controller update does not establish an application release. Bind release evidence
+to the actual accepted target, not just a mutable tag or an old successful report;
+exercise missing fresh output and same-source target replacement as negatives.
+
 ## Learn from native strengths
 
 - Producer/consumer matrices expose features with no write path or no client.
