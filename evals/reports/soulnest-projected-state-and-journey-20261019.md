@@ -151,3 +151,29 @@ Fixed evidence pointers:
 
 These are bounded familiar-coordinator observations, not independent comprehension
 or time-saving measurements.
+
+## Entry summaries can contradict newer evidence lower on the same page
+
+At 22:10Z, native reader4335 correctly identified Web b862/App1c5426f, but
+wiki6.11 still opened with an old main4f/unadopted boundary and a production981
+environment row. Newer source851 receipts were present near the end. Read-only
+recovery independently established normal production fbe adoption at20:44:20Z,
+including main CI39316198348, 7spec24 cases, migration374 and bound artifact/report
+hashes. Thus neither a correct reader source badge nor appending receipts made
+the feature's entry summary accurate. The bounded documentation follow-up owns
+correction of current entry prose while retaining dated historical evidence.
+
+A second native wiki-task query for assignments/[id]/route.ts returned
+"unregistered", even though the assignment page described completion and linked
+the notification deduplication helper. Actual source review showed that this
+omitted route owns the state write, completion eligibility and24-hour existence
+check. A helper edge alone did not route a successor to the producing decision.
+The feature and bell pages need the concrete producer reference and the actual
+existing-row/no-new-alert branch. This is a source-coverage correction, not a
+reason to infer missing source means no dependency or to require reading the
+entire site.
+
+Useful bounded review questions are now: after a state change, does the task
+entry agree with its most recent evidence, and can the named producer itself be
+routed back to the relevant feature page? No independent usability measurement
+or new global reading gate is claimed.
