@@ -44,6 +44,27 @@ controller update does not establish an application release. Bind release eviden
 to the actual accepted target, not just a mutable tag or an old successful report;
 exercise missing fresh output and same-source target replacement as negatives.
 
+## Keep terminology and review methods discoverable
+
+When ambiguous wording repeatedly causes wrong routing or completion claims,
+first find the project's existing domain glossary, actor/resource definitions and
+review/acceptance methods. A short, optional disambiguation route can link these
+authorities rather than duplicate their definitions. Distinguish product terms,
+who can act on which resource, and what evidence an action word such as "verified",
+"supported", "deployed" or "complete" actually describes. Delivery evidence may
+refer to application acceptance, a queue, a provider, a device or a user; name the
+observer instead of treating all of them as "received".
+
+Keep this proportional: ordinary task lookup should still go straight to its
+feature. Add entries for observed ambiguity, not an exhaustive vocabulary,
+forbidden-word scanner, mandatory startup reading or labels on every sentence.
+Existing code, policy and domain dictionaries retain ownership; an evidence table
+is not a new permission or business-state registry. Test an actual ambiguous query,
+follow the rendered links to the original rule, then check whether a real review
+misstates its scope. Structural/navigation success alone does not establish less
+agent work or better conclusions; distinguish familiar-author trials from an
+independent evaluation before expanding the convention.
+
 ## Learn from native strengths
 
 - Producer/consumer matrices expose features with no write path or no client.
