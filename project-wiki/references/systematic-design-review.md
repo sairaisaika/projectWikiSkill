@@ -52,6 +52,22 @@ missing privacy/role/partition boundary, migration without a backward path, and
 observability that cannot distinguish failure from empty or accepted from delivered.
 These are review prompts, not universal requirements for every trivial mechanism.
 
+For an apparent multiple-source defect, distinguish persistence authority from
+semantic fields and presentation policy. Legal names and user-chosen display names
+can legitimately coexist in one row; a greeting bypassing the shared display policy
+is a divergent consumer, not necessarily a second database to consolidate. Trace
+the actual rendered value, language, row identity and freshness through each view.
+Exercise the counterexample at the consumer seam: a pair-based name-joining audit
+can pass while a greeting still prints a single raw placeholder field. A shared
+helper being present is not evidence that every affected consumer uses it.
+
+For apparently duplicated editors or missing designs, inspect the routed component,
+write command, viewport variant, draft/saved projection and deployed source revision
+before removing anything. Two previews may have different permission or freshness
+contracts while sharing one renderer and writer. Record those intentional differences
+in the feature entry; evaluate the working view with its editor open, including
+space, scrolling and save/discard behavior, rather than only the closed-page image.
+
 For a server policy shared by Web and native clients, distinguish implementation,
 deployment, activation and acceptance. Include already-distributed clients and their
 actual update path in the consumer inventory: wiring the new App does not make an
