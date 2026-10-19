@@ -128,6 +128,12 @@ QA can change the result despite an unchanged source/version label; use the veri
 artifact or retest the final one. Trace draft promotion and downstream Latest/public
 distribution separately, and reject overwriting a published identity with new bytes.
 
+When a release or acceptance rerun reuses an output path, retain the earlier
+attempt's report and relevant failure detail before replacement. Give each attempt
+its own source/artifact identity, outcome and digest. A later green run is another
+witness, not an explanation of the earlier failure. If the earlier detail was lost,
+record its cause as unknown rather than borrowing a similar failure's diagnosis.
+
 For asynchronous state or preference links, document who owns the decision when an
 older read arrives after a newer choice, including time spent waiting on upstream
 locks. A successful persistence response does not prove that the visible state and

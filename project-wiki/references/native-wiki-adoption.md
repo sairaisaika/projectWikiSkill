@@ -160,3 +160,10 @@ Trace the calling route, passed props, defaults and effective role/account/rollo
 predicates. Render the actual reachable variant for each affected audience. Keep
 inactive references visible as gaps, rather than describing them as deployed
 consumers or activating them merely to make documentation match an assumption.
+
+Projection tests should preserve the authored scope and its evidence boundaries,
+not freeze a page at its current maturity. After real acceptance, a pending scope
+can become partially or fully verified without keeping a token such as “pending”
+solely to satisfy a string assertion. Check the source-to-card projection and the
+remaining unverified audiences separately; advancing one scope must not silently
+accept other roles, subscription tiers or clients.
