@@ -55,3 +55,35 @@ portable techniques from this project, not lower-grade substitutes for routes.js
 
 Remaining limitations: no native adapter, no independent blind trial, no causal
 speed comparison and no full page-by-page or arrow-by-arrow semantic certification.
+
+## 2026-10-19 implementation follow-up
+
+SoulNest adopted native behavior scopes in four existing pages (MFA, profile,
+Web release and staging). One integration assertion required every pilot to keep
+pending wording even after actual acceptance. Removing that maturity assertion
+retained authored-scope presence, dictionary links and full source-to-card
+projection checks. This is a document-contract correction, not expanded product
+acceptance across every role, tier or client.
+
+Actual `wiki-task --files` use exposed another adoption gap: seven login-helper
+consumers and an export test had been listed as bare paths in chapter sources,
+which the native `path » symbol` parser did not index. Real symbol entries now
+resolve those eight files to the owning pages through the existing model and CLI;
+the consent caller also reaches its consent page. The final native documentation
+suite passed 325 checks and the reader built 218 pages with 1425 source views.
+Rendered prose or a source-view page alone had not established map registration.
+
+Web PR13/PR14 adopted mandatory main-push CI plus artifact-bound staged E2E/SEO
+gates and the unsqueezed focused editor. Production application source is
+`9c187708bc9d`; wiki closeout is `97ac17edb927`. The exact-source stage ran 23
+actual passes without skips, flaky results or helper login retries. A user-filled
+production patient test account verified the focused view, draft retention,
+unsaved preview and restored content after reload without submitting a save.
+Calendar, real CAPTCHA activation, native-client and remaining audience coverage
+stay open. These are fitted implementation/acceptance observations, not an
+independent blind trial or evidence of reduced agent working time.
+
+Earlier attempt evidence stays separate: a retained premerge navigation failure
+cannot explain a later same-case failure whose details were overwritten. The
+new production candidate's first raw gate report was captured privately before
+replacement could occur; permanent per-attempt archival remains follow-up work.
