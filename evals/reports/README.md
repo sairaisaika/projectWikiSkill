@@ -14,6 +14,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 | [soulnest-learning-review.md](soulnest-learning-review.md) | Learning entrance, cross-feature narrative and reciprocal orientation mode | Familiar entry survey and selected source checks; not a full-page reading or independent comprehension trial |
 | [soulnest-scenario-acceptance.md](soulnest-scenario-acceptance.md) | Three human-supplied scenarios, field-level sharing and feature-local variant discovery | Familiar wiki-first/source self-review; no live posting or independent comprehension trial |
 | [soulnest-completeness-rule.md](soulnest-completeness-rule.md) | Universal feature contract, native gate enforcement and isolated omission/downgrade mutants | Three pilot entrances; 210 legacy pages unclassified; structural checks do not establish semantic or runtime completeness |
+| [delegated-wiki-recovery-20261019.md](delegated-wiki-recovery-20261019.md) | A real handoff exposed candidate/main source mismatch, invented references and a missing return route; an instructed retry recovered the feature/debt/relations | Same worker and familiar coordinator; residual wrong path remained; no independent adoption or speedup claim |
 
 The current fixture also declares a four-surface task map. One expected-scope case
 checks all four surfaces/routes separately from ranking. Eight mutation/read-boundary

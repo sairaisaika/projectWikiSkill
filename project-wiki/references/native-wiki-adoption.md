@@ -17,6 +17,13 @@ base, current main and review output; preserve overlapping edits and already-mer
 work. Record recovered edits separately from claims independently rechecked now.
 Do not inherit an earlier reviewer's stamp as evidence of your own semantic audit.
 
+Before writing native records, inspect the current parser or schema and one
+accepted local example. Reuse its exact headings, relation/status vocabulary and
+source syntax; do not guess them from a visually similar Markdown table. Run a
+focused native check before generating a large set. If touching a legacy entry
+requires completing its classification or relationships, plan that repair before
+the final commit rather than discovering the native contract only at push time.
+
 ## Verify a claim through its whole chain
 
 Choose representative questions before reading implementation. Draft the plan

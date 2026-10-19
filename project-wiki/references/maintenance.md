@@ -57,16 +57,38 @@ Track planned, implemented, offline-tested, installed and live-verified as disti
 claims. Reconcile final code against the plan and remove abandoned promises from
 current documentation. Do not turn source completeness into deployment acceptance.
 
-When delegating a bounded implementation, give the worker the existing feature
-route and its actual source revision or read-only snapshot, not just a separate
-design copy. At return, compare the changed producers/consumers and remaining
-gaps with that same route. Verify cited input files exist; repair invented page
-paths or duplicate debt suggestions before adoption. The coordinator owns the
-final wiki update when the worker cannot edit shared documentation. Link a new
-feature from the old entry users already follow, and state whether its reader
-shows main or a candidate checkout. A report or local preview alone does not
-establish that the shared wiki contains the change. Reuse native task and debt
-records instead of creating another progress registry.
+### Keep delegated work connected to the feature
+
+A worker needs a short answer to "where do I change this safely?", not just a
+large design document. Reuse the native task handoff to provide:
+
+| Needed answer | Minimum useful context |
+|---|---|
+| What do I read now? | Existing feature route, relevant section/diagram and exact wiki checkout/revision; mark an exported snapshot as a projection |
+| Does it apply to my checkout? | Implementation base plus the relevant difference from the wiki candidate; identify referenced sources absent from this checkout |
+| What should change? | Intended outcome, actual edit seams, caller-owned guards and affected producer/consumer IDs; distinguish existing behavior from the selected proposal |
+| Where does the result go? | Same feature route, existing debt/task record, focused exit evidence and who owns shared-document updates |
+
+Before implementation, check that the supplied inputs are reachable and summarize
+the applicable boundary and any missing source in the existing task response.
+Do not require a second manifest, a full-wiki recap or a ceremonial read receipt.
+If a candidate source is unavailable, obtain a revision-bound excerpt or report
+that dependency; do not silently replace it with a similarly named local file.
+
+At return, compare the actual diff with the same feature's producers/consumers:
+what is connected, what is still absent, and what was observed. Verify cited input
+files and reused-symbol locations against the actual checkout; repair invented
+page paths or duplicate debt suggestions before
+adoption. If the worker cannot edit shared documentation, the coordinator owns
+that update before calling the work package complete. Link a new feature from
+the old entry users already follow; state whether its reader shows main or a
+candidate checkout. A report or local preview alone does not establish adoption.
+
+Evaluate the repair on an actual handoff: can the worker find the right route,
+notice the checkout mismatch, retain the original policy and return changes to
+the same entry without inventing a page or debt? Record observed corrections and
+remaining errors. An instructed retry by the same worker is a recovery trial,
+not an independent blind evaluation or proof of lower effort.
 
 Keep fixed audit/test receipts separate from current release and rollout state.
 Point feature pages to the existing owner of that state, rather than copying a
