@@ -87,3 +87,27 @@ Earlier attempt evidence stays separate: a retained premerge navigation failure
 cannot explain a later same-case failure whose details were overwritten. The
 new production candidate's first raw gate report was captured privately before
 replacement could occur; permanent per-attempt archival remains follow-up work.
+
+## 2026-10-19 optional language and method route pilot
+
+SoulNest PR16 adds wiki 1.9 as a short disambiguation route: product vocabulary
+links to root CONTEXT, actor/resource terms to the existing 1.7 dictionary, and
+review/test/deployment/delivery wording to the existing methods. It adds no
+authorization registry, business-state enum, forbidden-word scanner or startup
+reading requirement. The actual query `wiki用词 方法词典` reaches 1.9 first.
+
+The candidate passed 326 native documentation checks (219 pages); the existing
+root-sidebar check first rejected the missing new-page registration and passed
+after the link was added. The private reader on a separate loopback port showed
+candidate `ab379c01a831`, the same page and a rendered routing diagram, with the
+existing domain/method links. This records authored structure, actual routing
+and reader adoption in a review candidate, not main or application deployment.
+
+Its concrete example retains a separate evidence boundary: PR15's original
+fixed-clock booking spec fails with a real 409 collision against the same 9c
+application; candidate specs select actual availability and observe three
+passing booking/reschedule flows including owned cancellation/readback. That
+does not close unrelated schema drift, full consultation journeys or native
+acceptance. These were familiar-author trials; no independent comprehension,
+time saving or causal efficiency result was measured. The optional approach is
+now guidance in native-wiki-adoption, rather than another required entry layer.
