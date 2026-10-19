@@ -151,4 +151,3 @@ Fixed evidence pointers:
 
 These are bounded familiar-coordinator observations, not independent comprehension
 or time-saving measurements.
-
