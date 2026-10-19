@@ -43,3 +43,8 @@ overwrite the historical independent trial with an inferred new result.
 records a familiar-reader project follow-up. It informs caller-specific predicates,
 snapshot provenance and native-ID-based projection checks; it is not another blind
 agent trial or an efficiency result.
+
+[Projected state and settled destinations, 2026-10-19](soulnest-projected-state-and-journey-20261019.md)
+records corrected display-projection interpretations, a real two-role staging
+journey and a generated source-link closure failure. It is a bounded familiar-reader
+follow-up; it adds no global reading gate or independent efficiency claim.
