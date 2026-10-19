@@ -177,3 +177,19 @@ inapplicable with a reason. Opposite sides of one workflow need connected outcom
 not identical permissions. Retiring a redundant adapter and completing the whole
 feature are separate claims; do not delete until the scoped retirement evidence
 is met. Mark role-playing/design scenarios as analysis, not user-study evidence.
+
+## Aggregate preparation without inventing another truth
+
+For a workflow that combines acknowledgement, consent, forms, payment and delivery,
+keep each fact's identity, validity scope and owner. A single next-action view may
+aggregate their projections; it must not become an independently stored overall
+ready flag or reinterpret one acknowledgement as all of them. For example, a
+same-occurrence idempotent consent receipt does not establish reuse across later
+appointments, and two questionnaire sets with different predicates must not be
+merged solely to simplify a dashboard. Name the original writer, visible consumer,
+completion predicate and invalidation event for each preparation item.
+
+Map the existing capability baseline to target journeys with stable original IDs.
+An exhaustive set comparison can show no baseline IDs were omitted from design
+navigation; it does not establish runtime parity, convenience or acceptance. Keep
+historical source summaries clearly dated when later fixes change their claims.

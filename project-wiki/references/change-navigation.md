@@ -29,6 +29,20 @@ name. A tool call proves neither reading nor semantic coverage.
 Use this when a request spans multiple interfaces or a route stops at a large
 factory. Keep ordinary one-surface queries simple.
 
+## Rank the requested work, not keyword density
+
+When native lookup repeatedly returns a narrow leaf for a whole workflow, inspect
+ranking as well as missing metadata. Many aliases for one noun must not overwhelm
+a page covering several distinct requested capabilities. Preserve exact route-ID
+selection, unknown-query disclosure, and seeds for every recognized surface in a
+compound request; improve the native selector rather than creating a parallel index.
+
+Save the original failure, test a dense single-topic negative against a sparse
+multi-topic route, and retain generic-entry and unrelated compound regressions.
+Verify the actual CLI or UI surface that uses the selector. Fixing CLI ranking
+does not prove browser search changed; a known-source regression is not a blind
+trial or a measured efficiency improvement.
+
 ## Declare the work surfaces before writing a plan
 
 A top-two result can be accurate while omitting most of a compound task. For a
