@@ -27,6 +27,20 @@ native format. Mechanism leaves may link to the enclosing feature contract rathe
 than duplicate it. Whether a page is really a feature entrance requires review;
 classification is not a waiver for a page that routes a user workflow.
 
+For overloaded actor terms such as "self", "owner" and "visitor", reuse a small
+project-level boundary dictionary and add a feature-local behavior scope. Identify
+the resource and its actual relationship key first. Keep deployment, test-account
+partition, role, effective entitlement, feature audience and client/version as
+separate dimensions; do not turn their Cartesian product into new role enums.
+An authenticated visitor is still a visitor to someone else's resource, and an
+administrator's visibility does not establish ownership or edit permission. State
+which dimensions alter the action, which share a proven rule, and which remain
+unverified. Blank cells or the word "all" must not silently imply all combinations
+were tested. Choose meaningful allow/deny equivalence classes from actual branches;
+link policy authorities rather than copying a second permissions matrix into the
+dictionary. Diagrams can use readable actor labels linked to this local scope,
+without duplicating every producer/consumer node for every account combination.
+
 ## Two distinct completion claims
 
 Documentation is usable when it answers the dimensions honestly and exposes all

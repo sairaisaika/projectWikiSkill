@@ -68,6 +68,25 @@ contracts while sharing one renderer and writer. Record those intentional differ
 in the feature entry; evaluate the working view with its editor open, including
 space, scrolling and save/discard behavior, rather than only the closed-page image.
 
+When a user remembers a removed presentation, inspect the relevant Git history,
+deletion/change record and old implementation before rejecting the memory based on
+the current route. One currently mounted editor does not prove that a former overlay
+never existed. Distinguish the historical cause from the useful interaction need:
+a wide overlay may have originated in a CSS bug while still revealing a need for
+focused editing. Preserve one draft and writer when designing alternative views;
+explain whether "preview" means the current draft or the saved public projection.
+
+For release design, separate artifact deployment from feature exposure and account
+partitioning. A test account in production does not automatically run a staging
+binary. Inspect effective live configuration as well as defaults, manual paths and
+failure/absence branches: a documented test gate may be optional when staging is
+missing or a revision is explicitly selected. Mark proposed fail-closed rules as
+unimplemented until both UI and execution paths enforce them. If public settings
+are compiled into environment-specific bundles, bind both artifacts to reviewed
+inputs; do not claim byte-identical promotion or copy staging secrets to production.
+Source/build checks, staging acceptance, production observations and feature rollout
+are separate evidence. "Elegant" boundaries alone establish no measured speedup.
+
 For a server policy shared by Web and native clients, distinguish implementation,
 deployment, activation and acceptance. Include already-distributed clients and their
 actual update path in the consumer inventory: wiring the new App does not make an
