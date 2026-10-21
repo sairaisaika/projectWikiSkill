@@ -70,6 +70,7 @@ class PluginPackageTests(unittest.TestCase):
         out = self.package()
         src = self.home / 'source'
         shutil.copytree(ROOT / 'project-wiki', src / 'project-wiki', ignore=shutil.ignore_patterns('__pycache__'))
+        shutil.copyfile(ROOT / 'plugin.json', src / 'plugin.json')
         (src / 'project-wiki/SKILL.md').write_text('changed canonical instructions')
         report = doctor.inspect(out, src)
         self.assertTrue(report['package_valid'])
@@ -98,6 +99,35 @@ class PluginPackageTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'hidden'):
             builder.build(self.home / 'bad', src)
         self.assertFalse((self.home / 'bad').exists())
+
+    def test_host_observation_requires_real_matching_init_and_tool_result_events(self):
+        out=self.package()
+        version=json.loads((out/'plugin.json').read_text())['version']
+        lines=[{'type':'system','subtype':'init','plugins':[{'name':'project-wiki','version':version,'path':str(out.resolve()),'source':'project-wiki@inline'}]},
+               {'type':'assistant','message':{'content':[{'type':'tool_use','id':'s1','name':'Skill','input':{'skill':'project-wiki:project-wiki'}}]}},
+               {'type':'user','message':{'content':[{'type':'tool_result','tool_use_id':'s1','content':'Launching skill: project-wiki:project-wiki'}]}},
+               {'type':'result','is_error':False}]
+        log=self.home/'scoped.jsonl'
+        log.write_text('\n'.join(json.dumps(x) for x in lines),encoding='utf-8')
+        result=doctor.inspect_claude_transcript(log,out,'project-wiki',version)
+        self.assertTrue(result['package_identity_matched'])
+        self.assertTrue(result['skill_launch_result_observed'])
+        self.assertEqual(result['permanent_installation'],'not established')
+        self.assertFalse(doctor.inspect_claude_transcript(log,out,'project-wiki','999.0.0')['skill_launch_result_observed'])
+        lines[2]['message']['content'][0]['is_error']=True
+        log.write_text('\n'.join(json.dumps(x) for x in lines),encoding='utf-8')
+        self.assertFalse(doctor.inspect_claude_transcript(log,out,'project-wiki',version)['skill_launch_result_observed'])
+        lines[2]['message']['content'][0].pop('is_error')
+        lines[1]['type']='user'
+        log.write_text('\n'.join(json.dumps(x) for x in lines),encoding='utf-8')
+        self.assertFalse(doctor.inspect_claude_transcript(log,out,'project-wiki',version)['skill_launch_result_observed'])
+
+    def test_a_model_saying_it_loaded_is_not_a_host_loading_receipt(self):
+        log=self.home/'claim.jsonl'
+        log.write_text(json.dumps({'type':'result','is_error':False,'result':'I loaded the plugin and read everything.'}),encoding='utf-8')
+        result=doctor.inspect_claude_transcript(log,self.home/'absent','project-wiki','0.2.0')
+        self.assertFalse(result['package_identity_matched'])
+        self.assertFalse(result['skill_launch_result_observed'])
 
 
 if __name__ == '__main__':
