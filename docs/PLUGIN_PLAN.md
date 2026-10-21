@@ -1,8 +1,9 @@
-# Internal collaboration plugin, v0.1
+# Internal collaboration plugin, v0.2 candidate
 
-Status: packaging and doctor implemented locally; Linux Claude manifest validation
-  passed, as did one instructed Linux Claude skill invocation. Not permanently
-  installed, lifecycle-tested or published.
+Status: packaging, doctor and a native JSON workflow implemented. Linux Claude
+manifest validation and one instructed v0.1 skill invocation passed. The native
+workflow has a real Syleli recovery trial in progress. Not permanently installed,
+fully lifecycle-tested or publicly released.
 The skill and its Python helper remain the canonical method and tool sources.
 Generated packages are projections, never another editable wiki.
 
@@ -43,10 +44,10 @@ MCP is optional transport over the same tools, not a prerequisite or another cor
 
 | Slice | Inputs and producers | Consumer and result | Exit evidence | Current state |
 |---|---|---|---|---|
-| Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | local implementation, host validation pending |
-| Doctor | selected package and optional canonical source | component/version/source-closure report | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | local implementation, installation/host probes pending |
-| Start/delegate | user task, source pair, planned files, native task route | bounded context packet: actors, fields, producers/consumers, failures, checks and allowed edits | existing native indexes reused; all file satellites retained; missing/dirty/mismatched peers reported | pending |
-| Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | pending |
+| Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | v0.1 Linux validated; v0.2 validation pending |
+| Doctor | selected package and optional canonical source/transcript | component/version/source-closure and scoped CLI observations | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | implemented; real v0.1 transcript available, no permanent installation probe |
+| Start/delegate | user task, source pair, planned files, native task route | bounded context packet: actors, fields, producers/consumers, failures, checks and allowed edits | existing native indexes reused; all file satellites retained; missing/dirty/mismatched peers reported | real capture/start/delegate and worker show/read observed |
+| Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | real 16-file return reconciled; two omitted-review counterexamples rejected; viewport runtime gap retained |
 | Host lifecycle | actual supported events and reviewed hook definitions | scoped entry/recovery prompts | current Codex and Linux Claude runtime receipts; unsupported host gets explicit CLI fallback | pending |
 | Project pilot | independent theme and scratch-composer engineering tasks | project repair and reusable rule improvement | real worker output/source review, missed capability and wrong schema assumptions retained as negatives | in progress, no efficiency result |
 
@@ -87,6 +88,7 @@ plugin must help expose these distinctions rather than give them passing stamps.
 ```text
 python scripts/package_plugin.py --output <new-directory-outside-this-checkout>
 python scripts/plugin_doctor.py --package <built-directory> --source <canonical-checkout>
+python project-wiki/scripts/workflow.py --help
 ```
 
 The build does not modify host configuration or overwrite an existing output.
@@ -94,5 +96,19 @@ Interrupted builds have no complete receipt and fail inspection. Hash receipts
 detect accidental drift, not package authorship or an attacker replacing both the
 payload and its receipt. Versioned distribution and trusted origin remain separate.
 Doctor does not execute hook scripts, scan project secrets or claim host installation.
-It is also distributed in the built package. Lifecycle and native routing adapters
-are still pending; a valid archive alone does not satisfy this plan's exit criteria.
+It is also distributed in the built package. The native JSON task-card bridge now
+has capture/start/show/delegate/finish commands and explicit peer selection; see
+[workflow instructions](../project-wiki/references/collaboration-workflow.md).
+Its isolated scenarios are mechanism tests, not a host lifecycle or independent
+adoption result. The real recovery trial and host lifecycle hooks remain
+required; a valid archive alone does not satisfy this plan's exit criteria.
+
+The native Syleli trial retains 16 planned files, 14 satellite references, one
+omitted candidate and explicit Web/App revisions. The worker invoked `show` and
+read the host-persisted full output after its 2 KiB preview was clipped. This exposed
+an ergonomics failure: complete transport does not guarantee convenient reading.
+The CLI now defaults to an explicit index and offers exact feature/file expansion;
+all records remain available. This is a guided same-worker recovery, not measured
+speedup or blind adoption. The actual return now reconciles structurally and keeps
+viewport acceptance as a gap; it does not certify the worker's semantic claims.
+See the [workflow receipt](../evals/reports/native-workflow-20261021.md).

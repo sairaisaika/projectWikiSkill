@@ -15,6 +15,8 @@ These reports describe measured runs, not expected scores to copy into a new pro
 | [soulnest-scenario-acceptance.md](soulnest-scenario-acceptance.md) | Three human-supplied scenarios, field-level sharing and feature-local variant discovery | Familiar wiki-first/source self-review; no live posting or independent comprehension trial |
 | [soulnest-completeness-rule.md](soulnest-completeness-rule.md) | Universal feature contract, native gate enforcement and isolated omission/downgrade mutants | Three pilot entrances; 210 legacy pages unclassified; structural checks do not establish semantic or runtime completeness |
 | [delegated-wiki-recovery-20261019.md](delegated-wiki-recovery-20261019.md) | A real handoff exposed candidate/main source mismatch, invented references and a missing return route; an instructed retry recovered the feature/debt/relations | Same worker and familiar coordinator; residual wrong path remained; no independent adoption or speedup claim |
+| [internal-plugin-package-20261021.md](internal-plugin-package-20261021.md) | Historical v0.1 payload, manifest and instructed Linux host-load evidence | No permanent installation or lifecycle acceptance |
+| [native-workflow-20261021.md](native-workflow-20261021.md) | v0.2 native capture/delegation/return pilot, full satellite preservation, two real-scope omission counterexamples and host-output friction | Guided same-worker recovery; browser acceptance remains a gap, no efficiency claim |
 
 The current fixture also declares a four-surface task map. One expected-scope case
 checks all four surfaces/routes separately from ranking. Eight mutation/read-boundary
@@ -23,7 +25,7 @@ snapshot drift and internal edit-target metadata. A task outline works even afte
 fixture source files are removed; queries still require source to resolve positions.
 These results do not constitute a new independent adoption trial.
 
-Local validation of this skill: 66 helper/package test cases, 65 passing and one
+Earlier pre-plugin local validation: 66 helper/package test cases, 65 passing and one
 symlink case skipped because Windows disallows unprivileged symlink creation;
 12 fixture application contract tests pass. Skill Creator's frontmatter validator
 passes. Python 3.13 on Windows was executed locally; the GitHub workflow configures
