@@ -44,7 +44,7 @@ MCP is optional transport over the same tools, not a prerequisite or another cor
 
 | Slice | Inputs and producers | Consumer and result | Exit evidence | Current state |
 |---|---|---|---|---|
-| Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | v0.1 Linux validated; v0.2 validation pending |
+| Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | v0.1/v0.2 Linux validated; v0.2 packaged Skill and scoped workflow reads observed |
 | Doctor | selected package and optional canonical source/transcript | component/version/source-closure and scoped CLI observations | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | implemented; real v0.1 transcript available, no permanent installation probe |
 | Start/delegate | user task, source pair, planned files, native task route | bounded context packet: actors, fields, producers/consumers, failures, checks and allowed edits | existing native indexes reused; all file satellites retained; missing/dirty/mismatched peers reported | real capture/start/delegate and worker show/read observed |
 | Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | real 16-file return reconciled; two omitted-review counterexamples rejected; viewport runtime gap retained |
@@ -77,7 +77,8 @@ plugin must help expose these distinctions rather than give them passing stamps.
 - Actual package build and eight adversarial packaging/doctor cases passed locally;
   see [bounded receipt](../evals/reports/internal-plugin-package-20261021.md).
 - Linux Claude manifest validation and one real packaged-skill invocation passed;
-  native project task routing and the complete lifecycle remain unverified.
+  v0.2 also loaded its packaged Skill and read the native index/selected records.
+  Complete automatic host lifecycle behavior remains unverified.
 - Codex desktop installation/source discovery and current hook trust behavior.
 - Full start/delegate/finish/recovery cycle, runtime source closure and task latency.
 - Fresh agent comparison; the current coordinator's familiar self-review is not a

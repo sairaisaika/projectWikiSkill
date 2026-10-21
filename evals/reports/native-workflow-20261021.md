@@ -58,4 +58,16 @@ Full Python discovery ran 97 cases: Linux 97 passed; Windows 96 passed with the
 existing unprivileged-symlink test skipped. The separate v0.1 host transcript was
 also inspected by the new observer: exact package/version/path initialization,
 Skill call and matching successful tool result were observed. That historical
-receipt is not v0.2 runtime adoption. A new v0.2 host invocation is tracked separately.
+receipt is not v0.2 runtime adoption.
+
+A separate v0.2 invocation then finished in Linux Claude 2.1.280. Its actual init
+and matched Skill call/result identified the exact v0.2 package. Tool results show
+a successful default index read (4,860 characters) and successful selected feature
+plus impact reads (21,930 characters combined), without host-persisted clipping in
+those returned blocks. Those sizes describe this fixture, not a general budget
+guarantee. The worker correctly reported the historical packet as stale and exposed
+its old draft-loss statement rather than treating current R2 source as part of that
+snapshot. It listed both satellites for the selected ScratchPatch file and left
+semantic/source/browser acceptance unknown. This is an instructed read-only
+retrieval trial, not engineering implementation or a blind efficiency comparison.
+No permanent plugin installation or hook trust was configured.
