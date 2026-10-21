@@ -1,7 +1,8 @@
 # Internal collaboration plugin, v0.1
 
 Status: packaging and doctor implemented locally; Linux Claude manifest validation
-passed. Not installed, enabled, lifecycle-tested or published.
+  passed, as did one instructed Linux Claude skill invocation. Not permanently
+  installed, lifecycle-tested or published.
 The skill and its Python helper remain the canonical method and tool sources.
 Generated packages are projections, never another editable wiki.
 
@@ -74,8 +75,8 @@ plugin must help expose these distinctions rather than give them passing stamps.
 
 - Actual package build and eight adversarial packaging/doctor cases passed locally;
   see [bounded receipt](../evals/reports/internal-plugin-package-20261021.md).
-- Linux Claude manifest validation passed; real invocation of the packaged skill
-  is dispatched but not yet verified.
+- Linux Claude manifest validation and one real packaged-skill invocation passed;
+  native project task routing and the complete lifecycle remain unverified.
 - Codex desktop installation/source discovery and current hook trust behavior.
 - Full start/delegate/finish/recovery cycle, runtime source closure and task latency.
 - Fresh agent comparison; the current coordinator's familiar self-review is not a

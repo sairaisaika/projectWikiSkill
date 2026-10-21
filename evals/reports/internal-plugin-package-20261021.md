@@ -15,9 +15,14 @@ skill and CLI are unchanged. This is a familiar maintainer's test, not blind use
 - The same candidate was transferred privately to Linux. Its bundled doctor ran
   successfully. The installed official Claude CLI's `plugin validate` returned
   exit 0 and `Validation passed` for the generated Claude manifest.
-- A separate bounded, read-only `--plugin-dir` smoke invocation was dispatched.
-  Dispatch is not success; its terminal response/tool transcript must be inspected
-  before recording actual component discovery or skill invocation.
+- A separate bounded, read-only `--plugin-dir` smoke invocation completed. The
+  actual initialization transcript lists this candidate as `project-wiki` version
+  `0.1.0`, source `inline`. The assistant made a real `Skill` call naming
+  `project-wiki:project-wiki`; its tool result was `Launching skill`, and the final
+  result was non-error and identified the packaged skill directory. The response
+  correctly distinguished structural enforcement from semantic/runtime review.
+  This verifies one instructed component load, not permanent installation, native
+  project routing, lifecycle compliance, independent adoption or efficiency.
 
 No host configuration was changed, no hook installed or trusted, no MCP server
 created and no package publicly released. There is no lifecycle/efficiency or
