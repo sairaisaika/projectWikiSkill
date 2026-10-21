@@ -1,6 +1,7 @@
 # Internal collaboration plugin, v0.1
 
-Status: implementation started; not installed, enabled, host-tested or published.
+Status: packaging and doctor implemented locally; Linux Claude manifest validation
+passed. Not installed, enabled, lifecycle-tested or published.
 The skill and its Python helper remain the canonical method and tool sources.
 Generated packages are projections, never another editable wiki.
 
@@ -41,8 +42,8 @@ MCP is optional transport over the same tools, not a prerequisite or another cor
 
 | Slice | Inputs and producers | Consumer and result | Exit evidence | Current state |
 |---|---|---|---|---|
-| Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | started |
-| Doctor | selected plugin, project, explicit host | component/version/source-closure report | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | pending |
+| Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | local implementation, host validation pending |
+| Doctor | selected package and optional canonical source | component/version/source-closure report | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | local implementation, installation/host probes pending |
 | Start/delegate | user task, source pair, planned files, native task route | bounded context packet: actors, fields, producers/consumers, failures, checks and allowed edits | existing native indexes reused; all file satellites retained; missing/dirty/mismatched peers reported | pending |
 | Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | pending |
 | Host lifecycle | actual supported events and reviewed hook definitions | scoped entry/recovery prompts | current Codex and Linux Claude runtime receipts; unsupported host gets explicit CLI fallback | pending |
@@ -71,9 +72,26 @@ plugin must help expose these distinctions rather than give them passing stamps.
 
 ## Verification still required
 
-- Actual package build and adversarial packaging/doctor tests.
-- Linux Claude manifest validation and a real invocation of the packaged skill.
+- Actual package build and eight adversarial packaging/doctor cases passed locally;
+  see [bounded receipt](../evals/reports/internal-plugin-package-20261021.md).
+- Linux Claude manifest validation passed; real invocation of the packaged skill
+  is dispatched but not yet verified.
 - Codex desktop installation/source discovery and current hook trust behavior.
 - Full start/delegate/finish/recovery cycle, runtime source closure and task latency.
 - Fresh agent comparison; the current coordinator's familiar self-review is not a
   blind trial, independent adoption or proof of speedup.
+
+## Local candidate commands
+
+```text
+python scripts/package_plugin.py --output <new-directory-outside-this-checkout>
+python scripts/plugin_doctor.py --package <built-directory> --source <canonical-checkout>
+```
+
+The build does not modify host configuration or overwrite an existing output.
+Interrupted builds have no complete receipt and fail inspection. Hash receipts
+detect accidental drift, not package authorship or an attacker replacing both the
+payload and its receipt. Versioned distribution and trusted origin remain separate.
+Doctor does not execute hook scripts, scan project secrets or claim host installation.
+It is also distributed in the built package. Lifecycle and native routing adapters
+are still pending; a valid archive alone does not satisfy this plan's exit criteria.
