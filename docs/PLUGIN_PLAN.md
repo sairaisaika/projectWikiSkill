@@ -19,6 +19,12 @@ corrected shape while retaining a capability gap. This is separate from normal
 source adoption, official installed-cache refresh and automatic lifecycle support.
 See the [bounded native return receipt](../evals/reports/native-readonly-return-20261022.md).
 
+The later [paired implementation return](../evals/reports/native-implementation-return-c50-20261022.md)
+observed an actual source worker, coordinator async counterexamples/corrections,
+original-page return and post-commit reconciliation with gaps. This extends the
+read-only pilot; it does not establish automatic hooks, device acceptance or a
+measured reduction in effort. Payload stays0.2.4.
+
 ## Intended result
 
 A successor agent can locate a change, receive its boundaries, implement it and
@@ -59,9 +65,9 @@ MCP is optional transport over the same tools, not a prerequisite or another cor
 | Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | v0.1/v0.2 Linux validated; v0.2 packaged Skill and scoped workflow reads observed |
 | Doctor | selected package and optional canonical source/transcript | component/version/source-closure and scoped CLI observations | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | payload/skill/support-source inspection and real Claude transcript observation implemented; actual stale Codex cache detected and refreshed; official inventory remains separate |
 | Start/delegate | user task, source pair, planned files, native task route | bounded context packet: actors, fields, producers/consumers, failures, checks and allowed edits | existing native indexes reused; all file satellites retained; missing/dirty/mismatched peers reported | real capture/start/delegate and worker show/read observed |
-| Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | real 16-file return reconciled; two omitted-review counterexamples rejected; viewport runtime gap retained |
+| Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | real paired implementation return and earlier16-file pilot reconciled; omission/freshness refusals and remaining runtime capabilities retained |
 | Host lifecycle | actual supported events and reviewed hook definitions | scoped entry/recovery prompts | current Codex and Linux Claude runtime receipts; unsupported host gets explicit CLI fallback | pending |
-| Project pilot | independent theme and scratch-composer engineering tasks | project repair and reusable rule improvement | real worker output/source review, missed capability and wrong schema assumptions retained as negatives | in progress, no efficiency result |
+| Project pilot | independent theme and scratch-composer engineering tasks | project repair and reusable rule improvement | real worker output/source review, missed capability and wrong schema assumptions retained as negatives | bounded source implementation-through-return observed; product/device acceptance and efficiency unmeasured |
 
 ## Evidence layers
 
