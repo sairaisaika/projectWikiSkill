@@ -5,7 +5,8 @@ manifest validation and one instructed v0.1 skill invocation passed. The native
 workflow has a real Syleli recovery trial in progress. Automatic lifecycle behavior
 is not fully tested, and this is not publicly released. Codex CLI 0.160.0 installed v0.2.1
 through a private local marketplace; its inventory and cached payload were checked.
-Desktop fresh-session component discovery is still pending.
+Fresh Codex CLI component discovery and a packaged-tool fixture query passed;
+desktop GUI fresh-session component discovery is still pending.
 The skill and its Python helper remain the canonical method and tool sources.
 Generated packages are projections, never another editable wiki.
 
@@ -83,6 +84,9 @@ plugin must help expose these distinctions rather than give them passing stamps.
   Complete automatic host lifecycle behavior remains unverified.
 - Codex desktop fresh-session component discovery and current hook trust behavior.
   Official CLI installation/inventory and cached source identity passed separately.
+  A fresh read-only CLI session also read the installed Skill and ran its actual
+  fixture query; see [bounded host receipt](../evals/reports/codex-host-discovery-20261021.md).
+  Neither result is a desktop GUI, hook or real-project adoption result.
 - Full start/delegate/finish/recovery cycle, runtime source closure and task latency.
 - Fresh agent comparison; the current coordinator's familiar self-review is not a
   blind trial, independent adoption or proof of speedup.
