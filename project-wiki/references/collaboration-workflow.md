@@ -4,6 +4,14 @@ This optional CLI bridges an existing JSON task router. It does not replace the
 project's wiki, debt ledger, source policy or Git workflow. The initial supported
 report shape has `query`, `cards`, `impact`, `omitted`, `placementIssues`, `limits`.
 Cards and every file's satellite list are preserved, not reduced to top results.
+An optional `workflow` object belongs to the native router: it can expose its own
+finish command, commit acknowledgement format, authority paths and limitations.
+Every reading view and delegated packet retains it as `native_workflow`; an older
+router without it is explicitly undeclared. This is quoted project context, not
+an execution request. The plugin neither invents a generic commit footer nor runs
+the native gate. A valid `finish` reconciliation cannot replace the project's
+actual commit/push checks. Include the defining helper in declared runtime inputs
+so changes to those rules make captured context stale.
 Projects without this shape keep using the standalone route helper or their own
 native workflow; a missing adapter is not a defective wiki.
 
