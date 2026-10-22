@@ -127,6 +127,21 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn('not delivered', view['expansion']['reading_state'])
         self.assertEqual(view['capabilities'], ['title', 'tags', 'visibility'])
 
+    def test_native_workflow_reaches_index_exact_views_and_delegation_without_execution(self):
+        native = self.root / 'native.py'
+        native.write_text(NATIVE.replace("'placementIssues':[]", "'workflow':{'authority':'native.py','acknowledgement':{'format':'Reviewed: <page> (reason)'},'finish':{'argv':['never-run-native-finish']}}, 'placementIssues':[]"), encoding='utf-8')
+        packet = self.packet()
+        expected = packet['context']['native_report']['workflow']
+        for view, selected in [('index', None), ('feature', 'feature.md'), ('impact', 'src/editor.py'), ('all', None)]:
+            self.assertEqual(wf.task_view(packet, view, selected)['native_workflow'], expected)
+        child = wf.delegate(packet, 'child', 'worker', ['src/editor.py'])
+        self.assertEqual(wf.task_view(child, 'index')['native_workflow'], expected)
+        self.assertFalse((self.root / 'never-run-native-finish').exists())
+
+    def test_absent_native_workflow_is_explicitly_undeclared_not_generic_completion(self):
+        view = wf.task_view(self.packet(), 'index')
+        self.assertEqual(view['native_workflow'], {'status': 'not_declared', 'meaning': 'The native router did not provide its return contract; inspect its own gates before dispatch.'})
+
     def test_native_mutation_during_capture_is_detected(self):
         p = self.root / 'native.py'
         p.write_text(NATIVE + "\nPath('docs/wiki/consumer.md').write_text('changed during capture')\n",encoding='utf-8')

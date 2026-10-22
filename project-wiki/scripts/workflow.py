@@ -362,6 +362,12 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
             'acceptance': packet['acceptance'], 'native_context': packet['context']['native_report'],
             'return_requirements': packet['return_requirements'], 'limits': packet['limits']}
     native = packet['context']['native_report']
+    # Preserve the native project's own finish/acknowledgement vocabulary in every
+    # reading view. These are quoted requirements, never commands to execute here.
+    result['native_workflow'] = native.get('workflow', {
+        'status': 'not_declared',
+        'meaning': 'The native router did not provide its return contract; inspect its own gates before dispatch.',
+    })
     if view == 'index':
         result.pop('native_context')
         result['native_index'] = {
