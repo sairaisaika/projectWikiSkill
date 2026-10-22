@@ -79,6 +79,16 @@ device clock. It also correctly distinguished this documentation/source pair
 from the separate producer candidate; a commit's presence is not runtime delivery.
 These findings require source-owner follow-up, not automatic product certification.
 
+Following the actual assignment also corrected a coordinator misclassification:
+a `role === patient` consumer had been recorded as an account-role restriction.
+The source writer assigns that state from the current response's `viewer_role`,
+so a practitioner receiving care can correctly enter that patient-facing branch.
+Root withdrew the false feature/debt conclusion in the original project pages
+instead of implementing an unnecessary second role rule. Inspecting a predicate
+without tracing its writer/provenance was insufficient. This applies the existing
+shared-state provenance rule; it is not a new product regression or a measured
+success rate for all wiki readers.
+
 Root independently matched three planned source hashes,245 declared wiki/runtime
 input hashes and both checkout heads before/after. All seven page decisions and
 the original worker review were retained. Root first supplied the planned read
