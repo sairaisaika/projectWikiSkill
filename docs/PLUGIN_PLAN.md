@@ -142,7 +142,8 @@ finish/runtime closure and efficiency measurements remain open. The
 [bounded receipt](../evals/reports/live-collaboration-c22-20261022.md) preserves
 wrong-path, audience-policy and native generation gaps without adding global
 reading or hook requirements. This checkpoint does not change the plugin payload.
-# Read-only task packets: 0.2.3 candidate (2026-10-22)
+
+## Read-only task packets: 0.2.3 source adopted (2026-10-22)
 
 Live Syleli source-structure adoption trial exposed a scope mismatch: `start`
 required `--allow-file`, and its implementation required all captured source
@@ -152,12 +153,16 @@ after the rejection. The first capture also used the wrong lockfile name; the
 missing-input rejection worked, and the corrected capture uses package.json and
 pnpm-lock.yaml. Neither failure establishes an agent-use result.
 
-Candidate adds explicit read-only start/delegation/display/reconciliation, with
+The change adds explicit read-only start/delegation/display/reconciliation, with
 empty editing paths and unchanged legacy editing behavior. A nominal read-only
 return with wiki/source differences is not certified as unchanged. This is scoped
 workflow metadata, not filesystem enforcement or proof of no transient/ignored
 writes. Native extra impact fields remain intact. Version bump changes the actual
-bundled workflow/reference payload; host installation and a fresh actual use trial
-must be verified separately. Existing 0.2.2 hosts remain the installed baseline
-until that candidate is built/checked/adopted.
-
+bundled workflow/reference payload. PR5 normally merged to main4ea89e1 after both
+CI matrix runs passed. A fresh scoped Linux invocation used the candidate Skill
+and native per-file structures, then returned an empty repository diff; initial
+CLI/display/section-reading misses were preserved rather than called first-pass
+success. The [bounded report](../evals/reports/source-structure-readonly-adoption-c22-20261022.md)
+records native follow-up fixes and remaining acceptance. This docs checkpoint
+does not change the 0.2.3 payload. Permanent host updates/discovery, hooks and
+semantic/business acceptance still need their own evidence.
