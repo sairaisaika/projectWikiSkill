@@ -17,6 +17,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 | [delegated-wiki-recovery-20261019.md](delegated-wiki-recovery-20261019.md) | A real handoff exposed candidate/main source mismatch, invented references and a missing return route; an instructed retry recovered the feature/debt/relations | Same worker and familiar coordinator; residual wrong path remained; no independent adoption or speedup claim |
 | [internal-plugin-package-20261021.md](internal-plugin-package-20261021.md) | Historical v0.1 payload, manifest and instructed Linux host-load evidence | No permanent installation or lifecycle acceptance |
 | [native-workflow-20261021.md](native-workflow-20261021.md) | v0.2 native capture/delegation/return pilot, full satellite preservation, two real-scope omission counterexamples and host-output friction | Guided same-worker recovery; browser acceptance remains a gap, no efficiency claim |
+| [codex-host-discovery-20261021.md](codex-host-discovery-20261021.md) | Fresh Codex CLI discovery, installed Skill read and real packaged-tool query, plus a final-generation CI counterexample | Synthetic fixture; desktop GUI, hooks, Syleli workflow adoption and efficiency remain unverified |
 
 The current fixture also declares a four-surface task map. One expected-scope case
 checks all four surfaces/routes separately from ranking. Eight mutation/read-boundary
