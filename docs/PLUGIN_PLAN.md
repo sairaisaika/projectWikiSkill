@@ -166,3 +166,13 @@ success. The [bounded report](../evals/reports/source-structure-readonly-adoptio
 records native follow-up fixes and remaining acceptance. This docs checkpoint
 does not change the 0.2.3 payload. Permanent host updates/discovery, hooks and
 semantic/business acceptance still need their own evidence.
+
+## Native source changes and parent/child adoption (C23)
+
+The [ongoing guided case](../evals/reports/source-delta-and-child-adoption-c23-20261022.md)
+separates current source facts from baseline/current investigation, and a worker's
+return from coordinator integration and runtime verification. Two actual Linux
+Claude child dispatches are observed; completed review/adoption is still pending.
+Use the existing native task log for owner, actual stage and next action, not a
+parallel business ledger. This evaluation adds no payload, hook or runtime gate;
+v0.2.3 host/discovery and independent takeover acceptance remain separate.
