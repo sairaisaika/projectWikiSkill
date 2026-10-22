@@ -53,3 +53,8 @@ agent trial or an efficiency result.
 records corrected display-projection interpretations, a real two-role staging
 journey and a generated source-link closure failure. It is a bounded familiar-reader
 follow-up; it adds no global reading gate or independent efficiency claim.
+
+[Runtime handoff follow-up, 2026-10-22](runtime-handoff-20261022.md)
+records observed mission Read/ACK, a wrong-directory watcher and a self-matching
+wait loop. Native capture already owns its cwd; this is guided external runtime
+recovery, not a new controller, payload update or efficiency result.
