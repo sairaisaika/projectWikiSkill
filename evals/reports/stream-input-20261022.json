@@ -1,0 +1,36 @@
+{
+  "scope": "Sanitized operator receipt; private raw sessions retained by the coordinator. Synthetic read-only transport, not business or plugin acceptance.",
+  "direct_stream_trial": {
+    "same_process_and_session": true,
+    "followup_sent_after_initial_read_before_first_result": true,
+    "messages_sent": 2,
+    "matched_transport_acks": 2,
+    "actual_reads": 2,
+    "both_random_tokens_returned": true,
+    "natural_exit_code": 0,
+    "duration_seconds": 9.67,
+    "raw_sha256": "0d4d7bf68a488223d9c30269af9c009bf4582726d36d88f3c0bb806597fc8f47",
+    "correction": "Two tool-result user events were removed from preliminary ACK candidates; exact sent IDs determine final ACKs."
+  },
+  "private_linux_prototype": {
+    "executed_script_sha256": "fa5a884da8aa9417ba08a2a97991c6fe7229a48aee22c3ab9f13c6fa2319dbb6",
+    "mechanism_checks_passed": 5,
+    "real_trial_messages": 2,
+    "matched_transport_acks": 2,
+    "actual_reads": 2,
+    "successful_turn_results": 2,
+    "both_random_tokens_returned": true,
+    "explicit_eof_then_natural_exit_code": 0,
+    "duration_seconds": 8.74,
+    "observed_raw_sha256": "8d3df3a9e04de5bf84603d36a815590fab32d7afe4ff1233d18fee3fa7f2eca0",
+    "signals_sent_to_existing_engineering_lead": 0,
+    "adopted_by_existing_lead": false,
+    "installed_plugin_payload_changed": false
+  },
+  "limits": [
+    "Guided familiar-operator pilot; no blind evaluation or measured efficiency improvement.",
+    "Read paths and returned tokens prove the tiny trial, not semantic understanding, project integration or runtime business acceptance.",
+    "Same-user trusted private Linux prototype; no filesystem sandbox or distributed duplicate-session guarantee.",
+    "No automatic restart, provider fallback, quota management or release authority."
+  ]
+}
