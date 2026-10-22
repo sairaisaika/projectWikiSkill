@@ -172,7 +172,8 @@ semantic/business acceptance still need their own evidence.
 The [ongoing guided case](../evals/reports/source-delta-and-child-adoption-c23-20261022.md)
 separates current source facts from baseline/current investigation, and a worker's
 return from coordinator integration and runtime verification. Two actual Linux
-Claude child dispatches are observed; completed review/adoption is still pending.
+Claude child reviews and their source-level use are observed; root integration,
+exact CI and actual product acceptance are still pending.
 Use the existing native task log for owner, actual stage and next action, not a
 parallel business ledger. This evaluation adds no payload, hook or runtime gate;
 v0.2.3 host/discovery and independent takeover acceptance remain separate.
