@@ -1,12 +1,13 @@
-# Internal collaboration plugin, v0.2.1 candidate
+# Internal collaboration plugin, v0.2.3 payload
 
-Status: packaging, doctor and a native JSON workflow implemented. Linux Claude
-manifest validation and one instructed v0.1 skill invocation passed. The native
-workflow has a real Syleli recovery trial in progress. Automatic lifecycle behavior
-is not fully tested, and this is not publicly released. Codex CLI 0.160.0 installed v0.2.1
-through a private local marketplace; its inventory and cached payload were checked.
-Fresh Codex CLI component discovery and a packaged-tool fixture query passed;
-desktop GUI fresh-session component discovery is still pending.
+Status: packaging, doctor and a native JSON workflow including read-only task
+scope are implemented in the adopted 0.2.3 payload. Scoped Linux Claude Skill use
+and guided native recovery have separate receipts below. On 2026-10-22 a valid
+but stale Codex 0.2.2 cache was detected and updated through the official CLI to
+0.2.3; inventory, installed source closure and a fresh read-only CLI query were
+checked. See the [bounded refresh receipt](../evals/reports/codex-host-refresh-20261022.md).
+Automatic lifecycle behavior and desktop GUI fresh-session discovery remain
+unverified. This is not publicly released.
 The skill and its Python helper remain the canonical method and tool sources.
 Generated packages are projections, never another editable wiki.
 
@@ -48,7 +49,7 @@ MCP is optional transport over the same tools, not a prerequisite or another cor
 | Slice | Inputs and producers | Consumer and result | Exit evidence | Current state |
 |---|---|---|---|---|
 | Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | v0.1/v0.2 Linux validated; v0.2 packaged Skill and scoped workflow reads observed |
-| Doctor | selected package and optional canonical source/transcript | component/version/source-closure and scoped CLI observations | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | payload/skill/support-source inspection and real Claude transcript observation implemented; Codex inventory currently checked separately |
+| Doctor | selected package and optional canonical source/transcript | component/version/source-closure and scoped CLI observations | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | payload/skill/support-source inspection and real Claude transcript observation implemented; actual stale Codex cache detected and refreshed; official inventory remains separate |
 | Start/delegate | user task, source pair, planned files, native task route | bounded context packet: actors, fields, producers/consumers, failures, checks and allowed edits | existing native indexes reused; all file satellites retained; missing/dirty/mismatched peers reported | real capture/start/delegate and worker show/read observed |
 | Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | real 16-file return reconciled; two omitted-review counterexamples rejected; viewport runtime gap retained |
 | Host lifecycle | actual supported events and reviewed hook definitions | scoped entry/recovery prompts | current Codex and Linux Claude runtime receipts; unsupported host gets explicit CLI fallback | pending |
