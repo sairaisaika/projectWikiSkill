@@ -1,9 +1,11 @@
-# Internal collaboration plugin, v0.2 candidate
+# Internal collaboration plugin, v0.2.1 candidate
 
 Status: packaging, doctor and a native JSON workflow implemented. Linux Claude
 manifest validation and one instructed v0.1 skill invocation passed. The native
 workflow has a real Syleli recovery trial in progress. Not permanently installed,
-fully lifecycle-tested or publicly released.
+fully lifecycle-tested or publicly released. Codex CLI 0.160.0 installed v0.2.1
+through a private local marketplace; its inventory and cached payload were checked.
+Desktop fresh-session component discovery is still pending.
 The skill and its Python helper remain the canonical method and tool sources.
 Generated packages are projections, never another editable wiki.
 
@@ -45,7 +47,7 @@ MCP is optional transport over the same tools, not a prerequisite or another cor
 | Slice | Inputs and producers | Consumer and result | Exit evidence | Current state |
 |---|---|---|---|---|
 | Package | canonical skill, versioned identity, explicit payload policy | Codex/Claude package with the same skill bytes | payload hashes, self-contained links, rejection of symlink/unsafe outputs, real host manifest validation | v0.1/v0.2 Linux validated; v0.2 packaged Skill and scoped workflow reads observed |
-| Doctor | selected package and optional canonical source/transcript | component/version/source-closure and scoped CLI observations | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | implemented; real v0.1 transcript available, no permanent installation probe |
+| Doctor | selected package and optional canonical source/transcript | component/version/source-closure and scoped CLI observations | tampered/missing/extra files detected; installation, trust and runtime remain unknown unless actually inspected | payload/skill/support-source inspection and real Claude transcript observation implemented; Codex inventory currently checked separately |
 | Start/delegate | user task, source pair, planned files, native task route | bounded context packet: actors, fields, producers/consumers, failures, checks and allowed edits | existing native indexes reused; all file satellites retained; missing/dirty/mismatched peers reported | real capture/start/delegate and worker show/read observed |
 | Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | real 16-file return reconciled; two omitted-review counterexamples rejected; viewport runtime gap retained |
 | Host lifecycle | actual supported events and reviewed hook definitions | scoped entry/recovery prompts | current Codex and Linux Claude runtime receipts; unsupported host gets explicit CLI fallback | pending |
@@ -79,7 +81,8 @@ plugin must help expose these distinctions rather than give them passing stamps.
 - Linux Claude manifest validation and one real packaged-skill invocation passed;
   v0.2 also loaded its packaged Skill and read the native index/selected records.
   Complete automatic host lifecycle behavior remains unverified.
-- Codex desktop installation/source discovery and current hook trust behavior.
+- Codex desktop fresh-session component discovery and current hook trust behavior.
+  Official CLI installation/inventory and cached source identity passed separately.
 - Full start/delegate/finish/recovery cycle, runtime source closure and task latency.
 - Fresh agent comparison; the current coordinator's familiar self-review is not a
   blind trial, independent adoption or proof of speedup.

@@ -129,6 +129,21 @@ class PluginPackageTests(unittest.TestCase):
         self.assertFalse(result['package_identity_matched'])
         self.assertFalse(result['skill_launch_result_observed'])
 
+    def test_changed_support_tool_is_detected_even_when_skill_and_version_match(self):
+        out = self.package()
+        source = self.home / 'support-source'
+        shutil.copytree(ROOT / 'project-wiki', source / 'project-wiki', ignore=shutil.ignore_patterns('__pycache__'))
+        (source / 'scripts').mkdir()
+        for rel in ('plugin.json', 'LICENSE', 'scripts/plugin_doctor.py'):
+            shutil.copyfile(ROOT / rel, source / rel)
+        (source / 'scripts/plugin_doctor.py').write_text('different support implementation')
+        report = doctor.inspect(out, source)
+        self.assertTrue(report['package_valid'])
+        self.assertTrue(report['source_match'])
+        self.assertTrue(report['source_identity_match'])
+        self.assertFalse(report['source_support_match'])
+        self.assertEqual(report['source_support_mismatches'], ['scripts/plugin_doctor.py'])
+
 
 if __name__ == '__main__':
     unittest.main()
