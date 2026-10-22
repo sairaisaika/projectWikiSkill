@@ -2,8 +2,8 @@
 
 Status: packaging, doctor and a native JSON workflow implemented. Linux Claude
 manifest validation and one instructed v0.1 skill invocation passed. The native
-workflow has a real Syleli recovery trial in progress. Not permanently installed,
-fully lifecycle-tested or publicly released. Codex CLI 0.160.0 installed v0.2.1
+workflow has a real Syleli recovery trial in progress. Automatic lifecycle behavior
+is not fully tested, and this is not publicly released. Codex CLI 0.160.0 installed v0.2.1
 through a private local marketplace; its inventory and cached payload were checked.
 Desktop fresh-session component discovery is still pending.
 The skill and its Python helper remain the canonical method and tool sources.
