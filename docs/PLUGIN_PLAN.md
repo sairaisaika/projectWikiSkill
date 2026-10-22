@@ -1,4 +1,4 @@
-# Internal collaboration plugin, v0.2.4 payload
+# Internal collaboration plugin, adopted0.2.4 / candidate0.2.5
 
 Status: packaging, doctor and a native JSON workflow including read-only task
 scope are implemented in the adopted 0.2.3 payload. Scoped Linux Claude Skill use
@@ -24,6 +24,13 @@ observed an actual source worker, coordinator async counterexamples/corrections,
 original-page return and post-commit reconciliation with gaps. This extends the
 read-only pilot; it does not establish automatic hooks, device acceptance or a
 measured reduction in effort. Payload stays0.2.4.
+
+The [0.2.5 newline candidate](../evals/reports/package-newline-provenance-20261022.md)
+addresses an observed installed0.2.4 versus clean-checkout byte mismatch. Receipt
+schema2 makes canonical UTF-8/CRLF-to-LF source comparison explicit, preserves raw
+input hashes, keeps package-byte integrity strict and still reads legacy raw
+schema1. It has not been installed or globally adopted merely because its source
+or tests exist. Scoped0.2.4 workers remain pinned until their tasks end.
 
 ## Intended result
 

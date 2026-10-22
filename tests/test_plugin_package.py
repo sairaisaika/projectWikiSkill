@@ -41,7 +41,7 @@ class PluginPackageTests(unittest.TestCase):
             self.assertEqual(manifest['name'], 'project-wiki')
             self.assertEqual(manifest['skills'], './skills/')
             self.assertNotIn('hooks', manifest)
-        self.assertEqual((out / 'skills/project-wiki/SKILL.md').read_bytes(), (ROOT / 'project-wiki/SKILL.md').read_bytes())
+        self.assertEqual((out / 'skills/project-wiki/SKILL.md').read_bytes(), (ROOT / 'project-wiki/SKILL.md').read_bytes().replace(b'\r\n', b'\n'))
         for layer in ('installation', 'hook_execution', 'agent_use', 'semantic_review', 'business_acceptance'):
             self.assertEqual(report[layer], 'unverified')
 
