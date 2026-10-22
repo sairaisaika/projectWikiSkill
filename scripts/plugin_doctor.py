@@ -102,6 +102,20 @@ def inspect(package: Path, source: Path | None = None) -> dict:
                 mismatches.append('not_in_package:' + name)
             report['source_match'] = not mismatches
             report['source_mismatches'] = mismatches
+            support = receipt.get('canonical_support_files')
+            report['source_support_match'] = 'unverified legacy receipt'
+            if support is not None:
+                if not isinstance(support, dict) or set(support) != {'plugin.json', 'LICENSE', 'scripts/plugin_doctor.py'}:
+                    raise ValueError('Invalid canonical support input inventory')
+                support_mismatches = []
+                for name, expected_hash in support.items():
+                    path = source / name
+                    if path.is_symlink() or not path.resolve().is_relative_to(source):
+                        raise ValueError('Canonical support input escapes checkout')
+                    if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != expected_hash:
+                        support_mismatches.append(name)
+                report['source_support_match'] = not support_mismatches
+                report['source_support_mismatches'] = support_mismatches
             identity = json.loads((source / 'plugin.json').read_text(encoding='utf-8'))
             report['source_version'] = identity.get('version')
             report['source_identity_match'] = (identity.get('name') == receipt['name'] and identity.get('version') == receipt['version'])
@@ -128,7 +142,7 @@ def main() -> int:
             except (OSError, ValueError, KeyError, TypeError, AttributeError):
                 report['cli_observation'] = {'error': 'Scoped host transcript unavailable or invalid; use remains unverified'}
     print(json.dumps(report, ensure_ascii=True, indent=2))
-    return 0 if report['package_valid'] and report.get('source_match', True) and report.get('source_identity_match', True) else 1
+    return 0 if report['package_valid'] and report.get('source_match', True) and report.get('source_support_match') is not False and report.get('source_identity_match', True) else 1
 
 
 if __name__ == '__main__':

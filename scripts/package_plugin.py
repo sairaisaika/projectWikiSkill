@@ -55,9 +55,18 @@ def build(output: Path, source: Path = ROOT) -> dict:
         data = path.read_bytes()
         payload[target] = data
         source_hashes[path.relative_to(source).as_posix()] = digest(data)
+    support = ('plugin.json', 'LICENSE', 'scripts/plugin_doctor.py')
+    for name in support:
+        path = source / name
+        if path.is_symlink() or not path.resolve().is_relative_to(source):
+            raise ValueError('Canonical package support input escapes checkout')
+    support_bytes = {name: (source / name).read_bytes() for name in support}
+    if json.loads(support_bytes['plugin.json']) != identity:
+        raise ValueError('Canonical identity changed during build')
+    support_hashes = {name: digest(data) for name, data in support_bytes.items()}
     payload['plugin.json'] = json_bytes(identity)
-    payload['LICENSE'] = (source / 'LICENSE').read_bytes()
-    payload['scripts/plugin_doctor.py'] = (source / 'scripts/plugin_doctor.py').read_bytes()
+    payload['LICENSE'] = support_bytes['LICENSE']
+    payload['scripts/plugin_doctor.py'] = support_bytes['scripts/plugin_doctor.py']
     host_identity = {key: identity[key] for key in ('name', 'version', 'description', 'author', 'license')}
     payload['.claude-plugin/plugin.json'] = json_bytes({**host_identity, 'skills': './skills/'})
     payload['.codex-plugin/plugin.json'] = json_bytes({**host_identity, 'skills': './skills/'})
@@ -67,6 +76,7 @@ def build(output: Path, source: Path = ROOT) -> dict:
         'version': identity['version'],
         'files': {name: digest(data) for name, data in sorted(payload.items())},
         'canonical_skill_files': source_hashes,
+        'canonical_support_files': support_hashes,
         'limits': ['not installed or enabled', 'no hook configuration', 'no MCP server',
                    'hashes establish payload closure, not semantic correctness or host adoption'],
     }
@@ -78,7 +88,7 @@ def build(output: Path, source: Path = ROOT) -> dict:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
     # Do not label a moving canonical input as a coherent snapshot.
-    for name, expected in source_hashes.items():
+    for name, expected in {**source_hashes, **support_hashes}.items():
         if digest((source / name).read_bytes()) != expected:
             raise ValueError('Canonical skill changed during build; output is incomplete')
     (output / 'PACKAGE-SOURCES.json').write_bytes(json_bytes(receipt))

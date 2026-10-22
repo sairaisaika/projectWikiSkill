@@ -70,4 +70,29 @@ its old draft-loss statement rather than treating current R2 source as part of t
 snapshot. It listed both satellites for the selected ScratchPatch file and left
 semantic/source/browser acceptance unknown. This is an instructed read-only
 retrieval trial, not engineering implementation or a blind efficiency comparison.
-No permanent plugin installation or hook trust was configured.
+No permanent plugin installation or hook trust was configured during that Linux
+invocation.
+
+## Codex installation and source-support follow-up
+
+Codex CLI 0.160.0 accepted a private local marketplace and installed `project-wiki`
+v0.2.0; its actual inventory reported installed/enabled. This exposed another
+provenance boundary: skill-source equality does not cover changes to a bundled
+doctor itself. The v0.2.1 receipt therefore also hashes the canonical identity,
+license and doctor source, and rechecks them before finalizing a build. A new case
+changes only the support tool while leaving skill and version equal; the doctor
+reports that mismatch separately. Legacy receipts mark support closure unverified.
+
+Full v0.2.1 discovery: Linux 98 passed; Windows 97 passed and one existing symlink
+privilege skip. Its 22-file package passed bundled source/support inspection and
+official Linux Claude manifest validation. The private Codex catalog was advanced
+to v0.2.1 through the official `plugin add` command; inventory again reports
+installed/enabled, and inspecting the actual versioned cache matches canonical
+skill, support files and identity. The CLI inventory receipt is separate from the
+doctor's payload report: the doctor does not yet query Codex inventory itself.
+
+This changed the selected user's local plugin configuration, without enabling or
+trusting hooks, registering MCP, altering project instructions, or refreshing this
+already-running desktop conversation. Fresh desktop-session loading/use remains
+unverified. The v0.2.1 support patch has not had a second Claude Skill invocation;
+the actual Skill/native-view evidence above belongs to v0.2.0.
