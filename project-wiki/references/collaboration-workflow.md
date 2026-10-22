@@ -64,6 +64,22 @@ A stale display is explicitly historical; fresh dispatch requires recapture.
 Delegation cannot widen edit scope, and does not send messages or start an agent.
 Pass the resulting private packet through the project's authorized coordinator.
 
+For a review with no authorized repository edits, use `start --read-only` without
+`--allow-file`. The capture's planned files remain readable context; the packet's
+`allowed_files` is empty and every display includes `access: read_only`. Do not
+invent a dummy edit permission just to send an audit task. An editing parent may
+delegate a narrower `--read-only` child with no edit paths; a read-only parent can
+only delegate read-only children and cannot regain editing paths. Older packets
+without `access` retain their existing editing semantics.
+
+Access describes task scope, not a filesystem sandbox or a host permission grant.
+Use the host's real read-only tools/mode where available and independently inspect
+the return. A read-only reconciliation rejects observed repository differences,
+including wiki changes which an editing task may justify. It compares against the
+captured Git base, so an already dirty/recovered tree is conservatively rejected
+as an unchanged return; use a clean isolated base when that proof is required.
+It does not observe transient reverted writes, ignored files or external state.
+
 Capabilities come from the intended user result, not just existing implementation.
 For example, a compact editor and a full editor may share storage but expose
 different title/tag/media controls. Draft preservation across back/close/re-entry
@@ -105,6 +121,13 @@ Review shape (the paths and capabilities are project-specific):
   }
 }
 ```
+
+For an unchanged read-only return, the actual diff and final native `--files`
+list are empty. Use a normal native query for that final capture when an optional
+source-analysis flag requires explicit files; do not fabricate changed files to
+keep the flag enabled. Inspectable capability evidence and the handoff remain
+required. Native per-file extension data (such as deterministic source-structure
+facts) stays in exact impact views without becoming a semantic coverage claim.
 
 Unregistered functional files need routing repair; a reason does not establish
 semantic completeness. A page marked updated must have a real diff. No-update
