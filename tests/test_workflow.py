@@ -280,6 +280,56 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(result['actual_files'],['mobile/src/client.py'])
         self.assertIsNotNone(result['source_state']['file_hashes']['mobile/src/client.py'])
 
+    def test_equal_contract_bytes_do_not_allow_substituting_the_peer_checkout(self):
+        primary = self.home / 'client-main'
+        (primary / 'src').mkdir(parents=True)
+        (primary / 'src/client.py').write_text('contract = "stable"\n', encoding='utf-8')
+        git(primary, 'init')
+        git(primary, 'config', 'user.name', 'Fixture')
+        git(primary, 'config', 'user.email', 'fixture@example.invalid')
+        git(primary, 'add', 'src/client.py')
+        git(primary, 'commit', '-m', 'client baseline')
+        candidate = self.home / 'client-candidate'
+        git(self.home, 'clone', str(primary), str(candidate))
+        git(candidate, 'config', 'user.name', 'Fixture')
+        git(candidate, 'config', 'user.email', 'fixture@example.invalid')
+        (candidate / 'src/editor.py').write_text('personal_editor = True\n', encoding='utf-8')
+        git(candidate, 'add', 'src/editor.py')
+        git(candidate, 'commit', '-m', 'candidate-only consumer')
+        files = ['mobile/src/client.py']
+        before = self.capture(files=files, peers={'mobile': str(primary)})
+        after = self.capture(files=files, peers={'mobile': str(candidate)})
+        self.assertEqual(before['planned_source_hashes'], after['planned_source_hashes'])
+        self.assertNotEqual(before['peers']['mobile']['head'], after['peers']['mobile']['head'])
+        packet = wf.start(before, 'peer-binding', 'root', 'Inspect the selected client variant',
+                          [], ['scoped source findings'], ['title', 'tags', 'visibility'], read_only=True)
+        child = wf.delegate(packet, 'worker', 'old-scope-child', [], read_only=True)
+        refreshed = wf.start(after, 'new-variant', 'root', 'Inspect candidate consumer',
+                             [], ['candidate source findings'], ['title', 'tags', 'visibility'], read_only=True)
+        self.assertEqual(wf.task_view(child, 'index')['peers']['mobile']['head'], git(primary, 'rev-parse', 'HEAD'))
+        self.assertEqual(wf.task_view(refreshed, 'index')['peers']['mobile']['head'], git(candidate, 'rev-parse', 'HEAD'))
+        self.assertFalse((primary / 'src/editor.py').exists())
+        self.assertTrue((candidate / 'src/editor.py').exists())
+        with self.assertRaisesRegex(ValueError, 'peer checkouts differ'):
+            wf.finish(packet, after, self.review())
+
+    def test_actual_router_execution_witness_is_not_relabelled_as_worker_execution(self):
+        native = self.root / 'native.py'
+        native.write_text(NATIVE.replace("'placementIssues':[]", "'workflow':{'authority':'native.py',"
+            "'execution':{'executable':sys.executable,'python':sys.version.split()[0],"
+            "'scope':'this native-router invocation only'}}, 'placementIssues':[]"), encoding='utf-8')
+        packet = self.packet()
+        witness = packet['context']['native_report']['workflow']['execution']
+        self.assertEqual(Path(witness['executable']).resolve(), Path(sys.executable).resolve())
+        self.assertEqual(witness['python'], sys.version.split()[0])
+        for view, selected in [('index', None), ('feature', 'feature.md'), ('impact', 'src/editor.py'), ('all', None)]:
+            shown = wf.task_view(packet, view, selected)
+            self.assertEqual(shown['native_workflow']['execution'], witness)
+        child = wf.delegate(packet, 'worker', 'execution-child', ['src/editor.py'])
+        self.assertEqual(wf.task_view(child, 'index')['native_workflow']['execution'], witness)
+        self.assertEqual(child['dispatch'], 'not performed')
+        self.assertEqual(witness['scope'], 'this native-router invocation only')
+
     def readonly_packet(self):
         return wf.start(self.capture(),'review-1','reviewer','Choose a justified next investigation',[],
                         ['inspectable findings without repository changes'],['interpret source facts'],read_only=True)
