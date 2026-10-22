@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Package newline provenance](package-newline-provenance-20261022.md) | Actual valid0.2.4 cache had four newline-only source differences; schema2 candidate canonicalizes source text, preserves raw inputs and rejects tampered package bytes | Controlled fixtures plus one host observation; no new0.2.5 installation, hooks or runtime acceptance |
 | [Native implementation return](native-implementation-return-c50-20261022.md) | Real paired-repository implementation, coordinator async negatives/corrections, original wiki return and post-commit reconciliation retaining a capability gap | Familiar coordinator; source tests and direct packaged CLI use, no device/product acceptance, hook or speedup claim |
 | [Fresh native read-only return](native-readonly-return-20261022.md) | Actual delegated native review exposed source gaps and invalid return shape; optional unreviewed preparation used by the resumed worker, compatible finish and omission negatives checked | One fresh reviewer plus guided format recovery; no engineering implementation, automatic hooks, speedup or product acceptance |
 | [Codex installed-cache refresh](codex-host-refresh-20261022.md) | Valid old 0.2.2 cache detected; official update, 0.2.3 source closure and fresh read-only CLI component/query use observed | No desktop refresh, hooks, complete native read-only cycle, speedup or product acceptance |

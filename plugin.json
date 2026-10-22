@@ -1,8 +1,10 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "project-wiki",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Source-backed wiki routing, change review and agent handoffs.",
-  "author": { "name": "projectWikiSkill contributors" },
+  "author": {
+    "name": "projectWikiSkill contributors"
+  },
   "license": "MIT"
 }
