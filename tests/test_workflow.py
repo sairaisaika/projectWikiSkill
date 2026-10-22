@@ -354,6 +354,90 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(impact['native_context']['impact'][0]['structure'],
                          {'status':'available','namedFunctionBodies':34,'sha256':'fixture-content-hash'})
 
+    def test_review_template_leaves_readonly_capabilities_unreviewed(self):
+        packet = self.readonly_packet()
+        after = self.empty_capture()
+        before = git(self.root, 'status', '--porcelain')
+        prepared = wf.review_template(packet, after)
+        self.assertEqual(prepared['pages'], {})
+        self.assertEqual(set(prepared['capabilities']), set(packet['capabilities']))
+        self.assertEqual(prepared['capabilities']['interpret source facts'],
+                         {'status': 'unreviewed', 'reason': '', 'references': []})
+        result = wf.finish(packet, after, prepared)
+        self.assertFalse(result['structural_reconciliation'])
+        self.assertIn('required capability unreviewed: interpret source facts', result['issues'])
+        self.assertEqual(git(self.root, 'status', '--porcelain'), before)
+
+    def test_review_template_uses_actual_capture_satellites_and_new_unregistered_files(self):
+        native = self.root / 'native.py'
+        native.write_text(NATIVE.replace("'unregistered':False", "'unregistered':x=='src/new.py'"), encoding='utf-8')
+        packet = self.packet()
+        self.change()
+        (self.root / 'src/new.py').write_text('new_consumer = True\n', encoding='utf-8')
+        after = self.capture(files=['src/editor.py', 'src/new.py'])
+        prepared = wf.review_template(packet, after)
+        self.assertEqual(set(prepared['pages']), {'feature.md', 'secondary.md', 'consumer.md'})
+        self.assertTrue(all(row == {'status': 'unreviewed', 'reason': ''}
+                            for row in prepared['pages'].values()))
+        self.assertEqual(prepared['unregistered'], {'src/new.py': ''})
+        self.assertFalse(wf.finish(packet, after, prepared)['structural_reconciliation'])
+
+    def test_readonly_finish_rejects_list_shaped_review_even_without_changed_pages(self):
+        packet = self.readonly_packet()
+        after = self.empty_capture()
+        for field in ('pages', 'capabilities', 'unregistered'):
+            bad = self.readonly_review()
+            bad[field] = []
+            with self.subTest(field=field), self.assertRaisesRegex(ValueError, field + ' must be an object.*review-template'):
+                wf.finish(packet, after, bad)
+        bad = self.readonly_review()
+        bad['capabilities']['interpret source facts'] = 'I checked it'
+        with self.assertRaisesRegex(ValueError, 'entries must be objects'):
+            wf.finish(packet, after, bad)
+
+    def test_reference_location_prose_has_an_actionable_error(self):
+        packet = self.readonly_packet()
+        review = self.readonly_review()
+        review['capabilities']['interpret source facts']['references'] = ['src/editor.py:1 (title)']
+        with self.assertRaisesRegex(ValueError, 'put lines/symbols in reason.*review-template'):
+            wf.finish(packet, self.empty_capture(), review)
+
+    def test_template_rejects_stale_and_different_checkout_captures(self):
+        packet = self.readonly_packet()
+        after = self.empty_capture()
+        (self.root / 'docs/wiki/feature.md').write_text('changed after capture', encoding='utf-8')
+        with self.assertRaises(ValueError):
+            wf.review_template(packet, after)
+        after = self.empty_capture()
+        foreign = copy.deepcopy(packet)
+        foreign['root'] = str(self.home / 'another-checkout')
+        with self.assertRaisesRegex(ValueError, 'different checkouts'):
+            wf.review_template(foreign, after)
+
+    def test_every_reading_view_exposes_optional_return_preparation(self):
+        packet = self.readonly_packet()
+        for view, path in [('index', None), ('all', None), ('feature', 'feature.md'), ('impact', 'src/editor.py')]:
+            shown = wf.task_view(packet, view, path)
+            self.assertIn('review-template --packet', shown['review_preparation']['command'])
+            self.assertIn('unreviewed', shown['review_preparation']['meaning'])
+
+    def test_real_cli_template_writes_one_unreviewed_file_without_overwrite(self):
+        packet = self.home / 'task.json'
+        after = self.home / 'after.json'
+        out = self.home / 'review.json'
+        wf.write_new(packet, self.readonly_packet())
+        wf.write_new(after, self.empty_capture())
+        argv = [sys.executable, str(ROOT / 'project-wiki/scripts/workflow.py'), 'review-template',
+                '--packet', str(packet), '--after-capture', str(after), '--output', str(out)]
+        first = subprocess.run(argv, text=True, capture_output=True)
+        self.assertEqual(first.returncode, 0, first.stdout + first.stderr)
+        original = out.read_bytes()
+        generated = json.loads(original)
+        self.assertEqual(generated['capabilities']['interpret source facts']['status'], 'unreviewed')
+        second = subprocess.run(argv, text=True, capture_output=True)
+        self.assertNotEqual(second.returncode, 0)
+        self.assertEqual(out.read_bytes(), original)
+
     def test_real_cli_start_readonly_does_not_require_a_dummy_allowed_file(self):
         capture=self.home/'capture.json';wf.write_new(capture,self.capture())
         packet=self.home/'task.json'

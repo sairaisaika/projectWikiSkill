@@ -1,4 +1,4 @@
-# Internal collaboration plugin, v0.2.3 payload
+# Internal collaboration plugin, v0.2.4 payload
 
 Status: packaging, doctor and a native JSON workflow including read-only task
 scope are implemented in the adopted 0.2.3 payload. Scoped Linux Claude Skill use
@@ -10,6 +10,14 @@ Automatic lifecycle behavior and desktop GUI fresh-session discovery remain
 unverified. This is not publicly released.
 The skill and its Python helper remain the canonical method and tool sources.
 Generated packages are projections, never another editable wiki.
+
+The 2026-10-22 review checkpoint adds optional 0.2.4 return preparation from a
+fresh real native review. A useful human report originally failed the existing
+machine return contract. The candidate generated unreviewed fields, and the same
+reviewer actually used them in a guided retry; old/new helpers accepted the
+corrected shape while retaining a capability gap. This is separate from normal
+source adoption, official installed-cache refresh and automatic lifecycle support.
+See the [bounded native return receipt](../evals/reports/native-readonly-return-20261022.md).
 
 ## Intended result
 
