@@ -258,7 +258,43 @@ def changed_files(root: Path, base: str, baseline_untracked: list[str]) -> list[
     return sorted(set(names) | (set(untracked(root)) - set(baseline_untracked)))
 
 
+def review_template(packet: dict, after: dict) -> dict:
+    """Prepare fields, never attest that a page/capability has been reviewed."""
+    if packet.get('kind') != 'wiki-work-packet':
+        raise ValueError('Expected a wiki work packet')
+    access = packet.get('access', 'edit')
+    if access not in ('edit', 'read_only') or (access == 'read_only' and packet['allowed_files']):
+        raise ValueError('Invalid task access scope')
+    root = check_capture(after)
+    if str(root) != packet['root'] or after['wiki_root'] != packet['context']['wiki_root']:
+        raise ValueError('Start/end captures refer to different checkouts or native wikis')
+    report = after['native_report']
+    pages = sorted({page['path'] for row in report['impact'] for page in row['pages']})
+    return {
+        'kind': 'wiki-review-template', 'task_id': packet['task_id'],
+        'pages': {p: {'status': 'unreviewed', 'reason': ''} for p in pages},
+        'capabilities': {c: {'status': 'unreviewed', 'reason': '', 'references': []}
+                         for c in packet['capabilities']},
+        'unregistered': {r['file']: '' for r in report['impact'] if r['unregistered']},
+        'handoff': {'remaining': [], 'next_safe_action': ''},
+        'guidance': {
+            'pages': 'Object keyed by native page path. Use updated only for a real diff, or no_update with an inspected reason.',
+            'capabilities': 'Object keyed by exact task capability. Use source_verified, runtime_verified, gap or not_applicable and a nonempty reason.',
+            'references': 'Verified claims require reachable repository-relative file paths, optionally prefixed by a declared peer alias. Put line ranges and symbols in reason, not in the path.',
+            'limits': 'All placeholders are unreviewed. This does not establish correct final diff scope, source truth, agent use or product acceptance. Run finish after actual review.',
+        },
+    }
+
+
 def finish(packet: dict, after: dict, review: dict) -> dict:
+    # Reject a human-readable list even when an empty actual diff would otherwise
+    # skip it. A container shape is not a semantic review or a completion stamp.
+    for field in ('pages', 'capabilities', 'unregistered'):
+        if field in review and not isinstance(review[field], dict):
+            raise ValueError(f'Review {field} must be an object keyed by page/capability/file, not a list; use review-template to prepare unreviewed fields')
+    for field in ('pages', 'capabilities'):
+        if any(not isinstance(row, dict) for row in review.get(field, {}).values()):
+            raise ValueError(f'Review {field} entries must be objects; use review-template')
     if packet.get('kind') != 'wiki-work-packet':
         raise ValueError('Expected a wiki work packet')
     access = packet.get('access', 'edit')
@@ -326,6 +362,10 @@ def finish(packet: dict, after: dict, review: dict) -> dict:
                 problems.append('verified capability lacks inspectable references: ' + capability)
             else:
                 for ref in refs:
+                    try:
+                        relative(ref)
+                    except ValueError as error:
+                        raise ValueError('Capability references must be repository-relative file paths; put lines/symbols in reason, not the reference path; use review-template') from error
                     if not source_hash(root, ref, peer_end):
                         problems.append('capability reference unavailable: ' + ref)
     gaps = [name for name, row in review.get('capabilities', {}).items() if row.get('status') == 'gap']
@@ -389,6 +429,10 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
         'status': 'not_declared',
         'meaning': 'The native router did not provide its return contract; inspect its own gates before dispatch.',
     })
+    result['review_preparation'] = {
+        'command': 'review-template --packet <same-packet> --after-capture <current-final-capture> --output <new-review.json>',
+        'meaning': 'Optional unreviewed skeleton for the actual return. Does not fill decisions or replace the native finish/commit gate.',
+    }
     if view == 'index':
         result.pop('native_context')
         result['native_index'] = {
@@ -444,11 +488,14 @@ def main(argv=None) -> int:
     end.add_argument('--packet', type=Path, required=True)
     end.add_argument('--after-capture', type=Path, required=True)
     end.add_argument('--review', type=Path, required=True)
+    template = subs.add_parser('review-template', help='Prepare unreviewed return fields from a final native capture; never mark work verified')
+    template.add_argument('--packet', type=Path, required=True)
+    template.add_argument('--after-capture', type=Path, required=True)
     show = subs.add_parser('show')
     show.add_argument('--packet', type=Path, required=True)
     show.add_argument('--view', choices=('index', 'feature', 'impact', 'all'), default='index')
     show.add_argument('--path', help='Exact feature path or impacted file from the index')
-    for sub in (cap, sta, de, end):
+    for sub in (cap, sta, de, end, template):
         sub.add_argument('--output', type=Path, required=True, help='New private projection path; never overwrite')
     args = parser.parse_args(argv)
     try:
@@ -464,6 +511,8 @@ def main(argv=None) -> int:
                            args.acceptance, args.capability, read_only=args.read_only)
         elif args.command == 'delegate':
             result = delegate(read_json(args.packet), args.owner, args.task_id, args.allow_file, read_only=args.read_only)
+        elif args.command == 'review-template':
+            result = review_template(read_json(args.packet), read_json(args.after_capture))
         else:
             result = finish(read_json(args.packet), read_json(args.after_capture), read_json(args.review))
         write_new(args.output, result)
