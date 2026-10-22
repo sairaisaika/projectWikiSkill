@@ -129,3 +129,16 @@ optional workflow metadata in every plugin reading view. Old reports say undecla
 commands remain quoted, never executed. [Mechanism receipt](../evals/reports/native-return-context-20261022.md)
 separates passing transport/negative tests from fresh-agent adoption, CI and runtime
 acceptance still pending. This does not implement or claim trusted host hooks.
+
+
+## C22 live engineering checkpoint
+
+The internal v0.2.2 distribution has been normally adopted in this repository;
+its project-native adapter is still a separate candidate. A real Linux worker
+used the Skill, source-backed feature/impact records and an explicit scope
+amendment, then returned implementation. Independent visual review rejected part
+of the first result and a fresh packet was used for the resumed task. Full
+finish/runtime closure and efficiency measurements remain open. The
+[bounded receipt](../evals/reports/live-collaboration-c22-20261022.md) preserves
+wrong-path, audience-policy and native generation gaps without adding global
+reading or hook requirements. This checkpoint does not change the plugin payload.
