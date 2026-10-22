@@ -38,16 +38,29 @@ Distinguish prepared packet, actual dispatch, delivered context, worker return,
 coordinator review, source integration, runtime verification and release. A child
 can recommend a design; the parent must say what it adopted/rejected and why.
 
-## Real parent/child trial, still in progress
+## Real parent/child trial: source returned, adoption still pending
 
 Root launched a separate Linux Claude subscription task on the themePR92 candidate
 to implement one shared settings/companion system-light-dark control. It received
 the v0.2.3 task packet and native feature/satellite reading requirements. Two real
 Agent calls launched read-only product-interaction and visual-direction children;
 both prompts included task ID, packet/wiki context and no-write/no-recursion scope.
-This proves dispatch, not completed review. The parent is implementing and
-maintaining original wiki pages; root has inspected initial component screenshots.
-Child completion/use and parent integration still require actual return evidence.
+Initial launch records proved dispatch only. After the parent stopped with a
+successful terminal result, root independently parsed the two bounded child
+transcripts:14 and11 tool calls respectively (Read/Grep/Bash), original wiki/source
+reads and substantive final design reviews were present. The parent receipt names
+adopted/rejected recommendations and reasons; the source contains the selected
+shared control and save-channel design. Root inspected actual component screenshots
+and archived all20 changed/new source/docs files before integration. This is source
+and guided adoption evidence, not a blind comparison or product/runtime acceptance.
+
+Root then used the new native comparator on this actual returned work: the save
+coordinator grew81→169 lines and6→15 named bodies, while Settings shrank703→657
+and the pet shell grew522→531. Source inspection traced the growth to a shared
+account save channel and removal of the settings-only twin, rather than assuming
+growth itself was a defect. The new48-line hook and138-line control remained
+explicit additions. Native root integration, exact CI and staged account flow are
+still pending. A successful child report or parent process does not adopt them.
 
 No generic workflow code or plugin payload changed for this report. The existing
 delegate command still creates context but does not launch agents, grant tool
