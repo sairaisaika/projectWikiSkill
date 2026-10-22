@@ -12,7 +12,7 @@ class PackageNewlineTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.home = Path(self.tmp.name)
+        self.home = Path(self.tmp.name).resolve()
 
     def source(self, name, crlf=False):
         root = self.home / name
@@ -80,7 +80,7 @@ class PackageNewlineTests(unittest.TestCase):
         src = self.source('src'); out = self.home/'package'; original = Path.write_bytes; changed = []
         def write(path, data):
             result = original(path, data)
-            if path == out/'skills/project-wiki/SKILL.md' and not changed:
+            if path.resolve() == (out/'skills/project-wiki/SKILL.md').resolve() and not changed:
                 original(src/'project-wiki/SKILL.md', (src/'project-wiki/SKILL.md').read_bytes().replace(b'\n', b'\r\n'))
                 changed.append(True)
             return result
