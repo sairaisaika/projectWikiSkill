@@ -165,6 +165,14 @@ read-only evaluation is authorized and available, give a fresh worker only the s
 task and raw fixture, without the expected answer. Label evaluator familiarity.
 Do not require delegation to complete ordinary maintenance.
 
+For revision-bound native task packets, constrained delegation and final-diff
+reconciliation, use [the collaboration workflow](references/collaboration-workflow.md).
+It reuses an existing native JSON task route without migrating its feature facts.
+Declare the user-visible capabilities separately: sharing an endpoint or even a
+component does not prove that every editing field, draft transition or client is
+connected. Keep omissions, gaps and runtime evidence distinct. A generated packet
+does not establish dispatch, reading, semantic correctness or completion.
+
 Keep secrets and host-private implementation details out of public artifacts.
 The skill authorizes no publication, installation, external messaging, or runtime
 operation beyond the user's request. Report concrete artifacts, checks, remaining
