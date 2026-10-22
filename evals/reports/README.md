@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Codex installed-cache refresh](codex-host-refresh-20261022.md) | Valid old 0.2.2 cache detected; official update, 0.2.3 source closure and fresh read-only CLI component/query use observed | No desktop refresh, hooks, complete native read-only cycle, speedup or product acceptance |
 | fixture-structure.json | Seven schema-2 routes resolve; structural average 98.86, minimum 92; six view kinds and optional engineering metrics | A missing TS test deliberately loses points; field completeness is not semantic truth |
 | fixture-routing.json | 20/20 known questions top-1/top-2; 4/4 unknown controls rejected | Author-curated synthetic self-test, not independent adoption |
 | forward-trial.md | One fresh evaluator drafted a six-category plan wiki-first with no exploratory search, then checked cited source | One synthetic trial before corrections; no speedup baseline |
