@@ -97,6 +97,17 @@ file list or old ranking output as the final scope.
 python <skill>/scripts/workflow.py finish --packet <task.json> --after-capture <actual-capture.json> --review <review.json> --output <new-reconciliation.json>
 ```
 
+For a new worker, `review-template --packet <task.json> --after-capture
+<actual-capture.json> --output <new-review.json>` prepares the exact capability
+keys, actual file satellites and unregistered paths. Fill the generated review
+before passing it to `finish`: every status starts `unreviewed`, reasons are
+empty, and no decisions or capability evidence are inferred. An untouched
+template fails reconciliation. It is optional formatting help, not another gate.
+`pages`, `capabilities` and `unregistered` are keyed objects, not lists. Verified
+`references` are reachable repository-relative file paths (with a declared peer
+alias when needed); put line ranges, symbols and prose in `reason`. Keep richer
+human findings separately rather than substituting them for these fields.
+
 Review shape (the paths and capabilities are project-specific):
 
 ```json
