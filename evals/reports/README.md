@@ -58,3 +58,9 @@ follow-up; it adds no global reading gate or independent efficiency claim.
 records observed mission Read/ACK, a wrong-directory watcher and a self-matching
 wait loop. Native capture already owns its cwd; this is guided external runtime
 recovery, not a new controller, payload update or efficiency result.
+
+[Native consumer and scoped review follow-up, 2026-10-22](native-appearance-adoption-c49-20261022.md)
+records real0.2.4 capture/start/read-only delegation, source/consumer inspection,
+three independently found and reproduced counterexamples, and a reconciled clean
+return retaining a capability gap. Runtime-executor/test-manifest failures and
+pending device/rollout acceptance remain separate; no payload or hook change.

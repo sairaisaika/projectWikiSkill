@@ -186,3 +186,15 @@ exact CI and actual product acceptance are still pending.
 Use the existing native task log for owner, actual stage and next action, not a
 parallel business ledger. This evaluation adds no payload, hook or runtime gate;
 v0.2.3 host/discovery and independent takeover acceptance remain separate.
+
+## Native consumer source-review exercise (C49)
+
+The existing0.2.4 workflow was used with a clean coupled snapshot for a bounded
+independent review of an actual native consumer, not merely a DTO. Observed index,
+feature/impact expansion, source-level findings and a normal clean return led to
+three reproduced corrections. Finish preserved a capability gap rather than
+turning its own success into feature acceptance. The existing doctor validated
+the package and one inline Skill launch while leaving global installation/hooks
+and business acceptance unverified. The [bounded report](../evals/reports/native-appearance-adoption-c49-20261022.md)
+retains executor/test-manifest counterexamples and actual device limits. This is
+a docs/evaluation update only: payload0.2.4 and host configuration are unchanged.
