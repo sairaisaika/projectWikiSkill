@@ -87,3 +87,9 @@ contract; raw schema1 and tampered package negatives remain strict.
 The frozen first candidate and original findings remain available privately.
 A corrected candidate still requires fresh exact CI, normal adoption and explicit
 host validation/update. It is not the installed0.2.4 package.
+
+The first exact CI rejected two Windows mutation tests: their injection matched
+the unresolved temporary path against the builder's resolved output path, so the
+intended mutation did not occur. Compare resolved fixture paths and retain the
+explicit assertion that injection happened. Preserve the failed runs; this test
+harness correction does not relax the builder's rejection of changing inputs.

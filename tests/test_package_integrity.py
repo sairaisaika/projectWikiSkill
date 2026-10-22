@@ -66,7 +66,7 @@ class PackageIntegrityTests(newline_tests.PackageNewlineTests):
         src=self.source('src');out=self.home/'package';original=Path.write_bytes;changed=[]
         def write(path,data):
             result=original(path,data)
-            if path==out/'skills/project-wiki/SKILL.md' and not changed:
+            if path.resolve()==(out/'skills/project-wiki/SKILL.md').resolve() and not changed:
                 original(src/'project-wiki/references/added.md',b'new source added during build\n');changed.append(True)
             return result
         with patch.object(Path,'write_bytes',write):
