@@ -88,6 +88,12 @@ The frozen first candidate and original findings remain available privately.
 A corrected candidate still requires fresh exact CI, normal adoption and explicit
 host validation/update. It is not the installed0.2.4 package.
 
+That sentence is the pre-adoption checkpoint. The later
+[bounded0.2.5 host receipt](host-adoption-v025-20261022.md) records normal source
+adoption, official selected-host update, actual cache/source comparison and fresh
+CLI use. It preserves the original failures and still does not establish global
+desktop lifecycle, hooks, business behavior or improved task efficiency.
+
 The first exact CI rejected two Windows mutation tests: their injection matched
 the unresolved temporary path against the builder's resolved output path, so the
 intended mutation did not occur. Compare resolved fixture paths and retain the
