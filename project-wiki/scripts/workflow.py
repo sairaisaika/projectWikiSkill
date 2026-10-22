@@ -206,35 +206,47 @@ def check_capture(value: dict, *, require_current: bool = True) -> Path:
 
 
 def start(value: dict, task_id: str, owner: str, outcome: str, allowed: list[str],
-          acceptance: list[str], capabilities: list[str]) -> dict:
+          acceptance: list[str], capabilities: list[str], *, read_only: bool = False) -> dict:
     root = check_capture(value)
     if not all(isinstance(x, str) and x.strip() for x in [task_id, owner, outcome, *acceptance, *capabilities]):
         raise ValueError('Task identity, outcome and nonempty acceptance/capability entries are required')
     if not acceptance or not capabilities:
         raise ValueError('Explicit user-visible capabilities and exit evidence are required')
     allowed = sorted(set(relative(f) for f in allowed))
-    if not set(value['files']).issubset(allowed):
+    if read_only and allowed:
+        raise ValueError('Read-only tasks cannot grant editing paths')
+    if not read_only and not allowed:
+        raise ValueError('Editing tasks require explicit allowed files; use --read-only for a review')
+    if not read_only and not set(value['files']).issubset(allowed):
         raise ValueError('Allowed files cannot omit the planned files')
     return {'schema_version': 1, 'kind': 'wiki-work-packet', 'task_id': task_id, 'owner': owner,
             'root': str(root), 'base_sha': value['base']['head'], 'outcome': outcome,
+            'access': 'read_only' if read_only else 'edit',
             'allowed_files': allowed, 'acceptance': acceptance, 'capabilities': capabilities,
             'context': value, 'dispatch': 'not performed',
-            'return_requirements': ['actual diff and exact source revision',
+            'return_requirements': [('read-only: no repository edits; findings requiring changes go to a separately scoped task'
+                                     if read_only else 'actual diff and exact source revision'),
                                     'capability evidence or explicit gaps',
                                     'each satellite updated or justified in the native wiki',
                                     'verification, remaining work and next safe action'],
-            'limits': 'A created or sent packet does not establish that a worker read or applied it.'}
+            'limits': 'A created or sent packet does not establish that a worker read or applied it. Access is task scope, not a filesystem sandbox.'}
 
 
-def delegate(packet: dict, owner: str, task_id: str, allowed: list[str]) -> dict:
+def delegate(packet: dict, owner: str, task_id: str, allowed: list[str], *, read_only: bool = False) -> dict:
     if packet.get('kind') != 'wiki-work-packet':
         raise ValueError('Expected a wiki work packet')
     check_capture(packet['context'])
     allowed = sorted(set(relative(f) for f in allowed))
-    if not owner.strip() or not task_id.strip() or not allowed or not set(allowed).issubset(packet['allowed_files']):
+    access = packet.get('access', 'edit')
+    if access not in ('edit', 'read_only') or (access == 'read_only' and packet['allowed_files']):
+        raise ValueError('Invalid task access scope')
+    read_only = read_only or access == 'read_only'
+    if read_only and allowed:
+        raise ValueError('Read-only delegation cannot widen editing scope')
+    if not owner.strip() or not task_id.strip() or (not read_only and not allowed) or not set(allowed).issubset(packet['allowed_files']):
         raise ValueError('Delegation must name an owner/task and cannot widen the editing scope')
     return {**packet, 'task_id': task_id, 'owner': owner, 'parent_task_id': packet['task_id'],
-            'allowed_files': allowed, 'dispatch': 'not performed'}
+            'access': 'read_only' if read_only else 'edit', 'allowed_files': allowed, 'dispatch': 'not performed'}
 
 
 def changed_files(root: Path, base: str, baseline_untracked: list[str]) -> list[str]:
@@ -249,6 +261,9 @@ def changed_files(root: Path, base: str, baseline_untracked: list[str]) -> list[
 def finish(packet: dict, after: dict, review: dict) -> dict:
     if packet.get('kind') != 'wiki-work-packet':
         raise ValueError('Expected a wiki work packet')
+    access = packet.get('access', 'edit')
+    if access not in ('edit', 'read_only') or (access == 'read_only' and packet['allowed_files']):
+        raise ValueError('Invalid task access scope')
     root = check_capture(after)
     if str(root) != packet['root'] or after['wiki_root'] != packet['context']['wiki_root']:
         raise ValueError('Start/end captures refer to different checkouts or native wikis')
@@ -276,6 +291,8 @@ def finish(packet: dict, after: dict, review: dict) -> dict:
             actual.append(name)
     actual = sorted(set(actual))
     problems = []
+    if access == 'read_only' and actual:
+        problems.append('read-only task has repository differences relative to the captured Git base; not accepted as unchanged')
     if missing_peers:
         problems.append('peer sources unavailable; not an empty diff: ' + ', '.join(missing_peers))
     if set(after['files']) != set(actual):
@@ -329,6 +346,7 @@ def finish(packet: dict, after: dict, review: dict) -> dict:
                     'file_hashes': {f: source_hash(root, f, peer_end) for f in actual},
                     'peers': peer_end}
     return {'schema_version': 1, 'kind': 'wiki-work-reconciliation', 'task_id': packet['task_id'],
+            'access': access,
             'base_sha': packet['base_sha'], 'head_sha': head(root), 'actual_files': actual,
             'structural_reconciliation': not problems, 'issues': problems, 'capability_gaps': gaps,
             'review': review, 'native_omitted_candidates': report['omitted'],
@@ -350,12 +368,15 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
     """Expose full native records or an explicit index; never silently clip them."""
     if packet.get('kind') != 'wiki-work-packet':
         raise ValueError('Expected a wiki work packet')
+    if packet.get('access', 'edit') not in ('edit', 'read_only') or (packet.get('access') == 'read_only' and packet['allowed_files']):
+        raise ValueError('Invalid task access scope')
     freshness = 'current for declared inputs'
     try:
         check_capture(packet['context'])
     except (OSError, ValueError, KeyError, subprocess.SubprocessError):
         freshness = 'stale or unavailable; this is a historical projection, recapture before new work'
     result = {'task_id': packet['task_id'], 'owner': packet['owner'], 'root': packet['root'],
+            'access': packet.get('access', 'edit'),
             'base_sha': packet['base_sha'], 'peers': packet['context'].get('peers', {}),
             'freshness': freshness, 'outcome': packet['outcome'],
             'allowed_files': packet['allowed_files'], 'capabilities': packet['capabilities'],
@@ -417,7 +438,8 @@ def main(argv=None) -> int:
     for sub in (sta, de):
         sub.add_argument('--task-id', required=True)
         sub.add_argument('--owner', required=True)
-        sub.add_argument('--allow-file', action='append', required=True)
+        sub.add_argument('--allow-file', action='append', default=[])
+        sub.add_argument('--read-only', action='store_true', help='Review only: no editing paths; metadata is not a sandbox')
     end = subs.add_parser('finish')
     end.add_argument('--packet', type=Path, required=True)
     end.add_argument('--after-capture', type=Path, required=True)
@@ -439,9 +461,9 @@ def main(argv=None) -> int:
                              peers=dict(entry.split('=', 1) for entry in args.peer))
         elif args.command == 'start':
             result = start(read_json(args.capture), args.task_id, args.owner, args.outcome, args.allow_file,
-                           args.acceptance, args.capability)
+                           args.acceptance, args.capability, read_only=args.read_only)
         elif args.command == 'delegate':
-            result = delegate(read_json(args.packet), args.owner, args.task_id, args.allow_file)
+            result = delegate(read_json(args.packet), args.owner, args.task_id, args.allow_file, read_only=args.read_only)
         else:
             result = finish(read_json(args.packet), read_json(args.after_capture), read_json(args.review))
         write_new(args.output, result)

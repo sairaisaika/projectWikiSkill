@@ -280,6 +280,90 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(result['actual_files'],['mobile/src/client.py'])
         self.assertIsNotNone(result['source_state']['file_hashes']['mobile/src/client.py'])
 
+    def readonly_packet(self):
+        return wf.start(self.capture(),'review-1','reviewer','Choose a justified next investigation',[],
+                        ['inspectable findings without repository changes'],['interpret source facts'],read_only=True)
+
+    def empty_capture(self):
+        return wf.capture(self.root,'editor task',[],[sys.executable,'native.py'],['native.py'],allow_execution=True)
+
+    def readonly_review(self):
+        return {'pages':{},'capabilities':{'interpret source facts':{
+            'status':'source_verified','reason':'inspected the captured source and limits',
+            'references':['src/editor.py']}},
+            'handoff':{'remaining':['semantic/runtime acceptance'],'next_safe_action':'Dispatch a separately scoped engineering task'}}
+
+    def test_readonly_keeps_read_context_without_inventing_edit_permissions(self):
+        packet=self.readonly_packet()
+        self.assertEqual(packet['allowed_files'],[])
+        self.assertEqual(packet['context']['files'],['src/editor.py'])
+        for view,path in [('index',None),('all',None),('feature','feature.md'),('impact','src/editor.py')]:
+            self.assertEqual(wf.task_view(packet,view,path)['access'],'read_only')
+        self.assertIn('not a filesystem sandbox',packet['limits'])
+
+    def test_readonly_start_rejects_edit_paths_and_edit_start_still_requires_scope(self):
+        captured=self.capture()
+        with self.assertRaisesRegex(ValueError,'cannot grant editing'):
+            wf.start(captured,'t','o','read',['src/editor.py'],['evidence'],['interpret'],read_only=True)
+        with self.assertRaisesRegex(ValueError,'Editing tasks require'):
+            wf.start(captured,'t','o','edit',[],['evidence'],['interpret'])
+
+    def test_readonly_delegation_inherits_no_edits_and_edit_parent_can_narrow_to_review(self):
+        parent=self.readonly_packet()
+        child=wf.delegate(parent,'child','child-1',[])
+        self.assertEqual(child['access'],'read_only')
+        self.assertEqual(child['allowed_files'],[])
+        with self.assertRaisesRegex(ValueError,'cannot widen'):
+            wf.delegate(parent,'child','child-2',['src/editor.py'])
+        narrowed=wf.delegate(self.packet(),'child','review-child',[],read_only=True)
+        self.assertEqual(narrowed['access'],'read_only')
+        self.assertEqual(narrowed['allowed_files'],[])
+
+    def test_readonly_return_without_changes_preserves_limits_and_requires_evidence(self):
+        packet=self.readonly_packet()
+        result=wf.finish(packet,self.empty_capture(),self.readonly_review())
+        self.assertTrue(result['structural_reconciliation'],result['issues'])
+        self.assertEqual(result['actual_files'],[])
+        self.assertEqual(result['access'],'read_only')
+        self.assertEqual(result['runtime_acceptance'],'not inferred')
+        bad=self.readonly_review();bad['capabilities']={}
+        self.assertFalse(wf.finish(packet,self.empty_capture(),bad)['structural_reconciliation'])
+
+    def test_readonly_return_rejects_implicit_wiki_write_even_when_updated_is_acknowledged(self):
+        packet=self.readonly_packet()
+        (self.root/'docs/wiki/consumer.md').write_text('changed by a nominal reviewer',encoding='utf-8')
+        review=self.readonly_review()
+        review['pages']={p+'.md':{'status':'updated' if p=='consumer' else 'no_update','reason':'reviewed'}
+                         for p in ['feature','secondary','consumer']}
+        result=wf.finish(packet,self.capture(files=['docs/wiki/consumer.md']),review)
+        self.assertFalse(result['structural_reconciliation'])
+        self.assertTrue(any('read-only task has repository differences' in p for p in result['issues']))
+
+    def test_readonly_existing_dirty_tree_is_conservatively_not_certified_as_unchanged(self):
+        self.change()
+        packet=self.readonly_packet()
+        result=wf.finish(packet,self.capture(),self.readonly_review())
+        self.assertFalse(result['structural_reconciliation'])
+        self.assertIn('src/editor.py',result['actual_files'])
+
+    def test_native_extra_structure_facts_survive_capture_and_exact_impact_view(self):
+        p=self.root/'native.py'
+        p.write_text(NATIVE.replace("'unregistered':False}","'unregistered':False,'structure':{'status':'available','namedFunctionBodies':34,'sha256':'fixture-content-hash'}}"),encoding='utf-8')
+        packet=self.readonly_packet()
+        impact=wf.task_view(packet,'impact','src/editor.py')
+        self.assertEqual(impact['native_context']['impact'][0]['structure'],
+                         {'status':'available','namedFunctionBodies':34,'sha256':'fixture-content-hash'})
+
+    def test_real_cli_start_readonly_does_not_require_a_dummy_allowed_file(self):
+        capture=self.home/'capture.json';wf.write_new(capture,self.capture())
+        packet=self.home/'task.json'
+        completed=subprocess.run([sys.executable,str(ROOT/'project-wiki/scripts/workflow.py'),'start',
+            '--capture',str(capture),'--task-id','review-cli','--owner','reviewer','--outcome','interpret source',
+            '--acceptance','inspectable result','--capability','interpret facts','--read-only','--output',str(packet)],
+            text=True,capture_output=True)
+        self.assertEqual(completed.returncode,0,completed.stdout+completed.stderr)
+        self.assertEqual(json.loads(packet.read_text(encoding='utf-8'))['allowed_files'],[])
+
 
 if __name__=='__main__':
     unittest.main()
