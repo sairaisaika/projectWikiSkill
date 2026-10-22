@@ -1,4 +1,16 @@
-# Internal collaboration plugin, adopted0.2.4 / candidate0.2.5
+# Internal collaboration plugin, source0.2.5 / bounded host adoption
+
+Current checkpoint (2026-10-22):0.2.5 source was normally adopted at main
+`3cac3ef`, with exact main CI green. Official Windows CLI inventory now reports
+installed/enabled0.2.5; actual cache/source inspection and one fresh read-only
+CLI Skill/query/source review passed separately. A fresh scoped Linux native
+review is recorded independently. Desktop current-chat refresh, trusted hooks,
+comparative efficiency and business acceptance are not implied. The official
+update removed the old cache directory; source workers on other scoped packages
+must not be mistaken for that cache. See the
+[actual host receipt](../evals/reports/host-adoption-v025-20261022.md).
+
+The following paragraphs retain earlier checkpoints and their evidence scope.
 
 Status: packaging, doctor and a native JSON workflow including read-only task
 scope are implemented in the adopted 0.2.3 payload. Scoped Linux Claude Skill use
@@ -25,12 +37,14 @@ original-page return and post-commit reconciliation with gaps. This extends the
 read-only pilot; it does not establish automatic hooks, device acceptance or a
 measured reduction in effort. Payload stays0.2.4.
 
-The [0.2.5 newline candidate](../evals/reports/package-newline-provenance-20261022.md)
+The [0.2.5 newline source change](../evals/reports/package-newline-provenance-20261022.md)
 addresses an observed installed0.2.4 versus clean-checkout byte mismatch. Receipt
 schema2 makes canonical UTF-8/CRLF-to-LF source comparison explicit, preserves raw
 input hashes, keeps package-byte integrity strict and still reads legacy raw
-schema1. It has not been installed or globally adopted merely because its source
-or tests exist. Scoped0.2.4 workers remain pinned until their tasks end.
+schema1. Its source/tests did not by themselves establish installation. The later
+bounded host receipt above adds actual selected-host observations; global/desktop
+lifecycle adoption still remains separate. Scoped0.2.4 workers remain pinned until
+their tasks end.
 
 ## Intended result
 
