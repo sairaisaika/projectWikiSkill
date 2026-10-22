@@ -142,3 +142,22 @@ finish/runtime closure and efficiency measurements remain open. The
 [bounded receipt](../evals/reports/live-collaboration-c22-20261022.md) preserves
 wrong-path, audience-policy and native generation gaps without adding global
 reading or hook requirements. This checkpoint does not change the plugin payload.
+# Read-only task packets: 0.2.3 candidate (2026-10-22)
+
+Live Syleli source-structure adoption trial exposed a scope mismatch: `start`
+required `--allow-file`, and its implementation required all captured source
+paths to be editable. The intended fresh Claude task was only to read/interpret
+three files' wiki and deterministic structure facts; no task/session was launched
+after the rejection. The first capture also used the wrong lockfile name; the
+missing-input rejection worked, and the corrected capture uses package.json and
+pnpm-lock.yaml. Neither failure establishes an agent-use result.
+
+Candidate adds explicit read-only start/delegation/display/reconciliation, with
+empty editing paths and unchanged legacy editing behavior. A nominal read-only
+return with wiki/source differences is not certified as unchanged. This is scoped
+workflow metadata, not filesystem enforcement or proof of no transient/ignored
+writes. Native extra impact fields remain intact. Version bump changes the actual
+bundled workflow/reference payload; host installation and a fresh actual use trial
+must be verified separately. Existing 0.2.2 hosts remain the installed baseline
+until that candidate is built/checked/adopted.
+
