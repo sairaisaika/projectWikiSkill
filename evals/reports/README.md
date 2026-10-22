@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Evidence-source selection, C60](evidence-source-selection-c60-20261022.md) | Real coupled-project stale-checkout and runtime-shadow failures, parent-summary review findings, plus controlled same-byte/different-peer and router-executor transport regressions | Familiar coordinator; no new payload, hook, host install, semantic certification, blind trial or measured efficiency |
 | [Actual0.2.5 host adoption](host-adoption-v025-20261022.md) | Official Windows CLI update, installed byte/source closure, fresh read-only Skill/query/source use and separate scoped Linux native review | Older cache path was removed by update; desktop refresh, hooks, efficiency and business acceptance remain separate |
 | [Package newline provenance](package-newline-provenance-20261022.md) | Actual valid0.2.4 cache had four newline-only source differences; schema2 candidate canonicalizes source text, preserves raw inputs and rejects tampered package bytes | Controlled fixtures plus one host observation; no new0.2.5 installation, hooks or runtime acceptance |
 | [Native implementation return](native-implementation-return-c50-20261022.md) | Real paired-repository implementation, coordinator async negatives/corrections, original wiki return and post-commit reconciliation retaining a capability gap | Familiar coordinator; source tests and direct packaged CLI use, no device/product acceptance, hook or speedup claim |

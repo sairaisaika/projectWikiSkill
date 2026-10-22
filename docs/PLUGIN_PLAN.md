@@ -12,6 +12,13 @@ must not be mistaken for that cache. See the
 
 The following paragraphs retain earlier checkpoints and their evidence scope.
 
+C60 adds a [bounded source-selection follow-up](../evals/reports/evidence-source-selection-c60-20261022.md):
+real native comparison/executor failures, a corrected parent capability summary,
+and existing workflow regressions for equal bytes across different checkouts and
+scoped router-execution metadata. The README's old0.2.4/current summary is corrected
+to the already-recorded0.2.5 source/limited-host observations. No packaged payload,
+live worker, hook or host lifecycle capability changes in this follow-up.
+
 Status: packaging, doctor and a native JSON workflow including read-only task
 scope are implemented in the adopted 0.2.3 payload. Scoped Linux Claude Skill use
 and guided native recovery have separate receipts below. On 2026-10-22 a valid
