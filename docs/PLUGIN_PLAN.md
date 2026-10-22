@@ -120,3 +120,12 @@ all records remain available. This is a guided same-worker recovery, not measure
 speedup or blind adoption. The actual return now reconciles structurally and keeps
 viewport acceptance as a gap; it does not certify the worker's semantic claims.
 See the [workflow receipt](../evals/reports/native-workflow-20261021.md).
+
+## Native return context candidate (v0.2.2)
+
+Actual scratch adoption exposed a late native commit acknowledgement requirement.
+The bounded follow-up keeps that format/parser in the project and transports its
+optional workflow metadata in every plugin reading view. Old reports say undeclared;
+commands remain quoted, never executed. [Mechanism receipt](../evals/reports/native-return-context-20261022.md)
+separates passing transport/negative tests from fresh-agent adoption, CI and runtime
+acceptance still pending. This does not implement or claim trusted host hooks.
