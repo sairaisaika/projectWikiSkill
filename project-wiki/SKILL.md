@@ -179,6 +179,11 @@ The plugin's read-only doctor can compare package/source bytes and optional
 caller-captured Codex inventory/version or scoped Claude events. Keep each host
 observation separate from hook execution, actual agent use and business evidence.
 
+If a native task router reports the repositories it selected, use the collaboration
+workflow's optional `--native-source-context` identity comparison to reject a
+different checkout/revision than the declared task peers. A matched report is
+still not physical-read or semantic-use evidence; absent comparison is unverified.
+
 Keep secrets and host-private implementation details out of public artifacts.
 The skill authorizes no publication, installation, external messaging, or runtime
 operation beyond the user's request. Report concrete artifacts, checks, remaining
