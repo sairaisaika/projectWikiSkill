@@ -1,5 +1,12 @@
 # projectWikiSkill
 
+Candidate0.2.7 adds an optional comparison between the native router's reported
+checkout identities and explicitly selected task peers. The
+[C91 exercise](evals/reports/native-source-consistency-c91-20261023.md) preserves
+the real mismatch and first policy-retention failure, then records the actual
+candidate CLI/full-suite/package checks. Normal source/main adoption and host
+updates are still pending; observed installed0.2.6/scoped0.2.4 are unchanged.
+
 0.2.6 source is normally adopted and one Windows host was updated through the
 official CLI, with installed bytes/source and inventory/version observations
 checked separately. The new doctor only reads caller-captured host evidence;
