@@ -86,3 +86,31 @@ scoped Linux worker stays on0.2.4. Doctor installation, hook, context delivery,
 agent use, semantic review and business layers remain unverified unless proved
 by separate evidence. This report does not close the coupled product's feature
 gaps or the overall user goal.
+
+## Adoption after the candidate checkpoint
+
+The earlier paragraphs retain their checkpoint boundaries. Final source22b0a84
+was normally merged through PR21 as main759307f; both trees are
+aa05c6cf36db5b472b7bd78d5410cefee39048c8. Exact source runs40010111653 and
+40010117029, and main40010635982, each passed all four Ubuntu/Windows
+Python3.10/3.13 jobs. The final guided difference review independently checked
+the optional-path exception handling and nine controls, with no new blocker.
+Root checked its ten consumed-file hashes separately from physical-read claims.
+
+One Windows host was then updated through the existing official CLI entry.
+Before updating, all23 old0.2.6 cache files and the selected catalog were backed
+up and hash-checked. Official update removed the old cache as expected; the backup
+remains. Official inventory reports installed/enabled0.2.7. Built and installed
+package/source/support/identity checks passed; the installed doctor itself was
+also invoked successfully with the separately captured inventory/version inputs.
+No active scoped Linux0.2.4 worker, hook trust or controller was changed.
+
+The installed workflow's actual bytes were explicitly copied to the authorized
+Linux environment and invoked for the next real paired implementation task.
+Capture/start/index retained strict matched reported identities and exact Native
+edit paths; no shared Web API edit scope or automatic worker dispatch was granted.
+The index still exposes unregistered planned modules/tests and omitted native
+pages for the implementation owner to resolve. Starting is not implementing or
+finishing that task, and index display is not full context consumption. This proves
+explicit installed-helper use, not an automatic desktop refresh, installed Linux
+plugin update, physical reads, semantic correctness or business acceptance.

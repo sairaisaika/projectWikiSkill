@@ -1,6 +1,6 @@
-# Internal collaboration plugin, source0.2.6 / bounded host adoption
+# Internal collaboration plugin, source0.2.7 / bounded host adoption
 
-## Candidate0.2.7: native selected-source identity comparison (C90)
+## Adopted0.2.7: native selected-source identity comparison (C91)
 
 A real coupled-repository review exposed a caller-side mismatch: the task capture
 could pin a current peer while the native router's own observed source context
@@ -8,7 +8,7 @@ selected a different checkout and revision. Existing0.2.6 correctly left pairing
 fitness to the caller; it had no optional comparison for those two reported
 identities. The mismatched packet was characterized privately and not dispatched.
 
-The candidate adds `capture --native-source-context <JSON-pointer>` to compare the
+The0.2.7 helper adds `capture --native-source-context <JSON-pointer>` to compare the
 router's existing `{label: {root, revision}}` observations against the root and
 every declared peer. Labels and paths remain project-owned, not hardcoded product
 facts. Unknown/missing/old/conflicting observations fail closed; legacy callers
@@ -21,10 +21,18 @@ remain in their native repositories.
 First focused run caught an implementation omission: policy retention was checked
 in review preparation but not final reconciliation. The failing regression was
 retained and the final path now checks it too. Full checks, actual paired CLI
-replay, normal source/main adoption and any host installation remain separate;
-installed Windows0.2.6 and running scoped Claude0.2.4 have not changed.
+replay, normal source/main adoption and host installation have separate evidence.
+PR21 source22b0a84 and main759307f have the same tree; both exact source matrices
+and main CI40010635982 passed. Official Windows installation now reports0.2.7,
+with package/source closure, inventory and direct installed doctor checked.
+All23 previous-cache files were backed up before the official update removed it.
+The installed helper's bytes then started an actual paired Native implementation
+task with strict reported-source comparison; no worker was dispatched by the CLI.
+This is explicit helper use, not automatic desktop lifecycle or Linux installation.
+Running scoped Claude0.2.4, hooks and trust were unchanged. See the
+[bounded source and host return](../evals/reports/native-source-consistency-c91-20261023.md#adoption-after-the-candidate-checkpoint).
 
-Current checkpoint (2026-10-23):0.2.6 normally adopted via PR18, source `fe6d8d1`
+Historical checkpoint (2026-10-23):0.2.6 normally adopted via PR18, source `fe6d8d1`
 and main `8c24a8a` have identical trees. Both source workflow runs and exact main
 workflow39935649839 passed Ubuntu/Windows Python3.10/3.13. One Windows host was
 updated through the existing official plugin entry, with package/source closure,
