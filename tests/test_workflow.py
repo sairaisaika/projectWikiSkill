@@ -657,6 +657,9 @@ class PreservedEvidenceTests(unittest.TestCase):
 
     def setUp(self):
         WorkflowTests.setUp(self)
+        # Hosted Windows TEMP may use a short-name/aliased parent. Select its
+        # real path; the production policy deliberately rejects path aliases.
+        self.home = self.home.resolve(strict=True)
         self.artifact = self.home / 'original-result.json'
         self.artifact.write_text('{"result":"FAIL"}\n', encoding='utf-8')
 

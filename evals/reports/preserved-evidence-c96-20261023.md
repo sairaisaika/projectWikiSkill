@@ -92,6 +92,13 @@ separate from this mechanism replay.
 
 ## Remaining layers
 
+The first pushed source CI failed in hosted Windows Python3.13: the new fixture
+passed its unresolved temporary path to a policy that requires a real path.
+Eight tests errored at that check and one CLI test failed; Linux jobs passed and
+Windows3.10 was cancelled by matrix fail-fast. The fixture now explicitly selects
+its resolved real temporary path. The alias rejection in the product helper is
+unchanged. Final cross-platform CI remains required; the earlier red run is kept.
+
 An independent, framework-familiar reviewer inspected the original candidate
 helper and its lifecycle callers, then executed the actual pure artifact helpers:
 17 checks passed and two real symlink probes were skipped for Windows privilege
