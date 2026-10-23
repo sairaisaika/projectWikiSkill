@@ -141,8 +141,51 @@ def validate_native(report: dict, query: str, files: list[str], root: Path, wiki
                 raise ValueError('Native satellite page is unavailable')
 
 
+def compare_native_sources(report: dict, pointer: str | None, root: Path, head: str, peers: dict) -> dict:
+    """Compare caller-selected native observations, not physical reads or deployment fitness.
+
+    The optional JSON pointer is adapter configuration supplied by the caller, never
+    a command taken from project text. Each selected record has root/revision; record
+    labels are deliberately opaque so projects keep their native repository names.
+    """
+    if pointer is None:
+        return {'status': 'not_requested', 'meaning': 'Native source observations have not been compared with declared checkouts.'}
+    if not isinstance(pointer, str) or not pointer.startswith('/'):
+        raise ValueError('Native source context requires a nonempty JSON pointer')
+    observed = report
+    for token in pointer[1:].split('/'):
+        token = token.replace('~1', '/').replace('~0', '~')
+        if not isinstance(observed, dict) or token not in observed:
+            raise ValueError('Declared native source context is unavailable')
+        observed = observed[token]
+    if not isinstance(observed, dict) or not observed:
+        raise ValueError('Native source observations must be a nonempty object')
+    by_root = {}
+    for row in observed.values():
+        if not isinstance(row, dict) or not isinstance(row.get('root'), str) or not row['root'] or not isinstance(row.get('revision'), str) or not row['revision']:
+            raise ValueError('Native source identity is unavailable or malformed')
+        folder = str(Path(row['root']).resolve())
+        revision = row['revision']
+        if folder in by_root and by_root[folder] != revision:
+            raise ValueError('Native source observations disagree about one checkout')
+        by_root[folder] = revision
+    selected = [('root', {'root': str(root.resolve()), 'head': head, 'available': True})]
+    selected.extend(('peer:' + alias, row) for alias, row in peers.items())
+    matched = {}
+    for alias, row in selected:
+        if not row['available']:
+            raise ValueError('Selected checkout is unavailable for native source comparison')
+        folder = str(Path(row['root']).resolve())
+        if by_root.get(folder) != row['head']:
+            raise ValueError('Native source observation does not match a selected checkout')
+        matched[alias] = {'root': folder, 'head': row['head']}
+    return {'status': 'matched', 'pointer': pointer, 'checkouts': matched,
+            'meaning': 'Reported checkout identities match selected snapshots; physical reads, correct deployment pairing, agent use and semantic accuracy remain unverified.'}
+
+
 def capture(root: Path, query: str, files: list[str], program: list[str], runtime_inputs: list[str],
-            *, wiki_root: str = 'docs/wiki', allow_execution: bool = False, peers: dict[str, str] | None = None) -> dict:
+            *, wiki_root: str = 'docs/wiki', allow_execution: bool = False, peers: dict[str, str] | None = None,
+            native_source_context: str | None = None) -> dict:
     root = root.resolve()
     if not allow_execution:
         raise ValueError('Native execution requires explicit opt-in; wiki text is never executable configuration')
@@ -169,6 +212,7 @@ def capture(root: Path, query: str, files: list[str], program: list[str], runtim
     if not isinstance(report, dict):
         raise ValueError('Native report must be an object')
     validate_native(report, query, files, root, wiki_root)
+    native_sources = compare_native_sources(report, native_source_context, root, before['head'], peer_before)
     return {'schema_version': 1, 'kind': 'native-wiki-capture', 'root': str(root),
             'wiki_root': wiki_root, 'query': query, 'files': files,
             'base': before, 'runtime_inputs': runtime_inputs,
@@ -179,6 +223,7 @@ def capture(root: Path, query: str, files: list[str], program: list[str], runtim
             'native_stderr_bytes': stderr_bytes, 'native_report_sha256': sha(raw),
             'native_report_canonical_sha256': report_hash(report),
             'native_report': report, 'baseline_untracked': untracked(root),
+            'native_source_context': native_source_context, 'native_source_comparison': native_sources,
             'planned_source_hashes': {f: source_hash(root, f, peer_before) for f in files},
             'evidence': {'context_generated': True, 'context_delivered': 'unverified',
                          'agent_use': 'unverified', 'semantic_accuracy': 'unverified',
@@ -202,6 +247,10 @@ def check_capture(value: dict, *, require_current: bool = True) -> Path:
     if require_current and any(source_hash(root, name, peers) != old for name, old in value['planned_source_hashes'].items()):
         raise ValueError('Captured source files changed after capture')
     validate_native(value['native_report'], value['query'], value['files'], root, value['wiki_root'])
+    expected_sources = compare_native_sources(value['native_report'], value.get('native_source_context'),
+                                              root, value['base']['head'], peers)
+    if value.get('native_source_comparison', expected_sources) != expected_sources:
+        raise ValueError('Native source comparison changed after capture')
     return root
 
 
@@ -268,6 +317,8 @@ def review_template(packet: dict, after: dict) -> dict:
     root = check_capture(after)
     if str(root) != packet['root'] or after['wiki_root'] != packet['context']['wiki_root']:
         raise ValueError('Start/end captures refer to different checkouts or native wikis')
+    if after.get('native_source_context') != packet['context'].get('native_source_context'):
+        raise ValueError('Start/end native source comparison policy differs')
     report = after['native_report']
     pages = sorted({page['path'] for row in report['impact'] for page in row['pages']})
     return {
@@ -304,6 +355,8 @@ def finish(packet: dict, after: dict, review: dict) -> dict:
     if str(root) != packet['root'] or after['wiki_root'] != packet['context']['wiki_root']:
         raise ValueError('Start/end captures refer to different checkouts or native wikis')
     actual = changed_files(root, packet['base_sha'], packet['context']['baseline_untracked'])
+    if after.get('native_source_context') != packet['context'].get('native_source_context'):
+        raise ValueError('Start/end native source comparison policy differs')
     peer_start = packet['context'].get('peers', {})
     peer_end = after.get('peers', {})
     if set(peer_start) != set(peer_end):
@@ -429,6 +482,8 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
         'status': 'not_declared',
         'meaning': 'The native router did not provide its return contract; inspect its own gates before dispatch.',
     })
+    result['native_source_comparison'] = packet['context'].get('native_source_comparison', {
+        'status': 'not_requested', 'meaning': 'Native source observations have not been compared with declared checkouts.'})
     result['review_preparation'] = {
         'command': 'review-template --packet <same-packet> --after-capture <current-final-capture> --output <new-review.json>',
         'meaning': 'Optional unreviewed skeleton for the actual return. Does not fill decisions or replace the native finish/commit gate.',
@@ -472,6 +527,7 @@ def main(argv=None) -> int:
     cap.add_argument('--native-argv', required=True, help='Explicit JSON argv; never read from wiki text')
     cap.add_argument('--allow-native-execution', action='store_true')
     cap.add_argument('--peer', action='append', default=[], help='Explicit alias=checkout; missing is not an empty diff')
+    cap.add_argument('--native-source-context', help='Caller-selected JSON pointer to native {label: {root, revision}} observations; compare every selected checkout')
     sta = subs.add_parser('start')
     sta.add_argument('--capture', type=Path, required=True)
     sta.add_argument('--outcome', required=True)
@@ -505,7 +561,8 @@ def main(argv=None) -> int:
         if args.command == 'capture':
             result = capture(args.root, args.query, args.files, json.loads(args.native_argv), args.runtime_input,
                              wiki_root=args.wiki_root, allow_execution=args.allow_native_execution,
-                             peers=dict(entry.split('=', 1) for entry in args.peer))
+                             peers=dict(entry.split('=', 1) for entry in args.peer),
+                             native_source_context=args.native_source_context)
         elif args.command == 'start':
             result = start(read_json(args.capture), args.task_id, args.owner, args.outcome, args.allow_file,
                            args.acceptance, args.capability, read_only=args.read_only)

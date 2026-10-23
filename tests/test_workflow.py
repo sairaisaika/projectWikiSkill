@@ -499,5 +499,110 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(json.loads(packet.read_text(encoding='utf-8'))['allowed_files'],[])
 
 
+class NativeSourceContextTests(unittest.TestCase):
+    setUp = WorkflowTests.setUp
+    capture = WorkflowTests.capture
+    packet = WorkflowTests.packet
+    review = WorkflowTests.review
+    pointer = '/workflow/context/sources'
+
+    def observe(self, rows):
+        workflow = {'context': {'sources': rows}}
+        (self.root / 'native.py').write_text(
+            NATIVE.replace("'placementIssues':[]", "'workflow':" + repr(workflow) + ", 'placementIssues':[]"),
+            encoding='utf-8')
+
+    def identity(self, root=None):
+        root = root or self.root
+        return {'root': str(root), 'revision': git(root, 'rev-parse', 'HEAD')}
+
+    def peer(self):
+        peer = self.home / 'peer'
+        peer.mkdir()
+        git(peer, 'init')
+        git(peer, 'config', 'user.name', 'Fixture')
+        git(peer, 'config', 'user.email', 'fixture@example.invalid')
+        (peer / 'client.py').write_text('value = 1\n', encoding='utf-8')
+        git(peer, 'add', 'client.py')
+        git(peer, 'commit', '-m', 'peer baseline')
+        return peer
+
+    def test_matching_arbitrary_native_labels_are_bound_and_visible_in_all_views(self):
+        peer = self.peer()
+        self.observe({'server-snapshot': self.identity(), 'reader-selected-client': self.identity(peer)})
+        captured = self.capture(peers={'client': str(peer)}, native_source_context=self.pointer)
+        packet = self.packet(captured)
+        expected = captured['native_source_comparison']
+        self.assertEqual(expected['status'], 'matched')
+        self.assertEqual(expected['checkouts']['peer:client']['head'], git(peer, 'rev-parse', 'HEAD'))
+        for view, path in [('index', None), ('all', None), ('feature', 'feature.md'), ('impact', 'src/editor.py')]:
+            self.assertEqual(wf.task_view(packet, view, path)['native_source_comparison'], expected)
+        child = wf.delegate(packet, 'reviewer', 'child', [], read_only=True)
+        self.assertEqual(wf.task_view(child, 'index')['native_source_comparison'], expected)
+        self.assertEqual(captured['evidence']['agent_use'], 'unverified')
+
+    def test_wrong_native_peer_selection_rejects_even_when_declared_peer_hashes_are_current(self):
+        peer = self.peer()
+        self.observe({'main': self.identity(), 'ambient-client': self.identity(self.root)})
+        # Existing capture semantics remain backward compatible and visibly unverified.
+        old_style = self.capture(peers={'client': str(peer)})
+        self.assertEqual(old_style['native_source_comparison']['status'], 'not_requested')
+        with self.assertRaisesRegex(ValueError, 'does not match'):
+            self.capture(peers={'client': str(peer)}, native_source_context=self.pointer)
+
+    def test_same_checkout_but_old_revision_is_not_a_matching_source(self):
+        observed = self.identity()
+        observed['revision'] = '0' * 40
+        self.observe({'native-root': observed})
+        with self.assertRaisesRegex(ValueError, 'does not match'):
+            self.capture(native_source_context=self.pointer)
+
+    def test_unavailable_and_conflicting_native_identity_are_not_empty_success(self):
+        for revision in [None, '']:
+            with self.subTest(revision=revision):
+                self.observe({'root': {'root': str(self.root), 'revision': revision}})
+                with self.assertRaisesRegex(ValueError, 'unavailable or malformed'):
+                    self.capture(native_source_context=self.pointer)
+        self.observe({'one': self.identity(), 'two': {'root': str(self.root), 'revision': '0' * 40}})
+        with self.assertRaisesRegex(ValueError, 'disagree'):
+            self.capture(native_source_context=self.pointer)
+
+    def test_root_named_peer_cannot_override_required_primary_checkout(self):
+        peer = self.peer()
+        self.observe({'client': self.identity(peer)})
+        with self.assertRaisesRegex(ValueError, 'does not match'):
+            self.capture(peers={'root': str(peer)}, native_source_context=self.pointer)
+
+    def test_missing_metadata_and_bad_pointer_remain_explicit(self):
+        with self.assertRaisesRegex(ValueError, 'unavailable'):
+            self.capture(native_source_context=self.pointer)
+        for pointer in ['', 'workflow/context/sources']:
+            with self.subTest(pointer=pointer), self.assertRaisesRegex(ValueError, 'JSON pointer'):
+                self.capture(native_source_context=pointer)
+
+    def test_saved_comparison_is_rechecked_and_cannot_be_silently_dropped_at_finish(self):
+        self.observe({'project': self.identity()})
+        captured = self.capture(native_source_context=self.pointer)
+        altered = copy.deepcopy(captured)
+        altered['native_source_comparison']['status'] = 'verified-reading'
+        with self.assertRaisesRegex(ValueError, 'changed after capture'):
+            self.packet(altered)
+        packet = self.packet(captured)
+        unchecked_after = self.capture()
+        with self.assertRaisesRegex(ValueError, 'policy differs'):
+            wf.finish(packet, unchecked_after, self.review())
+
+    def test_actual_cli_passes_the_declared_source_context_to_capture(self):
+        self.observe({'project': self.identity()})
+        target = self.home / 'strict-capture.json'
+        cp = subprocess.run([sys.executable, str(ROOT / 'project-wiki/scripts/workflow.py'), 'capture',
+                             '--root', str(self.root), '--query', 'editor task', '--files', 'src/editor.py',
+                             '--native-argv', json.dumps([sys.executable, 'native.py']), '--runtime-input', 'native.py',
+                             '--allow-native-execution', '--native-source-context', self.pointer, '--output', str(target)],
+                            text=True, capture_output=True)
+        self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+        self.assertEqual(json.loads(target.read_text(encoding='utf-8'))['native_source_comparison']['status'], 'matched')
+
+
 if __name__=='__main__':
     unittest.main()

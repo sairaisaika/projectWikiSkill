@@ -42,6 +42,24 @@ that alias. A missing peer remains unavailable, not an empty successful diff.
 Each selected peer is bound to its actual checkout/HEAD. The tool cannot certify
 that the selected pair is the correct deployment pair; verify that separately.
 
+When the native router reports its selected checkout identities, opt into comparing
+those observations with the selected root and every declared peer:
+
+```text
+... capture ... --native-source-context /workflow/context/sources
+```
+
+This caller-selected JSON pointer addresses an object whose arbitrary labels each
+contain `root` (checkout path) and `revision` (full Git HEAD). The pointer is adapter
+configuration, not a command copied from a page. No project or repository label is
+built into the helper. Missing/unknown identities, a different checkout, an old
+revision or contradictory observations reject the capture. Without this option,
+the comparison remains explicitly `not_requested`; legacy adapters still work.
+The matched comparison follows every reading view and delegation, and the final
+capture must retain the same comparison policy. It compares reported identities;
+it does not prove physical reads, a correct deployment pair or semantic adoption.
+Do not silently choose another checkout or rewrite the native report to make it pass.
+
 ## Start, display and delegate
 
 ```text
