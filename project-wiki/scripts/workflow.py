@@ -60,6 +60,64 @@ def file_hash(path: Path) -> str | None:
     return digest.hexdigest()
 
 
+def artifact_snapshot(paths: list[str] | None) -> dict[str, str]:
+    """Hash only explicitly selected existing real files; never copy contents."""
+    if paths is None:
+        paths = []
+    if not isinstance(paths, list) or not all(isinstance(x, str) and x and '\0' not in x for x in paths):
+        raise ValueError('Preserved artifact selection must be a list of absolute file paths')
+    result = {}
+    for name in paths:
+        path = Path(name)
+        try:
+            if not path.is_absolute() or '..' in path.parts or path.is_symlink():
+                raise ValueError('Preserved artifact must be an absolute real file, not an alias')
+            resolved = path.resolve(strict=True)
+            if path != resolved or not resolved.is_file():
+                raise ValueError('Preserved artifact must be an existing real file')
+            digest = file_hash(resolved)
+        except OSError as error:
+            raise ValueError('Selected artifact is missing or unreadable') from error
+        if digest is None:
+            raise ValueError('Selected artifact is not a file')
+        result[str(resolved)] = digest
+    return dict(sorted(result.items()))
+
+
+def artifact_fields(value: dict) -> tuple[list[str], dict[str, str]]:
+    paths = value.get('preserve_artifacts', [])
+    hashes = value.get('preserved_artifact_hashes', {})
+    if (not isinstance(paths, list) or not all(isinstance(x, str) and x and '\0' not in x for x in paths)
+            or paths != sorted(set(paths)) or not isinstance(hashes, dict) or set(hashes) != set(paths)):
+        raise ValueError('Preserved artifact policy or saved hash record is invalid/missing')
+    for name in paths:
+        if not Path(name).is_absolute() or '..' in Path(name).parts:
+            raise ValueError('Preserved artifact policy requires absolute paths')
+        digest = hashes[name]
+        if not isinstance(digest, str) or len(digest) != 64 or any(c not in '0123456789abcdef' for c in digest):
+            raise ValueError('Preserved artifact saved hash is invalid')
+    return paths, hashes
+
+
+def check_artifact_return(before: dict, after: dict) -> None:
+    old_paths, old_hashes = artifact_fields(before)
+    paths, hashes = artifact_fields(after)
+    if old_paths != paths:
+        raise ValueError('Preserved artifact selection differs between start and return')
+    if old_hashes != hashes:
+        raise ValueError('Preserved artifact bytes changed between start and return')
+
+
+def artifact_observation(value: dict, status: str = 'captured') -> dict:
+    try:
+        paths, hashes = artifact_fields(value)
+    except ValueError:
+        return {'status': 'unavailable', 'meaning': 'Selected artifact hash record is invalid/missing; recapture before dispatch.'}
+    return {'status': status if paths else 'not_requested', 'paths': paths,
+            'captured_sha256': hashes, 'continuous_monitoring': False, 'write_prevention': False,
+            'limits': 'Selected bytes at observation boundaries only. Not original provenance, continuous immutability, a sandbox, semantic accuracy or business acceptance. Unselected files and changes restored between observations are not detected.'}
+
+
 def git(root: Path, *args: str) -> bytes:
     # Avoid user fsmonitor hooks and diff/pager helpers. No Git write commands.
     return subprocess.check_output(['git', '--no-pager', '-c', 'core.fsmonitor=false',
@@ -199,7 +257,7 @@ def compare_native_sources(report: dict, pointer: str | None, root: Path, head: 
 
 def capture(root: Path, query: str, files: list[str], program: list[str], runtime_inputs: list[str],
             *, wiki_root: str = 'docs/wiki', allow_execution: bool = False, peers: dict[str, str] | None = None,
-            native_source_context: str | None = None) -> dict:
+            native_source_context: str | None = None, preserve_artifacts: list[str] | None = None) -> dict:
     root = root.resolve()
     if not allow_execution:
         raise ValueError('Native execution requires explicit opt-in; wiki text is never executable configuration')
@@ -210,6 +268,7 @@ def capture(root: Path, query: str, files: list[str], program: list[str], runtim
     files = sorted(set(relative(f) for f in files))
     before = input_snapshot(root, wiki_root, runtime_inputs)
     peer_before = peer_snapshot(peers or {})
+    artifact_before = artifact_snapshot(preserve_artifacts)
     with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
         result = subprocess.run([*program, query, '--json', '--files', *files], cwd=root,
                                 stdout=stdout, stderr=stderr, timeout=60, shell=False)
@@ -220,6 +279,8 @@ def capture(root: Path, query: str, files: list[str], program: list[str], runtim
         # Never reflect native exception text or ambient credentials into a packet.
         stderr_bytes = stderr.tell()
     after = input_snapshot(root, wiki_root, runtime_inputs)
+    if artifact_before != artifact_snapshot(list(artifact_before)):
+        raise ValueError('Preserved artifact changed during native capture')
     if before != after or peer_before != peer_snapshot(peers or {}):
         raise ValueError('Wiki/runtime inputs changed during native capture; retry from a stable snapshot')
     report = json.loads(raw.decode('utf-8-sig'))
@@ -238,6 +299,7 @@ def capture(root: Path, query: str, files: list[str], program: list[str], runtim
             'native_report_canonical_sha256': report_hash(report),
             'native_report': report, 'baseline_untracked': untracked(root),
             'native_source_context': native_source_context, 'native_source_comparison': native_sources,
+            'preserve_artifacts': list(artifact_before), 'preserved_artifact_hashes': artifact_before,
             'planned_source_hashes': {f: source_hash(root, f, peer_before) for f in files},
             'evidence': {'context_generated': True, 'context_delivered': 'unverified',
                          'agent_use': 'unverified', 'semantic_accuracy': 'unverified',
@@ -251,6 +313,9 @@ def check_capture(value: dict, *, require_current: bool = True) -> Path:
     if value.get('kind') != 'native-wiki-capture' or value.get('schema_version') != 1:
         raise ValueError('Expected a native wiki capture')
     root = Path(value['root']).resolve()
+    artifact_paths, artifact_hashes = artifact_fields(value)
+    if require_current and artifact_snapshot(artifact_paths) != artifact_hashes:
+        raise ValueError('Preserved artifact changed after capture')
     if report_hash(value['native_report']) != value.get('native_report_canonical_sha256'):
         raise ValueError('Native context was changed after capture; regenerate instead of editing its projection')
     if require_current and input_snapshot(root, value['wiki_root'], value['runtime_inputs']) != value['base']:
@@ -293,6 +358,7 @@ def start(value: dict, task_id: str, owner: str, outcome: str, allowed: list[str
                                      if read_only else 'actual diff and exact source revision'),
                                     'capability evidence or explicit gaps',
                                     'each satellite updated or justified in the native wiki',
+                                    'preserve selected evidence files; inspect embedded probe output paths and write each new raw run to a distinct destination',
                                     'verification, remaining work and next safe action'],
             'limits': 'A created or sent packet does not establish that a worker read or applied it. Access is task scope, not a filesystem sandbox.'}
 
@@ -331,6 +397,7 @@ def review_template(packet: dict, after: dict) -> dict:
     if access not in ('edit', 'read_only') or (access == 'read_only' and packet['allowed_files']):
         raise ValueError('Invalid task access scope')
     root = check_capture(after)
+    check_artifact_return(packet['context'], after)
     if str(root) != packet['root'] or after['wiki_root'] != packet['context']['wiki_root']:
         raise ValueError('Start/end captures refer to different checkouts or native wikis')
     if after.get('native_source_context') != packet['context'].get('native_source_context'):
@@ -339,6 +406,7 @@ def review_template(packet: dict, after: dict) -> dict:
     pages = sorted({page['path'] for row in report['impact'] for page in row['pages']})
     return {
         'kind': 'wiki-review-template', 'task_id': packet['task_id'],
+        'artifact_preservation': artifact_observation(after, 'unchanged_at_review_preparation'),
         'pages': {p: {'status': 'unreviewed', 'reason': ''} for p in pages},
         'capabilities': {c: {'status': 'unreviewed', 'reason': '', 'references': []}
                          for c in packet['capabilities']},
@@ -368,6 +436,7 @@ def finish(packet: dict, after: dict, review: dict) -> dict:
     if access not in ('edit', 'read_only') or (access == 'read_only' and packet['allowed_files']):
         raise ValueError('Invalid task access scope')
     root = check_capture(after)
+    check_artifact_return(packet['context'], after)
     if str(root) != packet['root'] or after['wiki_root'] != packet['context']['wiki_root']:
         raise ValueError('Start/end captures refer to different checkouts or native wikis')
     actual = changed_files(root, packet['base_sha'], packet['context']['baseline_untracked'])
@@ -456,6 +525,7 @@ def finish(packet: dict, after: dict, review: dict) -> dict:
                     'peers': peer_end}
     return {'schema_version': 1, 'kind': 'wiki-work-reconciliation', 'task_id': packet['task_id'],
             'access': access,
+            'artifact_preservation': artifact_observation(after, 'unchanged_at_finish'),
             'native_source_context': after.get('native_source_context'),
             'native_source_comparison': compare_native_sources(after['native_report'], after.get('native_source_context'),
                                                                root, after['base']['head'], peer_end),
@@ -506,6 +576,7 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
         'meaning': 'Strict comparison record is missing; recapture before dispatch.'
                    if packet['context'].get('native_source_context') is not None else
                    'Native source observations have not been compared with declared checkouts.'})
+    result['artifact_preservation'] = artifact_observation(packet['context'])
     result['review_preparation'] = {
         'command': 'review-template --packet <same-packet> --after-capture <current-final-capture> --output <new-review.json>',
         'meaning': 'Optional unreviewed skeleton for the actual return. Does not fill decisions or replace the native finish/commit gate.',
@@ -550,6 +621,7 @@ def main(argv=None) -> int:
     cap.add_argument('--allow-native-execution', action='store_true')
     cap.add_argument('--peer', action='append', default=[], help='Explicit alias=checkout; missing is not an empty diff')
     cap.add_argument('--native-source-context', help='Caller-selected JSON pointer to native {label: {root, revision}} observations; compare every selected checkout')
+    cap.add_argument('--preserve-artifact', action='append', default=[], help='Explicit absolute existing evidence file to hash-check; no write prevention or continuous monitoring')
     sta = subs.add_parser('start')
     sta.add_argument('--capture', type=Path, required=True)
     sta.add_argument('--outcome', required=True)
@@ -584,7 +656,7 @@ def main(argv=None) -> int:
             result = capture(args.root, args.query, args.files, json.loads(args.native_argv), args.runtime_input,
                              wiki_root=args.wiki_root, allow_execution=args.allow_native_execution,
                              peers=dict(entry.split('=', 1) for entry in args.peer),
-                             native_source_context=args.native_source_context)
+                             native_source_context=args.native_source_context, preserve_artifacts=args.preserve_artifact)
         elif args.command == 'start':
             result = start(read_json(args.capture), args.task_id, args.owner, args.outcome, args.allow_file,
                            args.acceptance, args.capability, read_only=args.read_only)
