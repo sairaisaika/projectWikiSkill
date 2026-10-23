@@ -559,6 +559,7 @@ class NativeSourceContextTests(unittest.TestCase):
 
     def test_unrelated_optional_native_source_cannot_block_selected_root(self):
         self.observe({'selected-project': self.identity(),
+                      'malformed-optional': {'root': 'unselected\x00path', 'revision': None},
                       'unselected-client': {'root': str(self.home / 'not-selected'), 'revision': None}})
         captured = self.capture(native_source_context=self.pointer)
         self.assertEqual(captured['native_source_comparison']['status'], 'matched')

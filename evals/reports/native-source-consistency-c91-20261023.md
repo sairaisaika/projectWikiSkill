@@ -59,6 +59,13 @@ are not treated as empty success. Legacy adapters retain `not_requested`.
   its checked comparison in the final receipt, with no source changes. The old
   and intermediate component artifacts remain; a reused aggregate replay summary
   was overwritten by the final replay, so it is not claimed immutable history.
+- Follow-up guided review found no new blocker in its31 Windows observations.
+  Its malformed optional-path control explicitly did not establish Linux behavior.
+  Root ran that original function on Linux and reproduced an embedded-NUL path
+  error despite a correct required source. Optional path normalization errors now
+  cannot satisfy a selected identity or block an unrelated valid selection; the
+  required-source matching still rejects absence. The existing optional-source
+  regression includes this platform control, and exact new CI remains required.
 - Matching observations follow index, full/feature/impact views and delegation.
   Final capture/reconciliation cannot silently drop the selected comparison policy.
   Native context, omitted candidates and complete satellite scope are preserved.
