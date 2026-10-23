@@ -1,4 +1,28 @@
-# Internal collaboration plugin, source0.2.7 / bounded host adoption
+# Internal collaboration plugin, candidate0.2.8 / adopted host0.2.7
+
+## Candidate0.2.8: explicit preservation observations for selected evidence
+
+A real coordinator replay changed its selected source but retained a private
+probe's embedded historical output path. Git showed no repository changes while
+the private raw result was overwritten. A separately saved prior command output
+allowed exact hash-verified recovery; the error and new replay were retained.
+The0.2.7 helper correctly left business/capability claims unverified, but private
+evidence outside its selected Git/wiki/runtime inputs was not observed.
+
+The candidate adds optional `capture --preserve-artifact <absolute-existing-file>`
+paths to the original workflow. The caller selects specific evidence; capture
+hashes it before/after the native command, dispatch checks it again, every view
+and delegation retains the policy, and review preparation/final reconciliation
+require the same selection and original hashes. Legacy unselected tasks remain
+explicitly `not_requested`; no new Wiki, credential source, sandbox or watcher is
+introduced. Output contents are not copied. Exact source/package/host adoption,
+real use and semantic/runtime acceptance remain separate evidence layers.
+
+The status `unchanged_at_finish` means equal bytes at observed checkpoints. It
+does not establish continuous immutability or original provenance; a change then
+restoration between observations is undetected. Inspecting all embedded output
+paths and using distinct raw destinations remains necessary. Current installed
+Windows0.2.7 and scoped Claude0.2.4 are unchanged by this candidate source work.
 
 ## Adopted0.2.7: native selected-source identity comparison (C91)
 

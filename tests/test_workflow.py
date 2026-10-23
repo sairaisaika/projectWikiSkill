@@ -652,5 +652,169 @@ class NativeSourceContextTests(unittest.TestCase):
         self.assertEqual(json.loads(target.read_text(encoding='utf-8'))['native_source_comparison']['status'], 'matched')
 
 
+class PreservedEvidenceTests(unittest.TestCase):
+    """Explicit private evidence is separate from the repository edit scope."""
+
+    def setUp(self):
+        WorkflowTests.setUp(self)
+        self.artifact = self.home / 'original-result.json'
+        self.artifact.write_text('{"result":"FAIL"}\n', encoding='utf-8')
+
+    def capture(self, **kw):
+        return wf.capture(self.root, 'editor task', [], [sys.executable, 'native.py'],
+                          ['native.py'], allow_execution=True, **kw)
+
+    def packet(self, captured):
+        return wf.start(captured, 'evidence-review', 'root', 'Preserve original evidence', [],
+                        ['Original evidence remains inspectable'], ['preserve evidence'], read_only=True)
+
+    def review(self):
+        return {'pages': {}, 'capabilities': {'preserve evidence': {
+            'status': 'gap', 'reason': 'Hash observations do not establish semantics or business acceptance'}},
+            'handoff': {'remaining': ['Actual implementation/runtime'], 'next_safe_action': 'Continue scoped work'}}
+
+    def guarded(self):
+        return self.capture(preserve_artifacts=[str(self.artifact)])
+
+    def test_legacy_unselected_files_are_explicitly_not_observed(self):
+        captured = self.capture()
+        result = wf.finish(self.packet(captured), self.capture(), self.review())
+        self.assertEqual(result['artifact_preservation']['status'], 'not_requested')
+        self.assertFalse(result['artifact_preservation']['write_prevention'])
+
+    def test_unchanged_private_artifact_follows_delegation_views_and_finish(self):
+        captured = self.guarded()
+        packet = self.packet(captured)
+        child = wf.delegate(packet, 'reader', 'child', [], read_only=True)
+        for view in ('index', 'all'):
+            record = wf.task_view(child, view)['artifact_preservation']
+            self.assertEqual(record['paths'], [str(self.artifact.resolve())])
+            self.assertEqual(record['captured_sha256'], captured['preserved_artifact_hashes'])
+        result = wf.finish(child, self.guarded(), self.review())
+        self.assertTrue(result['structural_reconciliation'], result['issues'])
+        self.assertEqual(result['actual_files'], [])
+        self.assertEqual(result['artifact_preservation']['status'], 'unchanged_at_finish')
+        self.assertEqual(result['capability_gaps'], ['preserve evidence'])
+
+    def test_overwritten_private_artifact_cannot_silently_return_as_unchanged_git(self):
+        captured = self.guarded()
+        packet = self.packet(captured)
+        self.artifact.write_text('{"result":"PASS"}\n', encoding='utf-8')
+        self.assertEqual(wf.changed_files(self.root, packet['base_sha'], captured['baseline_untracked']), [])
+        with self.assertRaisesRegex(ValueError, 'artifact'):
+            wf.start(captured, 'other', 'root', 'New work', [], ['Check'], ['Result'], read_only=True)
+        with self.assertRaisesRegex(ValueError, 'artifact'):
+            wf.delegate(packet, 'reader', 'child', [], read_only=True)
+        self.assertIn('historical', wf.task_view(packet)['freshness'])
+        after = self.guarded()
+        for operation in (wf.review_template, lambda p, a: wf.finish(p, a, self.review())):
+            with self.assertRaisesRegex(ValueError, 'artifact'):
+                operation(packet, after)
+
+    def test_selected_policy_cannot_be_dropped_expanded_or_replaced_at_return(self):
+        packet = self.packet(self.guarded())
+        other = self.home / 'other-result.json'
+        other.write_bytes(self.artifact.read_bytes())
+        for paths in ([], [str(other)], [str(self.artifact), str(other)]):
+            after = self.capture(preserve_artifacts=paths)
+            for operation in (wf.review_template, lambda p, a: wf.finish(p, a, self.review())):
+                with self.assertRaisesRegex(ValueError, 'artifact'):
+                    operation(packet, after)
+
+    def test_missing_or_invalid_saved_hash_record_is_not_a_legacy_capture(self):
+        original = self.guarded()
+        for bad in ({}, {str(self.artifact): None}, {str(self.artifact): 'not-a-sha256'}):
+            captured = copy.deepcopy(original)
+            captured['preserved_artifact_hashes'] = bad
+            with self.assertRaisesRegex(ValueError, 'artifact'):
+                self.packet(captured)
+        captured = copy.deepcopy(original)
+        captured.pop('preserved_artifact_hashes')
+        with self.assertRaisesRegex(ValueError, 'artifact'):
+            self.packet(captured)
+
+    def test_capture_detects_selected_artifact_changed_by_native_router(self):
+        native = self.root / 'native.py'
+        native.write_text('from pathlib import Path\nPath(' + repr(str(self.artifact)) +
+                          ').write_text("changed by fixture")\n' + NATIVE, encoding='utf-8')
+        with self.assertRaisesRegex(ValueError, 'artifact'):
+            self.guarded()
+
+    def test_missing_directory_relative_and_invalid_artifact_inputs_are_refused(self):
+        for paths in ([str(self.home / 'missing')], [str(self.home)], ['relative.json'], ['bad\0path'], 'not-a-list'):
+            with self.subTest(paths=paths), self.assertRaises(ValueError):
+                self.capture(preserve_artifacts=paths)
+        captured = self.guarded()
+        self.artifact.unlink()
+        with self.assertRaisesRegex(ValueError, 'artifact'):
+            self.packet(captured)
+
+    def test_exact_restoration_is_only_a_checkpoint_observation(self):
+        original = self.artifact.read_bytes()
+        packet = self.packet(self.guarded())
+        self.artifact.write_text('intermediate change', encoding='utf-8')
+        self.artifact.write_bytes(original)
+        result = wf.finish(packet, self.guarded(), self.review())
+        self.assertEqual(result['artifact_preservation']['status'], 'unchanged_at_finish')
+        self.assertFalse(result['artifact_preservation']['continuous_monitoring'])
+        self.assertFalse(result['artifact_preservation']['write_prevention'])
+
+    def test_legitimate_source_diff_is_not_confused_with_private_evidence_mutation(self):
+        captured = wf.capture(self.root, 'editor task', ['src/editor.py'], [sys.executable, 'native.py'],
+                              ['native.py'], allow_execution=True, preserve_artifacts=[str(self.artifact)])
+        packet = WorkflowTests.packet(self, captured)
+        WorkflowTests.change(self)
+        after = wf.capture(self.root, 'editor task', ['src/editor.py'], [sys.executable, 'native.py'],
+                           ['native.py'], allow_execution=True, preserve_artifacts=[str(self.artifact)])
+        result = wf.finish(packet, after, WorkflowTests.review(self))
+        self.assertTrue(result['structural_reconciliation'], result['issues'])
+        self.assertEqual(result['actual_files'], ['src/editor.py'])
+        self.assertEqual(result['artifact_preservation']['status'], 'unchanged_at_finish')
+
+    def test_cli_carries_selection_and_does_not_copy_artifact_contents(self):
+        target = self.home / 'guarded-capture.json'
+        cp = subprocess.run([sys.executable, str(ROOT / 'project-wiki/scripts/workflow.py'), 'capture',
+                             '--root', str(self.root), '--query', 'editor task', '--native-argv',
+                             json.dumps([sys.executable, 'native.py']), '--runtime-input', 'native.py',
+                             '--preserve-artifact', str(self.artifact), '--allow-native-execution',
+                             '--output', str(target)], text=True, capture_output=True)
+        self.assertEqual(cp.returncode, 0, cp.stdout + cp.stderr)
+        result = json.loads(target.read_text(encoding='utf-8'))
+        self.assertEqual(result['preserve_artifacts'], [str(self.artifact.resolve())])
+        self.assertNotIn('"result":"FAIL"', target.read_text(encoding='utf-8'))
+
+    def test_saved_selected_record_missing_in_view_is_unavailable_not_a_verified_legacy(self):
+        packet = self.packet(self.guarded())
+        packet['context'].pop('preserved_artifact_hashes')
+        result = wf.task_view(packet)
+        self.assertEqual(result['artifact_preservation']['status'], 'unavailable')
+        self.assertIn('historical', result['freshness'])
+
+    def test_cli_never_uses_a_selected_existing_artifact_as_its_new_output(self):
+        original = self.artifact.read_bytes()
+        cp = subprocess.run([sys.executable, str(ROOT / 'project-wiki/scripts/workflow.py'), 'capture',
+                             '--root', str(self.root), '--query', 'editor task', '--native-argv',
+                             json.dumps([sys.executable, 'native.py']), '--runtime-input', 'native.py',
+                             '--preserve-artifact', str(self.artifact), '--allow-native-execution',
+                             '--output', str(self.artifact)], text=True, capture_output=True)
+        self.assertEqual(cp.returncode, 1)
+        self.assertEqual(self.artifact.read_bytes(), original)
+
+    def test_symlink_file_and_parent_alias_are_not_preserved_as_real_paths(self):
+        link = self.home / 'evidence-alias'
+        parent = self.home / 'parent-alias'
+        real = self.home / 'real'
+        real.mkdir()
+        (real / 'result').write_bytes(b'original')
+        try:
+            link.symlink_to(self.artifact)
+            parent.symlink_to(real, target_is_directory=True)
+        except OSError as error:
+            self.skipTest('This host cannot create symlinks: ' + type(error).__name__)
+        for path in (link, parent / 'result'):
+            with self.assertRaisesRegex(ValueError, 'artifact'):
+                self.capture(preserve_artifacts=[str(path)])
+
+
 if __name__=='__main__':
     unittest.main()

@@ -5,6 +5,14 @@ description: Build, audit, and maintain source-backed engineering wikis that rou
 
 # Project Wiki
 
+For a task that must retain earlier raw evidence, select those exact files with
+the optional workflow `capture --preserve-artifact <absolute-file>` policy. Keep
+that selection through delegation and final return. Inspect every embedded probe
+output path before replay and write new runs to distinct destinations. The
+[workflow reference](references/collaboration-workflow.md#selected-evidence-files)
+explains the checkpoint hash checks and their limits; they are not write
+prevention, continuous immutability or a completion certificate.
+
 Make the wiki cheaper to use than guessing filenames. Optimize **time to a correct,
 actionable location** for a task, and a correct system model for orientation, not page count, diagram count, or an impressive aggregate score.
 

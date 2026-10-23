@@ -68,6 +68,37 @@ Do not silently choose another checkout or rewrite the native report to make it 
 
 ## Start, display and delegate
 
+### Selected evidence files
+
+When a task must retain earlier raw results outside the selected checkouts, repeat
+`capture --preserve-artifact <absolute-existing-file>`. Select the original result
+and any other specific evidence that must survive. This is optional; legacy
+captures explicitly remain `not_requested`. It does not scan private directories
+or copy file contents into a packet. Relative paths, missing files, directories
+and symlink aliases are refused.
+
+Selected paths and SHA256 observations follow start, every reading view and
+delegation. Capture checks before/after the native router; dispatch checks current
+bytes. The final capture must repeat the same selection. Both review preparation
+and finish reject dropped, expanded or changed selections and changed bytes,
+even when Git reports no repository changes. A successful final observation is
+named `unchanged_at_finish`, separately from capability review and runtime status.
+
+Before reusing a probe, inspect **all of its output destinations**, including
+paths derived from its own directory. Route a new run to a distinct output file;
+do not merely change the source checkout and retain a historical output path.
+The CLI's own projections remain write-new-only. If a result is accidentally
+overwritten, preserve the accidental run and any recovery record separately;
+only a verified saved preimage can restore original bytes. A replay is a new run.
+
+This guard observes selected bytes at checkpoints. It neither prevents writes nor
+continuously watches files, certifies their original provenance, enforces a
+filesystem sandbox, proves a physical read or verifies semantics/business flows.
+A change restored between observations is not detected; an exact saved preimage
+restoration may honestly match. Unselected evidence is outside this policy.
+Packets are unsigned local projections; editing both a task's policy and its
+saved hashes is not an authenticated history.
+
 ```text
 python <skill>/scripts/workflow.py start --capture <capture.json> --task-id <id> --owner <owner> --outcome "observable result" --allow-file <file> --capability "required user capability" --acceptance "exit evidence" --output <new-task.json>
 python <skill>/scripts/workflow.py show --packet <task.json>

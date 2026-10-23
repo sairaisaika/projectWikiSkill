@@ -1,5 +1,13 @@
 # projectWikiSkill
 
+Candidate0.2.8 adds optional checkpoint hash observations for explicitly selected
+historical evidence files, including private files outside Git. The original
+capture/delegate/return workflow refuses a changed or dropped selection; it does
+not prevent writes, continuously monitor files or certify business completion.
+See [selected evidence](project-wiki/references/collaboration-workflow.md#selected-evidence-files).
+Source/package/host adoption remain separate; the bounded installed host below
+is still0.2.7 until a separately verified update.
+
 0.2.7 adds an optional comparison between the native router's reported
 checkout identities and explicitly selected task peers. The
 [C91 exercise](evals/reports/native-source-consistency-c91-20261023.md) preserves
