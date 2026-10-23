@@ -1,20 +1,22 @@
 # projectWikiSkill
 
-Candidate0.2.7 adds an optional comparison between the native router's reported
+0.2.7 adds an optional comparison between the native router's reported
 checkout identities and explicitly selected task peers. The
 [C91 exercise](evals/reports/native-source-consistency-c91-20261023.md) preserves
 the real mismatch and first policy-retention failure, then records the actual
-candidate CLI/full-suite/package checks. Normal source/main adoption and host
-updates are still pending; observed installed0.2.6/scoped0.2.4 are unchanged.
+CLI/full-suite/package checks, normal source/main adoption and one official
+Windows update to0.2.7. A real task started using the installed helper's bytes
+with strict native-source comparison. Scoped0.2.4 workers remain pinned;
+automatic host lifecycle, physical reads and semantic adoption stay separate.
 
-0.2.6 source is normally adopted and one Windows host was updated through the
+Historical0.2.6 source was normally adopted and one Windows host was updated through the
 official CLI, with installed bytes/source and inventory/version observations
 checked separately. The new doctor only reads caller-captured host evidence;
 installation/enabling does not establish hook execution or agent adoption.
 Running scoped workers were not upgraded. See [actual host adoption](evals/reports/codex-inventory-doctor-c77-20261023.md#host-adoption-after-source-merge)
 and [doctor observations](docs/PLUGIN_PLAN.md#codex-inventory-observations-026-candidate).
 
-[内部协作插件计划](docs/PLUGIN_PLAN.md)：以现有 Skill/工具为唯一内核，补可复现打包、来源自检与宿主接线，再用真实工程验证开工、委派、收尾与接管。内部候选已在一台 Codex 主机通过官方 CLI 安装并核对缓存，Linux Claude 已做临时加载与真实任务试用；桌面新会话采用、hooks 与完整跨宿主验收仍待，未公开发布。根 `plugin.json` 是身份源，不能单凭它声称运行已验证。源码已采用0.2.5；[换行来源机制](evals/reports/package-newline-provenance-20261022.md)保留原始输入指纹，区分规范文本来源一致与包文件字节完整；[有限宿主采用记录](evals/reports/host-adoption-v025-20261022.md)另证官方 Windows CLI 安装0.2.5及实际有限使用。既有 scoped0.2.4 工程任务不由此自动升级。
+[内部协作插件计划](docs/PLUGIN_PLAN.md)：以现有 Skill/工具为唯一内核，补可复现打包、来源自检与宿主接线，再用真实工程验证开工、委派、收尾与接管。内部候选已在一台 Codex 主机通过官方 CLI 安装并核对缓存，Linux Claude 已做临时加载与真实任务试用；桌面新会话采用、hooks 与完整跨宿主验收仍待，未公开发布。根 `plugin.json` 是身份源，不能单凭它声称运行已验证。源码已采用0.2.7；[换行来源机制](evals/reports/package-newline-provenance-20261022.md)保留原始输入指纹，区分规范文本来源一致与包文件字节完整；[有限宿主采用记录](evals/reports/host-adoption-v025-20261022.md)另证官方 Windows CLI 安装0.2.5及实际有限使用。既有 scoped0.2.4 工程任务不由此自动升级。
 
 [协作工作流](project-wiki/references/collaboration-workflow.md)提供原生任务 JSON 的快照、任务包、范围受限的委派和真实 diff 收尾；全部卫星、能力缺口、未展开候选与跨仓版本保留。脚本不派 agent、不自动执行页内检查，也不把结构闭环认证成业务完成。当前是内部候选，宿主生命周期与项目试用按计划分别验收。
 
