@@ -92,8 +92,18 @@ separate from this mechanism replay.
 
 ## Remaining layers
 
-Normal exact source/main CI, independent review and any deliberate host adoption
-remain separate. Explicit candidate CLI use on Linux does not upgrade a scoped
+An independent, framework-familiar reviewer inspected the original candidate
+helper and its lifecycle callers, then executed the actual pure artifact helpers:
+17 checks passed and two real symlink probes were skipped for Windows privilege
+limitations. The reviewer did not run Git-dependent lifecycle routes. Their first
+probe failed in its own result summarizer; that traceback and the corrected run
+in a new output directory were retained. The coordinator read the raw result and
+verified all 22 declared source/generated-file hashes and the clean fixed source
+checkouts. No additional supported source blocker was found within that scope;
+this is not a blind trial or a substitute for the Linux lifecycle replay above.
+
+Normal exact source/main CI and any deliberate host adoption remain separate.
+Explicit candidate CLI use on Linux does not upgrade a scoped
 plugin, prove automatic hooks, prove another agent applied the context correctly
 or establish comparative efficiency. No private project data was transferred into
 the public report, and no project-specific repository label or path is built into
