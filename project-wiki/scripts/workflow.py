@@ -175,7 +175,10 @@ def compare_native_sources(report: dict, pointer: str | None, root: Path, head: 
     for row in observed.values():
         if not isinstance(row, dict) or not isinstance(row.get('root'), str) or not row['root']:
             continue  # Cannot satisfy a selected identity; unrelated optional context is not a gate.
-        folder = str(Path(row['root']).resolve())
+        try:
+            folder = str(Path(row['root']).resolve())
+        except (OSError, ValueError):
+            continue  # Malformed paths cannot satisfy a selected identity.
         if folder not in selected_roots:
             continue
         if not isinstance(row.get('revision'), str) or not row['revision']:
