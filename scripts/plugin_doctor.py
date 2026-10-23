@@ -8,7 +8,74 @@ from pathlib import Path, PurePosixPath
 import sys
 
 MAX_TRANSCRIPT = 4 * 1024 * 1024
+MAX_HOST_INVENTORY = 4 * 1024 * 1024
 SOURCE_BYTE_POLICY = 'utf8-crlf-to-lf-v1'
+
+
+def inspect_codex_inventory(path: Path, name: str, version: str, marketplace: str) -> dict:
+    """Read caller-captured official CLI JSON; never execute its source paths.
+
+    The file is unsigned and may be old or filtered. A matching record is an
+    installation/enabling observation only, not proof of the selected cache
+    bytes, hooks, context consumption or semantic correctness.
+    """
+    if not marketplace or '@' in marketplace:
+        raise ValueError('Explicit marketplace identity is required')
+    if path.stat().st_size > MAX_HOST_INVENTORY:
+        raise ValueError('Host inventory exceeds inspection budget')
+    raw = path.read_bytes()
+    data = json.loads(raw.decode('utf-8-sig'))
+    if not isinstance(data, dict) or not isinstance(data.get('installed'), list):
+        raise ValueError('Invalid Codex plugin inventory')
+    plugin_id = name + '@' + marketplace
+    matches = []
+    for row in data['installed']:
+        if not isinstance(row, dict):
+            raise ValueError('Invalid installed plugin record')
+        # Matching IDs must also agree with the explicit component identities.
+        if row.get('pluginId') != plugin_id:
+            continue
+        if row.get('name') != name or row.get('marketplaceName') != marketplace:
+            raise ValueError('Inconsistent plugin identity')
+        if (type(row.get('installed')) is not bool or type(row.get('enabled')) is not bool
+                or not isinstance(row.get('version'), str) or not row['version'].strip()
+                or (row['enabled'] and not row['installed'])):
+            raise ValueError('Invalid installed plugin state')
+        matches.append(row)
+    if len(matches) > 1:
+        raise ValueError('Target plugin inventory is ambiguous')
+    row = matches[0] if matches else None
+    return {
+        'kind': 'provided-codex-plugin-inventory',
+        'inventory_sha256': hashlib.sha256(raw).hexdigest(),
+        'plugin_id': plugin_id,
+        'selected_package_version': version,
+        'record_present': row is not None,
+        'state': 'record_observed' if row is not None else 'not_listed_in_supplied_inventory',
+        'reported_installed': row['installed'] if row else None,
+        'reported_enabled': row['enabled'] if row else None,
+        'reported_version': row['version'] if row else None,
+        'package_version_matched': bool(row and row['version'] == version),
+        'host_version': 'unreported',
+        'hook_trust': 'not established', 'hook_execution': 'not established',
+        'context_delivery': 'not established', 'agent_use': 'not established',
+        'semantic_review': 'not established', 'business_acceptance': 'not established',
+        'limits': 'Unsigned supplied snapshot; capture time, freshness and completeness are not authenticated. '
+                  'Absence is not global uninstall evidence. Matching version does not bind cache bytes '
+                  'or prove hooks, context delivery, agent adoption, semantics or business acceptance.',
+    }
+
+
+def inspect_codex_version(path: Path) -> dict:
+    """Optional caller-captured `codex --version` stdout, separate from inventory."""
+    if path.stat().st_size > 512:
+        raise ValueError('Host version exceeds inspection budget')
+    raw = path.read_bytes()
+    text = raw.decode('utf-8-sig').strip()
+    if not text.startswith('codex-cli ') or not text[10:].strip() or any(ord(c) < 32 for c in text):
+        raise ValueError('Invalid Codex version output')
+    return {'reported': text, 'stdout_sha256': hashlib.sha256(raw).hexdigest(),
+            'limits': 'Caller-supplied unsigned version stdout, not execution attestation.'}
 
 
 def inspect_claude_transcript(path: Path, package: Path, name: str, version: str) -> dict:
@@ -223,8 +290,26 @@ def main() -> int:
     parser.add_argument('--package', required=True, type=Path)
     parser.add_argument('--source', type=Path)
     parser.add_argument('--claude-transcript', type=Path, help='Inspect actual scoped CLI events; never infer global installation')
+    parser.add_argument('--codex-inventory', type=Path, help='Read saved `codex plugin list --json` stdout; no host commands are executed')
+    parser.add_argument('--codex-marketplace', help='Explicit marketplace identity for the selected plugin; required with --codex-inventory')
+    parser.add_argument('--codex-version-file', type=Path, help='Optional saved `codex --version` stdout, only with --codex-inventory')
     args = parser.parse_args()
+    if bool(args.codex_inventory) != bool(args.codex_marketplace):
+        parser.error('--codex-inventory and --codex-marketplace must be provided together')
+    if args.codex_version_file and not args.codex_inventory:
+        parser.error('--codex-version-file requires --codex-inventory')
     report = inspect(args.package, args.source)
+    if args.codex_inventory is not None:
+        if not report['package_valid']:
+            report['codex_observation'] = {'error': 'Package integrity must pass before matching host inventory'}
+        else:
+            try:
+                observation = inspect_codex_inventory(args.codex_inventory, report['name'], report['version'], args.codex_marketplace)
+                if args.codex_version_file is not None:
+                    observation['host_version'] = inspect_codex_version(args.codex_version_file)
+                report['codex_observation'] = observation
+            except (OSError, ValueError, KeyError, TypeError, UnicodeError):
+                report['codex_observation'] = {'error': 'Supplied Codex inventory/version unavailable or invalid; host state remains unverified'}
     if args.claude_transcript is not None:
         if not report['package_valid']:
             report['cli_observation'] = {'error': 'Package integrity must pass before matching host events'}
