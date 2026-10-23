@@ -160,3 +160,30 @@ missing peers, extra consumers, new untracked recovery files and wrong evidence
 paths. Then use real tasks and inspect whether the successor actually used the
 packet. Compare effort and omissions only with measured cases. A guided retry by
 the same worker is recovery evidence, not an independent blind efficiency trial.
+
+## Host observations
+
+When a plugin package is present, its existing `scripts/plugin_doctor.py` is at
+the **plugin root**, outside `skills/project-wiki`. Standalone skill/CLI users do
+not need a plugin installation or a new host configuration to use the workflow.
+
+```text
+python <plugin>/scripts/plugin_doctor.py --package <selected-package> --source <canonical-source>
+python <plugin>/scripts/plugin_doctor.py --package <selected-package> --codex-inventory <saved-official-inventory.json> --codex-marketplace <explicit-marketplace> --codex-version-file <saved-version-stdout.txt>
+```
+
+The caller can save official `codex plugin list --marketplace <marketplace>
+--json` and `codex --version` stdout with the host's normal tool. Doctor only reads
+these files and never invokes the CLI, follows a source path, installs anything
+or changes hook trust. `--claude-transcript` remains a separate scoped-event
+inspection. Do not substitute a model-written claim for a host record.
+
+Package integrity must pass before matching a Codex record. Identity is explicit
+name+marketplace; stale version, disabled state and absence are retained, not
+upgraded into a pass. The snapshot and optional host version are unsigned supplied
+evidence. No freshness, complete host inventory or cache-byte binding follows.
+Top-level evidence layers remain unverified; the nested observation says exactly
+what the provided record reported. Exit0 certifies neither installed-current
+state nor hook execution, context delivery, actual use, semantics or business
+acceptance. Combine this bounded observation with actual host/tool/read/runtime
+evidence when reporting the six layers; do not collapse them into one green badge.

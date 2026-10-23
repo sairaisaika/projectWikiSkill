@@ -173,6 +173,12 @@ component does not prove that every editing field, draft transition or client is
 connected. Keep omissions, gaps and runtime evidence distinct. A generated packet
 does not establish dispatch, reading, semantic correctness or completion.
 
+For an installed-plugin/source/version disagreement, use the collaboration
+workflow's [host observations](references/collaboration-workflow.md#host-observations).
+The plugin's read-only doctor can compare package/source bytes and optional
+caller-captured Codex inventory/version or scoped Claude events. Keep each host
+observation separate from hook execution, actual agent use and business evidence.
+
 Keep secrets and host-private implementation details out of public artifacts.
 The skill authorizes no publication, installation, external messaging, or runtime
 operation beyond the user's request. Report concrete artifacts, checks, remaining
