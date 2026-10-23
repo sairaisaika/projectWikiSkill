@@ -20,7 +20,7 @@ The missing capability was comparison of those two existing observations, not
 source attestation or authority to select a different repository. Candidate0.2.7
 adds an explicit adapter argument, `--native-source-context <JSON-pointer>`, for
 native `{label: {root, revision}}` records. Labels are opaque. Every selected root
-and peer must match; missing, stale, contradictory and unavailable observations
+  and peer must match; missing, stale, contradictory and unavailable selected observations
 are not treated as empty success. Legacy adapters retain `not_requested`.
 
 ## Actual evidence
@@ -29,16 +29,36 @@ are not treated as empty success. Legacy adapters retain `not_requested`.
   exit1 and created no capture file. The correctly selected pair captured with
   exit0, then passed read-only start and displayed the matched comparison in its
   index. This used the original local task router and actual Git snapshots.
-- Eight new focused tests cover arbitrary native labels, wrong peer selection,
+- The first eight focused tests covered arbitrary native labels, wrong peer selection,
   old revision, unknown/conflicting metadata, a peer named `root`, missing/bad
   pointer, comparison retention and the real CLI option. The first48-test workflow
   run had47pass/1fail: policy retention was present in review preparation but
   missing in final reconciliation. The regression was preserved and the final
   path fixed; its isolated replay then passed.
-- The final complete Python suite ran150 tests, with149 passed and1 existing
+- The first complete suite ran150 tests, with149 passed and1 existing skip;
+  both CI events passed their four Linux/Windows and Python3.10/3.13 jobs on that
+  intermediate commit. Independent guided review of that fixed commit then found
+  unrelated optional-source rejection, array-pointer rejection and an accepted
+  strict capture displayed as `not_requested` when its saved comparison was missing.
+  A final-receipt traceability recommendation was also retained; it was not a
+  missing policy gate. Twelve consumed-file hashes were independently checked.
+- Four additional focused tests preserve those boundaries: unrelated optional
+  context is ignored while every selected identity is still required; JSON Pointer
+  supports arrays/escaped keys and rejects invalid indices/escapes; strict captures
+  missing comparison records reject dispatch and display unavailable; final receipts
+  retain strict or legacy policy explicitly. The first replay of the three later
+  tests failed, including an invalid escape being accepted. Failure logs remain
+  private; they were fixed rather than reclassified as passing controls.
+- The final complete Python suite ran154 tests, with153 passed and1 existing
   skip. Candidate packaging and source-aware doctor both exited0, with valid
   package bytes/source and no doctor issues. Windows Python3.13 was the observed
-  local runtime; the normal CI matrix remains a separate adoption requirement.
+  local runtime; the exact final CI matrix remains a separate adoption requirement.
+- The final helper repeated the actual original-router mismatch/matching replay
+  and strict read-only capture, start, display, final capture and reconciliation.
+  Wrong selection rejected with exit1 and no output; matching selection retained
+  its checked comparison in the final receipt, with no source changes. The old
+  and intermediate component artifacts remain; a reused aggregate replay summary
+  was overwritten by the final replay, so it is not claimed immutable history.
 - Matching observations follow index, full/feature/impact views and delegation.
   Final capture/reconciliation cannot silently drop the selected comparison policy.
   Native context, omitted candidates and complete satellite scope are preserved.

@@ -154,27 +154,38 @@ def compare_native_sources(report: dict, pointer: str | None, root: Path, head: 
         raise ValueError('Native source context requires a nonempty JSON pointer')
     observed = report
     for token in pointer[1:].split('/'):
+        if any(not part or part[0] not in '01' for part in token.split('~')[1:]):
+            raise ValueError('Native source context contains an invalid JSON pointer escape')
         token = token.replace('~1', '/').replace('~0', '~')
-        if not isinstance(observed, dict) or token not in observed:
+        if isinstance(observed, dict) and token in observed:
+            observed = observed[token]
+        elif (isinstance(observed, list) and token.isascii() and token.isdecimal()
+              and (token == '0' or not token.startswith('0')) and int(token) < len(observed)):
+            observed = observed[int(token)]
+        else:
             raise ValueError('Declared native source context is unavailable')
-        observed = observed[token]
     if not isinstance(observed, dict) or not observed:
         raise ValueError('Native source observations must be a nonempty object')
+    selected = [('root', {'root': str(root.resolve()), 'head': head, 'available': True})]
+    selected.extend(('peer:' + alias, row) for alias, row in peers.items())
+    if any(not row['available'] for _, row in selected):
+        raise ValueError('Selected checkout is unavailable for native source comparison')
+    selected_roots = {str(Path(row['root']).resolve()) for _, row in selected}
     by_root = {}
     for row in observed.values():
-        if not isinstance(row, dict) or not isinstance(row.get('root'), str) or not row['root'] or not isinstance(row.get('revision'), str) or not row['revision']:
-            raise ValueError('Native source identity is unavailable or malformed')
+        if not isinstance(row, dict) or not isinstance(row.get('root'), str) or not row['root']:
+            continue  # Cannot satisfy a selected identity; unrelated optional context is not a gate.
         folder = str(Path(row['root']).resolve())
+        if folder not in selected_roots:
+            continue
+        if not isinstance(row.get('revision'), str) or not row['revision']:
+            raise ValueError('Native source identity is unavailable or malformed')
         revision = row['revision']
         if folder in by_root and by_root[folder] != revision:
             raise ValueError('Native source observations disagree about one checkout')
         by_root[folder] = revision
-    selected = [('root', {'root': str(root.resolve()), 'head': head, 'available': True})]
-    selected.extend(('peer:' + alias, row) for alias, row in peers.items())
     matched = {}
     for alias, row in selected:
-        if not row['available']:
-            raise ValueError('Selected checkout is unavailable for native source comparison')
         folder = str(Path(row['root']).resolve())
         if by_root.get(folder) != row['head']:
             raise ValueError('Native source observation does not match a selected checkout')
@@ -249,6 +260,8 @@ def check_capture(value: dict, *, require_current: bool = True) -> Path:
     validate_native(value['native_report'], value['query'], value['files'], root, value['wiki_root'])
     expected_sources = compare_native_sources(value['native_report'], value.get('native_source_context'),
                                               root, value['base']['head'], peers)
+    if value.get('native_source_context') is not None and 'native_source_comparison' not in value:
+        raise ValueError('Strict native source comparison is missing; recapture before dispatch')
     if value.get('native_source_comparison', expected_sources) != expected_sources:
         raise ValueError('Native source comparison changed after capture')
     return root
@@ -440,6 +453,9 @@ def finish(packet: dict, after: dict, review: dict) -> dict:
                     'peers': peer_end}
     return {'schema_version': 1, 'kind': 'wiki-work-reconciliation', 'task_id': packet['task_id'],
             'access': access,
+            'native_source_context': after.get('native_source_context'),
+            'native_source_comparison': compare_native_sources(after['native_report'], after.get('native_source_context'),
+                                                               root, after['base']['head'], peer_end),
             'base_sha': packet['base_sha'], 'head_sha': head(root), 'actual_files': actual,
             'structural_reconciliation': not problems, 'issues': problems, 'capability_gaps': gaps,
             'review': review, 'native_omitted_candidates': report['omitted'],
@@ -483,7 +499,10 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
         'meaning': 'The native router did not provide its return contract; inspect its own gates before dispatch.',
     })
     result['native_source_comparison'] = packet['context'].get('native_source_comparison', {
-        'status': 'not_requested', 'meaning': 'Native source observations have not been compared with declared checkouts.'})
+        'status': 'unavailable' if packet['context'].get('native_source_context') is not None else 'not_requested',
+        'meaning': 'Strict comparison record is missing; recapture before dispatch.'
+                   if packet['context'].get('native_source_context') is not None else
+                   'Native source observations have not been compared with declared checkouts.'})
     result['review_preparation'] = {
         'command': 'review-template --packet <same-packet> --after-capture <current-final-capture> --output <new-review.json>',
         'meaning': 'Optional unreviewed skeleton for the actual return. Does not fill decisions or replace the native finish/commit gate.',

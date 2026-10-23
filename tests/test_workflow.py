@@ -557,6 +557,53 @@ class NativeSourceContextTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'does not match'):
             self.capture(native_source_context=self.pointer)
 
+    def test_unrelated_optional_native_source_cannot_block_selected_root(self):
+        self.observe({'selected-project': self.identity(),
+                      'unselected-client': {'root': str(self.home / 'not-selected'), 'revision': None}})
+        captured = self.capture(native_source_context=self.pointer)
+        self.assertEqual(captured['native_source_comparison']['status'], 'matched')
+        self.assertEqual(set(captured['native_source_comparison']['checkouts']), {'root'})
+
+    def test_json_pointer_accepts_arrays_and_escaped_object_keys(self):
+        rows = {'selected': self.identity()}
+        for report, pointer in [({'runs': [{'sources': rows}]}, '/runs/0/sources'),
+                                ({'a/b': {'~sources': rows}}, '/a~1b/~0sources')]:
+            with self.subTest(pointer=pointer):
+                result = wf.compare_native_sources(report, pointer, self.root,
+                                                    self.identity()['revision'], {})
+                self.assertEqual(result['status'], 'matched')
+        for pointer in ['/runs/1/sources', '/runs/-1/sources', '/runs/00/sources',
+                        '/runs/-/sources', '/runs/x/sources', '/a~2b/~0sources', '/a~/~0sources']:
+            with self.subTest(pointer=pointer), self.assertRaises(ValueError):
+                wf.compare_native_sources({'runs': [{'sources': rows}], 'a~2b': {'~sources': rows}},
+                                           pointer, self.root, self.identity()['revision'], {})
+
+    def test_strict_capture_missing_comparison_is_rejected_and_never_displayed_as_legacy(self):
+        self.observe({'project': self.identity()})
+        captured = self.capture(native_source_context=self.pointer)
+        packet = self.packet(captured)
+        del captured['native_source_comparison']
+        with self.assertRaisesRegex(ValueError, 'comparison is missing'):
+            self.packet(captured)
+        packet['context'] = captured
+        shown = wf.task_view(packet, 'index')
+        self.assertEqual(shown['native_source_comparison']['status'], 'unavailable')
+        self.assertIn('historical', shown['freshness'])
+        legacy = self.capture()
+        legacy.pop('native_source_comparison')
+        legacy.pop('native_source_context')
+        self.assertEqual(wf.task_view(self.packet(legacy), 'index')['native_source_comparison']['status'],
+                         'not_requested')
+
+    def test_final_receipt_retains_strict_and_legacy_source_comparison(self):
+        self.observe({'project': self.identity()})
+        for pointer in [self.pointer, None]:
+            with self.subTest(pointer=pointer):
+                captured = self.capture(native_source_context=pointer)
+                result = wf.finish(self.packet(captured), captured, self.review())
+                self.assertEqual(result['native_source_context'], pointer)
+                self.assertEqual(result['native_source_comparison'], captured['native_source_comparison'])
+
     def test_unavailable_and_conflicting_native_identity_are_not_empty_success(self):
         for revision in [None, '']:
             with self.subTest(revision=revision):
