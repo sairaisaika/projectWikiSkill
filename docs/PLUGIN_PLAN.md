@@ -1,5 +1,37 @@
 # Internal collaboration plugin, source0.2.5 / bounded host adoption
 
+## Codex inventory observations (0.2.6 candidate)
+
+An actual package inspection reported valid matching0.2.5 bytes but left every
+host field unverified, while the official marketplace-scoped inventory separately
+reported that version installed/enabled. Doctor can now carry these **separate**
+observations in one output, without treating source inspection as installation.
+
+The caller captures official `codex plugin list --marketplace <market> --json`
+stdout and optionally `codex --version` stdout in private files, using the host's
+normal tools. Then:
+
+```text
+python scripts/plugin_doctor.py --package <selected-package> --source <canonical-source> --codex-inventory <inventory.json> --codex-marketplace <market> --codex-version-file <version.txt>
+```
+
+The explicit name+marketplace identity must agree with the record's plugin ID;
+duplicates, malformed state, string booleans and oversized input are rejected.
+An older recorded plugin version remains visible and fails the version match;
+available-only entries and another marketplace cannot substitute. The optional
+version file is inspected separately, not guessed from a plugin version.
+Only selected identity/state/version and input hashes are returned; source paths
+are not executed or copied into the observation. The normal package integrity
+check must succeed before matching a host record.
+
+The inputs are unsigned caller-supplied snapshots: no capture time, freshness,
+completeness, current runtime, cache identity, hook trust, hook execution, context
+delivery, agent use, semantic correctness or business acceptance follows. Absence
+means only not listed in the supplied inventory. Top-level evidence layers remain
+unverified, as before; inspect the named observation rather than interpreting exit0
+as overall completion. No hooks, host configuration, registry, credentials or
+running scoped worker is changed by this addition.
+
 Current checkpoint (2026-10-22):0.2.5 source was normally adopted at main
 `3cac3ef`, with exact main CI green. Official Windows CLI inventory now reports
 installed/enabled0.2.5; actual cache/source inspection and one fresh read-only
