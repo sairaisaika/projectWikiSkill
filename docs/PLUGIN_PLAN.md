@@ -1,4 +1,13 @@
-# Internal collaboration plugin, source0.2.5 / bounded host adoption
+# Internal collaboration plugin, source0.2.6 / bounded host adoption
+
+Current checkpoint (2026-10-23):0.2.6 normally adopted via PR18, source `fe6d8d1`
+and main `8c24a8a` have identical trees. Both source workflow runs and exact main
+workflow39935649839 passed Ubuntu/Windows Python3.10/3.13. One Windows host was
+updated through the existing official plugin entry, with package/source closure,
+inventory and direct installed-doctor invocation checked. The prior cache was
+archived before the host removed it; running scoped workers stayed pinned.
+See [the bounded host receipt](../evals/reports/codex-inventory-doctor-c77-20261023.md#host-adoption-after-source-merge).
+Desktop refresh, hooks, full collaboration and business acceptance remain separate.
 
 ## Codex inventory observations (0.2.6 candidate)
 
@@ -32,7 +41,7 @@ unverified, as before; inspect the named observation rather than interpreting ex
 as overall completion. No hooks, host configuration, registry, credentials or
 running scoped worker is changed by this addition.
 
-Current checkpoint (2026-10-22):0.2.5 source was normally adopted at main
+Historical checkpoint (2026-10-22):0.2.5 source was normally adopted at main
 `3cac3ef`, with exact main CI green. Official Windows CLI inventory now reports
 installed/enabled0.2.5; actual cache/source inspection and one fresh read-only
 CLI Skill/query/source review passed separately. A fresh scoped Linux native

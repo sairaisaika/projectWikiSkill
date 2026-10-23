@@ -1,10 +1,11 @@
 # projectWikiSkill
 
-0.2.6 source candidate adds optional read-only Codex inventory/version observations
-to doctor. The caller saves official CLI stdout and explicitly selects a marketplace;
-doctor never invokes host commands or treats installation/enabling as hook execution
-or agent adoption. Existing installed0.2.5/scoped workers remain unchanged until a
-separate authorized host update. See [doctor observations](docs/PLUGIN_PLAN.md#codex-inventory-observations-026-candidate).
+0.2.6 source is normally adopted and one Windows host was updated through the
+official CLI, with installed bytes/source and inventory/version observations
+checked separately. The new doctor only reads caller-captured host evidence;
+installation/enabling does not establish hook execution or agent adoption.
+Running scoped workers were not upgraded. See [actual host adoption](evals/reports/codex-inventory-doctor-c77-20261023.md#host-adoption-after-source-merge)
+and [doctor observations](docs/PLUGIN_PLAN.md#codex-inventory-observations-026-candidate).
 
 [内部协作插件计划](docs/PLUGIN_PLAN.md)：以现有 Skill/工具为唯一内核，补可复现打包、来源自检与宿主接线，再用真实工程验证开工、委派、收尾与接管。内部候选已在一台 Codex 主机通过官方 CLI 安装并核对缓存，Linux Claude 已做临时加载与真实任务试用；桌面新会话采用、hooks 与完整跨宿主验收仍待，未公开发布。根 `plugin.json` 是身份源，不能单凭它声称运行已验证。源码已采用0.2.5；[换行来源机制](evals/reports/package-newline-provenance-20261022.md)保留原始输入指纹，区分规范文本来源一致与包文件字节完整；[有限宿主采用记录](evals/reports/host-adoption-v025-20261022.md)另证官方 Windows CLI 安装0.2.5及实际有限使用。既有 scoped0.2.4 工程任务不由此自动升级。
 

@@ -1,4 +1,4 @@
-# Read-only Codex inventory observations, 0.2.6 candidate
+# Read-only Codex inventory observations and bounded0.2.6 host adoption
 
 ## Observed gap and change
 
@@ -57,3 +57,30 @@ enabled flag does not prove hook trust/execution, context delivery, actual agent
 use, semantic correctness, product acceptance, efficiency or complete
 cross-host collaboration. Host update and actual native-task use remain separate
 checks after normal source adoption; no running scoped execution is upgraded.
+
+## Host adoption after source merge
+
+The preceding table preserves the pre-adoption observation. Afterwards:
+
+- PR18 source `fe6d8d11b87d0548c3d59366015542d310cfc4d8` normally merged to
+  main `8c24a8a9ed77eb20c32a9aac965b1cac834f60f3`; their trees match. Both exact
+  source workflow runs39935263430/39935310648 and exact main39935649839 passed
+  Ubuntu/Windows Python3.10/3.13 checks. The clean canonical checkout fast-forwarded.
+- The immutable package was rebuilt from that clean main; its existing official
+  marketplace entry was updated after backing up the catalog. Official CLI
+  installation and subsequent inventory reported0.2.6 installed/enabled.
+- Actual cached package, canonical skill/support/identity and explicit inventory
+  version match passed independently. The newly installed doctor was invoked
+  directly, and its installed Skill entry route was read. These are bounded
+  tool/source consumption observations, not automatic discovery or a fresh model
+  session adopting its task context.
+- Before the official update removed the prior0.2.5 cache, all23 package/receipt
+  files were copied and hash-checked in a private recovery directory. The archive
+  stayed identical afterwards. The older immutable distribution remains available;
+  do not claim the old cache path still exists or unchanged-in-place.
+- The scoped Linux worker was not upgraded/restarted. Desktop current-chat
+  refresh, hook trust/execution, full cross-host implementation/recovery,
+  semantic accuracy, efficiency and business acceptance remain unestablished.
+
+This return changes documentation only. It does not change packaged payload,
+version, hook/controller code, installation state or the archived raw evidence.
