@@ -1,5 +1,29 @@
 # Internal collaboration plugin, source0.2.6 / bounded host adoption
 
+## Candidate0.2.7: native selected-source identity comparison (C90)
+
+A real coupled-repository review exposed a caller-side mismatch: the task capture
+could pin a current peer while the native router's own observed source context
+selected a different checkout and revision. Existing0.2.6 correctly left pairing
+fitness to the caller; it had no optional comparison for those two reported
+identities. The mismatched packet was characterized privately and not dispatched.
+
+The candidate adds `capture --native-source-context <JSON-pointer>` to compare the
+router's existing `{label: {root, revision}}` observations against the root and
+every declared peer. Labels and paths remain project-owned, not hardcoded product
+facts. Unknown/missing/old/conflicting observations fail closed; legacy callers
+remain explicitly `not_requested`. Index, exact views and delegation preserve the
+comparison, and final reconciliation cannot drop that selected policy. This is a
+consistency guard for reported snapshots, not evidence of physical reads, correct
+deployment pairing, hooks or semantic adoption. Original wiki and source facts
+remain in their native repositories.
+
+First focused run caught an implementation omission: policy retention was checked
+in review preparation but not final reconciliation. The failing regression was
+retained and the final path now checks it too. Full checks, actual paired CLI
+replay, normal source/main adoption and any host installation remain separate;
+installed Windows0.2.6 and running scoped Claude0.2.4 have not changed.
+
 Current checkpoint (2026-10-23):0.2.6 normally adopted via PR18, source `fe6d8d1`
 and main `8c24a8a` have identical trees. Both source workflow runs and exact main
 workflow39935649839 passed Ubuntu/Windows Python3.10/3.13. One Windows host was
