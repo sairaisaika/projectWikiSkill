@@ -144,6 +144,12 @@ def inspect(package: Path, source: Path | None = None) -> dict:
         if type(schema) is not int or schema not in (1, 2) or not isinstance(receipt.get('files'), dict):
             raise ValueError('Unsupported package receipt')
         normalized = schema == 2
+        with_hooks = receipt.get('lifecycle_hooks', False)
+        if type(with_hooks) is not bool:
+            raise ValueError('Invalid hook package profile')
+        hook_inputs = {'hooks/codex.json', 'hooks/claude.json'} if with_hooks else set()
+        support_names = {'plugin.json', 'LICENSE', 'scripts/plugin_doctor.py'} | hook_inputs
+        report['hook_configuration'] = 'optional definitions present; trust and execution unverified' if with_hooks else 'not included'
         if normalized:
             if receipt.get('source_byte_policy') != SOURCE_BYTE_POLICY:
                 raise ValueError('Unsupported source byte policy')
@@ -160,6 +166,8 @@ def inspect(package: Path, source: Path | None = None) -> dict:
         expected = receipt['files']
         required = {'plugin.json', 'LICENSE', '.claude-plugin/plugin.json', '.codex-plugin/plugin.json',
                     'skills/project-wiki/SKILL.md', 'skills/project-wiki/scripts/wiki.py', 'scripts/plugin_doctor.py'}
+        if with_hooks:
+            required |= hook_inputs | {'skills/project-wiki/scripts/lifecycle.py', 'skills/project-wiki/scripts/workflow.py'}
         if not required.issubset(expected):
             raise ValueError('Required plugin component is missing')
         for name, sha in expected.items():
@@ -195,12 +203,12 @@ def inspect(package: Path, source: Path | None = None) -> dict:
                 raise ValueError('Payload does not match canonical skill projection')
         supports = receipt.get('canonical_support_files')
         if supports is not None:
-            if not isinstance(supports, dict) or set(supports) != {'plugin.json', 'LICENSE', 'scripts/plugin_doctor.py'}:
+            if not isinstance(supports, dict) or set(supports) != support_names:
                 raise ValueError('Invalid canonical support input inventory')
-            for name in ('LICENSE', 'scripts/plugin_doctor.py'):
+            for name in {'LICENSE', 'scripts/plugin_doctor.py'} | hook_inputs:
                 if expected.get(name) != supports[name]:
                     raise ValueError('Payload does not match canonical support projection')
-        if set(expected) != projected | {'plugin.json', 'LICENSE', 'scripts/plugin_doctor.py', '.claude-plugin/plugin.json', '.codex-plugin/plugin.json'}:
+        if set(expected) != projected | support_names | {'.claude-plugin/plugin.json', '.codex-plugin/plugin.json'}:
             raise ValueError('Payload contains an unbound projection')
         package_identity = json.loads((package / 'plugin.json').read_text(encoding='utf-8'))
         if not isinstance(package_identity, dict) or package_identity.get('name') != receipt['name'] or package_identity.get('version') != receipt['version']:
@@ -210,7 +218,8 @@ def inspect(package: Path, source: Path | None = None) -> dict:
         host_identity = {key: package_identity[key] for key in ('name', 'version', 'description', 'author', 'license')}
         for host in ('claude', 'codex'):
             manifest = json.loads((package / f'.{host}-plugin/plugin.json').read_text(encoding='utf-8'))
-            if manifest != {**host_identity, 'skills': './skills/'}:
+            overlay = {'hooks': './hooks/' + host + '.json'} if with_hooks else {}
+            if manifest != {**host_identity, 'skills': './skills/', **overlay}:
                 raise ValueError('Host manifest does not match canonical projection')
         report['package_valid'] = not report['issues']
         if source is not None:
@@ -246,7 +255,7 @@ def inspect(package: Path, source: Path | None = None) -> dict:
                 support = receipt.get('canonical_support_files')
                 report['source_support_match'] = 'unverified legacy receipt'
                 if support is not None:
-                    if not isinstance(support, dict) or set(support) != {'plugin.json', 'LICENSE', 'scripts/plugin_doctor.py'}:
+                    if not isinstance(support, dict) or set(support) != support_names:
                         raise ValueError('Invalid canonical support input inventory')
                     support_mismatches = []
                     for name, expected_hash in support.items():

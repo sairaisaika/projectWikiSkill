@@ -15,6 +15,52 @@ so changes to those rules make captured context stale.
 Projects without this shape keep using the standalone route helper or their own
 native workflow; a missing adapter is not a defective wiki.
 
+## Optional lifecycle delivery
+
+The package builder's `--with-lifecycle-hooks` profile includes separate Codex and
+Linux Claude `SessionStart` definitions. The default package remains skill-only.
+Both profiles use the same canonical skill and Python workflow. No installation,
+trust file, host settings, model credentials or running session is changed by
+building a package. Hook definitions are intended for internal/manual distribution.
+
+The coordinator sets `PROJECT_WIKI_PACKET` to the absolute existing work-packet
+JSON for a new scoped host process. Startup, resume, clear, compact and fork can
+deliver its **saved index**, using `task_view(..., snapshot_only=True)` in the
+original workflow. The host cwd must belong to the packet's local checkout;
+another checkout is refused. This does not authenticate a packet or prove its
+source identities current. A coordinator must still use normal capture/dispatch
+checks before assigning new work, and the original final reconciliation afterwards.
+
+No selection is a quiet opt-out. The adapter never invokes Git/native routing,
+commands quoted in the packet, models or tools; it does not read a transcript,
+write an import cache, scan Wiki files or log raw hook input. Invalid selection
+or malformed input emits a delivery warning without blocking unrelated work.
+An index above the 6 KiB ASCII context budget is explicitly **not delivered**, with a
+pointer to the explicit `PROJECT_WIKI_PACKET` selection and standalone snapshot reader; it is not silently
+truncated into a purported complete impact inventory. The short wrapper is added
+after that check. Overflow never expands the selected path (Unicode paths cannot
+inflate the fallback). Codex's separate 8,000-token preview policy remains host-owned,
+and direct command replay is not proof of what a trusted host delivers. Task content is labelled
+untrusted data. Hook delivery is neither physical reading nor semantic adoption.
+
+Codex uses `python3` on Unix and a `commandWindows` override using `python`;
+Linux Claude uses `python3`. Python 3.10+ must already be available in that host's
+PATH. The installed plugin root is resolved inside Python from the host-provided
+`CLAUDE_PLUGIN_ROOT`, without shell-expanding project paths. The host-specific
+definitions add no permission policy or automatic completion gate.
+
+Before exercising a host, review its current support and trust configuration.
+Codex requires review/trust of the exact non-managed definition via `/hooks`;
+never write trust records or use a bypass to manufacture acceptance. Claude's
+normal project/plugin trust and enabled-hook policy also apply. Local execution,
+actual host triggering, delivered context, reader use and business correctness
+require separate evidence. An active scoped worker is not upgraded in place.
+Unsupported or untrusted hosts keep the existing explicit CLI task-package path.
+
+References: [Codex hook inputs, trust and local execution](https://learn.chatgpt.com/docs/hooks),
+[manual plugin hook packaging](https://developers.openai.com/plugins/build/plugins),
+[Claude hook reference](https://code.claude.com/docs/en/hooks).
+
 ## Context capture
 
 ```text
