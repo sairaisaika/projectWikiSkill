@@ -567,6 +567,12 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snaps
         except (OSError, ValueError, KeyError, subprocess.SubprocessError):
             freshness = 'stale or unavailable; this is a historical projection, recapture before new work'
     result = {'task_id': packet['task_id'], 'owner': packet['owner'], 'root': packet['root'],
+            'wiki_root': packet['context'].get('wiki_root'),
+            'path_bases': {
+                'wiki_pages': 'root / wiki_root',
+                'source_files': 'root, or peers[alias].root after a declared alias/ prefix',
+                'limits': 'Saved bases only; no existence or currentness claim. A missing wiki_root is unknown, not a default. Keep original native keys for --path.',
+            },
             'access': packet.get('access', 'edit'),
             'base_sha': packet['base_sha'], 'peers': packet['context'].get('peers', {}),
             'freshness': freshness, 'outcome': packet['outcome'],

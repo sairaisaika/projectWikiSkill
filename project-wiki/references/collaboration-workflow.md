@@ -63,7 +63,11 @@ PATH. The installed plugin root is resolved inside Python from the host-provided
 definitions add no permission policy or automatic completion gate.
 
 Before exercising a host, review its current support and trust configuration.
-Codex requires review/trust of the exact non-managed definition via `/hooks`;
+Codex requires review/trust of the exact non-managed definition: `/hooks` in the
+CLI, or Hooks settings in a desktop build that supports that entry. Check the
+selected local host; a separate CLI process and the desktop's embedded backend
+can have different versions and definition hashes. Do not assume one attests the
+other. Review the actually listed definition;
 never write trust records or use a bypass to manufacture acceptance. Claude's
 normal project/plugin trust and enabled-hook policy also apply. Local execution,
 actual host triggering, delivered context, reader use and business correctness
@@ -177,6 +181,25 @@ away. Large individual records still require the host's full-output reading path
 A stale display is explicitly historical; fresh dispatch requires recapture.
 Delegation cannot widen edit scope, and does not send messages or start an agent.
 Pass the resulting private packet through the project's authorized coordinator.
+
+Every saved reading view also exposes the capture's `wiki_root` and explicit path
+bases. Native feature and satellite page keys are relative to `root / wiki_root`;
+source files are relative to the checkout, or to a declared peer selected by its
+alias prefix. Keep the native key itself in `show --path` (for example,
+`feature.md`); prepend the saved Wiki base only when locating its actual file.
+This avoids reading a stale same-named file at the checkout root. No default Wiki
+directory is invented when older or incomplete context omits `wiki_root`.
+Snapshot-only mode preserves foreign path strings without probing or resolving
+them on the reader's host; these bases do not certify existence or freshness.
+
+```mermaid
+flowchart LR
+  CAPTURE["capture: root and wiki_root"] --> VIEW["task_view: saved path bases"]
+  KEY["native page key: unchanged"] --> VIEW
+  VIEW --> EXPAND["CLI / lifecycle: exact-key snapshot expansion"]
+  EXPAND --> READ["reader locates root / wiki_root / native key"]
+  VIEW -. "not a freshness check" .-> GUARD["coordinator capture / dispatch / finish"]
+```
 
 ### Reading when the worker cannot invoke Git
 

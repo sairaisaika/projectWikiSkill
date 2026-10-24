@@ -130,6 +130,41 @@ class WorkflowTests(unittest.TestCase):
         self.assertIn('not delivered', view['expansion']['reading_state'])
         self.assertEqual(view['capabilities'], ['title', 'tags', 'visibility'])
 
+    def test_reading_views_expose_existing_wiki_path_basis_without_rewriting_keys(self):
+        packet = self.packet()
+        for view, selected in [('index', None), ('feature', 'feature.md'),
+                               ('impact', 'src/editor.py'), ('all', None)]:
+            for saved in (False, True):
+                shown = wf.task_view(packet, view, selected, snapshot_only=saved)
+                self.assertEqual(shown['wiki_root'], packet['context']['wiki_root'])
+                self.assertEqual(shown['path_bases']['wiki_pages'], 'root / wiki_root')
+                if view in ('feature', 'all'):
+                    self.assertEqual(shown['native_context']['cards'][0]['path'], 'feature.md')
+
+    def test_custom_wiki_root_identifies_the_real_page_instead_of_a_root_decoy(self):
+        custom = self.root / 'knowledge' / 'manual'
+        custom.parent.mkdir()
+        (self.root / 'docs/wiki').rename(custom)
+        (self.root / 'feature.md').write_text('wrong root-level decoy', encoding='utf-8')
+        captured = self.capture(wiki_root='knowledge/manual')
+        packet = self.packet(captured)
+        with patch.object(wf, 'check_capture', side_effect=AssertionError('no live check')):
+            shown = wf.task_view(packet, 'index', snapshot_only=True)
+        path = self.root / shown['wiki_root'] / shown['native_index']['features'][0]['path']
+        self.assertEqual(path.read_text(encoding='utf-8'), '# feature')
+        self.assertNotEqual(path, self.root / 'feature.md')
+
+    def test_snapshot_path_basis_keeps_foreign_strings_and_missing_root_unknown(self):
+        packet = self.packet()
+        packet['root'] = '/foreign/checkout'
+        packet['context']['wiki_root'] = 'knowledge/手册'
+        with patch.object(wf, 'check_capture', side_effect=AssertionError('no live check')):
+            shown = wf.task_view(packet, 'index', snapshot_only=True)
+            self.assertEqual(shown['root'], '/foreign/checkout')
+            self.assertEqual(shown['wiki_root'], 'knowledge/手册')
+            packet['context'].pop('wiki_root')
+            self.assertIsNone(wf.task_view(packet, 'index', snapshot_only=True)['wiki_root'])
+
     def test_snapshot_view_does_not_attempt_live_checks_or_commands(self):
         packet = self.packet()
         with ExitStack() as stack:
