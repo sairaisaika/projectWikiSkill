@@ -73,8 +73,11 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(data['packet_selection'], 'PROJECT_WIKI_PACKET')
 
     def test_unicode_packet_path_cannot_expand_the_overflow_notice(self):
-        selected = str(self.home.joinpath(*(['文' * 20] * 90), 'packet.json'))
+        # Keep the synthetic path below Linux's filesystem byte limit while its
+        # ASCII-escaped form would still overflow the former fallback.
+        selected = str(self.home.joinpath(*(['文' * 20] * 60), 'packet.json'))
         self.assertLess(len(selected), 4096)
+        self.assertGreater(len(json.dumps(selected).encode('utf-8')), adapter.MAX_CONTEXT)
         self.packet['outcome'] = 'x' * (adapter.MAX_CONTEXT + 100)
         with patch.object(adapter.Path, 'is_file', return_value=True), patch.object(adapter.workflow, 'read_json', return_value=self.packet):
             result = adapter.deliver(self.event, selected)
