@@ -207,6 +207,20 @@ class WorkflowTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'access scope'):
             wf.task_view(packet, 'index', snapshot_only=True)
 
+    def test_snapshot_qualifies_saved_source_comparison_without_rewriting_it(self):
+        packet = self.packet()
+        saved = copy.deepcopy(packet['context']['native_source_comparison'])
+        for view, selected in [('index', None), ('feature', 'feature.md'),
+                               ('impact', 'src/editor.py'), ('all', None)]:
+            shown = wf.task_view(packet, view, selected, snapshot_only=True)
+            self.assertEqual(shown['native_source_comparison'], saved)
+            observation = shown['native_source_comparison_observation']
+            self.assertEqual(observation['record_time'], 'capture')
+            self.assertFalse(observation['current_check_attempted'])
+            self.assertIn('not a current match', observation['meaning'])
+        self.assertEqual(packet['context']['native_source_comparison'], saved)
+        self.assertNotIn('native_source_comparison_observation', wf.task_view(packet))
+
     def test_snapshot_does_not_replace_default_live_check(self):
         packet = self.packet()
         current = wf.task_view(packet, 'index')
