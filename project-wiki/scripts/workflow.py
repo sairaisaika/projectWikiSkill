@@ -350,7 +350,7 @@ def start(value: dict, task_id: str, owner: str, outcome: str, allowed: list[str
         raise ValueError('Editing tasks require explicit allowed files; use --read-only for a review')
     if not read_only and not set(value['files']).issubset(allowed):
         raise ValueError('Allowed files cannot omit the planned files')
-    return {'schema_version': 1, 'kind': 'wiki-work-packet', 'task_id': task_id, 'owner': owner,
+    packet = {'schema_version': 1, 'kind': 'wiki-work-packet', 'task_id': task_id, 'owner': owner,
             'root': str(root), 'base_sha': value['base']['head'], 'outcome': outcome,
             'access': 'read_only' if read_only else 'edit',
             'allowed_files': allowed, 'acceptance': acceptance, 'capabilities': capabilities,
@@ -362,6 +362,9 @@ def start(value: dict, task_id: str, owner: str, outcome: str, allowed: list[str
                                     'preserve selected evidence files; inspect embedded probe output paths and write each new raw run to a distinct destination',
                                     'verification, remaining work and next safe action'],
             'limits': 'A created or sent packet does not establish that a worker read or applied it. Access is task scope, not a filesystem sandbox.'}
+    if read_only:
+        packet['read_only_baseline'] = readonly_baseline(packet, 'start')
+    return packet
 
 
 def delegate(packet: dict, owner: str, task_id: str, allowed: list[str], *, read_only: bool = False) -> dict:
@@ -377,8 +380,11 @@ def delegate(packet: dict, owner: str, task_id: str, allowed: list[str], *, read
         raise ValueError('Read-only delegation cannot widen editing scope')
     if not owner.strip() or not task_id.strip() or (not read_only and not allowed) or not set(allowed).issubset(packet['allowed_files']):
         raise ValueError('Delegation must name an owner/task and cannot widen the editing scope')
-    return {**packet, 'task_id': task_id, 'owner': owner, 'parent_task_id': packet['task_id'],
+    child = {**packet, 'task_id': task_id, 'owner': owner, 'parent_task_id': packet['task_id'],
             'access': 'read_only' if read_only else 'edit', 'allowed_files': allowed, 'dispatch': 'not performed'}
+    if read_only:
+        child['read_only_baseline'] = readonly_baseline(child, 'delegate')
+    return child
 
 
 def changed_files(root: Path, base: str, baseline_untracked: list[str]) -> list[str]:
@@ -388,6 +394,50 @@ def changed_files(root: Path, base: str, baseline_untracked: list[str]) -> list[
     commit = git(root, 'rev-parse', '--verify', base + '^{commit}').decode().strip()
     names = [x.decode('utf-8') for x in git(root, 'diff', '--no-ext-diff', '--name-only', '-z', commit, '--').split(b'\0') if x]
     return sorted(set(names) | (set(untracked(root)) - set(baseline_untracked)))
+
+
+def repository_changes(packet: dict, after: dict) -> tuple[list[str], list[str]]:
+    """One Git-base/planned-untracked predicate for early advice and final return."""
+    root = Path(after['root']).resolve()
+    actual = changed_files(root, packet['base_sha'], packet['context']['baseline_untracked'])
+    peer_start = packet['context'].get('peers', {})
+    peer_end = after.get('peers', {})
+    if set(peer_start) != set(peer_end):
+        raise ValueError('Start/end peer scope differs')
+    missing_peers = []
+    for alias, peer in peer_start.items():
+        if not peer['available'] or not peer_end[alias]['available']:
+            missing_peers.append(alias)
+            continue
+        if peer['root'] != peer_end[alias]['root']:
+            raise ValueError('Start/end peer checkouts differ')
+        baseline = packet['context'].get('baseline_peer_untracked', {}).get(alias, [])
+        actual.extend(alias + '/' + f for f in changed_files(Path(peer['root']), peer['head'], baseline))
+    # Already-untracked planned files count even when present before capture.
+    for name, old in packet['context']['planned_source_hashes'].items():
+        alias, _, rest = name.partition('/')
+        declared_untracked = name in packet['context']['baseline_untracked']
+        if alias in peer_start:
+            declared_untracked = rest in packet['context'].get('baseline_peer_untracked', {}).get(alias, [])
+        if (source_hash(root, name, peer_end) != old or (declared_untracked and old is not None)) and name not in actual:
+            actual.append(name)
+    return sorted(set(actual)), sorted(missing_peers)
+
+
+def readonly_baseline(packet: dict, stage: str) -> dict:
+    """Coordinator observation, not a new permission or an unchanged certificate."""
+    actual, missing = repository_changes(packet, packet['context'])
+    status = 'unavailable' if missing else 'differences' if actual else 'no_differences_observed'
+    return {
+        'status': status, 'observed_at': stage, 'difference_count': len(actual),
+        'path_sample': actual[:8], 'path_sample_truncated': len(actual) > 8,
+        'unavailable_peers': missing, 'completion_certificate': False,
+        'meaning': ('Existing finish cannot accept an unchanged read-only return with these Git-base differences or unavailable peers. '
+                    'Inspection is still allowed; use an honestly identified clean committed review snapshot if unchanged return is required.'
+                    if actual or missing else
+                    'No differences observed by the existing return predicate at this boundary; later changes still require final reconciliation.'),
+        'limits': 'Saved coordinator observation only; not continuous monitoring, currentness, filesystem enforcement, provenance or semantic/runtime acceptance. No files were committed, cleaned or excluded. The path sample is not the task impact inventory.',
+    }
 
 
 def review_template(packet: dict, after: dict) -> dict:
@@ -440,31 +490,10 @@ def finish(packet: dict, after: dict, review: dict) -> dict:
     check_artifact_return(packet['context'], after)
     if str(root) != packet['root'] or after['wiki_root'] != packet['context']['wiki_root']:
         raise ValueError('Start/end captures refer to different checkouts or native wikis')
-    actual = changed_files(root, packet['base_sha'], packet['context']['baseline_untracked'])
     if after.get('native_source_context') != packet['context'].get('native_source_context'):
         raise ValueError('Start/end native source comparison policy differs')
-    peer_start = packet['context'].get('peers', {})
+    actual, missing_peers = repository_changes(packet, after)
     peer_end = after.get('peers', {})
-    if set(peer_start) != set(peer_end):
-        raise ValueError('Start/end peer scope differs')
-    missing_peers = []
-    for alias, peer in peer_start.items():
-        if not peer['available'] or not peer_end[alias]['available']:
-            missing_peers.append(alias)
-            continue
-        if peer['root'] != peer_end[alias]['root']:
-            raise ValueError('Start/end peer checkouts differ')
-        baseline = packet['context'].get('baseline_peer_untracked', {}).get(alias, [])
-        actual.extend(alias + '/' + f for f in changed_files(Path(peer['root']), peer['head'], baseline))
-    # An already-untracked planned file can still change after the start snapshot.
-    for name, old in packet['context']['planned_source_hashes'].items():
-        alias, _, rest = name.partition('/')
-        declared_untracked = name in packet['context']['baseline_untracked']
-        if alias in peer_start:
-            declared_untracked = rest in packet['context'].get('baseline_peer_untracked', {}).get(alias, [])
-        if (source_hash(root, name, peer_end) != old or (declared_untracked and old is not None)) and name not in actual:
-            actual.append(name)
-    actual = sorted(set(actual))
     problems = []
     if access == 'read_only' and actual:
         problems.append('read-only task has repository differences relative to the captured Git base; not accepted as unchanged')
@@ -579,6 +608,11 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snaps
             'allowed_files': packet['allowed_files'], 'capabilities': packet['capabilities'],
             'acceptance': packet['acceptance'], 'native_context': packet['context']['native_report'],
             'return_requirements': packet['return_requirements'], 'limits': packet['limits']}
+    if packet.get('access') == 'read_only':
+        result['read_only_baseline'] = packet.get('read_only_baseline', {
+            'status': 'unavailable', 'completion_certificate': False,
+            'meaning': 'This older packet has no saved read-only baseline observation; no clean baseline is inferred.',
+        })
     result['view_observation'] = {
         'mode': 'snapshot_only' if snapshot_only else 'live_check',
         'current_check_attempted': not snapshot_only,
