@@ -1,5 +1,13 @@
 # projectWikiSkill
 
+0.2.10 candidate adds an **optional** internal lifecycle-delivery package profile:
+`python scripts/package_plugin.py --with-lifecycle-hooks --output <new-directory>`.
+Startup/resume/compaction can deliver an explicitly selected saved task through
+the existing snapshot reader. The default package stays skill-only; no trust,
+installation, native execution or completion policy is changed by packaging.
+See [scope and host requirements](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery).
+Source tests, package closure and actual trusted host triggering remain separate.
+
 0.2.9 adds explicit `show --snapshot-only` for readers forbidden to invoke
 Git. It renders the saved task records without live input checks and clearly
 labels currentness as unchecked; default display, dispatch and return guards stay

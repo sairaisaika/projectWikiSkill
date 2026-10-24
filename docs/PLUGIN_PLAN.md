@@ -1,4 +1,50 @@
-# Internal collaboration plugin0.2.9 / bounded Windows host observation
+# Internal collaboration plugin / bounded host observations
+
+## 0.2.10 candidate: optional saved-task lifecycle delivery
+
+The first-entry method already existed but required explicit invocation after a
+host started or resumed. A bounded internal profile now connects `SessionStart`
+to the original saved-only reader, with one coordinator-selected packet and
+local workspace check. It preserves task scope/native workflow/source-selection
+observations/omissions without running Git, page commands or the native adapter.
+There is no automatic discovery, second task registry, full Wiki scan, trust edit
+or completion verdict. The profile is opt-in at build time; default packaging is
+unchanged apart from the new source version and canonical optional reader.
+
+Doctor binds the two optional hook definitions into its existing source/payload
+closure and reports configuration separately from trust, execution, delivery,
+agent use and semantic/business evidence. Legacy packages without the optional
+profile stay inspectable. `commandWindows` selects the available Windows Python;
+Linux Claude uses Python3. Current host support was checked against official
+Codex/Claude references; actual trusted host triggering still requires its own
+normal review and runtime evidence. Active scoped0.2.4 engineering stays pinned.
+
+The [bounded candidate review](../evals/reports/lifecycle-delivery-c118-20261024.md)
+retains the independent Windows directory-junction finding, full synthetic
+pre-fix package reproduction and both-profile rejection after repair. Canonical
+inputs now reject resolved aliases/escapes before reads and during final closure;
+the adapter's context budget was also reduced conservatively. None of this
+manufactures host trust or completes the larger collaboration acceptance goal.
+
+```mermaid
+flowchart LR
+  P[Canonical skill + optional hook definitions] --> B[Package profile + source closure]
+  B -. manual install and exact-definition review .-> H[Host SessionStart]
+  H --> A[Saved-task adapter]
+  S[Explicit existing task packet] --> A
+  A --> W[Original snapshot-only task reader]
+  W --> I[Bounded saved index or explicit overflow pointer]
+  I -. actual delivery and use still need evidence .-> R[Reader]
+  G[Original capture / dispatch / finish guards] -. remain separate .-> R
+```
+
+The adapter's three states are no selection (no output), accepted saved packet
+(index or explicit overflow pointer) and invalid delivery (nonblocking warning).
+None transitions a task to dispatched, verified, complete or trusted. Source
+inputs: `project-wiki/scripts/lifecycle.py`, original `workflow.py » task_view`,
+the two `hooks/*.json`, builder and doctor; native Wiki/feature state remains
+project-owned. The packaged hook runs only after the host's own loading/review
+path; a direct command probe observes only the adapter branch.
 
 ## Adopted0.2.9: saved-record reading under command restrictions
 

@@ -35,7 +35,15 @@ def json_bytes(value: object) -> bytes:
     return (json.dumps(value, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
 
 
-def build(output: Path, source: Path = ROOT) -> dict:
+def canonical_input(path: Path, root: Path) -> None:
+    # Windows directory junctions are not necessarily is_symlink(). Reject both
+    # external escapes and internal aliases before reading and during recheck.
+    resolved = path.resolve()
+    if path.is_symlink() or resolved != path.absolute() or not resolved.is_relative_to(root):
+        raise ValueError('Canonical package input alias or escape')
+
+
+def build(output: Path, source: Path = ROOT, *, with_hooks: bool = False) -> dict:
     source, output = source.resolve(), output.resolve()
     if output.is_relative_to(source):
         raise ValueError('Build outside the source checkout; do not package into canonical inputs')
@@ -53,6 +61,7 @@ def build(output: Path, source: Path = ROOT) -> dict:
     if not re.fullmatch(r'\d+\.\d+\.\d+(?:-[\w.-]+)?', identity['version']):
         raise ValueError('Invalid plugin version')
     skill = source / 'project-wiki'
+    canonical_input(skill, source)
     if not (skill / 'SKILL.md').is_file():
         raise ValueError('Canonical skill entry is missing')
     payload = {}
@@ -60,8 +69,7 @@ def build(output: Path, source: Path = ROOT) -> dict:
     input_hashes = {}
     for path in sorted(skill.rglob('*')):
         # Even a link to a file inside the skill is refused: archives must stand alone.
-        if path.is_symlink():
-            raise ValueError('Symlinks are not plugin payload')
+        canonical_input(path, skill)
         if any(part in IGNORED_PARTS for part in path.relative_to(skill).parts):
             continue
         if not path.is_file():
@@ -75,11 +83,13 @@ def build(output: Path, source: Path = ROOT) -> dict:
         data = canonical_source_bytes(raw)
         payload[target] = data
         source_hashes[name] = digest(data)
-    support = ('plugin.json', 'LICENSE', 'scripts/plugin_doctor.py')
+    if type(with_hooks) is not bool:
+        raise ValueError('Hook profile must be an explicit boolean')
+    hook_inputs = ('hooks/codex.json', 'hooks/claude.json') if with_hooks else ()
+    support = ('plugin.json', 'LICENSE', 'scripts/plugin_doctor.py') + hook_inputs
     for name in support:
         path = source / name
-        if path.is_symlink() or not path.resolve().is_relative_to(source):
-            raise ValueError('Canonical package support input escapes checkout')
+        canonical_input(path, source)
     support_inputs = {name: (source / name).read_bytes() for name in support}
     input_hashes.update({name: digest(data) for name, data in support_inputs.items()})
     support_bytes = {name: canonical_source_bytes(data) for name, data in support_inputs.items()}
@@ -89,9 +99,12 @@ def build(output: Path, source: Path = ROOT) -> dict:
     payload['plugin.json'] = json_bytes(identity)
     payload['LICENSE'] = support_bytes['LICENSE']
     payload['scripts/plugin_doctor.py'] = support_bytes['scripts/plugin_doctor.py']
+    for name in hook_inputs:
+        payload[name] = support_bytes[name]
     host_identity = {key: identity[key] for key in ('name', 'version', 'description', 'author', 'license')}
-    payload['.claude-plugin/plugin.json'] = json_bytes({**host_identity, 'skills': './skills/'})
-    payload['.codex-plugin/plugin.json'] = json_bytes({**host_identity, 'skills': './skills/'})
+    for host in ('claude', 'codex'):
+        overlay = {'hooks': './hooks/' + host + '.json'} if with_hooks else {}
+        payload[f'.{host}-plugin/plugin.json'] = json_bytes({**host_identity, 'skills': './skills/', **overlay})
     receipt = {
         'schema_version': 2,
         'source_byte_policy': SOURCE_BYTE_POLICY,
@@ -102,7 +115,9 @@ def build(output: Path, source: Path = ROOT) -> dict:
         'files': {name: digest(data) for name, data in sorted(payload.items())},
         'canonical_skill_files': source_hashes,
         'canonical_support_files': support_hashes,
-        'limits': ['not installed or enabled', 'no hook configuration', 'no MCP server',
+        'lifecycle_hooks': with_hooks,
+        'limits': ['not installed or enabled',
+                   'optional hook definitions present; not trusted or executed' if with_hooks else 'no hook configuration', 'no MCP server',
                    'hashes establish payload closure, not semantic correctness or host adoption'],
     }
     # Exclusive creation never replaces an existing installation. A partial output
@@ -117,8 +132,7 @@ def build(output: Path, source: Path = ROOT) -> dict:
     if any((source / name).is_symlink() for name in ('plugin.json', 'LICENSE', 'project-wiki')):
         raise ValueError('Canonical package inventory changed during build')
     for path in skill.rglob('*'):
-        if path.is_symlink():
-            raise ValueError('Canonical package inventory changed during build')
+        canonical_input(path, skill)
         if any(part in IGNORED_PARTS for part in path.relative_to(skill).parts):
             continue
         if path.is_file():
@@ -127,6 +141,7 @@ def build(output: Path, source: Path = ROOT) -> dict:
         raise ValueError('Canonical package inventory changed during build')
     # Do not label a moving canonical input as a coherent snapshot.
     for name, expected in input_hashes.items():
+        canonical_input(source / name, source)
         if digest((source / name).read_bytes()) != expected:
             raise ValueError('Canonical skill changed during build; output is incomplete')
     (output / 'PACKAGE-SOURCES.json').write_bytes(json_bytes(receipt))
@@ -136,9 +151,11 @@ def build(output: Path, source: Path = ROOT) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--with-lifecycle-hooks', action='store_true',
+                        help='Include optional saved-task hooks; does not install, trust or enable them')
     args = parser.parse_args()
     try:
-        receipt = build(args.output)
+        receipt = build(args.output, with_hooks=args.with_lifecycle_hooks)
     except (OSError, ValueError, KeyError) as error:
         print(json.dumps({'ok': False, 'error': str(error)}, ensure_ascii=True))
         return 1
