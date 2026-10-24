@@ -1,5 +1,25 @@
 # Internal collaboration plugin / bounded host observations
 
+## 0.2.12 candidate: observed-host compatibility container
+
+Both0.2.10 and0.2.11 passed source/main matrices and normal Windows installation,
+with cache/source closure checked. The actual installed hook lists remained empty
+in two workspace roots. Rather than changing another declaration by guesswork,
+the coordinator inspected the official upstream `rust-v0.160.0` loader (matching
+the reported CLI version). It explicitly returns no hook sources for
+`PluginManifestFormat::AgentPlugin`; legacy format takes the hook-loading path.
+This explains the observed boundary consistently, but the upstream tag is not
+an attestation of the installed binary's exact source commit.
+
+The hook profile now defaults to legacy host-only manifests, with canonical
+identity retained in the original receipt/source closure. Plain packages remain
+portable, and an explicit portable hook layout stays available for other hosts.
+The reader, hooks, task protocol and trust policy do not change. Doctor validates
+the new named projection, requires schema2 plus the hook profile, rejects mixed
+root layouts and retains older projections. Actual installed discovery remains
+required before asking a human to review/trust a listed hook. See the
+[bounded runtime-format evidence](../evals/reports/runtime-hook-layout-c120-20261024.md).
+
 ## 0.2.11 candidate: explicit portable hook declaration
 
 The0.2.10 source and exact main CI passed, followed by normal official Windows

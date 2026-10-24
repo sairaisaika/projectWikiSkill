@@ -23,6 +23,19 @@ Both profiles use the same canonical skill and Python workflow. No installation,
 trust file, host settings, model credentials or running session is changed by
 building a package. Hook definitions are intended for internal/manual distribution.
 
+For the observed Codex0.160 host, the hook profile defaults to a **legacy host
+container**: generated `.codex-plugin/` and `.claude-plugin/` manifests, with no
+portable root `plugin.json` in the output. Canonical identity still has exactly
+one source (`plugin.json` in the source checkout), retained and source-bound in
+the receipt. This is not a second identity registry or another Wiki. The matching
+upstream runtime tag explicitly skips hook loading for portable AgentPlugin
+format, even when its OpenAI extension declares the hook path. Explicit
+`--hook-layout portable` remains available for other host capabilities; it is not
+observed working for hooks on0.160. Plain packages retain their portable root.
+Doctor names the selected container projection, validates both generated host
+manifests and rejects a mixed legacy/portable output. Compatibility projections
+and actual host discovery/trust/execution are still separate evidence layers.
+
 The coordinator sets `PROJECT_WIKI_PACKET` to the absolute existing work-packet
 JSON for a new scoped host process. Startup, resume, clear, compact and fork can
 deliver its **saved index**, using `task_view(..., snapshot_only=True)` in the

@@ -53,8 +53,12 @@ def root_manifest(identity: dict, with_hooks: bool) -> dict:
         **extensions.get('com.openai', {}), 'hooks': './hooks/codex.json'}}}
 
 
-def build(output: Path, source: Path = ROOT, *, with_hooks: bool = False) -> dict:
+def build(output: Path, source: Path = ROOT, *, with_hooks: bool = False,
+          hook_layout: str = 'legacy') -> dict:
     source, output = source.resolve(), output.resolve()
+    if hook_layout not in ('legacy', 'portable') or (not with_hooks and hook_layout != 'legacy'):
+        raise ValueError('Select a supported layout only with the lifecycle profile')
+    legacy_hooks = with_hooks and hook_layout == 'legacy'
     if output.is_relative_to(source):
         raise ValueError('Build outside the source checkout; do not package into canonical inputs')
     if output.exists():
@@ -106,7 +110,11 @@ def build(output: Path, source: Path = ROOT, *, with_hooks: bool = False) -> dic
     if json.loads(support_bytes['plugin.json']) != identity:
         raise ValueError('Canonical identity changed during build')
     support_hashes = {name: digest(data) for name, data in support_bytes.items()}
-    payload['plugin.json'] = json_bytes(root_manifest(identity, with_hooks))
+    # Codex0.160 explicitly skips hook loading for AgentPlugin (portable) format.
+    # The internal legacy profile therefore emits only the two host manifests;
+    # canonical identity remains the one source object in the receipt.
+    if not legacy_hooks:
+        payload['plugin.json'] = json_bytes(root_manifest(identity, with_hooks))
     payload['LICENSE'] = support_bytes['LICENSE']
     payload['scripts/plugin_doctor.py'] = support_bytes['scripts/plugin_doctor.py']
     for name in hook_inputs:
@@ -126,7 +134,8 @@ def build(output: Path, source: Path = ROOT, *, with_hooks: bool = False) -> dic
         'canonical_skill_files': source_hashes,
         'canonical_support_files': support_hashes,
         'lifecycle_hooks': with_hooks,
-        'root_manifest_projection': 'portable-openai-hooks-v1' if with_hooks else 'canonical-identity-v1',
+        'root_manifest_projection': ('legacy-host-hooks-v1' if legacy_hooks else
+                                     'portable-openai-hooks-v1' if with_hooks else 'canonical-identity-v1'),
         'limits': ['not installed or enabled',
                    'optional hook definitions present; not trusted or executed' if with_hooks else 'no hook configuration', 'no MCP server',
                    'hashes establish payload closure, not semantic correctness or host adoption'],
@@ -164,9 +173,11 @@ def main() -> int:
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--with-lifecycle-hooks', action='store_true',
                         help='Include optional saved-task hooks; does not install, trust or enable them')
+    parser.add_argument('--hook-layout', choices=('legacy', 'portable'), default='legacy',
+                        help='Hook profile container; legacy supports Codex0.160. Portable hook loading is host-dependent')
     args = parser.parse_args()
     try:
-        receipt = build(args.output, with_hooks=args.with_lifecycle_hooks)
+        receipt = build(args.output, with_hooks=args.with_lifecycle_hooks, hook_layout=args.hook_layout)
     except (OSError, ValueError, KeyError) as error:
         print(json.dumps({'ok': False, 'error': str(error)}, ensure_ascii=True))
         return 1
