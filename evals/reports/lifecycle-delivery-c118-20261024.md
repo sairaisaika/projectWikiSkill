@@ -77,6 +77,12 @@ the same two Windows symbolic-link cases skipped; fixture and navigation checks
 passed. A documentation trailing-blank-line check initially failed and was fixed.
 After the final overflow repair, all twelve focused lifecycle cases passed.
 Normal final-head cross-platform CI is still recorded separately.
+The first source CI failed on Linux because the synthetic long-path regression
+itself exceeded that filesystem's byte limit before reaching the mocked reader;
+the production entry already handles such `OSError` as a delivery warning. The
+fixture was shortened below that limit while retaining an ASCII-escaped size
+above the former overflow budget. The original failure is retained, not labelled
+flaky or erased by a same-source retry.
 
 ## Remaining acceptance
 
