@@ -1,5 +1,10 @@
 # projectWikiSkill
 
+0.2.15 candidate shows the existing unchanged-return predicate at read-only
+task creation and delegation. A dirty baseline now receives an early advisory;
+final reconciliation, permissions and snapshot-only reader limits stay intact.
+Source tests and package checks are separate from installation and host delivery.
+
 0.2.14 makes repeated capture `--files` groups accumulate instead of
 silently replacing earlier paths. The native router receives the complete
 normalized selection; permissions and semantic completion remain separate.
