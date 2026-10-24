@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Read-only baseline advice, C130](readonly-baseline-c130-20261024.md) | Existing final-return differences become visible at start/delegation; real recovered-capture CLI comparison and focused root/peer/legacy-reader controls | Advisory only; no automatic clean/commit/permission or relaxed final gate, measured efficiency, host update or semantic/business acceptance |
 | [Repeated file groups, C126](repeated-file-groups-c126-20261024.md) | Real coordinator argument loss reproduced through the original CLI; accumulation, empty-later and legacy-shape controls | Explicit input coverage only; no inferred dependency closure, host update, semantic or business completion |
 | [Saved Wiki path basis, C122](wiki-path-basis-c122-20261024.md) | One normally trusted controlled startup delivery and reader adoption, followed by a retained wrong-base read and an explicit saved-path projection | Guided synthetic case; source metadata is not a future installed trial, broad reading/efficiency, current-chat or business acceptance |
 | [Runtime hook layout, C120](runtime-hook-layout-c120-20261024.md) | Installed portable-hook discovery failure matched an explicit format branch in the same-version upstream loader; an internal compatibility container retains one canonical identity and payload closure | Upstream tag is not binary attestation; new installed discovery/trust/triggering and agent/business acceptance remain separate |

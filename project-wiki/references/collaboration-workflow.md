@@ -260,6 +260,32 @@ captured Git base, so an already dirty/recovered tree is conservatively rejected
 as an unchanged return; use a clean isolated base when that proof is required.
 It does not observe transient reverted writes, ignored files or external state.
 
+### Read-only baseline observation
+
+`start --read-only` and a read-only `delegate` now save a
+`read_only_baseline` advisory before work is sent. Both use the same Git-base,
+declared peer and planned-untracked-file collector as final reconciliation;
+there is no second policy for what counts as a change. The states distinguish
+`differences`, `no_differences_observed` and unavailable peers. Delegation
+recomputes the observation instead of copying a parent's clean claim. The
+bounded path sample is explicitly labelled and never replaces the complete
+planned-file/satellite inventory or edit-permission list.
+
+This makes an existing mismatch actionable earlier. It does not reject source
+inspection, create a new permission, clean or commit a checkout, or relax the
+final unchanged-return rule. If a review needs that proof, first select an
+honestly identified committed snapshot in an isolated checkout. A dirty source
+overlay can still be useful evidence, but unchanged selected bytes are a
+different claim from no Git-base differences. Do not amend historical packets
+or silently add existing implementation files to read-only permissions.
+
+Every reading view preserves this saved advisory. In `show --snapshot-only`,
+neither it nor the rest of the view performs Git, native routing or live input
+hashing. Its observation boundary is `start` or `delegate`, not display time;
+clean advice cannot certify a later return. Older packets without the field
+display `unavailable`, without probing or inventing a clean baseline. Final
+reconciliation always recomputes changes and does not trust the advisory.
+
 Capabilities come from the intended user result, not just existing implementation.
 For example, a compact editor and a full editor may share storage but expose
 different title/tag/media controls. Draft preservation across back/close/re-entry
