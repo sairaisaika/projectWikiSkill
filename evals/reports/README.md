@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Repeated file groups, C126](repeated-file-groups-c126-20261024.md) | Real coordinator argument loss reproduced through the original CLI; accumulation, empty-later and legacy-shape controls | Explicit input coverage only; no inferred dependency closure, host update, semantic or business completion |
 | [Saved Wiki path basis, C122](wiki-path-basis-c122-20261024.md) | One normally trusted controlled startup delivery and reader adoption, followed by a retained wrong-base read and an explicit saved-path projection | Guided synthetic case; source metadata is not a future installed trial, broad reading/efficiency, current-chat or business acceptance |
 | [Runtime hook layout, C120](runtime-hook-layout-c120-20261024.md) | Installed portable-hook discovery failure matched an explicit format branch in the same-version upstream loader; an internal compatibility container retains one canonical identity and payload closure | Upstream tag is not binary attestation; new installed discovery/trust/triggering and agent/business acceptance remain separate |
 | [Portable hook declaration, C119](portable-hook-declaration-c119-20261024.md) | Actual official0.2.10 installation/closure followed by zero target hooks; explicit optional portable projection with legacy receipt checks | Underlying host cause and installed new-declaration discovery remain unverified; private uninstalled probes do not substitute |
