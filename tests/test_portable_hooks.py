@@ -14,7 +14,7 @@ class PortableHookTests(unittest.TestCase):
 
     def test_optional_profile_declares_openai_hooks_in_selected_portable_manifest(self):
         pkg = self.home / 'optional'
-        receipt = builder.build(pkg, with_hooks=True)
+        receipt = builder.build(pkg, with_hooks=True, hook_layout='portable')
         manifest = json.loads((pkg / 'plugin.json').read_text())
         self.assertEqual(manifest.get('extensions', {}).get('com.openai', {}).get('hooks'), './hooks/codex.json')
         report = doctor.inspect(pkg, ROOT)
@@ -30,7 +30,7 @@ class PortableHookTests(unittest.TestCase):
 
     def test_altered_projection_and_rehashed_wrong_hook_path_are_rejected(self):
         pkg = self.home / 'altered'
-        receipt = builder.build(pkg, with_hooks=True)
+        receipt = builder.build(pkg, with_hooks=True, hook_layout='portable')
         value = json.loads((pkg / 'plugin.json').read_text())
         value['extensions']['com.openai']['hooks'] = './elsewhere.json'
         data = builder.json_bytes(value)
@@ -41,7 +41,7 @@ class PortableHookTests(unittest.TestCase):
 
     def test_legacy_hook_package_identity_projection_stays_inspectable(self):
         pkg = self.home / 'legacy'
-        receipt = builder.build(pkg, with_hooks=True)
+        receipt = builder.build(pkg, with_hooks=True, hook_layout='portable')
         # Reconstruct the previous unsigned receipt representation; payload
         # helpers remain source-bound. This is format compatibility, not a claim
         # that a historical package or its hooks ran on a host.
