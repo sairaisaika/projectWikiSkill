@@ -477,3 +477,21 @@ the package and one inline Skill launch while leaving global installation/hooks
 and business acceptance unverified. The [bounded report](../evals/reports/native-appearance-adoption-c49-20261022.md)
 retains executor/test-manifest counterexamples and actual device limits. This is
 a docs/evaluation update only: payload0.2.4 and host configuration are unchanged.
+
+## Repeated file groups: source and installed CLI adoption (2026-10-24)
+
+Version0.2.14 has normal source/main CI and one official Windows installation,
+with package/source/support/input closure and direct installed CLI observations.
+The old installed copy loses repeated or earlier nonempty file groups; the new
+copy preserves them through the existing native router. Snapshot reading keeps
+the actual path bases, selected impacts and explicit capture-time limits.
+At the recorded cutoff the host marks the new hook modified, so normal review
+and automatic delivery are separate pending evidence; a running scoped worker
+is unchanged. See the existing [counterexample and bounded host return](../evals/reports/repeated-file-groups-c126-20261024.md#subsequent-official-host-adoption-2026-10-24).
+
+The same use found a project feature entry with a stale negative implementation
+claim despite a registered consumer. Correcting the original functional table,
+producer/consumer relation and local diagram is a project-native follow-through
+step, not grounds for another registry or a project-specific kernel rule.
+These three nonpackaged documentation files do not change payload, version,
+hooks, installation, project runtime or any completion gate.
