@@ -41,6 +41,8 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(view['native_index']['omitted_candidates'], self.packet['context']['native_report']['omitted'])
         self.assertEqual(view['view_observation']['mode'], 'snapshot_only')
         self.assertFalse(view['view_observation']['current_check_attempted'])
+        self.assertEqual(view['wiki_root'], self.packet['context']['wiki_root'])
+        self.assertEqual(view['path_bases']['wiki_pages'], 'root / wiki_root')
         self.assertIn('snapshot-only', view['expansion']['all'])
 
     def test_no_selection_and_other_events_are_quiet(self):
