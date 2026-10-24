@@ -208,6 +208,15 @@ component does not prove that every editing field, draft transition or client is
 connected. Keep omissions, gaps and runtime evidence distinct. A generated packet
 does not establish dispatch, reading, semantic correctness or completion.
 
+For an implementation return, the coordinator's explicit `capture-return` command
+collects all actual root/peer differences through the same collector as `finish`;
+it does not reuse the planned list or remove unplanned files. It requires the
+reviewed native argv again and explicit execution opt-in. Keep the native selector
+configuration and source comparison accurate. This invokes Git/native execution,
+so a restricted worker must continue using saved snapshot views instead. A clean
+read-only return has no changed files; an implementation return needs every actual
+file. Review and final reconciliation remain separate required steps.
+
 For an installed-plugin/source/version disagreement, use the collaboration
 workflow's [host observations](references/collaboration-workflow.md#host-observations).
 The plugin's read-only doctor can compare package/source bytes and optional
