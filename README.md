@@ -1,9 +1,14 @@
 # projectWikiSkill
 
-0.2.14 candidate makes repeated capture `--files` groups accumulate instead of
+0.2.14 makes repeated capture `--files` groups accumulate instead of
 silently replacing earlier paths. The native router receives the complete
 normalized selection; permissions and semantic completion remain separate.
 See [the retained CLI counterexample](evals/reports/repeated-file-groups-c126-20261024.md).
+Source/main CI and one official Windows installation are verified. The actual
+installed CLI preserves repeated and later-empty groups; the prior installed
+copy loses them. At the recorded host cutoff, the new hook is **modified** and
+awaits normal user review; installation does not imply trust or automatic context
+delivery. The same report separates these observations from semantic use.
 
 0.2.13 candidate exposes the saved Wiki path base in every reading view. A normal
 trusted host delivery exercise succeeded, but its reader initially opened native
@@ -18,7 +23,7 @@ The version-matched upstream loader explicitly skips portable AgentPlugin hooks;
 the actual installed old/new-declaration probes both returned no hooks. See
 [the evidence and remaining runtime acceptance](evals/reports/runtime-hook-layout-c120-20261024.md).
 Normal source/main adoption and official Windows installation are now verified.
-The actual host discovers the optional SessionStart hook as **untrusted**;
+At that 0.2.12 checkpoint, the host discovered SessionStart as **untrusted**;
 automatic execution and use are still awaiting normal review and their own
 evidence. See [the bounded adoption return](evals/reports/runtime-hook-layout-c120-20261024.md#normal-adoption-and-actual-discovery).
 
