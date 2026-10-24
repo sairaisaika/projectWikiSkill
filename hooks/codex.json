@@ -1,0 +1,16 @@
+{
+  "description": "Optional saved task delivery; requires explicit packet selection and host hook review.",
+  "hooks": {
+    "SessionStart": [{
+      "matcher": "^(startup|resume|clear|compact|fork)$",
+      "hooks": [{
+        "type": "command",
+        "command": "python3 -c \"import os,runpy;runpy.run_path(os.path.join(os.environ['CLAUDE_PLUGIN_ROOT'],'skills','project-wiki','scripts','lifecycle.py'),run_name='__main__')\"",
+        "commandWindows": "python -c \"import os,runpy;runpy.run_path(os.path.join(os.environ['CLAUDE_PLUGIN_ROOT'],'skills','project-wiki','scripts','lifecycle.py'),run_name='__main__')\"",
+        "timeout": 10,
+        "additionalContextLimit": 8000,
+        "statusMessage": "Loading selected Wiki task snapshot"
+      }]
+    }]
+  }
+}

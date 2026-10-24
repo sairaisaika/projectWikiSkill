@@ -1,0 +1,13 @@
+{
+  "description": "Optional saved task delivery for Linux Claude; no project execution or trust changes.",
+  "hooks": {
+    "SessionStart": [{
+      "matcher": "^(startup|resume|clear|compact|fork)$",
+      "hooks": [{
+        "type": "command",
+        "command": "python3 -c \"import os,runpy;runpy.run_path(os.path.join(os.environ['CLAUDE_PLUGIN_ROOT'],'skills','project-wiki','scripts','lifecycle.py'),run_name='__main__')\"",
+        "timeout": 10
+      }]
+    }]
+  }
+}
