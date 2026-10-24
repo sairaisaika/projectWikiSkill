@@ -142,6 +142,9 @@ artifact paths remain saved strings, not validated local paths. `freshness` says
 current inputs were **not checked**, and `view_observation` distinguishes this
 from a successful live check. Saved identity matches and artifact hashes describe
 their capture-time observations; they are not checked again by this display.
+An adjacent `native_source_comparison_observation` explicitly qualifies the saved
+comparison as capture-time data, even when its retained status says `matched`.
+The original comparison record is preserved without relabelling its contents.
 
 The coordinator's check and the worker's actual reading are separate evidence.
 Neither is a trace of every physical read or proof of semantic/business adoption.

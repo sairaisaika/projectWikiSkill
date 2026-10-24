@@ -591,6 +591,11 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snaps
         'meaning': 'Strict comparison record is missing; recapture before dispatch.'
                    if packet['context'].get('native_source_context') is not None else
                    'Native source observations have not been compared with declared checkouts.'})
+    if snapshot_only:
+        result['native_source_comparison_observation'] = {
+            'record_time': 'capture', 'current_check_attempted': False,
+            'meaning': 'native_source_comparison is preserved capture-time data, not a current match; reading does not recompute or authenticate that record.',
+        }
     # Foreign-host path strings are retained as saved data in snapshot views,
     # not validated as local paths. Live dispatch/return use the original policy.
     result['artifact_preservation'] = artifact_observation(

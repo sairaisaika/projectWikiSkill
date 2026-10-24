@@ -52,16 +52,53 @@ A private candidate-helper copy replayed a fixed real read-only task packet on
 Linux through actual CLI index/all/feature/impact views with an empty PATH. All
 four retained the relevant original records and unchecked-currentness labels;
 the saved packet bytes remained unchanged. This replay did not perform a live
-source check or certify a new dispatch. Independent semantic review and actual
-worker use are pending; no installation or host refresh is claimed.
+source check or certify a new dispatch. At that initial checkpoint, independent
+semantic review and actual worker use were pending; no installation or host
+refresh was claimed.
 Private raw commands, logs, hashes and task paths stay outside this public report.
 No private account, clinical content, repository identity or session path is
 included here.
 
+## Subsequent bounded Linux reading and Windows process check
+
+A separate Linux reader inspected the changed command implementation, the seven
+new tests and selected reference/diff hunks, then actually used index, exact
+feature and exact impact CLI views with an empty PATH. The returned source report
+kept the shared editor's four satellites, the unregistered test, the omitted
+cross-client candidate and the original native return vocabulary. It correctly
+distinguished a container from its shared editor and treated the saved role and
+deployment observations as historical. This is reported guided consumption,
+supported by saved outputs and hashes; it is not a trace of every physical read,
+full-document review, a blind trial or complete semantic/business acceptance.
+
+That review found no blocking issue in its inspected scope, and one low-severity
+label ambiguity: the saved source-comparison status could say `matched` without
+a field-specific capture-time qualifier. The follow-up adds an adjacent
+`native_source_comparison_observation` in saved-only views. The original saved
+comparison object remains unchanged, and default live views and dispatch/return
+guards remain unchanged. A new regression first failed on the old helper's
+missing qualifier; it covers all four saved views, exact record retention and
+the unchanged default live view.
+
+The follow-up local suite ran175 tests:173 passed and2 host symlink-permission
+skips. The12 fixture contract checks and24 curated navigation cases also passed;
+the latter remain self-tests, not semantic accuracy or measured time savings.
+The rebuilt candidate contains22 payload files and passes package/source doctor.
+All four actual packaged CLI views retain the original comparison and expose the
+capture-time qualifier. Final source CI, source adoption and host installation
+are separate from these local observations.
+
+The coordinator also ran four actual separate Windows CLI processes on a fixed
+Linux task projection with empty PATH and a forced legacy stdout default. The
+existing command entry already selects UTF-8; Chinese records decoded intact, so
+that implementation was retained. This check adds no claim about host
+installation, activation, hooks or cross-host live-source validation.
+
 ## Remaining
 
-- Independently read the new implementation and replay a fixed real task packet
-  under the original worker command restriction, with new output destinations.
+- Review the final capture-time qualifier and final source checks separately
+  from the initial bounded reader report; unreviewed document/source scope stays
+  unreviewed.
 - Adopt source/package/host through their normal paths and inspect each layer.
 - Measure real routing/read cost and interpretation quality separately; neither
   fewer synthetic calls nor rendering a packet proves a faster/correct agent.
