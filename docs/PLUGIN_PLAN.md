@@ -1,6 +1,26 @@
-# Internal collaboration plugin, candidate0.2.8 / adopted host0.2.7
+# Internal collaboration plugin, candidate0.2.9 / last bounded host0.2.8
 
-## Candidate0.2.8: explicit preservation observations for selected evidence
+## Candidate0.2.9: saved-record reading under command restrictions
+
+Actual constrained reviews separated the coordinator's currentness check from
+the worker's physical reading: even default `show` can call read-only Git, which
+their task policy prohibited. `access: read_only` is a repository scope label,
+not a host command grant. `show --snapshot-only` now provides an explicit reading
+path with no Git/native execution or live input hashing. All expansions retain
+the mode, all native records/omissions/captured peer and evidence policies remain
+visible, and currentness is explicitly unchecked. Foreign artifact paths are
+saved data in this view, not approved local paths.
+
+Default live display and capture/start/delegate/review-template/finish keep their
+original checks; no snapshot switch is accepted by dispatch/return commands.
+This change adds no MCP server, hook trust, host permission or installation.
+The [bounded evaluation](../evals/reports/snapshot-reading-c103-20261024.md)
+keeps interface-negative evidence, regressions and unmeasured adoption separate.
+The prior bounded Windows receipt observed installed/enabled0.2.8 and direct
+helper use; it did not establish current-chat refresh or hook execution. Active
+scoped0.2.4 workers remain pinned until a separate authorized lifecycle change.
+
+## Historical0.2.8 candidate: explicit preservation observations for selected evidence
 
 A real coordinator replay changed its selected source but retained a private
 probe's embedded historical output path. Git showed no repository changes while
@@ -21,8 +41,9 @@ real use and semantic/runtime acceptance remain separate evidence layers.
 The status `unchanged_at_finish` means equal bytes at observed checkpoints. It
 does not establish continuous immutability or original provenance; a change then
 restoration between observations is undetected. Inspecting all embedded output
-paths and using distinct raw destinations remains necessary. Current installed
-Windows0.2.7 and scoped Claude0.2.4 are unchanged by this candidate source work.
+paths and using distinct raw destinations remains necessary. At that stage, installed
+Windows0.2.7 and scoped Claude0.2.4 were unchanged by that candidate source work;
+the later bounded Windows0.2.8 observation is recorded above.
 
 ## Adopted0.2.7: native selected-source identity comparison (C91)
 

@@ -5,6 +5,14 @@ description: Build, audit, and maintain source-backed engineering wikis that rou
 
 # Project Wiki
 
+For a worker forbidden to invoke Git, default workflow `show` is unsuitable:
+it performs a live freshness check even for a read-only packet. After the
+authorized coordinator checks freshness, use explicit `show --snapshot-only`
+for reading saved records without Git/native execution or current input hashing.
+Its output states that currentness is unchecked; it never replaces dispatch or
+return checks. Keep coordinator checks, actual worker reading and semantic/runtime
+evidence separate. See the [workflow reference](references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git).
+
 For a task that must retain earlier raw evidence, select those exact files with
 the optional workflow `capture --preserve-artifact <absolute-file>` policy. Keep
 that selection through delegation and final return. Inspect every embedded probe
