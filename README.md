@@ -6,6 +6,10 @@ plain packages stay portable. One canonical identity/skill/workflow is retained.
 The version-matched upstream loader explicitly skips portable AgentPlugin hooks;
 the actual installed old/new-declaration probes both returned no hooks. See
 [the evidence and remaining runtime acceptance](evals/reports/runtime-hook-layout-c120-20261024.md).
+Normal source/main adoption and official Windows installation are now verified.
+The actual host discovers the optional SessionStart hook as **untrusted**;
+automatic execution and use are still awaiting normal review and their own
+evidence. See [the bounded adoption return](evals/reports/runtime-hook-layout-c120-20261024.md#normal-adoption-and-actual-discovery).
 
 0.2.11 candidate declares optional Codex hooks explicitly in the portable root
 manifest, with a named source-to-package projection and legacy receipt support.
