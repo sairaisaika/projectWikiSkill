@@ -1,5 +1,12 @@
 # projectWikiSkill
 
+0.2.12 candidate adapts the optional hook package container to the observed
+Codex0.160 loader: `--with-lifecycle-hooks` emits legacy host manifests, while
+plain packages stay portable. One canonical identity/skill/workflow is retained.
+The version-matched upstream loader explicitly skips portable AgentPlugin hooks;
+the actual installed old/new-declaration probes both returned no hooks. See
+[the evidence and remaining runtime acceptance](evals/reports/runtime-hook-layout-c120-20261024.md).
+
 0.2.11 candidate declares optional Codex hooks explicitly in the portable root
 manifest, with a named source-to-package projection and legacy receipt support.
 This follows an actual0.2.10 installation whose hook list was empty; source/package
