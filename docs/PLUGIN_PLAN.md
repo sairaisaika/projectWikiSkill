@@ -19,6 +19,12 @@ the new named projection, requires schema2 plus the hook profile, rejects mixed
 root layouts and retains older projections. Actual installed discovery remains
 required before asking a human to review/trust a listed hook. See the
 [bounded runtime-format evidence](../evals/reports/runtime-hook-layout-c120-20261024.md).
+The exact source/PR/main matrices subsequently passed, followed by normal
+official Windows installation. A fresh actual host list now discovers the
+enabled SessionStart command with `untrusted` status in two workspace roots.
+Normal review was requested; no trusted trigger/context/use claim follows from
+discovery. This closes the observed discovery boundary only. The source-to-host
+return is recorded in the same report without changing packaged inputs.
 
 ## 0.2.11 candidate: explicit portable hook declaration
 
