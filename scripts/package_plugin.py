@@ -43,6 +43,16 @@ def canonical_input(path: Path, root: Path) -> None:
         raise ValueError('Canonical package input alias or escape')
 
 
+def root_manifest(identity: dict, with_hooks: bool) -> dict:
+    if not with_hooks:
+        return identity
+    extensions = identity.get('extensions', {})
+    if not isinstance(extensions, dict) or not isinstance(extensions.get('com.openai', {}), dict):
+        raise ValueError('Portable OpenAI extension must be an object')
+    return {**identity, 'extensions': {**extensions, 'com.openai': {
+        **extensions.get('com.openai', {}), 'hooks': './hooks/codex.json'}}}
+
+
 def build(output: Path, source: Path = ROOT, *, with_hooks: bool = False) -> dict:
     source, output = source.resolve(), output.resolve()
     if output.is_relative_to(source):
@@ -96,7 +106,7 @@ def build(output: Path, source: Path = ROOT, *, with_hooks: bool = False) -> dic
     if json.loads(support_bytes['plugin.json']) != identity:
         raise ValueError('Canonical identity changed during build')
     support_hashes = {name: digest(data) for name, data in support_bytes.items()}
-    payload['plugin.json'] = json_bytes(identity)
+    payload['plugin.json'] = json_bytes(root_manifest(identity, with_hooks))
     payload['LICENSE'] = support_bytes['LICENSE']
     payload['scripts/plugin_doctor.py'] = support_bytes['scripts/plugin_doctor.py']
     for name in hook_inputs:
@@ -116,6 +126,7 @@ def build(output: Path, source: Path = ROOT, *, with_hooks: bool = False) -> dic
         'canonical_skill_files': source_hashes,
         'canonical_support_files': support_hashes,
         'lifecycle_hooks': with_hooks,
+        'root_manifest_projection': 'portable-openai-hooks-v1' if with_hooks else 'canonical-identity-v1',
         'limits': ['not installed or enabled',
                    'optional hook definitions present; not trusted or executed' if with_hooks else 'no hook configuration', 'no MCP server',
                    'hashes establish payload closure, not semantic correctness or host adoption'],
