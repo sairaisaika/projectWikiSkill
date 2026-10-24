@@ -1,7 +1,8 @@
 """Revision-bound native wiki context, delegation and diff reconciliation.
 
 Only capture runs a caller-supplied native command, with explicit opt-in and no
-shell. Other operations inspect projections and Git; none edits project sources,
+shell. Other operations inspect projections and Git, except explicit saved-only
+show views, which do not inspect live inputs; none edits project sources,
 installs hooks, executes wiki check commands or certifies a worker's claims.
 """
 from __future__ import annotations
@@ -84,14 +85,14 @@ def artifact_snapshot(paths: list[str] | None) -> dict[str, str]:
     return dict(sorted(result.items()))
 
 
-def artifact_fields(value: dict) -> tuple[list[str], dict[str, str]]:
+def artifact_fields(value: dict, *, native_paths: bool = True) -> tuple[list[str], dict[str, str]]:
     paths = value.get('preserve_artifacts', [])
     hashes = value.get('preserved_artifact_hashes', {})
     if (not isinstance(paths, list) or not all(isinstance(x, str) and x and '\0' not in x for x in paths)
             or paths != sorted(set(paths)) or not isinstance(hashes, dict) or set(hashes) != set(paths)):
         raise ValueError('Preserved artifact policy or saved hash record is invalid/missing')
     for name in paths:
-        if not Path(name).is_absolute() or '..' in Path(name).parts:
+        if native_paths and (not Path(name).is_absolute() or '..' in Path(name).parts):
             raise ValueError('Preserved artifact policy requires absolute paths')
         digest = hashes[name]
         if not isinstance(digest, str) or len(digest) != 64 or any(c not in '0123456789abcdef' for c in digest):
@@ -108,9 +109,9 @@ def check_artifact_return(before: dict, after: dict) -> None:
         raise ValueError('Preserved artifact bytes changed between start and return')
 
 
-def artifact_observation(value: dict, status: str = 'captured') -> dict:
+def artifact_observation(value: dict, status: str = 'captured', *, native_paths: bool = True) -> dict:
     try:
-        paths, hashes = artifact_fields(value)
+        paths, hashes = artifact_fields(value, native_paths=native_paths)
     except ValueError:
         return {'status': 'unavailable', 'meaning': 'Selected artifact hash record is invalid/missing; recapture before dispatch.'}
     return {'status': status if paths else 'not_requested', 'paths': paths,
@@ -546,17 +547,25 @@ def write_new(path: Path, value: dict) -> None:
         out.write(encoded)
 
 
-def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
+def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snapshot_only: bool = False) -> dict:
     """Expose full native records or an explicit index; never silently clip them."""
     if packet.get('kind') != 'wiki-work-packet':
         raise ValueError('Expected a wiki work packet')
     if packet.get('access', 'edit') not in ('edit', 'read_only') or (packet.get('access') == 'read_only' and packet['allowed_files']):
         raise ValueError('Invalid task access scope')
-    freshness = 'current for declared inputs'
-    try:
-        check_capture(packet['context'])
-    except (OSError, ValueError, KeyError, subprocess.SubprocessError):
-        freshness = 'stale or unavailable; this is a historical projection, recapture before new work'
+    current = False
+    if snapshot_only:
+        # A constrained reader may be forbidden to invoke even read-only Git.
+        # Render stored context without probing live inputs. This mode is never
+        # used by capture/start/delegate/review-template/finish.
+        freshness = 'saved snapshot only; current inputs not checked; coordinator must validate before new dispatch or acceptance'
+    else:
+        freshness = 'current for declared inputs'
+        try:
+            check_capture(packet['context'])
+            current = True
+        except (OSError, ValueError, KeyError, subprocess.SubprocessError):
+            freshness = 'stale or unavailable; this is a historical projection, recapture before new work'
     result = {'task_id': packet['task_id'], 'owner': packet['owner'], 'root': packet['root'],
             'access': packet.get('access', 'edit'),
             'base_sha': packet['base_sha'], 'peers': packet['context'].get('peers', {}),
@@ -564,6 +573,12 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
             'allowed_files': packet['allowed_files'], 'capabilities': packet['capabilities'],
             'acceptance': packet['acceptance'], 'native_context': packet['context']['native_report'],
             'return_requirements': packet['return_requirements'], 'limits': packet['limits']}
+    result['view_observation'] = {
+        'mode': 'snapshot_only' if snapshot_only else 'live_check',
+        'current_check_attempted': not snapshot_only,
+        'current_inputs_checked': current,
+        'limits': 'Saved source-identity and artifact records describe capture-time observations, not a new live check. Rendering is not authenticated provenance, permission, physical reading, semantic review or business acceptance.',
+    }
     native = packet['context']['native_report']
     # Preserve the native project's own finish/acknowledgement vocabulary in every
     # reading view. These are quoted requirements, never commands to execute here.
@@ -576,7 +591,17 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
         'meaning': 'Strict comparison record is missing; recapture before dispatch.'
                    if packet['context'].get('native_source_context') is not None else
                    'Native source observations have not been compared with declared checkouts.'})
-    result['artifact_preservation'] = artifact_observation(packet['context'])
+    if snapshot_only:
+        result['native_source_comparison_observation'] = {
+            'record_time': 'capture', 'current_check_attempted': False,
+            'meaning': 'native_source_comparison is preserved capture-time data, not a current match; reading does not recompute or authenticate that record.',
+        }
+    # Foreign-host path strings are retained as saved data in snapshot views,
+    # not validated as local paths. Live dispatch/return use the original policy.
+    result['artifact_preservation'] = artifact_observation(
+        packet['context'], 'captured_snapshot' if snapshot_only else 'captured', native_paths=not snapshot_only)
+    if snapshot_only:
+        result['artifact_preservation']['local_path_validation'] = 'not performed; saved path strings only'
     result['review_preparation'] = {
         'command': 'review-template --packet <same-packet> --after-capture <current-final-capture> --output <new-review.json>',
         'meaning': 'Optional unreviewed skeleton for the actual return. Does not fill decisions or replace the native finish/commit gate.',
@@ -589,9 +614,10 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None) -> dict:
                        'unregistered': row['unregistered']} for row in native['impact']],
             'omitted_candidates': native['omitted'], 'placementIssues': native['placementIssues'],
             'limits': native['limits']}
-        result['expansion'] = {'feature': 'show --packet <same-packet> --view feature --path <feature-path>',
-                               'impact': 'show --packet <same-packet> --view impact --path <file>',
-                               'all': 'show --packet <same-packet> --view all',
+        mode_flag = ' --snapshot-only' if snapshot_only else ''
+        result['expansion'] = {'feature': 'show --packet <same-packet>' + mode_flag + ' --view feature --path <feature-path>',
+                               'impact': 'show --packet <same-packet>' + mode_flag + ' --view impact --path <file>',
+                               'all': 'show --packet <same-packet>' + mode_flag + ' --view all',
                                'reading_state': 'Index only; full feature records and satellites are not delivered in this view.'}
     elif view in ('feature', 'impact'):
         key = 'cards' if view == 'feature' else 'impact'
@@ -645,12 +671,13 @@ def main(argv=None) -> int:
     show.add_argument('--packet', type=Path, required=True)
     show.add_argument('--view', choices=('index', 'feature', 'impact', 'all'), default='index')
     show.add_argument('--path', help='Exact feature path or impacted file from the index')
+    show.add_argument('--snapshot-only', action='store_true', help='Render saved records without Git/live-input checks; never establishes currentness or authorizes new work')
     for sub in (cap, sta, de, end, template):
         sub.add_argument('--output', type=Path, required=True, help='New private projection path; never overwrite')
     args = parser.parse_args(argv)
     try:
         if args.command == 'show':
-            print(json.dumps(task_view(read_json(args.packet), args.view, args.path), ensure_ascii=False, indent=2))
+            print(json.dumps(task_view(read_json(args.packet), args.view, args.path, snapshot_only=args.snapshot_only), ensure_ascii=False, indent=2))
             return 0
         if args.command == 'capture':
             result = capture(args.root, args.query, args.files, json.loads(args.native_argv), args.runtime_input,

@@ -119,6 +119,43 @@ A stale display is explicitly historical; fresh dispatch requires recapture.
 Delegation cannot widen edit scope, and does not send messages or start an agent.
 Pass the resulting private packet through the project's authorized coordinator.
 
+### Reading when the worker cannot invoke Git
+
+The default `show` performs a live freshness check. It can invoke read-only Git
+and hash declared inputs, even when the packet has `access: read_only`.
+That access field does not grant host command permissions. A worker forbidden to
+invoke Git must not run the default display just because its task is a review.
+
+After the authorized coordinator checks the current packet and sources, a
+constrained reader may use the explicit saved-record mode:
+
+```text
+python <skill>/scripts/workflow.py show --packet <task.json> --snapshot-only
+python <skill>/scripts/workflow.py show --packet <task.json> --snapshot-only --view feature --path <feature-path>
+python <skill>/scripts/workflow.py show --packet <task.json> --snapshot-only --view impact --path <impacted-file>
+```
+
+This display does not call Git, a native router or live source/evidence hashing.
+Every expansion command keeps the flag. It retains the saved native records,
+omissions, peer identities, workflow and selected-evidence records; foreign-host
+artifact paths remain saved strings, not validated local paths. `freshness` says
+current inputs were **not checked**, and `view_observation` distinguishes this
+from a successful live check. Saved identity matches and artifact hashes describe
+their capture-time observations; they are not checked again by this display.
+An adjacent `native_source_comparison_observation` explicitly qualifies the saved
+comparison as capture-time data, even when its retained status says `matched`.
+The original comparison record is preserved without relabelling its contents.
+
+The coordinator's check and the worker's actual reading are separate evidence.
+Neither is a trace of every physical read or proof of semantic/business adoption.
+Packets remain unsigned local projections. This flag establishes no permission,
+trust, currentness or completion, and is unavailable on `capture`, `start`,
+`delegate`, `review-template` and `finish`. Those operations retain their original
+live-input checks and selected-source/evidence guards. A saved display cannot be
+used to accept changed inputs or dispatch a stale task. If no safe reader command
+is available, the coordinator can deliver the actual saved projection directly
+with the same limitations; do not relax the worker's command prohibition.
+
 For a review with no authorized repository edits, use `start --read-only` without
 `--allow-file`. The capture's planned files remain readable context; the packet's
 `allowed_files` is empty and every display includes `access: read_only`. Do not
