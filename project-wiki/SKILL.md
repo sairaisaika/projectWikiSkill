@@ -5,6 +5,13 @@ description: Build, audit, and maintain source-backed engineering wikis that rou
 
 # Project Wiki
 
+For an already captured task, an optional packaged `SessionStart` adapter can
+deliver the saved index on startup/resume/compaction. It requires an explicitly
+selected `PROJECT_WIKI_PACKET`, a matching local workspace and the host's normal
+hook review. It uses the same snapshot-only reader, not a scan or native command.
+See [optional lifecycle delivery](references/collaboration-workflow.md#optional-lifecycle-delivery).
+The index is task data, not fresh authority; dispatch/finish checks remain explicit.
+
 For a worker forbidden to invoke Git, default workflow `show` is unsuitable:
 it performs a live freshness check even for a read-only packet. After the
 authorized coordinator checks freshness, use explicit `show --snapshot-only`
