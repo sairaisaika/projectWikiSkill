@@ -1,12 +1,21 @@
 # projectWikiSkill
 
-Candidate0.2.8 adds optional checkpoint hash observations for explicitly selected
+Candidate0.2.9 adds explicit `show --snapshot-only` for readers forbidden to invoke
+Git. It renders the saved task records without live input checks and clearly
+labels currentness as unchecked; default display, dispatch and return guards stay
+in place. See [permission-separated reading](project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git)
+and the [bounded evaluation](evals/reports/snapshot-reading-c103-20261024.md).
+This candidate is not an installation or active-session adoption claim. The last
+bounded Windows host receipt recorded0.2.8; the active scoped Claude worker remains
+0.2.4. Hooks, trust and automatic host lifecycle are separate observations.
+
+0.2.8 adds optional checkpoint hash observations for explicitly selected
 historical evidence files, including private files outside Git. The original
 capture/delegate/return workflow refuses a changed or dropped selection; it does
 not prevent writes, continuously monitor files or certify business completion.
 See [selected evidence](project-wiki/references/collaboration-workflow.md#selected-evidence-files).
-Source/package/host adoption remain separate; the bounded installed host below
-is still0.2.7 until a separately verified update.
+Source/package/host adoption remain separate. Its later bounded0.2.8 host receipt
+is distinguished from the historical0.2.7 exercise below.
 
 0.2.7 adds an optional comparison between the native router's reported
 checkout identities and explicitly selected task peers. The
@@ -24,7 +33,7 @@ installation/enabling does not establish hook execution or agent adoption.
 Running scoped workers were not upgraded. See [actual host adoption](evals/reports/codex-inventory-doctor-c77-20261023.md#host-adoption-after-source-merge)
 and [doctor observations](docs/PLUGIN_PLAN.md#codex-inventory-observations-026-candidate).
 
-[内部协作插件计划](docs/PLUGIN_PLAN.md)：以现有 Skill/工具为唯一内核，补可复现打包、来源自检与宿主接线，再用真实工程验证开工、委派、收尾与接管。内部候选已在一台 Codex 主机通过官方 CLI 安装并核对缓存，Linux Claude 已做临时加载与真实任务试用；桌面新会话采用、hooks 与完整跨宿主验收仍待，未公开发布。根 `plugin.json` 是身份源，不能单凭它声称运行已验证。源码已采用0.2.7；[换行来源机制](evals/reports/package-newline-provenance-20261022.md)保留原始输入指纹，区分规范文本来源一致与包文件字节完整；[有限宿主采用记录](evals/reports/host-adoption-v025-20261022.md)另证官方 Windows CLI 安装0.2.5及实际有限使用。既有 scoped0.2.4 工程任务不由此自动升级。
+[内部协作插件计划](docs/PLUGIN_PLAN.md)：以现有 Skill/工具为唯一内核，补可复现打包、来源自检与宿主接线，再用真实工程验证开工、委派、收尾与接管。内部候选已在一台 Codex 主机通过官方 CLI 安装并核对缓存，Linux Claude 已做临时加载与真实任务试用；桌面新会话采用、hooks 与完整跨宿主验收仍待，未公开发布。根 `plugin.json` 是身份源，不能单凭它声称运行已验证。0.2.8源码已采用，当前0.2.9候选与宿主安装分验；[换行来源机制](evals/reports/package-newline-provenance-20261022.md)保留原始输入指纹，区分规范文本来源一致与包文件字节完整；[有限宿主采用记录](evals/reports/host-adoption-v025-20261022.md)另证历史官方 Windows CLI 安装0.2.5及实际有限使用。既有 scoped0.2.4 工程任务不由此自动升级。
 
 [协作工作流](project-wiki/references/collaboration-workflow.md)提供原生任务 JSON 的快照、任务包、范围受限的委派和真实 diff 收尾；全部卫星、能力缺口、未展开候选与跨仓版本保留。脚本不派 agent、不自动执行页内检查，也不把结构闭环认证成业务完成。当前是内部候选，宿主生命周期与项目试用按计划分别验收。
 

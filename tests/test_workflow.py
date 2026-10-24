@@ -2,11 +2,14 @@
 import copy
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
+from contextlib import ExitStack
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('wiki_workflow', ROOT / 'project-wiki/scripts/workflow.py')
@@ -126,6 +129,95 @@ class WorkflowTests(unittest.TestCase):
         view = wf.task_view(self.packet(), 'index')
         self.assertIn('not delivered', view['expansion']['reading_state'])
         self.assertEqual(view['capabilities'], ['title', 'tags', 'visibility'])
+
+    def test_snapshot_view_does_not_attempt_live_checks_or_commands(self):
+        packet = self.packet()
+        with ExitStack() as stack:
+            spies = [stack.enter_context(patch.object(wf, name, side_effect=AssertionError('No live input access')))
+                     for name in ('check_capture', 'git', 'input_snapshot', 'peer_snapshot', 'source_hash', 'artifact_snapshot')]
+            spies.extend(stack.enter_context(patch.object(wf.subprocess, name, side_effect=AssertionError('No commands')))
+                         for name in ('run', 'check_output'))
+            shown = wf.task_view(packet, 'index', snapshot_only=True)
+        self.assertTrue(all(spy.call_count == 0 for spy in spies))
+        self.assertIn('not checked', shown['freshness'])
+        self.assertFalse(shown['view_observation']['current_inputs_checked'])
+        self.assertEqual(shown['native_index']['omitted_candidates'], packet['context']['native_report']['omitted'])
+        self.assertEqual(shown['allowed_files'], packet['allowed_files'])
+
+    def test_snapshot_expansions_keep_mode_and_original_native_records(self):
+        packet = self.packet()
+        native = packet['context']['native_report']
+        index = wf.task_view(packet, 'index', snapshot_only=True)
+        for name in ('feature', 'impact', 'all'):
+            self.assertIn('--snapshot-only', index['expansion'][name])
+        for view, selected, key in [('feature', 'feature.md', 'cards'), ('impact', 'src/editor.py', 'impact'), ('all', None, None)]:
+            shown = wf.task_view(packet, view, selected, snapshot_only=True)
+            self.assertIn('not checked', shown['freshness'])
+            self.assertEqual(shown['native_context'] if key is None else shown['native_context'][key], native if key is None else native[key])
+            self.assertEqual(shown['native_workflow'], index['native_workflow'])
+            self.assertEqual(shown['native_source_comparison'], index['native_source_comparison'])
+
+    def test_snapshot_is_not_a_fresh_dispatch_or_artifact_observation(self):
+        evidence = self.home / 'old-result.json'
+        evidence.write_text('{"result":"old failure"}', encoding='utf-8')
+        packet = self.packet(self.capture(preserve_artifacts=[str(evidence.resolve())]))
+        saved = copy.deepcopy(packet['context']['preserved_artifact_hashes'])
+        evidence.write_text('{"result":"changed"}', encoding='utf-8')
+        self.change()
+        shown = wf.task_view(packet, 'all', snapshot_only=True)
+        self.assertEqual(shown['artifact_preservation']['captured_sha256'], saved)
+        self.assertFalse(shown['view_observation']['current_inputs_checked'])
+        self.assertIn('historical', wf.task_view(packet)['freshness'])
+        with self.assertRaisesRegex(ValueError, 'artifact changed'):
+            wf.delegate(packet, 'worker', 'new-task', ['src/editor.py'])
+
+    def test_snapshot_cli_works_without_git_and_is_not_a_dispatch_switch(self):
+        packet = self.home / 'task.json'
+        packet.write_text(json.dumps(self.packet()), encoding='utf-8')
+        script = ROOT / 'project-wiki/scripts/workflow.py'
+        result = subprocess.run([sys.executable, str(script), 'show', '--packet', str(packet), '--snapshot-only'],
+                                env={**os.environ, 'PATH': ''}, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+        shown = json.loads(result.stdout)
+        self.assertIn('not checked', shown['freshness'])
+        self.assertFalse(shown['view_observation']['current_inputs_checked'])
+        rejected = subprocess.run([sys.executable, str(script), 'delegate', '--packet', str(packet),
+                                   '--task-id', 'child', '--owner', 'worker', '--read-only',
+                                   '--output', str(self.home / 'child.json'), '--snapshot-only'], capture_output=True, text=True)
+        self.assertEqual(rejected.returncode, 2)
+        self.assertIn('unrecognized arguments: --snapshot-only', rejected.stderr)
+        self.assertFalse((self.home / 'child.json').exists())
+
+    def test_snapshot_keeps_foreign_host_artifact_paths_as_unchecked_data(self):
+        packet = self.packet()
+        foreign = '/peer/private/old-result.json' if os.name == 'nt' else 'C:/peer/private/old-result.json'
+        packet['context']['preserve_artifacts'] = [foreign]
+        packet['context']['preserved_artifact_hashes'] = {foreign: '0' * 64}
+        shown = wf.task_view(packet, 'all', snapshot_only=True)
+        self.assertEqual(shown['artifact_preservation']['paths'], [foreign])
+        self.assertEqual(shown['artifact_preservation']['captured_sha256'], {foreign: '0' * 64})
+        self.assertEqual(shown['artifact_preservation']['status'], 'captured_snapshot')
+        self.assertIn('not performed', shown['artifact_preservation']['local_path_validation'])
+        with self.assertRaisesRegex(ValueError, 'absolute paths'):
+            wf.delegate(packet, 'worker', 'child', ['src/editor.py'])
+
+    def test_snapshot_display_does_not_relax_readonly_scope_validation(self):
+        packet = self.packet()
+        packet['access'] = 'read_only'
+        with self.assertRaisesRegex(ValueError, 'access scope'):
+            wf.task_view(packet, 'index', snapshot_only=True)
+
+    def test_snapshot_does_not_replace_default_live_check(self):
+        packet = self.packet()
+        current = wf.task_view(packet, 'index')
+        self.assertTrue(current['view_observation']['current_check_attempted'])
+        self.assertTrue(current['view_observation']['current_inputs_checked'])
+        with patch.object(wf, 'git', side_effect=PermissionError('Reader cannot invoke Git')) as attempted:
+            historical = wf.task_view(packet, 'index')
+        self.assertGreater(attempted.call_count, 0)
+        self.assertIn('historical', historical['freshness'])
+        self.assertTrue(historical['view_observation']['current_check_attempted'])
+        self.assertFalse(historical['view_observation']['current_inputs_checked'])
 
     def test_native_workflow_reaches_index_exact_views_and_delegation_without_execution(self):
         native = self.root / 'native.py'
