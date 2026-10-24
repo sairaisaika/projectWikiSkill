@@ -20,6 +20,14 @@ Its output states that currentness is unchecked; it never replaces dispatch or
 return checks. Keep coordinator checks, actual worker reading and semantic/runtime
 evidence separate. See the [workflow reference](references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git).
 
+Before a read-only review, inspect the saved `read_only_baseline` observation
+from `start` or `delegate`. Existing Git-base differences can prevent an unchanged
+return even when the reviewer edits nothing. The advisory uses the same final
+predicate; it does not clean, commit, widen permissions or certify completion.
+Use an honestly identified committed review snapshot when unchanged return is
+required. Snapshot-only views show saved advice without a new Git check; older
+packets without it remain unknown. See the [workflow reference](references/collaboration-workflow.md#read-only-baseline-observation).
+
 Saved views expose `wiki_root` and path bases. Locate native Wiki page files under
 `root / wiki_root`, while keeping the original native key for `show --path`.
 Do not guess a default base or resolve foreign-host strings on the reader's host.
