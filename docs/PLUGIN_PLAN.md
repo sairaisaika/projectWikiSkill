@@ -1,6 +1,6 @@
-# Internal collaboration plugin, candidate0.2.9 / last bounded host0.2.8
+# Internal collaboration plugin0.2.9 / bounded Windows host observation
 
-## Candidate0.2.9: saved-record reading under command restrictions
+## Adopted0.2.9: saved-record reading under command restrictions
 
 Actual constrained reviews separated the coordinator's currentness check from
 the worker's physical reading: even default `show` can call read-only Git, which
@@ -16,9 +16,12 @@ original checks; no snapshot switch is accepted by dispatch/return commands.
 This change adds no MCP server, hook trust, host permission or installation.
 The [bounded evaluation](../evals/reports/snapshot-reading-c103-20261024.md)
 keeps interface-negative evidence, regressions and unmeasured adoption separate.
-The prior bounded Windows receipt observed installed/enabled0.2.8 and direct
-helper use; it did not establish current-chat refresh or hook execution. Active
-scoped0.2.4 workers remain pinned until a separate authorized lifecycle change.
+The source/main and selected Windows0.2.9 adoption are recorded in the
+[normal adoption return](../evals/reports/snapshot-reading-c103-20261024.md#normal-adoption-and-bounded-host-observation).
+Official inventory, direct installed helper use and subsequent catalog delivery
+were observed separately. Automatic lifecycle, hooks, broad semantic and business
+acceptance remain unverified. Active scoped0.2.4 workers remain pinned until a
+separate authorized lifecycle change.
 
 ## Historical0.2.8 candidate: explicit preservation observations for selected evidence
 
