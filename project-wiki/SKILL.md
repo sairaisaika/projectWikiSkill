@@ -20,6 +20,10 @@ Its output states that currentness is unchecked; it never replaces dispatch or
 return checks. Keep coordinator checks, actual worker reading and semantic/runtime
 evidence separate. See the [workflow reference](references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git).
 
+Saved views expose `wiki_root` and path bases. Locate native Wiki page files under
+`root / wiki_root`, while keeping the original native key for `show --path`.
+Do not guess a default base or resolve foreign-host strings on the reader's host.
+
 For a task that must retain earlier raw evidence, select those exact files with
 the optional workflow `capture --preserve-artifact <absolute-file>` policy. Keep
 that selection through delegation and final return. Inspect every embedded probe
