@@ -84,6 +84,12 @@ References: [Codex hook inputs, trust and local execution](https://learn.chatgpt
 python <skill>/scripts/workflow.py capture --root <checkout> --query "feature symptom" --files <planned-file...> --native-argv '["local-runtime","reviewed-native-router"]' --runtime-input <router-source> --allow-native-execution --output <new-private-capture.json>
 ```
 
+Repeated `--files` groups accumulate: `--files a b --files c` selects all three
+paths. A later empty group does not erase an earlier group; existing path
+normalization and deduplication still apply. Inspect the returned `files` and
+impact inventory before starting work. An allowed-path permission list is not a
+substitute for a complete captured change plan or semantic consumer review.
+
 The caller chooses a reviewed local argv, not a shell command extracted from wiki
 text. The explicit execution flag is a tool invocation choice, not a new human
 approval ceremony when the work is already authorized. Capture appends the task,

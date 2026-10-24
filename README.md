@@ -1,5 +1,10 @@
 # projectWikiSkill
 
+0.2.14 candidate makes repeated capture `--files` groups accumulate instead of
+silently replacing earlier paths. The native router receives the complete
+normalized selection; permissions and semantic completion remain separate.
+See [the retained CLI counterexample](evals/reports/repeated-file-groups-c126-20261024.md).
+
 0.2.13 candidate exposes the saved Wiki path base in every reading view. A normal
 trusted host delivery exercise succeeded, but its reader initially opened native
 page keys at the checkout root instead of the Wiki root. The new metadata uses
