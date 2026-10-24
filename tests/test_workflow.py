@@ -819,6 +819,7 @@ class WorkflowTests(unittest.TestCase):
     def test_capture_return_missing_peer_and_changed_artifact_fail_before_native_execution(self):
         artifact = self.home / 'original-evidence.json'
         artifact.write_text('original selected evidence', encoding='utf-8')
+        artifact = artifact.resolve(strict=True)
         packet = self.packet(self.capture(peers={'mobile': str(self.home / 'absent-peer')},
                                          preserve_artifacts=[str(artifact)]))
         with patch.object(wf, 'capture', side_effect=AssertionError('must not execute native')):
