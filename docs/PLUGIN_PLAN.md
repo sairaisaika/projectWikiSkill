@@ -1,5 +1,24 @@
 # Internal collaboration plugin / bounded host observations
 
+## 0.2.13 candidate: saved Wiki path basis
+
+A normally trusted0.2.12 hook delivered a selected index to one fresh ephemeral
+read-only process from the observed desktop backend. Its initial agent message,
+before any tool, matched randomized task metadata absent from the human prompt;
+saved feature/impact reads and a correct source-gap report followed. This was a
+controlled offline fixture, not product or current-chat acceptance. The original
+after-capture/review/finish retained no edits and the intentional capability gap.
+
+One real failed read exposed a missing path base: the native capture validated
+pages under its declared Wiki root, while saved views omitted that root. The
+reader recovered by search. The candidate now exposes the already captured
+`wiki_root` and an explicit distinction between native page and source-file
+bases, without changing native keys or snapshot/live checks. The old run remains
+intact. See [the scoped observation and fix](../evals/reports/wiki-path-basis-c122-20261024.md).
+Source/package, normal adoption, a future installed update and repeated actual
+reader behavior remain separate evidence layers; the current trusted host is not
+silently patched.
+
 ## 0.2.12 candidate: observed-host compatibility container
 
 Both0.2.10 and0.2.11 passed source/main matrices and normal Windows installation,

@@ -1,5 +1,11 @@
 # projectWikiSkill
 
+0.2.13 candidate exposes the saved Wiki path base in every reading view. A normal
+trusted host delivery exercise succeeded, but its reader initially opened native
+page keys at the checkout root instead of the Wiki root. The new metadata uses
+the existing captured base, retains native keys and snapshot-only limits, and
+does not add a new router. See [the bounded case and scope](evals/reports/wiki-path-basis-c122-20261024.md).
+
 0.2.12 candidate adapts the optional hook package container to the observed
 Codex0.160 loader: `--with-lifecycle-hooks` emits legacy host manifests, while
 plain packages stay portable. One canonical identity/skill/workflow is retained.
