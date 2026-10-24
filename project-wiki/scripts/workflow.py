@@ -647,7 +647,8 @@ def main(argv=None) -> int:
     cap.add_argument('--root', type=Path, required=True)
     cap.add_argument('--wiki-root', default='docs/wiki')
     cap.add_argument('--query', required=True)
-    cap.add_argument('--files', nargs='*', default=[])
+    cap.add_argument('--files', action='extend', nargs='*', default=[],
+                     help='Planned file groups accumulate; repeating the option never replaces earlier paths')
     cap.add_argument('--runtime-input', action='append', default=[])
     cap.add_argument('--native-argv', required=True, help='Explicit JSON argv; never read from wiki text')
     cap.add_argument('--allow-native-execution', action='store_true')

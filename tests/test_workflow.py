@@ -639,6 +639,46 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(completed.returncode,0,completed.stdout+completed.stderr)
         self.assertEqual(json.loads(packet.read_text(encoding='utf-8'))['allowed_files'],[])
 
+    def capture_cli_file_groups(self, name, groups):
+        output = self.home / (name + '.json')
+        (self.root / 'src/viewer.py').write_text('visible = True\n', encoding='utf-8')
+        argv = [sys.executable, str(ROOT / 'project-wiki/scripts/workflow.py'), 'capture',
+                '--root', str(self.root), '--query', 'editor consumer',
+                '--native-argv', json.dumps([sys.executable, 'native.py']),
+                '--runtime-input', 'native.py', '--allow-native-execution',
+                '--output', str(output)]
+        for group in groups:
+            argv.extend(['--files', *group])
+        completed = subprocess.run(argv, text=True, capture_output=True)
+        self.assertEqual(completed.returncode, 0, completed.stdout + completed.stderr)
+        return json.loads(output.read_text(encoding='utf-8'))
+
+    def test_cli_repeated_file_groups_keep_every_planned_consumer(self):
+        captured = self.capture_cli_file_groups('repeated', [
+            ['src/editor.py', 'src/editor.py'], ['src/viewer.py'],
+        ])
+        expected = ['src/editor.py', 'src/viewer.py']
+        self.assertEqual(captured['files'], expected)
+        self.assertEqual([row['file'] for row in captured['native_report']['impact']], expected)
+        self.assertEqual(set(captured['planned_source_hashes']), set(expected))
+        self.assertTrue(all(len(row['pages']) == 3 for row in captured['native_report']['impact']))
+
+    def test_cli_later_empty_file_group_does_not_erase_prior_scope(self):
+        captured = self.capture_cli_file_groups('empty-after', [['src/editor.py'], []])
+        self.assertEqual(captured['files'], ['src/editor.py'])
+        self.assertEqual(captured['native_report']['impact'][0]['file'], 'src/editor.py')
+
+    def test_cli_single_absent_and_empty_file_groups_keep_existing_behavior(self):
+        for name, groups, expected in [
+            ('single', [['src/editor.py', 'src/viewer.py']], ['src/editor.py', 'src/viewer.py']),
+            ('absent', [], []),
+            ('empty', [[]], []),
+        ]:
+            with self.subTest(name=name):
+                captured = self.capture_cli_file_groups(name, groups)
+                self.assertEqual(captured['files'], expected)
+                self.assertEqual([row['file'] for row in captured['native_report']['impact']], expected)
+
 
 class NativeSourceContextTests(unittest.TestCase):
     setUp = WorkflowTests.setUp

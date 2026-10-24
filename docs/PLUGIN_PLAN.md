@@ -1,5 +1,19 @@
 # Internal collaboration plugin / bounded host observations
 
+## 0.2.14 candidate: complete explicit file groups
+
+A real coordinator invocation repeated `capture --files` and silently retained
+only its last group. Native validation then checked an already shortened plan.
+The coordinator caught the loss before implementation; a broader allowed-path
+list would not have repaired the capture. The shared CLI now accumulates groups
+before the existing normalization and native routing, including an empty later
+group. Existing single/absent/empty behavior is covered separately.
+
+This repairs explicit argument loss, not inferred dependency completeness or
+semantic review. Packaging, normal source adoption, installed version and hook
+review remain separate. No running host or scoped worker is patched by this
+candidate. See [the bounded evidence](../evals/reports/repeated-file-groups-c126-20261024.md).
+
 ## 0.2.13 candidate: saved Wiki path basis
 
 A normally trusted0.2.12 hook delivered a selected index to one fresh ephemeral
