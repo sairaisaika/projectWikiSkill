@@ -145,13 +145,14 @@ def inspect(package: Path, source: Path | None = None) -> dict:
             raise ValueError('Unsupported package receipt')
         normalized = schema == 2
         projection = receipt.get('root_manifest_projection', 'canonical-identity-v1')
-        if projection not in ('canonical-identity-v1', 'portable-openai-hooks-v1'):
+        if projection not in ('canonical-identity-v1', 'portable-openai-hooks-v1', 'legacy-host-hooks-v1'):
             raise ValueError('Unsupported root manifest projection')
         with_hooks = receipt.get('lifecycle_hooks', False)
         if type(with_hooks) is not bool:
             raise ValueError('Invalid hook package profile')
-        if projection == 'portable-openai-hooks-v1' and (not normalized or not with_hooks):
-            raise ValueError('Portable hook projection requires a normalized hook profile')
+        if projection in ('portable-openai-hooks-v1', 'legacy-host-hooks-v1') and (not normalized or not with_hooks):
+            raise ValueError('Hook projection requires a normalized hook profile')
+        legacy_hooks = projection == 'legacy-host-hooks-v1'
         report['root_manifest_projection'] = projection
         hook_inputs = {'hooks/codex.json', 'hooks/claude.json'} if with_hooks else set()
         support_names = {'plugin.json', 'LICENSE', 'scripts/plugin_doctor.py'} | hook_inputs
@@ -172,6 +173,8 @@ def inspect(package: Path, source: Path | None = None) -> dict:
         expected = receipt['files']
         required = {'plugin.json', 'LICENSE', '.claude-plugin/plugin.json', '.codex-plugin/plugin.json',
                     'skills/project-wiki/SKILL.md', 'skills/project-wiki/scripts/wiki.py', 'scripts/plugin_doctor.py'}
+        if legacy_hooks:
+            required.remove('plugin.json')
         if with_hooks:
             required |= hook_inputs | {'skills/project-wiki/scripts/lifecycle.py', 'skills/project-wiki/scripts/workflow.py'}
         if not required.issubset(expected):
@@ -214,9 +217,11 @@ def inspect(package: Path, source: Path | None = None) -> dict:
             for name in {'LICENSE', 'scripts/plugin_doctor.py'} | hook_inputs:
                 if expected.get(name) != supports[name]:
                     raise ValueError('Payload does not match canonical support projection')
-        if set(expected) != projected | support_names | {'.claude-plugin/plugin.json', '.codex-plugin/plugin.json'}:
+        emitted_support = support_names - {'plugin.json'} if legacy_hooks else support_names
+        if set(expected) != projected | emitted_support | {'.claude-plugin/plugin.json', '.codex-plugin/plugin.json'}:
             raise ValueError('Payload contains an unbound projection')
-        package_identity = json.loads((package / 'plugin.json').read_text(encoding='utf-8'))
+        package_identity = (receipt.get('canonical_identity') if legacy_hooks else
+                            json.loads((package / 'plugin.json').read_text(encoding='utf-8')))
         if not isinstance(package_identity, dict) or package_identity.get('name') != receipt['name'] or package_identity.get('version') != receipt['version']:
             raise ValueError('Package identity does not match receipt')
         canonical_identity = receipt.get('canonical_identity') if normalized else package_identity
