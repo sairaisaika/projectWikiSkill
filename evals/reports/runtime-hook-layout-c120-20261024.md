@@ -58,3 +58,25 @@ actual triggering, delivered context, agent expansion/use and semantic/business
 acceptance still require their own evidence. A compatibility manifest alone does
 not establish any of those layers. No installed cache was patched to simulate
 the new format.
+
+## Normal adoption and actual discovery
+
+The final source was normally merged through PR30. Exact push, PR and main CI
+each passed all four Windows/Linux and Python3.10/3.13 jobs. Source and main
+trees matched. After checking the primary checkout was clean, it was advanced
+with a fast-forward. The prior installed portable cache was copied and every
+file hash checked before using the official installer for version0.2.12.
+
+The installed legacy profile passed all24 payload files, canonical skill/support,
+identity and raw-input comparisons. Fresh read-only app-server `hooks/list`
+responses in two workspace roots each listed the plugin's enabled SessionStart
+command, with no entry warnings or errors. The command matched the installed
+definition. Both lists reported **untrusted**. This is actual installed discovery,
+following two earlier zero-hook installations; it is not trusted execution.
+
+Normal exact-definition review was requested through the supported `/hooks`
+flow. No trust database, managed policy or bypass flag was changed. Actual host
+triggering, delivered task context, agent use and semantic/business acceptance
+remain unverified. The ongoing scoped worker on the other host was left intact.
+This return changes only unpackaged documentation, requiring no payload version
+change or reinstall.
