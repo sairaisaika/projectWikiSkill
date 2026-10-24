@@ -1,5 +1,13 @@
 # projectWikiSkill
 
+0.2.16 candidate adds an explicit coordinator `capture-return` command. It derives
+every actual root/peer diff file through the same collector as final reconciliation,
+then invokes the reviewed native router with explicit opt-in. Unplanned files,
+missing peers and selected evidence remain visible to the original gates; source
+or scope drift during capture refuses the operation without automatic retry.
+Review, source/main adoption, host installation and product acceptance remain separate.
+See [the bounded actual-return case](evals/reports/actual-return-capture-c134-20261024.md).
+
 0.2.15 candidate shows the existing unchanged-return predicate at read-only
 task creation and delegation. A dirty baseline now receives an early advisory;
 final reconciliation, permissions and snapshot-only reader limits stay intact.

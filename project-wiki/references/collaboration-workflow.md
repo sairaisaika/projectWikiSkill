@@ -110,6 +110,12 @@ Use `--peer alias=/checkout` for a coupled repository and prefix its paths with
 that alias. A missing peer remains unavailable, not an empty successful diff.
 Each selected peer is bound to its actual checkout/HEAD. The tool cannot certify
 that the selected pair is the correct deployment pair; verify that separately.
+Root paths and peer aliases share the existing path-label format. Live capture,
+source hashing and the common actual-diff collector refuse a root path whose
+first component collides with a selected peer alias, including root deletions in
+the actual diff. Choose a distinct explicit alias and recapture instead of
+guessing which physical file a label represents. Saved-only views remain saved
+data and do not perform this live namespace check.
 
 When the native router reports its selected checkout identities, opt into comparing
 those observations with the selected root and every declared peer:
@@ -298,6 +304,45 @@ Once the worker has stopped, collect the real diff from the packet's base across
 all selected checkouts. Query the native router again with **all actual files**,
 including new tests/docs/consumers, and capture that result. Do not reuse a planned
 file list or old ranking output as the final scope.
+
+The coordinator can use `capture-return` to perform that collection through the
+**same** `repository_changes` predicate used by `finish` and read-only baseline
+advice. Supply the reviewed native argv explicitly again; it must equal the
+original capture, and `--allow-native-execution` remains required. Native selector
+environment remains the caller's responsibility; the saved optional source
+comparison is retained and still rejects the wrong selected checkout.
+
+Declared native runtime input bytes must still match the original reviewed capture,
+including capture's own pre-launch input snapshot; return capture does not accept
+a replacement as a new reviewed baseline. These remain checkpoint comparisons,
+not atomic file locking, interpreter pinning or a sandbox.
+If the task intentionally changes that command/runtime, review those changes and
+use the existing explicit manual capture/new-phase path. The wrapper does not
+silently trust a replaced program merely because its argv spelling is unchanged.
+
+```text
+python <skill>/scripts/workflow.py capture-return --packet <task.json> --native-argv '["reviewed-runtime", "native-task-command"]' --allow-native-execution --output <new-actual-capture.json>
+```
+
+This coordinator operation invokes Git and the native router; it is unsuitable
+for a worker forbidden those operations. It does not run a command from Wiki
+text, silently select argv from the packet, dispatch an agent, edit project
+sources, or execute listed checks. The reviewed native program may still write
+its own task stamp, as with ordinary `capture`. No files/peers/baselines/artifact
+policy are inferred from convenient defaults or filtered by the allowed paths:
+unplanned changes must reach the unchanged final gate. Missing peers or changed
+selected evidence refuse the operation. Scope/HEAD/source hashes are compared at
+capture boundaries; a changing result is refused without automatic retry. These
+are checkpoint observations, not continuous monitoring or a filesystem sandbox.
+
+The output is a normal native capture with an adjacent `return_scope` observation.
+It preserves the query, runtime declarations, source-comparison policy and selected
+evidence. A clean read-only task produces an empty impact list; a dirty read-only
+task still has differences and is still rejected by `finish`. A command with native
+flags that require nonempty files may refuse an empty capture; the wrapper does
+not silently rewrite those reviewed arguments. Existing manual actual-file
+captures and legacy packets remain supported. Prepare and fill the review next;
+this command does not attest that any page or capability has been reviewed.
 
 ```text
 python <skill>/scripts/workflow.py finish --packet <task.json> --after-capture <actual-capture.json> --review <review.json> --output <new-reconciliation.json>
