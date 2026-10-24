@@ -1,5 +1,24 @@
 # Internal collaboration plugin / bounded host observations
 
+## 0.2.11 candidate: explicit portable hook declaration
+
+The0.2.10 source and exact main CI passed, followed by normal official Windows
+installation and installed/source closure. An actual read-only app-server
+`hooks/list` observation nevertheless listed zero target-plugin hooks; installation
+and valid package bytes did not establish discovery. No trust record was changed,
+and no claim of hook execution followed. The underlying host cause is not yet
+proven. Private uninstalled metadata probes also returned empty hook descriptions
+for both old and new declarations; these do not prove installed runtime discovery.
+
+The optional profile now explicitly projects `extensions.com.openai.hooks` into
+the selected portable root manifest, while retaining the host compatibility
+manifests. The receipt names that deterministic projection separately from the
+canonical source identity. Doctor checks both without executing candidate code;
+old receipts keep their identity-only interpretation and remain inspectable.
+Default packaging is unchanged. Runtime hook discovery must be checked again
+after normal source/main adoption; this declaration change alone is not a host fix
+certificate. See the [bounded observation](../evals/reports/portable-hook-declaration-c119-20261024.md).
+
 ## 0.2.10 candidate: optional saved-task lifecycle delivery
 
 The first-entry method already existed but required explicit invocation after a

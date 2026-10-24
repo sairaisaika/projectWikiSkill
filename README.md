@@ -1,5 +1,10 @@
 # projectWikiSkill
 
+0.2.11 candidate declares optional Codex hooks explicitly in the portable root
+manifest, with a named source-to-package projection and legacy receipt support.
+This follows an actual0.2.10 installation whose hook list was empty; source/package
+checks are not runtime discovery. See the [observation and remaining acceptance](evals/reports/portable-hook-declaration-c119-20261024.md).
+
 0.2.10 candidate adds an **optional** internal lifecycle-delivery package profile:
 `python scripts/package_plugin.py --with-lifecycle-hooks --output <new-directory>`.
 Startup/resume/compaction can deliver an explicitly selected saved task through
