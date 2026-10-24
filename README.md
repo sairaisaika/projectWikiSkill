@@ -39,6 +39,8 @@ and [doctor observations](docs/PLUGIN_PLAN.md#codex-inventory-observations-026-c
 
 [协作工作流](project-wiki/references/collaboration-workflow.md)提供原生任务 JSON 的快照、任务包、范围受限的委派和真实 diff 收尾；全部卫星、能力缺口、未展开候选与跨仓版本保留。脚本不派 agent、不自动执行页内检查，也不把结构闭环认证成业务完成。内部插件已有限采用，宿主生命周期与项目试用按计划分别验收。
 
+协同仓库开工时，先核项目实际支持的来源选择参数。原生命令退出成功或印记有效，仍可能读了默认旧仓库；若原生报告提供来源身份，声明 peer 后使用[所选来源核对](project-wiki/references/collaboration-workflow.md#context-capture)，在派工前比较真实 root / HEAD。[C116 使用复盘](evals/reports/native-selection-invocation-c116-20261024.md)保留一次协调者误传环境变量的失败与已有核对能力的实际拒收；这是调用方法修正，没有新增插件或修改宿主。
+
 让项目 Wiki 成为比猜文件名、全仓搜索更省事的工程入口。
 
 可安装 skill 在 [`project-wiki/`](project-wiki/SKILL.md)，名称为 `$project-wiki`。它将问题、精确源码位置、接口契约、规则、影响面、检查与证据边界连接起来；分别量化结构完整度、任务路由表现、语义核验和实际使用效果，避免一个总分掩盖未知。
