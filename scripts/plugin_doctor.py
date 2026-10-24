@@ -144,9 +144,15 @@ def inspect(package: Path, source: Path | None = None) -> dict:
         if type(schema) is not int or schema not in (1, 2) or not isinstance(receipt.get('files'), dict):
             raise ValueError('Unsupported package receipt')
         normalized = schema == 2
+        projection = receipt.get('root_manifest_projection', 'canonical-identity-v1')
+        if projection not in ('canonical-identity-v1', 'portable-openai-hooks-v1'):
+            raise ValueError('Unsupported root manifest projection')
         with_hooks = receipt.get('lifecycle_hooks', False)
         if type(with_hooks) is not bool:
             raise ValueError('Invalid hook package profile')
+        if projection == 'portable-openai-hooks-v1' and (not normalized or not with_hooks):
+            raise ValueError('Portable hook projection requires a normalized hook profile')
+        report['root_manifest_projection'] = projection
         hook_inputs = {'hooks/codex.json', 'hooks/claude.json'} if with_hooks else set()
         support_names = {'plugin.json', 'LICENSE', 'scripts/plugin_doctor.py'} | hook_inputs
         report['hook_configuration'] = 'optional definitions present; trust and execution unverified' if with_hooks else 'not included'
@@ -213,8 +219,21 @@ def inspect(package: Path, source: Path | None = None) -> dict:
         package_identity = json.loads((package / 'plugin.json').read_text(encoding='utf-8'))
         if not isinstance(package_identity, dict) or package_identity.get('name') != receipt['name'] or package_identity.get('version') != receipt['version']:
             raise ValueError('Package identity does not match receipt')
-        if normalized and package_identity != receipt.get('canonical_identity'):
-            raise ValueError('Package identity does not match canonical projection')
+        canonical_identity = receipt.get('canonical_identity') if normalized else package_identity
+        if normalized:
+            if not isinstance(canonical_identity, dict):
+                raise ValueError('Canonical identity must be an object')
+            expected_identity = canonical_identity
+            if projection == 'portable-openai-hooks-v1':
+                # Data-only mirror of the declared projection; do not import or
+                # execute package builder/hook code while inspecting its bytes.
+                extensions = canonical_identity.get('extensions', {})
+                if not isinstance(extensions, dict) or not isinstance(extensions.get('com.openai', {}), dict):
+                    raise ValueError('Invalid canonical OpenAI extension')
+                expected_identity = {**canonical_identity, 'extensions': {**extensions, 'com.openai': {
+                    **extensions.get('com.openai', {}), 'hooks': './hooks/codex.json'}}}
+            if package_identity != expected_identity:
+                raise ValueError('Package identity does not match canonical projection')
         host_identity = {key: package_identity[key] for key in ('name', 'version', 'description', 'author', 'license')}
         for host in ('claude', 'codex'):
             manifest = json.loads((package / f'.{host}-plugin/plugin.json').read_text(encoding='utf-8'))
@@ -281,7 +300,7 @@ def inspect(package: Path, source: Path | None = None) -> dict:
                 if not isinstance(identity, dict):
                     raise ValueError('Source identity must be an object')
                 report['source_version'] = identity.get('version')
-                report['source_identity_match'] = (identity == package_identity)
+                report['source_identity_match'] = (identity == canonical_identity)
             except (OSError, ValueError, KeyError, TypeError) as error:
                 report['source_match'] = False
                 report['source_support_match'] = False
