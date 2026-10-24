@@ -1,5 +1,26 @@
 # Internal collaboration plugin / bounded host observations
 
+## 0.2.16 candidate: capture the complete actual return
+
+One real coordinator applied an unchanged-readonly empty-file recipe to a
+cross-checkout implementation return. The original final gate correctly refused
+the missing impacts. Manual collection of the actual root/peer diff repaired the
+call without weakening that gate. The new explicit `capture-return` command reuses
+the existing final collector so this collection no longer needs a project-specific
+wrapper or an intersection with planned/allowed paths.
+
+The caller still supplies the reviewed argv and native-execution opt-in. Current
+root/peer scope and source hashes are observed around native capture, with the
+original query/runtime/source-comparison/artifact policy retained. Missing peers,
+changed evidence or an unstable source scope refuse the operation; no automatic
+retry, source cleanup, agent dispatch, review verdict or host/trust change follows.
+Changed declared runtime bytes require a fresh explicit manual review/capture
+boundary; the same argv cannot silently authorize an edited program body.
+Existing manual captures and final reconciliation remain supported and independent.
+The candidate source is not an installed update; running scoped workers stay pinned.
+The [bounded actual-return case](../evals/reports/actual-return-capture-c134-20261024.md)
+records the retained refusal, focused controls and real paired-source return.
+
 ## 0.2.14 candidate: complete explicit file groups
 
 A real coordinator invocation repeated `capture --files` and silently retained

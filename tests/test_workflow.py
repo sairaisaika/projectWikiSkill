@@ -680,12 +680,235 @@ class WorkflowTests(unittest.TestCase):
                 self.assertEqual([row['file'] for row in captured['native_report']['impact']], expected)
 
 
+    def return_capture(self, packet, **kwargs):
+        return wf.capture_return(packet, [sys.executable, 'native.py'],
+                                 allow_execution=True, **kwargs)
+
+    def test_capture_return_collects_real_root_peer_and_planned_untracked_without_allowlist_filter(self):
+        peer = self.home / 'mobile-return'
+        (peer / 'src').mkdir(parents=True)
+        (peer / 'src/client.py').write_text('old\n', encoding='utf-8')
+        git(peer, 'init')
+        git(peer, 'config', 'user.name', 'Fixture')
+        git(peer, 'config', 'user.email', 'fixture@example.invalid')
+        git(peer, 'add', 'src/client.py')
+        git(peer, 'commit', '-m', 'peer baseline')
+        (peer / 'existing-cache.tmp').write_text('preexisting unselected cache', encoding='utf-8')
+        (peer / 'src/recovered.py').write_text('recovered candidate', encoding='utf-8')
+        initial = self.capture(files=['src/editor.py', 'mobile/src/client.py', 'mobile/src/recovered.py'],
+                               peers={'mobile': str(peer)})
+        packet = wf.start(initial, 'actual-return', 'coordinator', 'Inspect every actual consumer',
+                          initial['files'], ['inspect all actual impacts'], ['title', 'tags', 'visibility'])
+        self.change()
+        git(self.root, 'add', 'src/editor.py')
+        git(self.root, 'commit', '-m', 'normal source change')
+        (peer / 'src/client.py').write_text('new\n', encoding='utf-8')
+        (self.root / 'src/新 reader.py').write_text('unplanned\n', encoding='utf-8')
+        after = self.return_capture(packet)
+        expected = ['mobile/src/client.py', 'mobile/src/recovered.py', 'src/editor.py', 'src/新 reader.py']
+        self.assertEqual(after['files'], expected)
+        self.assertEqual([row['file'] for row in after['native_report']['impact']], expected)
+        self.assertNotEqual(after['base']['head'], packet['base_sha'])
+        self.assertEqual(packet['base_sha'], initial['base']['head'])
+        result = wf.finish(packet, after, self.review())
+        self.assertEqual(result['actual_files'], expected)
+        self.assertFalse(result['structural_reconciliation'])
+        self.assertTrue(any('unplanned files: src/新 reader.py' in x for x in result['issues']))
+
+    def test_capture_return_clean_readonly_is_empty_not_the_planned_list(self):
+        initial = self.capture()
+        packet = wf.start(initial, 'readonly-return', 'reviewer', 'Read only', [],
+                          ['source report'], ['title', 'tags', 'visibility'], read_only=True)
+        after = self.return_capture(packet)
+        self.assertEqual(after['files'], [])
+        self.assertEqual(after['native_report']['impact'], [])
+        self.assertTrue(wf.finish(packet, after, self.review())['structural_reconciliation'])
+        self.change()
+        dirty = self.return_capture(packet)
+        self.assertEqual(dirty['files'], ['src/editor.py'])
+        self.assertFalse(wf.finish(packet, dirty, self.review())['structural_reconciliation'])
+
+    def test_capture_return_retains_deletions_as_actual_changes(self):
+        packet = self.packet()
+        (self.root / 'src/editor.py').unlink()
+        after = self.return_capture(packet)
+        self.assertEqual(after['files'], ['src/editor.py'])
+        self.assertIsNone(after['planned_source_hashes']['src/editor.py'])
+
+    def test_capture_return_requires_review_of_changed_runtime_but_allows_normal_wiki_edits(self):
+        packet = self.packet()
+        (self.root / 'docs/wiki/consumer.md').write_text('updated original consumer rule', encoding='utf-8')
+        self.assertIn('docs/wiki/consumer.md', self.return_capture(packet)['files'])
+        marker = self.home / 'unreviewed-runtime-ran'
+        (self.root / 'native.py').write_text(
+            NATIVE + '\nPath(' + repr(str(marker)) + ').write_text("ran changed body", encoding="utf-8")\n',
+            encoding='utf-8')
+        blocked = False
+        try:
+            self.return_capture(packet)
+        except ValueError as error:
+            self.assertIn('runtime input', str(error))
+            blocked = True
+        self.assertFalse(marker.exists(), 'A changed runtime body executed without a fresh review boundary')
+        self.assertTrue(blocked)
+
+    def test_capture_return_runtime_change_in_collector_is_not_a_new_reviewed_baseline(self):
+        packet = self.packet()
+        marker = self.home / 'runtime-gap-ran'
+        collector = wf.repository_changes
+
+        def change_after_guard(*args, **kwargs):
+            value = collector(*args, **kwargs)
+            (self.root / 'native.py').write_text(
+                NATIVE + '\nPath(' + repr(str(marker)) + ').write_text("changed runtime executed", encoding="utf-8")\n',
+                encoding='utf-8')
+            return value
+
+        rejection = None
+        with patch.object(wf, 'repository_changes', side_effect=change_after_guard):
+            try:
+                self.return_capture(packet)
+            except ValueError as error:
+                rejection = str(error)
+        self.assertFalse(marker.exists(), 'A replaced runtime became a new accepted capture baseline')
+        self.assertIsNotNone(rejection)
+        self.assertIn('runtime', rejection)
+
+    def test_root_paths_cannot_be_shadowed_by_the_peer_alias_namespace(self):
+        packet = self.packet()
+        peers = {'mobile': {'root': str(self.home / 'synthetic-peer'), 'available': True, 'head': 'peer-sha'}}
+        (self.root / 'mobile').mkdir()
+        (self.root / 'mobile/client.py').write_text('physical root source', encoding='utf-8')
+        legacy = copy.deepcopy(packet)
+        legacy['context']['peers'] = peers
+        after = {'root': str(self.root), 'peers': peers}
+        with self.assertRaisesRegex(ValueError, 'namespace'):
+            wf.source_hash(self.root, 'mobile/client.py', peers)
+        with self.assertRaisesRegex(ValueError, 'namespace'):
+            wf.repository_changes(legacy, after)
+        with self.assertRaisesRegex(ValueError, 'namespace'):
+            self.capture(peers={'mobile': str(self.home / 'absent-peer')})
+        # Legacy root deletion still has an ambiguous label after its directory is gone.
+        (self.root / 'mobile/client.py').unlink()
+        (self.root / 'mobile').rmdir()
+        with patch.object(wf, 'changed_files', return_value=['mobile/client.py']):
+            with self.assertRaisesRegex(ValueError, 'namespace'):
+                wf.repository_changes(legacy, after)
+        # A distinct explicit alias preserves the existing path format.
+        (self.root / 'mobile').mkdir()
+        (self.root / 'mobile/client.py').write_text('root source retained', encoding='utf-8')
+        self.assertEqual(wf.source_hash(self.root, 'mobile/client.py', {'other-peer': peers['mobile']}),
+                         wf.file_hash(self.root / 'mobile/client.py'))
+
+    def test_capture_return_requires_explicit_native_opt_in_and_matching_caller_argv(self):
+        packet = self.packet()
+        with patch.object(wf, 'capture', side_effect=AssertionError('must not execute native')):
+            with self.assertRaisesRegex(ValueError, 'explicit opt-in'):
+                wf.capture_return(packet, [sys.executable, 'native.py'])
+            with self.assertRaisesRegex(ValueError, 'argv'):
+                wf.capture_return(packet, ['not-the-reviewed-command'], allow_execution=True)
+            damaged = copy.deepcopy(packet)
+            damaged['context']['native_report']['cards'][0]['title'] = 'changed saved context'
+            with self.assertRaisesRegex(ValueError, 'changed'):
+                self.return_capture(damaged)
+            damaged = copy.deepcopy(packet)
+            damaged['base_sha'] = 'HEAD'
+            with self.assertRaisesRegex(ValueError, 'base'):
+                self.return_capture(damaged)
+
+    def test_capture_return_missing_peer_and_changed_artifact_fail_before_native_execution(self):
+        artifact = self.home / 'original-evidence.json'
+        artifact.write_text('original selected evidence', encoding='utf-8')
+        artifact = artifact.resolve(strict=True)
+        packet = self.packet(self.capture(peers={'mobile': str(self.home / 'absent-peer')},
+                                         preserve_artifacts=[str(artifact)]))
+        with patch.object(wf, 'capture', side_effect=AssertionError('must not execute native')):
+            with self.assertRaisesRegex(ValueError, 'unavailable'):
+                self.return_capture(packet)
+        packet = self.packet(self.capture(preserve_artifacts=[str(artifact)]))
+        artifact.write_text('overwritten evidence', encoding='utf-8')
+        with patch.object(wf, 'capture', side_effect=AssertionError('must not execute native')):
+            with self.assertRaisesRegex(ValueError, 'artifact'):
+                self.return_capture(packet)
+
+    def test_capture_return_refuses_scope_or_source_changes_during_capture_without_retry(self):
+        packet = self.packet()
+        self.change()
+        original_capture = wf.capture
+        for change in ('source', 'scope'):
+            with self.subTest(change=change):
+                def race(*args, **kwargs):
+                    value = original_capture(*args, **kwargs)
+                    if change == 'source':
+                        with (self.root / 'src/editor.py').open('a', encoding='utf-8') as out:
+                            out.write('race = True\n')
+                    else:
+                        (self.root / 'src/late.py').write_text('late consumer\n', encoding='utf-8')
+                    return value
+                with patch.object(wf, 'capture', side_effect=race) as call:
+                    with self.assertRaisesRegex(ValueError, 'changed during return capture'):
+                        self.return_capture(packet)
+                    self.assertEqual(call.call_count, 1)
+
+    def test_capture_return_cli_derives_actual_files_and_preserves_original_output(self):
+        packet = self.packet()
+        packet_path, output = self.home / 'task.json', self.home / 'actual.json'
+        wf.write_new(packet_path, packet)
+        self.change()
+        command = [sys.executable, str(ROOT / 'project-wiki/scripts/workflow.py'), 'capture-return',
+                   '--packet', str(packet_path), '--native-argv', json.dumps([sys.executable, 'native.py']),
+                   '--allow-native-execution', '--output', str(output)]
+        result = subprocess.run(command, capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        value = json.loads(output.read_text(encoding='utf-8'))
+        self.assertEqual(value['files'], ['src/editor.py'])
+        before = output.read_bytes()
+        again = subprocess.run(command, capture_output=True, text=True)
+        self.assertNotEqual(again.returncode, 0)
+        self.assertEqual(output.read_bytes(), before)
+
+    def test_manual_empty_implementation_return_still_fails_existing_coverage_gate(self):
+        packet = self.packet()
+        self.change()
+        after = wf.capture(self.root, 'editor task', [], [sys.executable, 'native.py'],
+                           ['native.py'], allow_execution=True)
+        result = wf.finish(packet, after, self.review())
+        self.assertFalse(result['structural_reconciliation'])
+        self.assertIn('actual diff is not completely covered by the final native impact query', result['issues'])
+
+
 class NativeSourceContextTests(unittest.TestCase):
     setUp = WorkflowTests.setUp
     capture = WorkflowTests.capture
     packet = WorkflowTests.packet
     review = WorkflowTests.review
     pointer = '/workflow/context/sources'
+
+    def test_capture_return_preserves_strict_peer_selection_instead_of_using_ambient_default(self):
+        peer = self.peer()
+        # Real selector changes are ambient input, not permission to replace the reviewed native program.
+        (self.root / 'native.py').write_text(
+            NATIVE.replace('import json,sys', 'import json,sys,os').replace(
+                "'placementIssues':[]", "'workflow':{'context':{'sources':json.loads(os.environ['WF_TEST_SOURCES'])}}, 'placementIssues':[]"),
+            encoding='utf-8')
+        selected = json.dumps({'server': self.identity(), 'selected-client': self.identity(peer)})
+        with patch.dict(os.environ, {'WF_TEST_SOURCES': selected}):
+            captured = self.capture(peers={'client': str(peer)}, native_source_context=self.pointer)
+            packet = self.packet(captured)
+            (peer / 'client.py').write_text('changed consumer\n', encoding='utf-8')
+            after = wf.capture_return(packet, [sys.executable, 'native.py'], allow_execution=True)
+        self.assertEqual(after['native_source_context'], self.pointer)
+        self.assertEqual(after['native_source_comparison']['status'], 'matched')
+        self.assertIn('client/client.py', after['files'])
+        damaged = copy.deepcopy(packet)
+        damaged['context'].pop('native_source_comparison')
+        with patch.object(wf, 'capture', side_effect=AssertionError('no native execution')):
+            with self.assertRaisesRegex(ValueError, 'comparison'):
+                wf.capture_return(damaged, [sys.executable, 'native.py'], allow_execution=True)
+        wrong = json.dumps({'server': self.identity(), 'wrong-default': self.identity()})
+        with patch.dict(os.environ, {'WF_TEST_SOURCES': wrong}):
+            with self.assertRaisesRegex(ValueError, 'does not match'):
+                wf.capture_return(packet, [sys.executable, 'native.py'], allow_execution=True)
 
     def observe(self, rows):
         workflow = {'context': {'sources': rows}}

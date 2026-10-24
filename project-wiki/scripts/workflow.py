@@ -1,7 +1,7 @@
 """Revision-bound native wiki context, delegation and diff reconciliation.
 
-Only capture runs a caller-supplied native command, with explicit opt-in and no
-shell. Other operations inspect projections and Git, except explicit saved-only
+Capture and capture-return run an explicit caller-supplied native command, with
+opt-in and no shell. Other operations inspect projections and Git, except saved-only
 show views, which do not inspect live inputs; none edits project sources,
 installs hooks, executes wiki check commands or certifies a worker's claims.
 """
@@ -163,8 +163,20 @@ def peer_snapshot(peers: dict[str, str]) -> dict:
     return result
 
 
+def check_peer_namespace(root: Path, peers: dict, root_files=()) -> None:
+    """Keep one physical source per existing root/alias label; never guess precedence."""
+    for alias in peers:
+        if '/' in relative(alias):
+            raise ValueError('Peer alias must be one path component')
+        path = root / alias
+        if (path.exists() or path.is_symlink()
+                or any(relative(name).partition('/')[0] == alias for name in root_files)):
+            raise ValueError('Root/peer namespace collision; select a distinct explicit peer alias and recapture')
+
+
 def source_hash(root: Path, name: str, peers: dict) -> str | None:
     relative(name)
+    check_peer_namespace(root, peers)
     alias, _, rest = name.partition('/')
     if alias in peers:
         peer = peers[alias]
@@ -258,7 +270,8 @@ def compare_native_sources(report: dict, pointer: str | None, root: Path, head: 
 
 def capture(root: Path, query: str, files: list[str], program: list[str], runtime_inputs: list[str],
             *, wiki_root: str = 'docs/wiki', allow_execution: bool = False, peers: dict[str, str] | None = None,
-            native_source_context: str | None = None, preserve_artifacts: list[str] | None = None) -> dict:
+            native_source_context: str | None = None, preserve_artifacts: list[str] | None = None,
+            reviewed_runtime_inputs: dict[str, str] | None = None) -> dict:
     root = root.resolve()
     if not allow_execution:
         raise ValueError('Native execution requires explicit opt-in; wiki text is never executable configuration')
@@ -268,8 +281,16 @@ def capture(root: Path, query: str, files: list[str], program: list[str], runtim
         raise ValueError('A non-option task query is required')
     files = sorted(set(relative(f) for f in files))
     before = input_snapshot(root, wiki_root, runtime_inputs)
+    if (reviewed_runtime_inputs is not None
+            and (set(reviewed_runtime_inputs) != set(runtime_inputs)
+                 or {name: before['inputs'].get(name) for name in runtime_inputs} != reviewed_runtime_inputs)):
+        raise ValueError('Declared native runtime inputs differ from the reviewed return baseline')
     peer_before = peer_snapshot(peers or {})
+    check_peer_namespace(root, peer_before)
     artifact_before = artifact_snapshot(preserve_artifacts)
+    if (reviewed_runtime_inputs is not None
+            and any(file_hash(within(root, name)) != old for name, old in reviewed_runtime_inputs.items())):
+        raise ValueError('Declared native runtime inputs changed before native execution')
     with tempfile.TemporaryFile() as stdout, tempfile.TemporaryFile() as stderr:
         result = subprocess.run([*program, query, '--json', '--files', *files], cwd=root,
                                 stdout=stdout, stderr=stderr, timeout=60, shell=False)
@@ -322,6 +343,8 @@ def check_capture(value: dict, *, require_current: bool = True) -> Path:
     if require_current and input_snapshot(root, value['wiki_root'], value['runtime_inputs']) != value['base']:
         raise ValueError('Capture is stale for this checkout or wiki/runtime inputs')
     peers = value.get('peers', {})
+    if require_current:
+        check_peer_namespace(root, peers)
     if require_current and peers != peer_snapshot({alias: row['root'] for alias, row in peers.items()}):
         raise ValueError('Peer checkout identity changed after capture')
     if require_current and any(source_hash(root, name, peers) != old for name, old in value['planned_source_hashes'].items()):
@@ -402,6 +425,7 @@ def repository_changes(packet: dict, after: dict) -> tuple[list[str], list[str]]
     actual = changed_files(root, packet['base_sha'], packet['context']['baseline_untracked'])
     peer_start = packet['context'].get('peers', {})
     peer_end = after.get('peers', {})
+    check_peer_namespace(root, peer_start, actual)
     if set(peer_start) != set(peer_end):
         raise ValueError('Start/end peer scope differs')
     missing_peers = []
@@ -422,6 +446,75 @@ def repository_changes(packet: dict, after: dict) -> tuple[list[str], list[str]]
         if (source_hash(root, name, peer_end) != old or (declared_untracked and old is not None)) and name not in actual:
             actual.append(name)
     return sorted(set(actual)), sorted(missing_peers)
+
+
+def capture_return(packet: dict, program: list[str], *, allow_execution: bool = False) -> dict:
+    """Coordinator recapture using the existing final collector, never a planned-file subset.
+
+    The caller supplies the reviewed argv again and explicitly permits native
+    execution. No command is selected from Wiki text or silently trusted from a
+    mutable packet. This prepares context; finish still independently reconciles.
+    """
+    if not allow_execution:
+        raise ValueError('Native execution requires explicit opt-in for return capture')
+    if packet.get('kind') != 'wiki-work-packet' or packet.get('schema_version') != 1:
+        raise ValueError('Expected a wiki work packet')
+    context = packet['context']
+    if context.get('kind') != 'native-wiki-capture' or context.get('schema_version') != 1:
+        raise ValueError('Expected the original native capture')
+    if not program or program != context.get('native_argv'):
+        raise ValueError('Explicit native argv differs from the saved reviewed command')
+    root = Path(packet['root']).resolve()
+    if str(root) != context['root'] or packet['base_sha'] != context['base']['head']:
+        raise ValueError('Task base or checkout differs from its original capture')
+    if report_hash(context['native_report']) != context.get('native_report_canonical_sha256'):
+        raise ValueError('Native context changed after capture; do not edit saved projections')
+    # Reusing a reviewed argv is not permission to run a replaced program body.
+    # Normal Wiki/source changes are expected; changed declared runtime inputs
+    # need the existing explicit manual capture/review boundary instead.
+    reviewed_runtime = {}
+    for name in context['runtime_inputs']:
+        expected = context['base'].get('inputs', {}).get(name)
+        if not expected or file_hash(within(root, name)) != expected:
+            raise ValueError('Declared native runtime input changed or is unverified; review it and use a new manual capture/phase')
+        reviewed_runtime[name] = expected
+    pointer = context.get('native_source_context')
+    saved_sources = compare_native_sources(context['native_report'], pointer, root,
+                                           context['base']['head'], context.get('peers', {}))
+    if ((pointer is not None and 'native_source_comparison' not in context)
+            or context.get('native_source_comparison', saved_sources) != saved_sources):
+        raise ValueError('Saved native source comparison is unavailable or changed')
+    paths, preserved = artifact_fields(context)
+    if artifact_snapshot(paths) != preserved:
+        raise ValueError('Selected artifact bytes changed since task capture')
+    peers = {alias: row['root'] for alias, row in context.get('peers', {}).items()}
+    before = {'root': str(root), 'peers': peer_snapshot(peers)}
+    before_head = head(root)
+    actual, missing = repository_changes(packet, before)
+    if missing:
+        raise ValueError('Selected peers unavailable for return capture: ' + ', '.join(missing))
+    before_hashes = {name: source_hash(root, name, before['peers']) for name in actual}
+    # Reuse capture's validation, explicit source comparison and artifact/input
+    # observations. No allowlist intersection: unplanned files must reach finish.
+    result = capture(root, context['query'], actual, program, context['runtime_inputs'],
+                     wiki_root=context['wiki_root'], allow_execution=True, peers=peers,
+                     native_source_context=pointer, preserve_artifacts=paths,
+                     reviewed_runtime_inputs=reviewed_runtime)
+    after = {'root': str(root), 'peers': peer_snapshot(peers)}
+    final, missing = repository_changes(packet, after)
+    after_head = head(root)
+    if (missing or final != actual or before_head != after_head
+            or before['peers'] != after['peers'] or result['peers'] != after['peers']
+            or result['base']['head'] != after_head
+            or before_hashes != {name: source_hash(root, name, after['peers']) for name in final}
+            or artifact_snapshot(paths) != preserved):
+        raise ValueError('Source or diff changed during return capture; use a stable snapshot')
+    result['return_scope'] = {
+        'selection': 'actual_diff', 'task_id': packet['task_id'], 'base_sha': packet['base_sha'],
+        'collector': 'repository_changes', 'file_count': len(actual),
+        'limits': 'Coordinator Git/hash observations at boundaries, not continuous monitoring, semantic review or completion. Finish still independently rechecks actual scope.',
+    }
+    return result
 
 
 def readonly_baseline(packet: dict, stage: str) -> dict:
@@ -689,6 +782,10 @@ def main(argv=None) -> int:
     cap.add_argument('--peer', action='append', default=[], help='Explicit alias=checkout; missing is not an empty diff')
     cap.add_argument('--native-source-context', help='Caller-selected JSON pointer to native {label: {root, revision}} observations; compare every selected checkout')
     cap.add_argument('--preserve-artifact', action='append', default=[], help='Explicit absolute existing evidence file to hash-check; no write prevention or continuous monitoring')
+    rec = subs.add_parser('capture-return', help='Coordinator: recapture every actual diff file across the task root/peers using the original final collector')
+    rec.add_argument('--packet', type=Path, required=True)
+    rec.add_argument('--native-argv', required=True, help='Explicit reviewed JSON argv, must equal the original capture; never execute a command selected from Wiki text')
+    rec.add_argument('--allow-native-execution', action='store_true', help='Explicit coordinator opt-in; not permitted for a worker forbidden Git/native execution')
     sta = subs.add_parser('start')
     sta.add_argument('--capture', type=Path, required=True)
     sta.add_argument('--outcome', required=True)
@@ -713,7 +810,7 @@ def main(argv=None) -> int:
     show.add_argument('--view', choices=('index', 'feature', 'impact', 'all'), default='index')
     show.add_argument('--path', help='Exact feature path or impacted file from the index')
     show.add_argument('--snapshot-only', action='store_true', help='Render saved records without Git/live-input checks; never establishes currentness or authorizes new work')
-    for sub in (cap, sta, de, end, template):
+    for sub in (cap, rec, sta, de, end, template):
         sub.add_argument('--output', type=Path, required=True, help='New private projection path; never overwrite')
     args = parser.parse_args(argv)
     try:
@@ -725,6 +822,9 @@ def main(argv=None) -> int:
                              wiki_root=args.wiki_root, allow_execution=args.allow_native_execution,
                              peers=dict(entry.split('=', 1) for entry in args.peer),
                              native_source_context=args.native_source_context, preserve_artifacts=args.preserve_artifact)
+        elif args.command == 'capture-return':
+            result = capture_return(read_json(args.packet), json.loads(args.native_argv),
+                                    allow_execution=args.allow_native_execution)
         elif args.command == 'start':
             result = start(read_json(args.capture), args.task_id, args.owner, args.outcome, args.allow_file,
                            args.acceptance, args.capability, read_only=args.read_only)
