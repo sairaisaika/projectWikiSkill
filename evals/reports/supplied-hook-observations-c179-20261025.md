@@ -28,6 +28,14 @@ ran 234 cases with two host symlink skips; the original twelve fixture checks an
 24-task curated navigation evaluation also passed. These are self-tests, not an
 independent agent trial or proof of measured time savings.
 
+The first remote Windows matrix rejected the fixture's source path while both
+Linux matrices passed. The fixture constructed its received path from the raw
+temporary-directory spelling but the selected package was resolved. The fixture
+now uses its canonical temporary root, and an additional control explicitly
+refuses to guess short-name or symlink aliases from received path strings.
+The parser's source association remains lexical and unchanged. The original
+remote failure is retained; corrected final cross-host CI needs a new exact run.
+
 The candidate doctor also read a previously captured real Codex0.160 listing,
 matching installation inventory and a valid installed0.2.14 package. It reported
 the selected SessionStart's enabled/trusted state while leaving all higher layers

@@ -19,7 +19,10 @@ class CodexHooksTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
-        self.home = Path(self.temp.name)
+        # Windows CI may expose TEMP through a short-name/junction spelling.
+        # Bind fixture source strings to the selected canonical package path;
+        # the inspector must not resolve arbitrary paths received from a listing.
+        self.home = Path(self.temp.name).resolve()
         self.package = self.home / 'package'
         self.path = self.home / 'hooks.json'
         self.row = {'pluginId': 'project-wiki@fixture-market', 'eventName': 'sessionStart',
@@ -111,6 +114,12 @@ class CodexHooksTests(unittest.TestCase):
                       '/work/../secret', 'C:/work/./file', '/work/\x00file', '', None]:
             with self.subTest(value=value), self.assertRaises(ValueError):
                 doctor.local_path_key(value)
+
+    def test_local_path_comparison_does_not_guess_short_name_or_symlink_aliases(self):
+        self.assertNotEqual(doctor.local_path_key('C:/Users/RUNNER~1/Temp/package/hooks/codex.json'),
+                            doctor.local_path_key('C:/Users/runneradmin/Temp/package/hooks/codex.json'))
+        self.assertNotEqual(doctor.local_path_key('/alias/package/hooks/codex.json'),
+                            doctor.local_path_key('/real/package/hooks/codex.json'))
 
     def test_captured_paths_and_commands_never_become_io_targets(self):
         # Write input before mocking. Only the explicitly supplied JSON may be read.
