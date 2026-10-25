@@ -1,5 +1,15 @@
 # projectWikiSkill
 
+0.2.17 candidate lets doctor read an explicitly supplied Codex `hooks/list`
+snapshot alongside matching installation inventory. It reports one working
+directory's plugin SessionStart enabled/trust state and lexical source association;
+it never grants trust or claims execution, context delivery or use. Received paths
+and commands are not opened or executed. See the
+[bounded design and acceptance plan](docs/DOCTOR_HOOK_OBSERVATION_PLAN.md).
+The [bounded replay](evals/reports/supplied-hook-observations-c179-20261025.md)
+separates package/source checks from a supplied real host observation.
+Source, package, installed host and actual lifecycle acceptance remain separate.
+
 0.2.16 candidate adds an explicit coordinator `capture-return` command. It derives
 every actual root/peer diff file through the same collector as final reconciliation,
 then invokes the reviewed native router with explicit opt-in. Unplanned files,
