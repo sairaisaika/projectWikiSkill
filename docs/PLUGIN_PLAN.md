@@ -1,5 +1,24 @@
 # Internal collaboration plugin / bounded host observations
 
+## 0.2.17 candidate: supplied hook listing observations
+
+The existing package/inventory/version inspector now accepts optional
+`--codex-hooks <saved-json> --codex-hooks-cwd <explicit-cwd>`, only alongside
+`--codex-inventory` and `--codex-marketplace`. A valid hook package and matching
+installed inventory version are required. It reads one supplied per-cwd
+SessionStart listing, associates its source path lexically with the selected
+package, and reports enabled/trusted/untrusted/modified as host-reported data.
+No paths or commands inside the snapshot are opened or executed; an opaque host
+definition hash is not substituted for package-byte verification. Duplicates,
+partial errors, invalid data or a different package path leave the observation
+unverified. Snapshot authenticity, freshness and completeness remain unknown.
+
+Top-level installation/trust/execution/delivery/use/semantic/business fields and
+package exit semantics remain unchanged. The adapter grants no trust, changes no
+host and starts no process. See [design and scoped acceptance](DOCTOR_HOOK_OBSERVATION_PLAN.md).
+Source/main adoption, a newly installed package and actual automatic delivery
+must each have their own evidence; this candidate does not install itself.
+
 ## 0.2.16 candidate: capture the complete actual return
 
 One real coordinator applied an unchanged-readonly empty-file recipe to a
