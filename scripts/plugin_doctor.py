@@ -4,11 +4,13 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from pathlib import Path, PurePosixPath
+from pathlib import Path, PurePosixPath, PureWindowsPath
+import re
 import sys
 
 MAX_TRANSCRIPT = 4 * 1024 * 1024
 MAX_HOST_INVENTORY = 4 * 1024 * 1024
+MAX_HOST_HOOKS = 4 * 1024 * 1024
 SOURCE_BYTE_POLICY = 'utf8-crlf-to-lf-v1'
 
 
@@ -76,6 +78,97 @@ def inspect_codex_version(path: Path) -> dict:
         raise ValueError('Invalid Codex version output')
     return {'reported': text, 'stdout_sha256': hashlib.sha256(raw).hexdigest(),
             'limits': 'Caller-supplied unsigned version stdout, not execution attestation.'}
+
+
+def local_path_key(value: str) -> tuple:
+    """Compare host path strings lexically; never stat/resolve captured paths."""
+    if not isinstance(value, str) or not value or any(ord(c) < 32 for c in value):
+        raise ValueError('Invalid host path')
+    text = value.replace('\\', '/')
+    if text.startswith('//') or any(p in ('.', '..') for p in text.split('/')):
+        raise ValueError('Network or traversing host path')
+    if re.match(r'^[A-Za-z]:/', text):
+        path = PureWindowsPath(text)
+        return ('windows', *(part.casefold() for part in path.parts))
+    if '\\' in value or not text.startswith('/'):
+        raise ValueError('Host path must be local and absolute')
+    return ('posix', *PurePosixPath(text).parts)
+
+
+def inspect_codex_hooks(path: Path, package: Path, name: str, marketplace: str,
+                        cwd: str) -> dict:
+    """Observe one supplied hooks/list record, not trust or execution attestation.
+
+    The caller must first verify package integrity and a matching installed
+    inventory version. Received source/cwd strings are data, never I/O targets.
+    """
+    if not marketplace or '@' in marketplace:
+        raise ValueError('Explicit marketplace identity is required')
+    selected_cwd = local_path_key(cwd)
+    source_key = local_path_key(str(package.resolve() / 'hooks' / 'codex.json'))
+    with path.open('rb') as stream:
+        raw = stream.read(MAX_HOST_HOOKS + 1)
+    if len(raw) > MAX_HOST_HOOKS:
+        raise ValueError('Host hook snapshot exceeds inspection budget')
+    data = json.loads(raw.decode('utf-8-sig'))
+    if not isinstance(data, dict) or 'error' in data:
+        raise ValueError('Invalid Codex hooks/list snapshot')
+    # Accept saved result data or the complete JSON-RPC response, never prose.
+    result = data.get('result', data)
+    if (not isinstance(result, dict) or 'error' in result or result.get('errors')
+            or not isinstance(result.get('data'), list)):
+        raise ValueError('Invalid Codex hooks/list result')
+    plugin_id = name + '@' + marketplace
+    groups = []
+    for group in result['data']:
+        if not isinstance(group, dict) or not isinstance(group.get('cwd'), str):
+            raise ValueError('Invalid hook working directory')
+        if local_path_key(group['cwd']) == selected_cwd:
+            groups.append(group)
+    if len(groups) > 1:
+        raise ValueError('Hook working directory is ambiguous')
+    matches = []
+    if groups:
+        group = groups[0]
+        if not isinstance(group.get('hooks'), list) or group.get('errors'):
+            raise ValueError('Incomplete hook working directory observation')
+        for row in group['hooks']:
+            if not isinstance(row, dict):
+                raise ValueError('Invalid hook record')
+            if row.get('pluginId') != plugin_id or row.get('eventName') != 'sessionStart':
+                continue
+            if (row.get('source') != 'plugin' or row.get('handlerType') != 'command'
+                    or type(row.get('enabled')) is not bool
+                    or row.get('trustStatus') not in ('trusted', 'untrusted', 'modified')
+                    or not isinstance(row.get('currentHash'), str)
+                    or not re.fullmatch(r'sha256:[0-9a-f]{64}', row['currentHash'])):
+                raise ValueError('Invalid selected hook state')
+            if local_path_key(row.get('sourcePath')) != source_key:
+                raise ValueError('Selected hook source differs from inspected package')
+            matches.append(row)
+    if len(matches) > 1:
+        raise ValueError('Selected SessionStart hook is ambiguous')
+    row = matches[0] if matches else None
+    return {
+        'kind': 'provided-codex-hooks-list',
+        'snapshot_sha256': hashlib.sha256(raw).hexdigest(),
+        'plugin_id': plugin_id, 'selected_cwd': cwd,
+        'selected_event': 'sessionStart', 'cwd_present': bool(groups),
+        'record_present': row is not None,
+        'state': 'record_observed' if row else 'not_listed_in_supplied_cwd',
+        'selected_package_source_path_matched': bool(row),
+        'reported_enabled': row['enabled'] if row else None,
+        'reported_trust_status': row['trustStatus'] if row else None,
+        'reported_definition_hash': row['currentHash'] if row else None,
+        'hook_execution': 'not established', 'context_delivery': 'not established',
+        'agent_use': 'not established', 'semantic_review': 'not established',
+        'business_acceptance': 'not established',
+        'limits': 'Unsigned supplied per-working-directory snapshot; capture time, freshness '
+                  'and completeness are unverified. Source path association is lexical, '
+                  'not cache-byte or command identity attestation. The host definition hash '
+                  'is opaque, not a package-file checksum. Reported trust grants no trust '
+                  'and does not prove execution, delivery, adoption or acceptance.',
+    }
 
 
 def inspect_claude_transcript(path: Path, package: Path, name: str, version: str) -> dict:
@@ -326,11 +419,17 @@ def main() -> int:
     parser.add_argument('--codex-inventory', type=Path, help='Read saved `codex plugin list --json` stdout; no host commands are executed')
     parser.add_argument('--codex-marketplace', help='Explicit marketplace identity for the selected plugin; required with --codex-inventory')
     parser.add_argument('--codex-version-file', type=Path, help='Optional saved `codex --version` stdout, only with --codex-inventory')
+    parser.add_argument('--codex-hooks', type=Path, help='Optional saved hooks/list JSON; reads evidence only, never grants trust')
+    parser.add_argument('--codex-hooks-cwd', help='Explicit working directory represented in --codex-hooks; a path string, not an I/O target')
     args = parser.parse_args()
     if bool(args.codex_inventory) != bool(args.codex_marketplace):
         parser.error('--codex-inventory and --codex-marketplace must be provided together')
     if args.codex_version_file and not args.codex_inventory:
         parser.error('--codex-version-file requires --codex-inventory')
+    if bool(args.codex_hooks) != bool(args.codex_hooks_cwd):
+        parser.error('--codex-hooks and --codex-hooks-cwd must be provided together')
+    if args.codex_hooks and not args.codex_inventory:
+        parser.error('--codex-hooks requires --codex-inventory and --codex-marketplace')
     report = inspect(args.package, args.source)
     if args.codex_inventory is not None:
         if not report['package_valid']:
@@ -343,6 +442,18 @@ def main() -> int:
                 report['codex_observation'] = observation
             except (OSError, ValueError, KeyError, TypeError, UnicodeError):
                 report['codex_observation'] = {'error': 'Supplied Codex inventory/version unavailable or invalid; host state remains unverified'}
+    if args.codex_hooks is not None:
+        observation = report.get('codex_observation', {})
+        if (not report['package_valid'] or not observation.get('reported_installed')
+                or not observation.get('package_version_matched')
+                or not (args.package / 'hooks/codex.json').is_file()):
+            report['codex_hooks_observation'] = {'error': 'Valid hook package and matching installed inventory version required; hook state remains unverified'}
+        else:
+            try:
+                report['codex_hooks_observation'] = inspect_codex_hooks(
+                    args.codex_hooks, args.package, report['name'], args.codex_marketplace, args.codex_hooks_cwd)
+            except (OSError, ValueError, KeyError, TypeError, UnicodeError):
+                report['codex_hooks_observation'] = {'error': 'Supplied Codex hook snapshot unavailable, ambiguous or invalid; hook state remains unverified'}
     if args.claude_transcript is not None:
         if not report['package_valid']:
             report['cli_observation'] = {'error': 'Package integrity must pass before matching host events'}
