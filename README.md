@@ -10,7 +10,7 @@ The [bounded replay](evals/reports/supplied-hook-observations-c179-20261025.md)
 separates package/source checks from a supplied real host observation.
 Source, package, installed host and actual lifecycle acceptance remain separate.
 
-Normal source/main CI and one official Windows installation of0.2.17 are now
+Normal source/main CI and one official Windows installation of 0.2.17 are now
 verified. The installed doctor consumed a fresh host listing and reported the
 selected SessionStart as enabled/trusted while leaving execution/delivery/use
 unverified. Hook definitions and the delivery script were unchanged; no trust

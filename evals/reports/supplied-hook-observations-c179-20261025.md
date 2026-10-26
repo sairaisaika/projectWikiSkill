@@ -36,7 +36,8 @@ refuses to guess short-name or symlink aliases from received path strings.
 The parser's source association remains lexical and unchanged. The original
 remote failure is retained; corrected final cross-host CI needs a new exact run.
 
-The candidate doctor also read a previously captured real Codex0.160 listing,
+At the pre-installation cutoff, the candidate doctor also read a previously
+captured real Codex0.160 listing,
 matching installation inventory and a valid installed0.2.14 package. It reported
 the selected SessionStart's enabled/trusted state while leaving all higher layers
 unverified. All selected input hashes were unchanged. The source candidate is
@@ -45,14 +46,15 @@ unverified. All selected input hashes were unchanged. The source candidate is
 and payload closure checks. No host was updated, no trust was changed and no
 project-native router, worker or product runtime was modified by this change.
 
-Normal source/main CI, a later host update and actual automatic delivery require
-separate evidence. The real raw host snapshots remain private; this report contains
+At that cutoff, normal source/main CI, a later host update and actual automatic
+delivery still required separate evidence; the later adoption is recorded below.
+The real raw host snapshots remain private; this report contains
 no account, private project path, session, command log or application data.
 
 ## Normal source and bounded host adoption
 
 The corrected final source, PR and main CI each passed all four Windows/Linux
-and Python3.10/3.13 matrices:235 unit cases,12 fixture checks and the original
+and Python 3.10/3.13 matrices: 235 unit cases, 12 fixture checks and the original
 curated navigation evaluation per matrix. Both Linux runs retained one explicit
 skip; Windows completed the unit suite without skips. The first remote failure
 remains a historical result, not a successful attempt relabelled later.
