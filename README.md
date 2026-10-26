@@ -10,6 +10,13 @@ The [bounded replay](evals/reports/supplied-hook-observations-c179-20261025.md)
 separates package/source checks from a supplied real host observation.
 Source, package, installed host and actual lifecycle acceptance remain separate.
 
+Normal source/main CI and one official Windows installation of0.2.17 are now
+verified. The installed doctor consumed a fresh host listing and reported the
+selected SessionStart as enabled/trusted while leaving execution/delivery/use
+unverified. Hook definitions and the delivery script were unchanged; no trust
+settings or running scoped worker were modified. See the
+[bounded host adoption return](evals/reports/supplied-hook-observations-c179-20261025.md#normal-source-and-bounded-host-adoption).
+
 0.2.16 candidate adds an explicit coordinator `capture-return` command. It derives
 every actual root/peer diff file through the same collector as final reconciliation,
 then invokes the reviewed native router with explicit opt-in. Unplanned files,
