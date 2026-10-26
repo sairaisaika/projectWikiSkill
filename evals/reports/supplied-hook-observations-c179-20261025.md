@@ -48,3 +48,31 @@ project-native router, worker or product runtime was modified by this change.
 Normal source/main CI, a later host update and actual automatic delivery require
 separate evidence. The real raw host snapshots remain private; this report contains
 no account, private project path, session, command log or application data.
+
+## Normal source and bounded host adoption
+
+The corrected final source, PR and main CI each passed all four Windows/Linux
+and Python3.10/3.13 matrices:235 unit cases,12 fixture checks and the original
+curated navigation evaluation per matrix. Both Linux runs retained one explicit
+skip; Windows completed the unit suite without skips. The first remote failure
+remains a historical result, not a successful attempt relabelled later.
+
+After that source adoption, one Windows host was updated through its actual
+official CLI's supported plugin installation entry. The existing local catalog
+retained its identity and only selected the new immutable package directory.
+The prior0.2.14 cache was hash-verified and backed up before the updater ran.
+Fresh inventory reports0.2.17 installed/enabled. A freshly built package and the
+installed copy match canonical source, support inputs, raw-input receipt and
+payload bytes. Actual installed doctor and snapshot-only reader invocations
+passed; the reader preserved a historical task packet and its four impact pages,
+without claiming that packet's sources were current.
+
+The hook definitions and delivery-script file were byte-identical to the prior
+installation. A fresh official per-working-directory hook listing reported
+SessionStart enabled/trusted; the new installed doctor consumed that exact listing
+with matching package/inventory/version evidence. No agent edited trust settings.
+The definition hash is still opaque, and this listing does not attest new automatic
+execution, delivery, model use, semantic correctness or business acceptance.
+Current-chat refresh and any future lifecycle invocation require separate evidence.
+No running scoped worker was upgraded or resumed. This documentation return changes
+no packaged helper, reference, manifest, hook, installer, version or host setting.
