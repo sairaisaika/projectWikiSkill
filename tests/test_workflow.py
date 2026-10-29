@@ -1089,7 +1089,7 @@ class PreservedEvidenceTests(unittest.TestCase):
         with self.assertRaises(ValueError) as raised:
             wf.artifact_snapshot([str(self.artifact), str(missing)])
         self.assertIsInstance(raised.exception.__cause__, FileNotFoundError)
-        self.assertIn(str(missing), str(raised.exception.__cause__))
+        self.assertEqual(Path(raised.exception.__cause__.filename), missing)
         cp = subprocess.run([sys.executable, str(ROOT / 'project-wiki/scripts/workflow.py'), 'capture',
                              '--root', str(self.root), '--query', 'editor task', '--native-argv',
                              json.dumps([sys.executable, 'native.py']), '--runtime-input', 'native.py',

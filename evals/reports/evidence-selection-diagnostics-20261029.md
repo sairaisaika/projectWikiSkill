@@ -67,7 +67,7 @@ execution. Tests exposed the missing report target, which was then created. The
 reference now documents order and privacy limits at the original task route.
 No timing, token saving or monetary cost claim was measured.
 
-## Final source acceptance
+## Initial source acceptance (before independent review)
 Python 3.12.3 on Linux: complete suite ran 239 tests, OK with one existing
 Windows directory-junction skip. The last rerun includes explicit proof that the
 missing-file exception cause contains the selected absolute fixture path while
@@ -85,6 +85,19 @@ An independent reader reran17 focused tests, three additional actual CLI cases, 
 
 The next real task discovered that both the Web and mobile copies of an iOS URL acceptance receipt named a screenshot absent from their audit directories, although the original image still existed in the handoff. This was a coordinator evidence-return omission; previous Markdown/HTML anchor checks did not validate this JSON reference.
 Candidate helper hash c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2 was used in that task. Its first actual capture selected the receipt followed by the missing referenced image and returned exit1, the original error prefix plus selection item2, empty stderr, and no capture output. The coordinator mapped that item to its explicit selection, copied the existing original image into both audit directories, and checked the receipt SHA without retaking or editing the image. Capture and start then passed. This is a real preparation use of the new diagnostic, not automatic discovery, copying, or proof of semantic acceptance.
-The original Claude iOS owner is now reading that packet and checking actual image/receipt/Wiki consistency. Worker return and final reconciliation are still pending. The image remains an OS confirmation dialog; no JS callback or authenticated journey is thereby accepted. No host install/trust/hooks changed.
+The original Claude iOS owner subsequently read the packet, inspected image/receipt/Wiki consistency, updated the two business pages and original task records, and returned the six scoped paths. Root reviewed the actual diff and unchanged selected hashes; capture-return and finish returned structural_reconciliation=true with no issues or capability gaps. This establishes the scoped evidence-return workflow, not product completion. The image remains an OS confirmation dialog; no JS callback or authenticated journey is thereby accepted. No host install/trust/hooks changed.
 
 Package validation: default skill-only0.2.18 package built successfully with23 payload files; current doctor reports package/source/support/input bytes/identity matching. Hooks were not included, installation was not performed, and host execution/delivery layers remain unverified.
+
+## Windows CI portability rework
+Root reported CI40968530564 at83613b24589b0f65abf1a2c916cbe3469a418e35: Windows3.13 job123779103149 failed only the new cause-string assertion. WinError2 formats the filename using repr, so its escaped backslashes do not match the raw path string. Ubuntu3.10/3.13 passed; Windows3.10 was cancelled by fail-fast. This is a test assertion portability defect, not a demonstrated runtime diagnostic/privacy failure.
+The test now compares `Path(cause.filename)` directly to the selected missing Path. It still proves the cause is FileNotFoundError and retains the actual subprocess assertions: exact safe JSON, exit1, no capture output, no path/name/content in stdout/stderr, and empty stderr. workflow.py remains SHA256 c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2.
+Focused PreservedEvidenceTests rerun on Linux:17 passed, including the real CLI case. Windows CI rerun remains pending; this local result is not Windows acceptance. No commit/push or host configuration change was performed in this rework. Prior independent review and real preparation adoption receipts above are preserved.
+Efficiency: exact CI file/assertion mapped directly to the existing test; no new tool, policy, or broad source investigation was needed. No token/cost measurement.
+
+## Actual task return and efficiency review
+The iOS task used candidate workflow.py c5017764 throughout capture, start, worker reading, return and finish. The original Claude owner updated the actual image links and an inline image while retaining the OS confirmation versus JavaScript callback boundary. The native index was 10,159 bytes, feature view 44,019 bytes, two impact views 8,973 and 8,960 bytes; the selected task projection was 79,626 bytes. These are output bytes, not token counts or a demonstrated saving. The owner did not need the separate 75,293-byte full capture after reading the projection.
+
+This task also exposed a separate missing startup screenshot in the mobile audit directory. Root preserved the completed six-path return, scoped the follow-up in the original mobile task, and copied the existing original image. A bounded scan of the two relevant audit directories in both repositories verified five screenshot references against declared hashes. The initial diagnostic helped locate an explicitly selected missing file; it did not automatically discover every JSON dependency. Shared site rendering and full product journeys remain separate pending work.
+
+Evidence remains in the original product task records and coordinator handoff: 20261029-ios-evidence-closure/{actual-missing-refusal.json,return.json,review.json,reconciliation.json,related-screenshot-check.json}. No user intervention was needed for the routine image repair. No measured before/after latency, total context reduction, token or fee improvement is asserted.
