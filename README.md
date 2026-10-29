@@ -1,5 +1,13 @@
 # projectWikiSkill
 
+0.2.18 source candidate adds a private-safe item ordinal to selected-evidence
+file refusals, preserving their existing prefix and refusal policy. The ordinal
+follows the current checkpoint list, not always original CLI order; see
+[selected evidence](project-wiki/references/collaboration-workflow.md#selected-evidence-files)
+and the [bounded evaluation](evals/reports/evidence-selection-diagnostics-20261029.md).
+This candidate is not installed or published; independent real-task adoption
+remains pending. No skill instructions, hooks or host trust settings changed.
+
 0.2.17 candidate lets doctor read an explicitly supplied Codex `hooks/list`
 snapshot alongside matching installation inventory. It reports one working
 directory's plugin SessionStart enabled/trust state and lexical source association;
