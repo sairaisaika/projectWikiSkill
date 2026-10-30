@@ -1,13 +1,13 @@
 ---
 type: Project
-updated_at: 2026-10-30T02:17:47.554729+00:00
-history_count: 4
+updated_at: 2026-10-30T10:01:04.118827+00:00
+history_count: 5
 ---
 # projectWikiSkill
 Native knowledge: README, project-wiki/SKILL.md and project-wiki/references; evaluations in evals/reports. Do not create a parallel business Wiki.
 Architecture: dependency-free Python 3.10+ helper; workflow.py captures explicit native JSON routes, snapshots selected evidence and reconciles returns. plugin.json is version identity; packaging never installs or grants trust.
 Conventions: selected evidence refuses missing/aliased/non-file inputs, exposes no contents in capture; outputs write-new-only. Capture input order precedes saved sorted unique selection. Separate source tests, installed host and real adoption.
-Current task: docs/WIKI_EVOLUTION_PIPELINE_PLAN_20261029.md. Evolve the project-to-Wiki maintenance paradigm from actual task evidence; Claude owns reference/maintenance, Root owns entry/evaluation/shared checkpoint. No hooks/permissions/installation changes. PR40 and frozen delivery tree stay separate.
+Current task: docs/WIKI_EVOLUTION_PIPELINE_PLAN_20261029.md. Evolve the project-to-Wiki maintenance paradigm from actual task evidence; Claude owns reference/maintenance, Root owns entry/evaluation/shared checkpoint. Skill-only host installation is recorded separately; no hooks/permissions changes. PR40 and frozen delivery tree stay separate.
 Checks: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTests in tests/test_workflow.py. Test fixtures are synthetic and portable; OS-specific skips are explicit.
 ## History
 - 2026-10-29: Source candidate0.2.18 adds private-safe selection ordinals; existing policy/JSON envelope and sorted saved selections retained. Focused17 and full239 tests passed (one Windows-only skip); independent review passed; next real iOS capture identified missing selection item2 and succeeded after original-image repair. Claude scoped evidence return and structural reconciliation passed; shared site/product acceptance and installation remain separate/pending. Plan and eval record red/green and documentation-link correction.
@@ -17,3 +17,5 @@ Checks: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTest
 - 2026-10-29: Source candidate0.2.19 adds an evolution guide and question-first entry: independent fact/structure decisions, causal reading scope, miss-layer diagnosis and native return. Claude implementation required independent rework plus one coordinator correction; six counterexamples now accepted. Native project protocol/template adopted the method in draft PR216; a fresh real-task planner used it but reached similar conclusions to baseline. Local239 tests/package/doctor passed, one OS-specific skip; no installation/hooks/product completion or efficiency gain claimed. Actual iOS QA migration/PNG consumer implementation and bounded booking-entry restructuring now exercise the method; independent MIME rework and actual HTTP evidence are retained. Browser visuals remain blocked by Work settings, and repeated oversized reads remain open; see plan and evaluation. Source be9f CI40975300367 passed four OS/Python jobs; no claimed cost reduction or host installation. Next real booking investigation required original-owner corrections for a falsely reported routing miss and overstated matrix coverage; exact receipts and limitations retained in the project. This is counterevidence to first-pass/efficiency improvement, not a reason for another generic rule or selector patch. Guide and payload unchanged.
 
 - 2026-10-30: Real sitemap and following release-readiness tasks exercised causal reading, native consumer validation, current/history separation and manual subsequent adoption. Original-owner and coordinator rework remains counterevidence to first-pass improvement. Scoped discovery found no registered conventional host skill; native Git pre-push gate did run, distinct from agent hooks. Only plan/evaluation/checkpoint updated; guide/helper unchanged. Six package/documentation checks passed; new-head CI pending.
+
+- 2026-10-30: Pinned ee6c065 skill-only copies match all19 files on Mac Codex and Linux Claude. Both host catalogs delivered; Claude native Skill and Mac explicit read evidenced. Artifact task still required recipe rework and native metadata repair; no generic payload change, hook proof or efficiency gain. Six package checks passed. Receipt/evaluation preserve wrapper and oversized-read costs; documentation head CI pending.

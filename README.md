@@ -10,11 +10,13 @@ Wiki as the fact owner; the skill supplies the working method.
 - Capture and return work across agents: [collaboration workflow](project-wiki/references/collaboration-workflow.md).
 - Run the helper or package it: [usage](README.md#使用).
 
-0.2.19 is a source candidate for the evolution workflow. Independent
-design review and a real-task planning trial are complete; repeated oversized
-reads remain open. Instructions and structural checks do not prove lower error
-rates, product acceptance or host activation. See the
-[plan](docs/WIKI_EVOLUTION_PIPELINE_PLAN_20261029.md) and
+0.2.19 is a source candidate for the evolution workflow, exercised in real
+product and Wiki-maintenance tasks with independent rework retained. Skill-only
+copies pinned to ee6c065 now match all 19 source files on the selected Mac Codex
+and Linux Claude hosts; the new Claude invocation advertised and natively loaded
+the skill. The subsequent Mac catalog also advertises it and Root read the
+installed entry. Correct adoption and lower rework/context cost remain separate checks. No plugin hooks, trust or access settings changed.
+See the [plan](docs/WIKI_EVOLUTION_PIPELINE_PLAN_20261029.md) and
 [evaluation](evals/reports/wiki-evolution-pipeline-20261029.md).
 
 ## Historical source and host observations
