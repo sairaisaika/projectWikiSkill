@@ -1,7 +1,7 @@
 ---
 type: Project
-updated_at: 2026-10-30T11:58:23.217585+00:00
-history_count: 6
+updated_at: 2026-10-30T13:19:20.379438+00:00
+history_count: 7
 ---
 # projectWikiSkill
 Native knowledge: README, project-wiki/SKILL.md and project-wiki/references; evaluations in evals/reports. Do not create a parallel business Wiki.
@@ -21,3 +21,5 @@ Checks: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTest
 - 2026-10-30: Pinned ee6c065 skill-only copies match all19 files on Mac Codex and Linux Claude. Both host catalogs delivered; Claude native Skill and Mac explicit read evidenced. Artifact task still required recipe rework and native metadata repair; no generic payload change, hook proof or efficiency gain. Six package checks passed. Receipt/evaluation preserve wrapper and oversized-read costs; 8dc documentation CI41037700460 passed four jobs. Following real Web integration used the repaired native route; late reading, false miss diagnosis and native-template mismatch still required independent rework. Six package checks passed again; later evidence-only head CI separate.
 
 - 2026-10-30: User-requested split-owner trial preserved proposal/reviewed Wiki/implementation/independent return. Added optional handoff guidance and clarified target hits versus unrelated extras; helper/schema/entry/hooks unchanged. Five informed decision cases and six package checks passed. Actual native selector acceptance retained legitimate explicit queries and reduced one error query output; late reads, repeated validation and coordinator parsing correction remain costs. Installed ee6c065 copies unchanged; next distinct-task adoption/efficiency unproven.
+
+- 2026-10-30: Distinct product-union task manually adopted9032 guidance. Same-owner implementation exposed coordinator Wiki merge defects; native27/492 and independent source/alias checks passed after repair. Late reading, command environment/peer mistakes and output cost remain counterevidence. Existing guide already covers them; no payload/hooks/install changes. Original-owner two-leaf test-isolation repair and product CI/artifacts remain pending. Evaluation records actual source scope and mobile canonical-CI dependency. Six package checks and diff check passed; payload unchanged, later-head CI separate.
