@@ -208,6 +208,24 @@ not explain an older failure, and a failed run does not invalidate a later verif
 artifact. Do not promote an observation from one environment, profile or audience to
 others.
 
+### When planning, Wiki editing and implementation have different owners
+
+Use this optional handoff when the task deliberately separates those roles; a
+single worker can keep the same transitions without extra delegation. Preserve the
+planner's original proposal. The Wiki owner records the reviewed contract and
+acceptance boundaries in the existing owning section or task, explicitly as
+accepted but not implemented, alongside the observed current behavior.
+
+Return that reviewed section to the implementer with the source/peer identities,
+changed constraints and file ownership. Confirm what was actually read; a hash
+identifies bytes but does not prove adoption. Late reading remains late reading.
+If source discovery changes the contract, return the specific difference to its
+owner before implementing a conflicting interpretation. After independent checks,
+the Wiki owner promotes only evidenced behavior to current candidate state, names
+remaining boundaries, and preserves the earlier proposal as history. Source,
+artifact and deployed state remain separate. Do not create a second specification
+registry or impose this division on routine work.
+
 ## 7. Keep the per-task record light
 
 Use the project's existing task record and its required sections; add no new

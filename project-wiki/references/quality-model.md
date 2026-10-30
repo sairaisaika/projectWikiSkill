@@ -77,6 +77,22 @@ It does not label those results independent or semantic. Alias-based routing has
 semantic model: a known synonym may fail until added; an absent match is preferable
 to a made-up location. Record failures rather than relaxing thresholds to claim success.
 
+### Relevant targets do not excuse irrelevant results
+
+A target in the top results measures recall/ranking, not whether the other returned
+pages are useful. Regular query cases in the helper's current `evaluate` do not
+reject extra results merely because the expected route ranks correctly; task-map
+scope checks are separate. For a native-selector repair, preserve the actual
+consumer output and check both required routes and demonstrated unrelated routes.
+Keep plausible but unreviewed results explicitly unclassified instead of treating
+every extra result as an error. Use the project's existing tests or evaluation
+record; this guidance adds no helper task-file fields.
+
+Include a positive control where an otherwise irrelevant page is explicitly wanted,
+along with the failing query and unseen paraphrases. Compare selected and omitted
+results, ordering and output size separately. Replaying a declared keyword corpus
+measures compatibility/self-recall, not semantic precision or a user's reading cost.
+
 Task file:
 
 ```json
