@@ -1,6 +1,6 @@
 ---
 type: Project
-updated_at: 2026-10-29T23:45:11.217724+00:00
+updated_at: 2026-10-30T00:33:46.403750+00:00
 history_count: 3
 ---
 # projectWikiSkill
@@ -14,4 +14,4 @@ Checks: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTest
 
 - 2026-10-29: Windows3.13 CI40968530564 exposed repr-dependent filename assertion; compare cause.filename as Path instead. Focused17 passed on Linux, core c5017764 unchanged; Subsequent head3276f71 CI40969816305 passed Ubuntu/Windows Python3.10/3.13. This was test portability rework, not product/runtime failure. Independent adoption records preserved; no commit/push in this rework.
 
-- 2026-10-29: Source candidate0.2.19 adds an evolution guide and question-first entry: independent fact/structure decisions, causal reading scope, miss-layer diagnosis and native return. Claude implementation required independent rework plus one coordinator correction; six counterexamples now accepted. Native project protocol/template adopted the method in draft PR216; a fresh real-task planner used it but reached similar conclusions to baseline. Local239 tests/package/doctor passed, one OS-specific skip; no installation/hooks/product completion or efficiency gain claimed. Repeated oversized reads and real reader/image implementation remain open; see plan and evaluation.
+- 2026-10-29: Source candidate0.2.19 adds an evolution guide and question-first entry: independent fact/structure decisions, causal reading scope, miss-layer diagnosis and native return. Claude implementation required independent rework plus one coordinator correction; six counterexamples now accepted. Native project protocol/template adopted the method in draft PR216; a fresh real-task planner used it but reached similar conclusions to baseline. Local239 tests/package/doctor passed, one OS-specific skip; no installation/hooks/product completion or efficiency gain claimed. Actual iOS QA migration/PNG consumer implementation and bounded booking-entry restructuring now exercise the method; independent MIME rework and actual HTTP evidence are retained. Browser visuals remain blocked by Work settings, and repeated oversized reads remain open; see plan and evaluation. Source be9f CI40975300367 passed four OS/Python jobs; no claimed cost reduction or host installation.
