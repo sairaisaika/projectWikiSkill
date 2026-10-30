@@ -61,3 +61,6 @@ Pin source ee6c065d38b8ee0d133f6bcdbf55877bbb4367a6: CI40990893408 has all four 
 
 ### Host adoption return
 Both selected host catalogs now expose the pinned skill. Claude's explicit native Skill call delivered the entry; Mac's later catalog and bounded installed-file read confirm delivery/read separately. The artifact task still required independent implementation rework and a native Wiki keyword correction. See the existing evaluation's artifact-task return and hash receipt. Guide/helper/hook code are unchanged; no business rules copied into the skill. Next real integration-task use and efficiency effects remain to verify.
+
+### Next integration-task review
+The next Web integration task used the repaired native20.2 route and both agents' installed skill, while independent review still found late reading, a false retrieval diagnosis and native-template section mismatch. Evidence and retractions are in the existing evaluation; actual product/reader/peer checks remain in the Web task. Classify these at agent adoption/native task usage, not as a generic selector defect. No additional payload or hook change; no efficiency gain claimed.
