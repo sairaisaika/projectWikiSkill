@@ -1,7 +1,7 @@
 ---
 type: Project
-updated_at: 2026-10-30T13:19:20.379438+00:00
-history_count: 7
+updated_at: 2026-10-30T13:59:54.153027+00:00
+history_count: 8
 ---
 # projectWikiSkill
 Native knowledge: README, project-wiki/SKILL.md and project-wiki/references; evaluations in evals/reports. Do not create a parallel business Wiki.
@@ -22,4 +22,6 @@ Checks: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTest
 
 - 2026-10-30: User-requested split-owner trial preserved proposal/reviewed Wiki/implementation/independent return. Added optional handoff guidance and clarified target hits versus unrelated extras; helper/schema/entry/hooks unchanged. Five informed decision cases and six package checks passed. Actual native selector acceptance retained legitimate explicit queries and reduced one error query output; late reads, repeated validation and coordinator parsing correction remain costs. Installed ee6c065 copies unchanged; next distinct-task adoption/efficiency unproven.
 
-- 2026-10-30: Distinct product-union task manually adopted9032 guidance. Same-owner implementation exposed coordinator Wiki merge defects; native27/492 and independent source/alias checks passed after repair. Late reading, command environment/peer mistakes and output cost remain counterevidence. Existing guide already covers them; no payload/hooks/install changes. Original-owner two-leaf test-isolation repair and product CI/artifacts remain pending. Evaluation records actual source scope and mobile canonical-CI dependency. Six package checks and diff check passed; payload unchanged, later-head CI separate.
+- 2026-10-30: Distinct product-union task manually adopted9032 guidance. Same-owner implementation exposed coordinator Wiki merge defects; native27/492 and independent source/alias checks passed after repair. Late reading, command environment/peer mistakes and output cost remain counterevidence. Existing guide already covers them; no payload/hooks/install changes. Original-owner two-leaf test-isolation repair subsequently passed bounded independent acceptance; product CI/artifacts remain separate. Evaluation records actual source scope and mobile canonical-CI dependency. Six package checks and diff check passed; payload unchanged, later-head CI separate.
+
+- 2026-10-30: Same-owner test repair independently accepted63 suites; subsequent SDK task used reviewed Wiki before a one-leaf implementation and independent false-positive control. Report-only exit-code correction, stale current task fields and oversized PR output remain observed rework. Existing evolution guidance covers state separation; native Wiki/test changes suffice, no generic payload or hook change. Source acceptance is bounded; Web full diagnostic timed out, mobile canonical CI remains red, no new artifact or efficiency gain. Six package/documentation checks and diff check passed; payload unchanged, later exact-head CI pending.
