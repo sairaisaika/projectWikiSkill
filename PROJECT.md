@@ -1,6 +1,6 @@
 ---
 type: Project
-updated_at: 2026-10-30T10:01:04.118827+00:00
+updated_at: 2026-10-30T10:26:59.081217+00:00
 history_count: 5
 ---
 # projectWikiSkill
@@ -18,4 +18,4 @@ Checks: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTest
 
 - 2026-10-30: Real sitemap and following release-readiness tasks exercised causal reading, native consumer validation, current/history separation and manual subsequent adoption. Original-owner and coordinator rework remains counterevidence to first-pass improvement. Scoped discovery found no registered conventional host skill; native Git pre-push gate did run, distinct from agent hooks. Only plan/evaluation/checkpoint updated; guide/helper unchanged. Six package/documentation checks passed; new-head CI pending.
 
-- 2026-10-30: Pinned ee6c065 skill-only copies match all19 files on Mac Codex and Linux Claude. Both host catalogs delivered; Claude native Skill and Mac explicit read evidenced. Artifact task still required recipe rework and native metadata repair; no generic payload change, hook proof or efficiency gain. Six package checks passed. Receipt/evaluation preserve wrapper and oversized-read costs; documentation head CI pending.
+- 2026-10-30: Pinned ee6c065 skill-only copies match all19 files on Mac Codex and Linux Claude. Both host catalogs delivered; Claude native Skill and Mac explicit read evidenced. Artifact task still required recipe rework and native metadata repair; no generic payload change, hook proof or efficiency gain. Six package checks passed. Receipt/evaluation preserve wrapper and oversized-read costs; 8dc documentation CI41037700460 passed four jobs. Following real Web integration used the repaired native route; late reading, false miss diagnosis and native-template mismatch still required independent rework. Six package checks passed again; later evidence-only head CI separate.
