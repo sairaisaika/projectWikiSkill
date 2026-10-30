@@ -71,3 +71,12 @@ Read evolution, collaboration and quality-model before changing guidance. Propos
 
 ### Split-owner trial — source Wiki return
 Accepted source guidance stays in the existing quality-model and evolution references. Five independent informed decision cases and six existing package/documentation compatibility tests pass; actual native task acceptance preserves positive and negative routes, original-owner rework and Root harness corrections. No helper/schema/SKILL entry, automatic operation or permissions changed. Subsequent distinct-task adoption remains pending and installed hosts remain on the frozen older payload. This source update is useful guidance, not evidence of lower cost.
+
+## Distinct product-union trial — Wiki start and source return
+Use the already-read evolution/quality references from9032ad7 on the next actual Web/mobile source integration. This is manual candidate-guidance adoption; installedee6c065 and hooks are unchanged. Reconcile the original planner proposal, reviewed native Wiki, same-owner implementation and Root acceptance, retaining all failures. Only this plan, evaluation and PROJECT change here; native business/renderer/test fixes remain in the project.
+
+The original Claude owner implemented the union and returned concrete Wiki merge defects instead of editing coordinator-owned pages or weakening tests. Root fixed the owning rules/metadata/actual anchor; all27 native docs suites/492 assertions subsequently passed. Source70-test SEO and the original alias counterexample passed independent replay. Exact product CI/artifacts and test-isolation follow-up remain separate/pending. Real mobile integration produced DraftPR38, whose canonical CI fails against unadopted Web-main contracts; local paired-source checks do not supersede it.
+
+Meta disposition: required reading, actual consumer checks and original-owner rework are already in the guide. Late reading and coordinator mistakes remain adoption counterevidence, not a reason to add duplicate generic reminders. Native Wiki consumer scope was clarified and linked to its existing contract-source owner after a real wrong-peer command. Record the bounded observed benefit and rework without a throughput claim; package/documentation checks follow.
+
+Scoped return validation: six test_skill_package tests passed; git diff --check passed; project-wiki payload diff is empty. This later evidence-only head requires its own CI;9032 source CI is not reused.
