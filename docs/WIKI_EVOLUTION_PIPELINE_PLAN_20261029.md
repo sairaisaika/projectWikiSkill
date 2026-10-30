@@ -86,3 +86,13 @@ Scoped return validation: six test_skill_package tests passed; git diff --check 
 The existing evaluation now records bounded original-owner repair acceptance, the subsequent SDK test identity task, original-owner report correction, and stale current-state/output-discipline failures. These are actual uses and counterexamples to perfect adoption. Native22.1/13.3 and the original task own the SDK rule, sources, diagram and remaining exit-warning boundary; no business or SDK rule enters the generic payload. Existing evolution section6 already addresses current/history separation, so correct the project records and caller behavior rather than add redundant guidance. Only plan/evaluation/PROJECT change here. Prior0bdcfe5 exact CI41062412798 passed four jobs; this later evidence head needs its own checks and CI. Installed copies remain ee6c065.
 
 Follow-up validation: six existing package/documentation checks passed; diff check passed; project-wiki payload diff remains empty.
+
+## Subsequent artifact preparation and delivery-layer review (2026-10-30)
+
+Continue the same accepted handoff method on unified Web source2d995dd17. The original Claude proposed the artifact; Root reviewed and wrote native20.2 before the same owner implemented a private recipe and offline tests. Root independently verified real CI rejection before lock/subprocess and browser-static bake counterexamples. Product PR CI41069514583 is now successful; actual image/runtime remain separate. Preserve the coordinator's earlier ignored-log/source-view packaging failure and later stale current fields as adoption counterevidence.
+
+Meta scope: original rule already requires actual delivery and current/history reconciliation. Correct project20.2/22.6, scripts CONTEXT and original records, not generic selectors. Add the observed subsequent use and limitations to the existing evaluation only. Next diagnostic filtering is a native engineering fact, not a business rule or generic skill exception. Original owner's unsafe mutation design was rejected before execution; safe fixture rework and report-only overclaim correction remain visible. No guide/helper/SKILL/hook/install changes.
+
+Artifact-phase evaluation return: six existing package/documentation tests passed; diff check passed; project-wiki payload diff empty. New evidence head CI remains separate; no automatic install/hook change.
+
+Artifact follow-through verified source2d archive/image/BUILD_ID/browser inputs without service adoption. Evaluation retains detached-wrapper/PID and unobserved outer-exit limits; no guide change.
