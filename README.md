@@ -1,12 +1,38 @@
 # projectWikiSkill
 
+Use [$project-wiki](project-wiki/SKILL.md) to connect a project task to its rules,
+implementation, knowledge structure and verified return. Keep the project's native
+Wiki as the fact owner; the skill supplies the working method.
+
+- Start a real task: [skill entry](project-wiki/SKILL.md#choose-the-work).
+- Decide where new knowledge belongs, diagnose a missed rule, or migrate a page:
+  [Wiki evolution](project-wiki/references/wiki-evolution.md).
+- Capture and return work across agents: [collaboration workflow](project-wiki/references/collaboration-workflow.md).
+- Run the helper or package it: [usage](README.md#使用).
+
+0.2.19 is a source candidate for the evolution workflow, exercised in real
+product and Wiki-maintenance tasks with independent rework retained. Skill-only
+copies pinned to ee6c065 now match all 19 source files on the selected Mac Codex
+and Linux Claude hosts; the new Claude invocation advertised and natively loaded
+the skill. The subsequent Mac catalog also advertises it and Root read the
+installed entry. Correct adoption and lower rework/context cost remain separate checks. No plugin hooks, trust or access settings changed.
+See the [plan](docs/WIKI_EVOLUTION_PIPELINE_PLAN_20261029.md) and
+[evaluation](evals/reports/wiki-evolution-pipeline-20261029.md).
+
+## Historical source and host observations
+
+The following notes describe their own revisions and host scopes, not the current
+installation state of every reader.
+
 0.2.18 source candidate adds a private-safe item ordinal to selected-evidence
 file refusals, preserving their existing prefix and refusal policy. The ordinal
 follows the current checkpoint list, not always original CLI order; see
 [selected evidence](project-wiki/references/collaboration-workflow.md#selected-evidence-files)
 and the [bounded evaluation](evals/reports/evidence-selection-diagnostics-20261029.md).
-This candidate is not installed or published; independent real-task adoption
-remains pending. No skill instructions, hooks or host trust settings changed.
+At its initial checkpoint, installation/publication and independent real-task
+adoption remained pending. The linked evaluation and PR40 record the later scoped
+iOS adoption and cross-platform CI. That change did not alter skill instructions,
+hooks or host trust settings.
 
 0.2.17 candidate lets doctor read an explicitly supplied Codex `hooks/list`
 snapshot alongside matching installation inventory. It reports one working

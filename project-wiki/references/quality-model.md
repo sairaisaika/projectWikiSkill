@@ -77,6 +77,22 @@ It does not label those results independent or semantic. Alias-based routing has
 semantic model: a known synonym may fail until added; an absent match is preferable
 to a made-up location. Record failures rather than relaxing thresholds to claim success.
 
+### Relevant targets do not excuse irrelevant results
+
+A target in the top results measures recall/ranking, not whether the other returned
+pages are useful. Regular query cases in the helper's current `evaluate` do not
+reject extra results merely because the expected route ranks correctly; task-map
+scope checks are separate. For a native-selector repair, preserve the actual
+consumer output and check both required routes and demonstrated unrelated routes.
+Keep plausible but unreviewed results explicitly unclassified instead of treating
+every extra result as an error. Use the project's existing tests or evaluation
+record; this guidance adds no helper task-file fields.
+
+Include a positive control where an otherwise irrelevant page is explicitly wanted,
+along with the failing query and unseen paraphrases. Compare selected and omitted
+results, ordering and output size separately. Replaying a declared keyword corpus
+measures compatibility/self-recall, not semantic precision or a user's reading cost.
+
 Task file:
 
 ```json
@@ -89,6 +105,25 @@ Task file:
   ]
 }
 ```
+
+## Required pages per commit
+
+Measure the load a change-touch gate puts on one commit, separately from routing
+and from reading. For a commit touching one file, count the pages the gate
+requires (changed in the batch or acknowledged) and, separately, the pages it
+prints only as hints; take both from the gate's own summary line, not by hand.
+Compare old and new gate keying on the same synthetic single-file commits over the
+same base: each commit appends one comment line, so the measurement is gate load
+only, not a semantic change, reading or correctness. A hit is by file path.
+
+One recorded example (three files, one project, 2026-10-31, invariant rows added
+to three pilot pages): a mechanism of two invariants went 1 → 2 required pages,
+the added page being a newly registered consumer, not a relaxation; a mechanism of
+one invariant on a high-fan-out file went 7 → 4 required plus 5 hints; a shared
+file no invariant covers stayed 23 → 23, so the ratchet did not relax. A single
+project and three commits establish the metric's shape, not a typical saving.
+Report numerators per file; a target such as 3–8 required pages per covered file is
+a project choice. See [change navigation](change-navigation.md#route-by-rule-not-only-by-file).
 
 ## Actual wiki-first trial
 
@@ -107,6 +142,7 @@ Record in a project-local evaluation report (only real observations):
 | exploratory searches | Repo-wide/targeted searches before and after plan |
 | plan coverage | 0–6: outcome, dependencies, interfaces, deliverables, exit evidence, unknowns |
 | semantic findings | Wrong rule/caller, missing failure mode, invented implementation |
+| acknowledgement load | Required and hint pages per commit from the gate summary; rule-ID versus page tokens used |
 | outcome | usable plan / targeted verification needed / blocked by missing route |
 
 “Wiki-only” means plan drafting used wiki facts; the helper itself reads curated

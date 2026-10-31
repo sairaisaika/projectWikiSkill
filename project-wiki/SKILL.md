@@ -5,41 +5,6 @@ description: Build, audit, and maintain source-backed engineering wikis that rou
 
 # Project Wiki
 
-For an already captured task, an optional packaged `SessionStart` adapter can
-deliver the saved index on startup/resume/compaction. It requires an explicitly
-selected `PROJECT_WIKI_PACKET`, a matching local workspace and the host's normal
-hook review. It uses the same snapshot-only reader, not a scan or native command.
-See [optional lifecycle delivery](references/collaboration-workflow.md#optional-lifecycle-delivery).
-The index is task data, not fresh authority; dispatch/finish checks remain explicit.
-
-For a worker forbidden to invoke Git, default workflow `show` is unsuitable:
-it performs a live freshness check even for a read-only packet. After the
-authorized coordinator checks freshness, use explicit `show --snapshot-only`
-for reading saved records without Git/native execution or current input hashing.
-Its output states that currentness is unchecked; it never replaces dispatch or
-return checks. Keep coordinator checks, actual worker reading and semantic/runtime
-evidence separate. See the [workflow reference](references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git).
-
-Before a read-only review, inspect the saved `read_only_baseline` observation
-from `start` or `delegate`. Existing Git-base differences can prevent an unchanged
-return even when the reviewer edits nothing. The advisory uses the same final
-predicate; it does not clean, commit, widen permissions or certify completion.
-Use an honestly identified committed review snapshot when unchanged return is
-required. Snapshot-only views show saved advice without a new Git check; older
-packets without it remain unknown. See the [workflow reference](references/collaboration-workflow.md#read-only-baseline-observation).
-
-Saved views expose `wiki_root` and path bases. Locate native Wiki page files under
-`root / wiki_root`, while keeping the original native key for `show --path`.
-Do not guess a default base or resolve foreign-host strings on the reader's host.
-
-For a task that must retain earlier raw evidence, select those exact files with
-the optional workflow `capture --preserve-artifact <absolute-file>` policy. Keep
-that selection through delegation and final return. Inspect every embedded probe
-output path before replay and write new runs to distinct destinations. The
-[workflow reference](references/collaboration-workflow.md#selected-evidence-files)
-explains the checkpoint hash checks and their limits; they are not write
-prevention, continuous immutability or a completion certificate.
-
 Make the wiki cheaper to use than guessing filenames. Optimize **time to a correct,
 actionable location** for a task, and a correct system model for orientation, not page count, diagram count, or an impressive aggregate score.
 
@@ -61,15 +26,19 @@ actionable location** for a task, and a correct system model for orientation, no
   see [change navigation](references/change-navigation.md).
   If agents repeatedly bypass the wiki, audit the cost and usefulness of this
   first task read before adding more compliance rules. Provide task context and
-  planned-file satellites before the post-commit maintenance gate.
+  planned-file satellites before the post-commit maintenance gate. When one
+  commit's acknowledgement list runs past about ten pages, the repair is
+  granularity: give rules identity and route/gate by rule edges rather than by
+  shared file; see change navigation.
 - **Create or repair:** start with representative user questions, inspect current
   source and constraints, then document the smallest useful routes. Never infer
   implementation from a README, package name, type declaration, or planned feature.
 - **Audit precision:** attempt a plan from wiki-only information first. Record
   missing locations/rules/impacts before consulting code; then verify cited code
   directly. Prior familiarity makes this a self-test, not an independent blind test.
-- **Maintain:** update affected routes alongside code changes; retain evidence
-  boundaries, regenerate locations, and rerun the relevant navigation scenarios.
+- **Maintain:** follow the task's knowledge changes through placement, required
+  reading, implementation, native projections and return; use the evolution guide
+  below before changing structure or treating a missed rule as agent noncompliance.
 
 For an established wiki with its own parser, indexes and gates, first use
 [native wiki adoption](references/native-wiki-adoption.md). Audit its actual
@@ -78,6 +47,25 @@ does not prove that a rule has a writer, a consumer or a deployed implementation
 
 For a missing task route, use one targeted search and repair that route. Do not require
 full-site reading for routine task lookup, block unrelated work, or claim wiki prose outranks actual source.
+
+## Evolve the Wiki through each task
+
+Begin from the native Wiki route and owning rules before making the implementation
+plan. Establish the current checkout, responsible owner and relevant original
+sections; use code to verify or resolve conflicts, not to silently replace the
+knowledge model. Honor the project's required Wiki-first/Wiki-last workflow.
+
+For maintenance, decide **where the knowledge belongs** before appending it.
+Use [Wiki evolution](references/wiki-evolution.md) to choose an existing section,
+a split or new responsibility, a shared concept, a historical record, or a
+justified no-change. The same guide connects required reading, structural changes,
+actual consumer checks, return coverage and per-task usage review. Reuse the
+native task record; a new manifest or a whole-site read is not a prerequisite.
+
+When required knowledge was missed, preserve the first plan and locate the failed
+link: absent/ambiguous rule, placement/granularity, navigation/projection,
+host delivery, or agent use. Fix the responsible layer and test the next real
+task. More prose or another acknowledgement does not establish improvement.
 
 ## Apply the feature completion rule
 
@@ -200,35 +188,25 @@ read-only evaluation is authorized and available, give a fresh worker only the s
 task and raw fixture, without the expected answer. Label evaluator familiarity.
 Do not require delegation to complete ordinary maintenance.
 
-For revision-bound native task packets, constrained delegation and final-diff
-reconciliation, use [the collaboration workflow](references/collaboration-workflow.md).
-It reuses an existing native JSON task route without migrating its feature facts.
-Declare the user-visible capabilities separately: sharing an endpoint or even a
-component does not prove that every editing field, draft transition or client is
-connected. Keep omissions, gaps and runtime evidence distinct. A generated packet
-does not establish dispatch, reading, semantic correctness or completion.
-
-For an implementation return, the coordinator's explicit `capture-return` command
-collects all actual root/peer differences through the same collector as `finish`;
-it does not reuse the planned list or remove unplanned files. It requires the
-reviewed native argv again and explicit execution opt-in. Keep the native selector
-configuration and source comparison accurate. This invokes Git/native execution,
-so a restricted worker must continue using saved snapshot views instead. A clean
-read-only return has no changed files; an implementation return needs every actual
-file. Review and final reconciliation remain separate required steps.
-
-For an installed-plugin/source/version disagreement, use the collaboration
-workflow's [host observations](references/collaboration-workflow.md#host-observations).
-The plugin's read-only doctor can compare package/source bytes and optional
-caller-captured Codex inventory/version or scoped Claude events. Keep each host
-observation separate from hook execution, actual agent use and business evidence.
-
-If a native task router reports the repositories it selected, use the collaboration
-workflow's optional `--native-source-context` identity comparison to reject a
-different checkout/revision than the declared task peers. A matched report is
-still not physical-read or semantic-use evidence; absent comparison is unverified.
-
 Keep secrets and host-private implementation details out of public artifacts.
 The skill authorizes no publication, installation, external messaging, or runtime
 operation beyond the user's request. Report concrete artifacts, checks, remaining
 uncertainty, and whether anything was actually published.
+
+
+## Conditional packet and host operations
+
+Use the [collaboration workflow](references/collaboration-workflow.md) for packet
+mechanics after establishing the task's knowledge scope. Select only the relevant
+operation; these do not substitute for the Wiki-first plan or semantic return.
+
+| Situation | Required distinction and reference |
+|---|---|
+| Startup/resume/compaction delivery | Optional explicitly selected packet, matching workspace and normal hook review; saved context is not fresh authority. [Lifecycle delivery](references/collaboration-workflow.md#optional-lifecycle-delivery) |
+| Worker forbidden Git | Default show performs a freshness check. Coordinator checks first; worker uses explicit snapshot-only, with currentness unchecked. [Reading restrictions](references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git) |
+| Read-only review | Inspect start/delegate's saved baseline; a dirty starting tree may prevent unchanged return without reviewer edits. Do not clean or expand permissions to conceal it. [Baseline observation](references/collaboration-workflow.md#read-only-baseline-observation) |
+| Implementation return | Coordinator capture-return uses actual root/peer differences and reviewed native argv with explicit opt-in; review and finish remain separate. Missing peers/unplanned files must stay visible. [Return workflow](references/collaboration-workflow.md) |
+| Selected source identity | When supported, compare the native router's reported checkouts with the declared peers using native-source-context. A match is not physical-read, delivery or semantic proof. [Source comparison](references/collaboration-workflow.md) |
+| Installation/version disagreement | Doctor compares supplied source/package/inventory or scoped host observations; it does not establish hook triggering or use. [Host observations](references/collaboration-workflow.md#host-observations) |
+| Saved page paths | Resolve native page files under captured root/wiki_root; keep native keys for show and do not resolve foreign-host paths locally. |
+| Preserve raw evidence | Select exact files through capture preserve-artifact; inspect embedded output paths before reruns and use distinct destinations. Checkpoint hashes are not continuous protection. [Selected evidence](references/collaboration-workflow.md#selected-evidence-files) |
