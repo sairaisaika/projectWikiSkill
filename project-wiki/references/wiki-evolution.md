@@ -25,7 +25,7 @@ must be read from the task itself, then check each item is reached:
 | Derive from | Read |
 |---|---|
 | Capabilities the user expects | Each feature entrance that owns one of them, including ones the user did not name |
-| Invariants the change relies on ("X is always true") | The writer and the paths that can violate it: degraded identity, fallback, missing data, alternate client |
+| Invariants the change relies on ("X is always true") | The writer and the paths that can violate it: degraded identity, fallback, missing data, alternate client. Where the wiki has invariant rows, start from the rows whose mechanism or gate is a planned file and follow their consumer pages |
 | Producers and consumers | Callers of the changed seam and readers of its output whose behavior depends on what changed; confirm by searching source, not by the page's list alone |
 | Identity, state and environment axes | Owner/viewer, role/partition, rollout/deployment, build profile; the page that defines each axis and where it is enforced |
 | Shared rules touched | The rule's owning page, plus overview pages and diagrams that restate it |
@@ -136,6 +136,7 @@ layer has a different repair; fixing the wrong one hides the real cause.
 | The fact is not written anywhere authoritative | Rule absent | Write it at its owner (section 2), with its authority and evidence | Adding a reminder elsewhere |
 | The fact exists but no route from the task reaches it, or it sits in an overview that hides its condition | Linking or granularity | Add the route from the entry readers use; move or qualify the statement; register native sources | Copying the fact into the task page |
 | The route exists but the index, ranking, satellite projection or generated view drops it | Retrieval or projection | Fix native metadata or the selector; test with the original failing query | Telling agents to read more |
+| Workers acknowledge tens of pages per commit, the stamps carry no reasons the gate keeps, and the same rule is restated without an anchor | Granularity and gate keying | Give the rule an identity on one owner page with its mechanism, consumers and gate; key routing and the gate on those edges, leaving uncovered files on the file rule; measure required pages per commit ([change navigation](change-navigation.md#route-by-rule-not-only-by-file)) | Reminding workers to read, or tightening the stamp format |
 | What the worker actually received omitted the relevant section, or was truncated, or came from another revision or checkout | Delivery (helper input, packet, hook, handoff) | Fix the delivery path or its inputs (checkout, peer, selected evidence, size limits); record what was delivered | Rewriting the page |
 | The right revision's relevant section was demonstrably delivered or opened, and the worker did not use it | Adoption | Record it as an adoption miss; improve the task-facing cost (shorter entry, earlier impact, clearer scope) only if repeated | Assuming the wiki was wrong |
 | The consumer cannot use a correct artifact (reader does not render an image, heading IDs differ from authored links) | Consumer capability | Record the gap at the consumer's owner; verify against the actual consumer | Declaring the link "done" because the file exists |

@@ -39,6 +39,7 @@ Example entry text (adapt to the project's existing instructions):
 | Human summary disagrees with JSON | Recompute counts/maxima from the report; preserve historical trial scope instead of silently relabeling old results |
 | Endpoint or relation added | Regenerate all local projections and counts from native IDs; verify full-set retention with an independent oracle rather than editing duplicated test constants |
 | Serialization/state/timing changes | Update authoritative schema, field/transition tables, source-linked local diagrams and relevant decision rationale; rerun actual conformance/recovery tests |
+| One commit's acknowledgement list exceeds ~10 pages | Give the shared file's rules identity and key routing/gate on rule edges; keep uncovered files on the file rule; measure required pages per commit before and after. See [route by rule](change-navigation.md#route-by-rule-not-only-by-file) |
 
 These rows say what to update. Where the knowledge should live (edit in place, new
 section, split, new page, shared concept, archive or no structural change), which
