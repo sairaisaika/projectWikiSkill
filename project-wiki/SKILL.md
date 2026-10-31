@@ -26,7 +26,10 @@ actionable location** for a task, and a correct system model for orientation, no
   see [change navigation](references/change-navigation.md).
   If agents repeatedly bypass the wiki, audit the cost and usefulness of this
   first task read before adding more compliance rules. Provide task context and
-  planned-file satellites before the post-commit maintenance gate.
+  planned-file satellites before the post-commit maintenance gate. When one
+  commit's acknowledgement list runs past about ten pages, the repair is
+  granularity: give rules identity and route/gate by rule edges rather than by
+  shared file; see change navigation.
 - **Create or repair:** start with representative user questions, inspect current
   source and constraints, then document the smallest useful routes. Never infer
   implementation from a README, package name, type declaration, or planned feature.
