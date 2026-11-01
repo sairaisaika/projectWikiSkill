@@ -8,8 +8,11 @@ sections/diagrams, ownership and variant constraints, recorded producers and
 consumers, gaps, and the next verification seam. Once planned files are known,
 return **every registered satellite per file**, with the relation that brought it
 into scope. Recheck the actual working delta during development; a post-commit
-touch gate cannot substitute for this planning aid. Keep the ordinary first read
-short and make the deeper records directly reachable.
+touch gate cannot substitute for this planning aid. The planning aid and the gate
+must read the same change range: a working-delta input that sees only uncommitted
+changes goes empty after a commit and under-reports against a gate keyed on the
+merge base. Keep the ordinary first read short and make the deeper records
+directly reachable.
 
 An actor dictionary link alone may leave the task response ambiguous. When the
 feature has an authored behavior-scope section, project its actual resource,

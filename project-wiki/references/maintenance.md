@@ -217,6 +217,57 @@ on stale committed snapshots instead of overwriting them and passing. Keep comma
 read-only except the documented index generation. The helper does not render Mermaid,
 verify domain truth, run commands listed in a manifest, or validate live systems.
 
+### Audit the execution surface before adding a rule
+
+A mechanism that exists is not a mechanism that runs. Before diagnosing any miss
+([wiki evolution](wiki-evolution.md#4-diagnose-a-miss-before-repairing-it)) and
+once per review period, record for every wiki mechanism where it actually executes
+and what the last period's evidence showed:
+
+| Mechanism | Runs at (record the actual one) | Evidence to record |
+|---|---|---|
+| Task router (entry, satellites, rule paths) | manual, at task start | Wrong entries, if any; whether its planned-file input covers the same change range as the gate |
+| Touch gate (changed file ⇒ page changed or acknowledged) | pre-push hook / aggregate check / CI | Required versus acknowledged pages per commit; false refusals |
+| Generated-view consistency tests | CI only / pre-push hook / finish script | First-run CI failures for stale views; "regenerate" commits per branch |
+| Anchor test (authored links resolve against the site renderer) | CI only / pre-push hook | Failures and how each was repaired (link edited, heading renamed) |
+| Header ratchet (keywords, verification stamps) | CI only / pre-push hook | Failures; whether the failure named the page |
+| Invariant tables and their gates | CI / pre-push hook | Rows added; real gaps exposed |
+| Finish script (regenerate, test, stage) | manual | Pages edited after it ran without rerunning it |
+| Editor or session hooks | editor; wiring may be untracked | Whether the repository can prove a worker session had it |
+
+Take counts from run logs and branch history, not memory, and state the basis
+beside each number. Expensive failures cluster where a check runs only in CI: on
+one recorded day the three most costly docs failures (stale generated views,
+guessed anchors, unparseable verification stamps) each cost a serial CI round of
+roughly forty minutes plus a repair commit, while the same checks take about
+twenty seconds in a pre-push hook. The repair is to run the check earlier, keep CI
+as the final gate, and offer an explicit, logged skip; it is not another reminder.
+A hook runs only on machines that installed it; record that boundary with the
+audit. Record what the audit found working as well (correct entry on every task,
+a gate that exposed a real gap): a negative control keeps "nothing to change"
+available as an outcome.
+
+### Checkable rules beat examples
+
+A template line or an example in a README teaches a format once; a rule a gate can
+check and name teaches it every time. Two recurring cases:
+
+- **Verification stamps.** Fix the parseable form: date · commit sha, optionally
+  followed by scope ("verified X; Y not re-verified") and older stamps. A branch
+  or worktree name is not a revision; for uncommitted work write the base commit
+  the tree was verified on plus "worktree (branch)". Put the rule where authors
+  look, beside the template, and make the parser the authority.
+- **Heading anchors.** The site renderer's slug is not GitHub's slug (full-width
+  punctuation, backticks, underscores and brackets differ). Prefer slug-safe
+  headings, without brackets, backticks or underscores, so others cannot guess
+  wrong. When a complex heading must be linked, copy the ID from a CLI that lists
+  the renderer's real ids for a page; do not derive it by habit.
+
+A ratchet or format gate that fails must name the offending page and distinguish
+"no line" from "malformed line"; a bare `false` sends the worker back to CI logs.
+Keep the numeric baseline unchanged when a check gains names: naming is a
+reporting improvement, neither a relaxation nor a tightening.
+
 Independent trials, if authorized, use fresh workers and isolated outputs. Give the
 task, entry and skill without expected route IDs, suspected bug or proposed answer.
 Maintain a small regression set plus held-out paraphrases; distinguish fitting an

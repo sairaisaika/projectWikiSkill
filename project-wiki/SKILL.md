@@ -64,8 +64,12 @@ native task record; a new manifest or a whole-site read is not a prerequisite.
 
 When required knowledge was missed, preserve the first plan and locate the failed
 link: absent/ambiguous rule, placement/granularity, navigation/projection,
-host delivery, or agent use. Fix the responsible layer and test the next real
-task. More prose or another acknowledgement does not establish improvement.
+tooling/gate (a check that runs only in CI, reads a different change range than
+the gate, or fails without naming the case), host delivery, agent use, or process
+architecture. Classify first from execution evidence, and audit where each
+mechanism actually runs before adding a rule; "no wiki change" is a valid outcome.
+Fix the responsible layer and test the next real task. More prose or another
+acknowledgement does not establish improvement.
 
 ## Apply the feature completion rule
 

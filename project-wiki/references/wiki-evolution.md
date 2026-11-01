@@ -131,6 +131,31 @@ is not automatically a bug — check the owner's stated rule and decision record
 When a worker missed or misused knowledge, classify the failure before editing. Each
 layer has a different repair; fixing the wrong one hides the real cause.
 
+Assign the first classification from execution evidence (run logs, branch history,
+what the gate printed, what the router returned), not from the page the worker
+should have read. Five layers, from the one most often assumed to the one most
+often found:
+
+| Layer | What the evidence looks like | Typical repair |
+|---|---|---|
+| Missing content | A fact the plan needed is in no authoritative page | Write it at its owner (section 2) |
+| Navigation and metadata | The fact exists but the route, keywords, anchor rule or stamp rule does not reach or hold it; an example stands where a checkable rule should | Repair the route or the rule's wording; expose the consumer's real ids |
+| Tooling and gate | A check exists but runs only in CI, reads a different change range than the gate, or fails without naming the case | Run the check earlier, align inputs, name failures ([maintenance](maintenance.md#audit-the-execution-surface-before-adding-a-rule)) |
+| Agent adoption | The relevant section or finish step was demonstrably available and the worker skipped it | Record it; lower the step's cost only if repeated |
+| Process and architecture | The failure follows from how artifacts are stored or merged (committed generated views make every merge conflict with open peers) | A decision for the owner; record it, do not patch around it in pages |
+
+Several layers can hold at once; record each. "No wiki content change" is a valid
+and common outcome. On one recorded day, none of eight classified miss types was
+missing content: stale generated views pushed without the finish step were tooling
+(the hook did not check freshness) plus adoption (sub-agents did not run the finish
+script); GitHub-style anchors the site renderer does not produce were metadata (the
+slug rule was invisible, a lone candidate note) plus tooling (nothing exposed the
+renderer's ids before push); verification stamps carrying a branch name were
+metadata (an example existed, a checkable rule did not) plus gate (the ratchet
+reported only `false` and named no page). The repairs added rules and moved checks;
+they invented no page content. The finer table below chooses the repair within a
+layer.
+
 | Observed | Likely layer | Repair at that layer | Not a repair |
 |---|---|---|---|
 | The fact is not written anywhere authoritative | Rule absent | Write it at its owner (section 2), with its authority and evidence | Adding a reminder elsewhere |
