@@ -125,6 +125,21 @@ project and three commits establish the metric's shape, not a typical saving.
 Report numerators per file; a target such as 3–8 required pages per covered file is
 a project choice. See [change navigation](change-navigation.md#route-by-rule-not-only-by-file).
 
+The same synthetic method measures where a docs failure is caught, not only gate
+load. Clone the repository at a fixed base; make one deliberate failure per commit
+(a page edited without regenerating views; a link using a GitHub-style slug the
+site renderer does not produce; a verification stamp carrying a branch name) and
+keep the single-file routing controls; run the gates as a push would; record
+whether the pre-push layer refuses, how long it takes and whether the refusal names
+the failing case. Record BEFORE and AFTER on the same base with only the gate
+change applied. One recorded example (one project, 2026-11-01, five commits): the
+three failure commits went from "pushed in about 1 s, red in CI about 40 minutes
+later" to "refused at push in 19–22 s with the failing case named"; the two routing
+controls stayed at 2 and 23 required pages. Report unchanged numbers as unchanged,
+"no efficiency gain claimed there", and put the hook's own cost per push (about
+20 s here) beside the saving. Tokens, reading time and whether the next real task
+adopts the rule remain unmeasured unless observed.
+
 ## Actual wiki-first trial
 
 Record in a project-local evaluation report (only real observations):
@@ -143,6 +158,7 @@ Record in a project-local evaluation report (only real observations):
 | plan coverage | 0–6: outcome, dependencies, interfaces, deliverables, exit evidence, unknowns |
 | semantic findings | Wrong rule/caller, missing failure mode, invented implementation |
 | acknowledgement load | Required and hint pages per commit from the gate summary; rule-ID versus page tokens used |
+| pre-push catches / CI catches | For each docs failure in the period (stale generated view, broken anchor, malformed stamp, touch-gate refusal): which layer caught it, pre-push hook, CI, or a later reader; counts per layer from hook and run logs, with the hook's installed-machine boundary stated |
 | outcome | usable plan / targeted verification needed / blocked by missing route |
 
 “Wiki-only” means plan drafting used wiki facts; the helper itself reads curated
