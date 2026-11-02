@@ -124,7 +124,8 @@ class LifecycleTests(unittest.TestCase):
                 self.assertEqual('hooks' in manifest, enabled)
                 if enabled:
                     config = json.loads((out / manifest['hooks']).read_text())
-                    self.assertEqual(list(config['hooks']), ['SessionStart'])
+                    # Codex carries delivery only; Claude also declares the optional pre-edit gate.
+                    self.assertEqual(list(config['hooks']), {'claude': ['SessionStart', 'PreToolUse'], 'codex': ['SessionStart']}[host])
             for layer in ['installation', 'hook_trust', 'hook_execution', 'context_delivery', 'agent_use', 'semantic_review', 'business_acceptance']:
                 self.assertEqual(report[layer], 'unverified')
 

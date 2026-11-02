@@ -1,5 +1,5 @@
 {
-  "description": "Optional saved task delivery; requires explicit packet selection and host hook review.",
+  "description": "Optional saved task delivery; requires explicit packet selection and host hook review. The pre-edit Wiki gate (hooks/claude.json PreToolUse) is declared for Claude only; Codex PreToolUse support is not observed here.",
   "hooks": {
     "SessionStart": [{
       "matcher": "^(startup|resume|clear|compact|fork)$",
