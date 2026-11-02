@@ -72,7 +72,7 @@ sandbox. The ongoing engineer retained its independent0.2.4 package.
 
 The reviewer read the packet's native views, seven original wiki pages and actual
 source seams. It retained a capability gap: server-clock display/focus metadata
-does not prove outbound booking intent, complete receiving-care access or device
+does not prove outbound reservation intent, complete recipient-side access or device
 behavior. It located device-derived rebook conversion and slot labels, ambiguous
 notification actor/historical lookup, and client time gates still reading the
 device clock. It also correctly distinguished this documentation/source pair
@@ -80,9 +80,10 @@ from the separate producer candidate; a commit's presence is not runtime deliver
 These findings require source-owner follow-up, not automatic product certification.
 
 Following the actual assignment also corrected a coordinator misclassification:
-a `role === patient` consumer had been recorded as an account-role restriction.
-The source writer assigns that state from the current response's `viewer_role`,
-so a practitioner receiving care can correctly enter that patient-facing branch.
+a role-equality consumer had been recorded as an account-role restriction.
+The source writer assigns that state from the current response's viewer role,
+so a provider-role user acting as a recipient can correctly enter that
+recipient-facing branch.
 Root withdrew the false feature/debt conclusion in the original project pages
 instead of implementing an unnecessary second role rule. Inspecting a predicate
 without tracing its writer/provenance was insufficient. This applies the existing
@@ -104,7 +105,7 @@ actual diff alone does not validate their semantics.
 ## Remaining acceptance
 
 Desktop GUI fresh-session discovery, actual reviewed/trusted lifecycle hooks,
-independent comparative task cost/omissions, complete receiving-care and booking
+independent comparative task cost/omissions, complete recipient-side and reservation
 flows, new APK/device acceptance and product behavior remain unverified. Earlier
 source implementation-through-return receipts remain valid within their own
 revisions; this package update does not expand their scope or complete the goal.

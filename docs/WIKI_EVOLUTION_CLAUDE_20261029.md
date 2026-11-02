@@ -1,15 +1,14 @@
 ---
 type: Plan
-owner: Claude (original iOS C285 owner context)
+owner: Claude (original iOS QA task owner context)
 base: 3276f7182ef04e7d1297ebb0a08696b96cd09731
 ---
 # Wiki evolution guide — Claude plan and result
 
 ## Prior real dispatch record used as reference (not new history)
 
-Product workspace task record for the iOS simulator QA continuation, repository-relative
-`.context/work/active/20261028-ios-simulator-qa-c285.md` in the mobile checkout, with its Web pointer
-`.context/work/active/20261029-ios-main-qa-wiki.md`. Input method: Root sends a dispatch message (scope,
+The pilot's task record for the iOS simulator QA continuation in the pilot's mobile repo, with its
+pointer record in the pilot's Web repo. Input method: Root sends a dispatch message (scope,
 allowed paths, forbidden actions, evidence locations) and writes its own "Wiki start / plan" section in
 the task file; the owner appends "Wiki start → plan → execution → evidence → Wiki end / coverage /
 efficiency" sections to the same file before and after editing, and returns a chat report with file
@@ -45,7 +44,7 @@ evidence for this guide, not a template to copy verbatim.
    rendered image syntax as a link (no image element). Classes: asset handoff omission; consumer
    capability gap; and an owner claim ("inline image") that assumed rendering without checking the
    consumer.
-4. A shared rule ("booking gate is not partitioned") remained in two overview pages after the
+4. A shared rule ("the reservation-like flow gate is not partitioned") remained in two overview pages after the
    implementation and design ledger changed. Class: duplicated statements of one rule, no single owner.
 5. A first fix plan asserted an invariant (an owner always has the same account flag) and a scope
    limit (a step is not in scope) without checking the identity-degradation path and real callers.
@@ -147,7 +146,7 @@ These are forward tests; this document does not claim they pass.
   systematic-design-review, collaboration-workflow (only the selected-evidence section was read in an
   earlier task) — the guide links only to the four read references and does not restate the others.
 - Evidence records: bounded grep of the two product task records (18779 B Web record: lines on OTA,
-  anchors, image/reader; booking record: lines on guessed paths, peer, plan rework, read-only and
+  anchors, image/reader; reservation precheck record: lines on guessed paths, peer, plan rework, read-only and
   corrections), plus the selected-evidence eval's headings only (10188 B, conclusions not re-read).
 - No CONTEXT.md exists; none created.
 
@@ -165,8 +164,8 @@ These are forward tests; this document does not claim they pass.
 
 ## Raw sources
 
-- Web task record (product workspace), mobile C285 task record, booking precheck task record (product
-  workspace); evaluation `evals/reports/evidence-selection-diagnostics-20261029.md` (headings only).
+- Web task record (pilot), mobile QA task record, reservation precheck task record (pilot);
+  evaluation `evals/reports/evidence-selection-diagnostics-20261029.md` (headings only).
 - Test logs `/tmp/wiki-evolution-*.log` (local, not committed).
 
 ## Unresolved
@@ -287,7 +286,7 @@ mechanism → its section; Entrances — none moved → **no structural change**
 ### Evidence, re-presented as observed categories (no incident count)
 
 Earlier "eight incidents" withdrawn: several items are corrections within one task, and one is only
-referenced as an earlier occurrence. Categories with original pointers (product workspace,
+referenced as an earlier occurrence. Categories with original pointers (pilot
 repository-relative task records; line numbers at time of reading):
 
 | Category observed | Original pointer | Note |
@@ -295,11 +294,11 @@ repository-relative task records; line numbers at time of reading):
 | Overview edge without variant condition | Web QA wiki record L42–L51 | Found by satellite review |
 | Authored fragment vs reader heading ID | same record L55 | Projection / consumer |
 | Missing evidence asset, ordinal-only refusal, reader shows image as link | same record L59–L80 | One chain, several layers |
-| Owner claimed an embedded image without checking the consumer | mobile C285 record L220 vs Web record L80 | Same chain as above, not separate |
-| Plan asserted invariant / scope without degraded identity and real callers | booking precheck record L57–L58, L114, L173 | One task, two reasoning gaps |
-| Guessed file names; truncated batch reads | booking precheck record L174 | Retrieval; truncation was self-reported |
-| Wrong companion source | booking precheck record L112, L130, L172 | Only referenced as an earlier occurrence; original not re-read here |
-| Existing boundary row first described as a gap | mobile C285 record L277 | Recorded with correction in the same entry |
+| Owner claimed an embedded image without checking the consumer | mobile QA record L220 vs Web record L80 | Same chain as above, not separate |
+| Plan asserted invariant / scope without degraded identity and real callers | reservation precheck record L57–L58, L114, L173 | One task, two reasoning gaps |
+| Guessed file names; truncated batch reads | reservation precheck record L174 | Retrieval; truncation was self-reported |
+| Wrong companion source | reservation precheck record L112, L130, L172 | Only referenced as an earlier occurrence; original not re-read here |
+| Existing boundary row first described as a gap | mobile QA record L277 | Recorded with correction in the same entry |
 | Hook delivery | — | Category only; nothing observed |
 
 These support the categories in §4; they are not frequencies and not independent of each other.

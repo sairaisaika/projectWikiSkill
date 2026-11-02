@@ -58,14 +58,13 @@ prove independent adoption, reduced effort, semantic completeness or deployment.
 
 ## Follow-up use on a different feature: assignment history
 
-The same worker received a read-only source packet for Web draft PR19 at
-`275f9d9189e985a1c1dd1c1b49f845243beaf226`: native wiki12.3 with behavior scope
-and AH relation IDs, the existing task/debt, audit, and selected implementation
+The same worker received a read-only source packet for a pinned pilot Web draft
+PR: the native feature page with behavior scope and AH relation IDs, the existing task/debt, audit, and selected implementation
 files. The packet explicitly distinguished its source revision from the runnable
 checkout and named a single report return path. It was not a runnable checkout.
 
 The returned report mapped SSR/pagination/create behavior to AH_E_SSR, AH_E_PAGE,
-and AH_E_NEW, retained TD-1060, and explicitly stated that it ran no tests. It
+and AH_E_NEW, retained the existing debt entry, and explicitly stated that it ran no tests. It
 correctly treated missing localization/component-test files as packet omissions,
 not evidence that the product lacked them. It also used an older local checkout
 to compare selected files; that comparison was disclosed and did not establish
@@ -83,8 +82,6 @@ reported as a current production defect after root review.
 This is evidence that the compact handoff was usable on another feature and
 produced useful source review. It remains an instructed same-worker observation,
 not a blind comparison, speed measurement, real database test or release proof.
-The packet and returned report are retained locally under
-`D:/project/wiki-nav-work/assignment-history-dsh-review` and
-`deepseek-assignment-history-review-20261019.md`; the adopted review and synthetic
-receipts are in the PR19 audit directory. No extra global wiki-reading rules
+The packet and returned report are retained privately; the adopted review and
+synthetic receipts are in the pilot PR's audit directory. No extra global wiki-reading rules
 were added on the strength of this one follow-up.
