@@ -247,6 +247,58 @@ audit. Record what the audit found working as well (correct entry on every task,
 a gate that exposed a real gap): a negative control keeps "nothing to change"
 available as an outcome.
 
+### Pre-edit gate (host delivery of Wiki-first)
+
+When workers repeatedly write code first and the page last although the prompt
+says Wiki-first, the repair is a mechanism, not another reminder. The package
+ships an optional Claude `PreToolUse` hook (`Edit|Write|MultiEdit`) running
+`scripts/edit_gate.py`; Codex hooks carry delivery only. It judges a checkout
+only when `.project-wiki/edit-gate.json` exists at its root, and for a path that
+matches `locked` (or appears in `map_file` as `map_row_format`, default
+``| `{path}` |``) it checks two predicates and reports each with its own fix:
+
+- **(a) context** — the `stamp` file (JSON with `files`) is younger than
+  `max_age_hours` and lists the path's repository-relative form; `stamp_command`
+  is printed as the fix with `{file}` filled in;
+- **(b) design** (only with `design_first`) — a handwritten file under `wiki_root`
+  changed since `merge-base(HEAD, base_ref)` (default `origin/main`), in the
+  working tree or untracked, after removing `generated` views. Without a merge-base
+  (b) is not judged and says so. A non-empty `skip_file` waives (b) only and is
+  echoed; an empty one fails (b).
+
+Exit 2 blocks the edit with the reasons on stderr. The gate runs only read-only
+Git subcommands (optional locks off, inherited repository variables dropped),
+executes no project code and writes nothing. Any defect of its own — unreadable
+or malformed config, malformed event, Git failure — passes the edit with
+"gate unavailable" on stderr.
+
+What it proves: the route was expanded for this file, and some handwritten page
+moved on this branch first. What it does not prove: that the worker read the
+page, that the moved page is the owning one, or that the design is right. One
+unrelated line satisfies (b); review and the finish/touch gate stay responsible
+for that. The two gates split the work: this one runs **before** the first edit
+of a locked file; the touch gate runs at **finish or push** and checks that every
+changed file's owning page changed or was acknowledged.
+
+```json
+{
+  "wiki_root": "docs/wiki",
+  "locked": ["src/**", "api/**", "migrations/**"],
+  "map_file": "docs/wiki/file-map.md",
+  "stamp": {"path": ".project-wiki/stamp.json", "max_age_hours": 8},
+  "stamp_command": "<router command> --files {file}",
+  "design_first": true,
+  "generated": ["file-map.md", "index.md"],
+  "base_ref": "origin/main",
+  "skip_file": ".project-wiki/design.skip"
+}
+```
+
+A project that already has its own pre-edit hook keeps it and does not also
+enable this one: two gates with different predicates give two answers. Either
+way, record in the audit above whether the hook is wired on the machines that run
+workers; wiring kept outside the repository is an unproven delivery.
+
 ### Checkable rules beat examples
 
 A template line or an example in a README teaches a format once; a rule a gate can

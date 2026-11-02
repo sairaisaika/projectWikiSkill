@@ -1,11 +1,19 @@
 {
-  "description": "Optional saved task delivery for Linux Claude; no project execution or trust changes.",
+  "description": "Optional saved task delivery and optional pre-edit Wiki gate for Linux Claude; no project execution or trust changes. The gate judges only checkouts holding .project-wiki/edit-gate.json and passes on any defect of its own.",
   "hooks": {
     "SessionStart": [{
       "matcher": "^(startup|resume|clear|compact|fork)$",
       "hooks": [{
         "type": "command",
         "command": "python3 -c \"import os,runpy;runpy.run_path(os.path.join(os.environ['CLAUDE_PLUGIN_ROOT'],'skills','project-wiki','scripts','lifecycle.py'),run_name='__main__')\"",
+        "timeout": 10
+      }]
+    }],
+    "PreToolUse": [{
+      "matcher": "Edit|Write|MultiEdit",
+      "hooks": [{
+        "type": "command",
+        "command": "python3 -c \"import os,runpy;runpy.run_path(os.path.join(os.environ['CLAUDE_PLUGIN_ROOT'],'skills','project-wiki','scripts','edit_gate.py'),run_name='__main__')\"",
         "timeout": 10
       }]
     }]

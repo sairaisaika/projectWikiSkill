@@ -54,6 +54,8 @@ Begin from the native Wiki route and owning rules before making the implementati
 plan. Establish the current checkout, responsible owner and relevant original
 sections; use code to verify or resolve conflicts, not to silently replace the
 knowledge model. Honor the project's required Wiki-first/Wiki-last workflow.
+When reminders do not hold it, enforce Wiki-first with the optional
+[pre-edit gate](references/maintenance.md#pre-edit-gate-host-delivery-of-wiki-first).
 
 For maintenance, decide **where the knowledge belongs** before appending it.
 Use [Wiki evolution](references/wiki-evolution.md) to choose an existing section,
