@@ -8,20 +8,20 @@ comparison, independent blind evaluation, product acceptance or host installatio
 Current file counts alone did not satisfy the intended use: after an edit, the
 reader should notice an unexpected size/shape change, inspect what changed, then
 check the original feature explanation/diagram and actual runtime evidence.
-Syleli PR98 source023aeedae adds selected Git-baseline/current comparisons using
+A pilot PR adds selected Git-baseline/current comparisons using
 the existing TypeScript parser. A fixture adds500 configuration lines inside the
 same named body; counts remain one while its span grows1→504. Equal-count source
 changes, real addition/deletion, selected peer HEAD, unknown and unsafe inputs are
 also exercised. This belongs in the native adapter, not a generic second parser.
 
 The real private reader displayed107→111 lines,8→8 named and26→27 anonymous bodies;
-expanded spans linked to the current function and back to feature22.6. Reviewing
+expanded spans linked to the current function and back to its feature page. Reviewing
 the first paragraph caught ambiguous “named bodies0” wording: it was a delta but
 looked like a total. It became a before/after/net-change table. The same-fragment
 browser navigation initially retained old DOM; a full reload verified the new
 build.380 native docs tests, type/lint and five private HTTP guards passed; new
-exact full CI/main adoption of PR98 remain pending. These are navigation facts,
-not semantic coverage, source-quality thresholds or clinical runtime evidence.
+exact full CI/main adoption of that pilot PR remain pending. These are navigation facts,
+not semantic coverage, source-quality thresholds or product runtime evidence.
 
 ## Where cooperation actually stopped
 
@@ -40,7 +40,7 @@ can recommend a design; the parent must say what it adopted/rejected and why.
 
 ## Real parent/child trial: source returned, adoption still pending
 
-Root launched a separate Linux Claude subscription task on the themePR92 candidate
+Root launched a separate Linux Claude subscription task on the pilot's theme candidate
 to implement one shared settings/companion system-light-dark control. It received
 the v0.2.3 task packet and native feature/satellite reading requirements. Two real
 Agent calls launched read-only product-interaction and visual-direction children;

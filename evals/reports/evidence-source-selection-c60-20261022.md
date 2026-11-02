@@ -2,7 +2,7 @@
 
 This is a familiar coordinator's bounded follow-up in a coupled product, plus two
 controlled workflow regressions. It is not a fresh blind evaluation or a measured
-speedup. Private operational paths, clinical content, account identities, signed
+speedup. Private operational paths, sensitive user content, account identities, signed
 artifact URLs and raw logs are excluded. The packaged payload stays0.2.5: no helper,
 packaged reference, hook, runtime controller or host installation was changed.
 

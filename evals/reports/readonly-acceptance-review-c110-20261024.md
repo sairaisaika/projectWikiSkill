@@ -7,14 +7,14 @@ It is not an independent blind efficiency comparison, a product incident report,
 an executed acceptance result or automatic host lifecycle verification.
 
 Private repository identities, source revisions, machine paths, account values,
-credentials, clinical content and raw operational artifacts are excluded. The
+credentials, sensitive user content and raw operational artifacts are excluded. The
 underlying review, source inventories, projections and observations remain private;
 this summary is not a publicly reproducible benchmark.
 
 ## Inputs and permission separation
 
 The task concerned profile reference links and whether adding a display link
-preserved the product's internal booking path. The coordinator selected explicit
+preserved the product's internal reservation path. The coordinator selected explicit
 Web and native checkouts, declared runtime inputs and required capabilities, and
 used the existing native Wiki router rather than inventing a second feature map.
 
@@ -82,7 +82,7 @@ The source-backed review identified five defects in the proposed script:
 | Cleanup located the new row among HTTPS inputs, then used that index among every remove button | A valid pre-existing HTTP row could shift the index, deleting the wrong row before the final comparison detected damage | Locate the unique URL and remove within that same row; reject ambiguous scope |
 | Failed readback defaulted to an empty list | Cleanup PUT failure followed by GET failure could compare equal to an empty baseline and report success | Require successful response/envelope/readback; unresolved state remains unresolved |
 | Any reference to the expected provider satisfied the visitor check | An older link could pass while the newly saved link was absent | Require the exact unique new URL, visibility and destination attributes |
-| Unchanged booking text/hrefs counted as preserved internal booking | Both lists could be empty; the real external button used a click handler rather than an href | Require an eligible enabled control and observe its actual internal-modal behavior before and after writing |
+| Unchanged reservation text/hrefs counted as preserved internal reservation | Both lists could be empty; the real external button used a click handler rather than an href | Require an eligible enabled control and observe its actual internal-modal behavior before and after writing |
 | Partition denial was required to return a literal HTTP404 | The pinned implementation documented a soft-404 rendering boundary | Test rendered denial and absence of protected profile content separately from the recorded status |
 
 These were static, source-grounded failure paths, not executed product failures
@@ -106,7 +106,7 @@ gap-bearing reconciliation were preserved unchanged; they were not rewritten to
 make the later script appear previously accepted.
 
 At this report's cutoff the normal locked candidate chain was building. Actual
-save, independent-viewer display, click, booking behavior and cleanup still needed
+save, independent-viewer display, click, reservation behavior and cleanup still needed
 their runtime receipts. Successful fresh state and response validation are also
 different evidence: the helper's status/`ok` checks did not repair every malformed
 acknowledgement or unknown-write path in the product. Broader providers, languages,

@@ -1,4 +1,4 @@
-# General feature completion rule — SoulNest, 2026-10-15
+# General feature completion rule — pilot project, 2026-10-15
 
 The human asked to generalize beyond three repaired scenarios. The skill now
 requires necessary capabilities to be derived from the user result and an
@@ -6,7 +6,8 @@ eight-dimension evidence contract at each feature entrance. Documentation closur
 implementation closure and runtime acceptance are separate claims. Missing or
 unknown required capabilities must not be reported as complete.
 
-SoulNest reused wikiModel, check-wiki-touch, COVERAGE and existing docs CI. New or
+The pilot reused its native wiki parser, touch gate, coverage generator and existing
+docs CI. New or
 modified chapter pages require a classification; feature entries require eight
 status/evidence rows; adopted entries cannot silently delete or downgrade the
 record. The legacy count is visible and reduction-only. Classification truth and
@@ -15,9 +16,10 @@ not certify debt resolution or product completeness.
 
 Pilot: three feature entrances / 24 rows, five unresolved dimensions; one process
 page classified and 210 of 214 prior pages remain unclassified. The rollout gap is
-explicitly tracked as TD-1041; this is not site-wide semantic certification.
+explicitly tracked in the pilot's debt ledger; this is not site-wide semantic
+certification.
 
-The project report docs/audit/WIKI_COMPLETENESS_RULE_2026-10-15.md records validation,
+The pilot's own audit report records validation,
 including real CLI runs in nine isolated Git fixtures. No second manifest was
 introduced and no product implementation or deployment was authorized by this rule.
 

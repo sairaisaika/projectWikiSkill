@@ -33,14 +33,14 @@ These reports describe measured runs, not expected scores to copy into a new pro
 | smv-legacy-audit.json | Existing real project's 10 schema-1 routes resolve; schema-2 precision gaps are reported | Read-only audit; not migrated, not awarded a schema-2 score |
 | engineering-and-six-view-trials.md | Two fresh read-only trials used wiki-first plans and surfaced concrete missing constraints | Synthetic tasks; no time/speedup baseline or live product acceptance |
 | diagram-rendering.json | Six current Mermaid sources parsed/rendered; source hashes checked in tests | Screenshots are temporary; core Python helper does not render or prove diagram semantics |
-| [soulnest-native-audit.md](soulnest-native-audit.md) | Existing native wiki recovery, source/runtime corrections, real packaging failure and a 12-question search self-test | Familiar reviewer; native schema is not ingested by wiki.py; no full semantic certification or timing baseline |
-| [soulnest-learning-review.md](soulnest-learning-review.md) | Learning entrance, cross-feature narrative and reciprocal orientation mode | Familiar entry survey and selected source checks; not a full-page reading or independent comprehension trial |
-| [soulnest-scenario-acceptance.md](soulnest-scenario-acceptance.md) | Three human-supplied scenarios, field-level sharing and feature-local variant discovery | Familiar wiki-first/source self-review; no live posting or independent comprehension trial |
-| [soulnest-completeness-rule.md](soulnest-completeness-rule.md) | Universal feature contract, native gate enforcement and isolated omission/downgrade mutants | Three pilot entrances; 210 legacy pages unclassified; structural checks do not establish semantic or runtime completeness |
+| [pilot-native-audit.md](pilot-native-audit.md) | Existing native wiki recovery, source/runtime corrections, real packaging failure and a 12-question search self-test | Familiar reviewer; native schema is not ingested by wiki.py; no full semantic certification or timing baseline |
+| [pilot-learning-review.md](pilot-learning-review.md) | Learning entrance, cross-feature narrative and reciprocal orientation mode | Familiar entry survey and selected source checks; not a full-page reading or independent comprehension trial |
+| [pilot-scenario-acceptance.md](pilot-scenario-acceptance.md) | Three human-supplied scenarios, field-level sharing and feature-local variant discovery | Familiar wiki-first/source self-review; no live posting or independent comprehension trial |
+| [pilot-completeness-rule.md](pilot-completeness-rule.md) | Universal feature contract, native gate enforcement and isolated omission/downgrade mutants | Three pilot entrances; 210 legacy pages unclassified; structural checks do not establish semantic or runtime completeness |
 | [delegated-wiki-recovery-20261019.md](delegated-wiki-recovery-20261019.md) | A real handoff exposed candidate/main source mismatch, invented references and a missing return route; an instructed retry recovered the feature/debt/relations | Same worker and familiar coordinator; residual wrong path remained; no independent adoption or speedup claim |
 | [internal-plugin-package-20261021.md](internal-plugin-package-20261021.md) | Historical v0.1 payload, manifest and instructed Linux host-load evidence | No permanent installation or lifecycle acceptance |
 | [native-workflow-20261021.md](native-workflow-20261021.md) | v0.2 native capture/delegation/return pilot, full satellite preservation, two real-scope omission counterexamples and host-output friction | Guided same-worker recovery; browser acceptance remains a gap, no efficiency claim |
-| [codex-host-discovery-20261021.md](codex-host-discovery-20261021.md) | Fresh Codex CLI discovery, installed Skill read and real packaged-tool query, plus a final-generation CI counterexample | Synthetic fixture; desktop GUI, hooks, Syleli workflow adoption and efficiency remain unverified |
+| [codex-host-discovery-20261021.md](codex-host-discovery-20261021.md) | Fresh Codex CLI discovery, installed Skill read and real packaged-tool query, plus a final-generation CI counterexample | Synthetic fixture; desktop GUI, hooks, pilot workflow adoption and efficiency remain unverified |
 
 The current fixture also declares a four-surface task map. One expected-scope case
 checks all four surfaces/routes separately from ranking. Eight mutation/read-boundary
@@ -65,12 +65,12 @@ or capture their CLI JSON output. Preserve UTF-8; reports intentionally exclude
 host paths, credentials, private project facts and raw operational logs. Do not
 overwrite the historical independent trial with an inferred new result.
 
-[State consumers and projection maintenance, 2026-10-18](soulnest-state-consumers-20261018.md)
+[State consumers and projection maintenance, 2026-10-18](pilot-state-consumers-20261018.md)
 records a familiar-reader project follow-up. It informs caller-specific predicates,
 snapshot provenance and native-ID-based projection checks; it is not another blind
 agent trial or an efficiency result.
 
-[Projected state and settled destinations, 2026-10-19](soulnest-projected-state-and-journey-20261019.md)
+[Projected state and settled destinations, 2026-10-19](pilot-projected-state-and-journey-20261019.md)
 records corrected display-projection interpretations, a real two-role staging
 journey and a generated source-link closure failure. It is a bounded familiar-reader
 follow-up; it adds no global reading gate or independent efficiency claim.

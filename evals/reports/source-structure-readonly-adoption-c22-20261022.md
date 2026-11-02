@@ -5,7 +5,7 @@ acceptance. Raw packets/transcripts remain private.
 
 ## Native experiment and scope failure
 
-Syleli PR96 source `85557afd3b13c56302a086960505292e02ff2419` added native TS/JS
+A pilot PR added native TS/JS
 structure facts: current content hash, line counts, named bodies/anonymous counts,
 unknown states and navigable outlines. Source/chapter views and explicit task
 impact consume one producer; the initial wiki query still avoids source reads.

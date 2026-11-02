@@ -1,7 +1,7 @@
-# Projected state and settled destinations — SoulNest, 2026-10-19
+# Projected state and settled destinations — pilot project, 2026-10-19
 
 This is a familiar coordinator's source review and live staging follow-up, with
-an instructed DeepSeek reader. It is not a blind evaluation, a comprehension
+an instructed third-party model reader. It is not a blind evaluation, a comprehension
 score, or a measured efficiency improvement.
 
 The fixed source packet let the reader find an existing stacked-media primitive,
@@ -14,10 +14,10 @@ separate. No second gallery configuration table or new wiki manifest was needed.
 
 Two proposed editor status readings needed correction before implementation:
 
-- A null office showcase is a filtered display projection: the assembler also
+- A null profile showcase is a filtered display projection: the assembler also
   returns null when display is disabled. It does not prove the uploaded images
   were deleted or never existed.
-- The initial calendar display flag includes the saved module switch. It is not
+- The initial schedule display flag includes the saved module switch. It is not
   an independent capability flag, nor the final visibility of an unsaved draft.
   The editor should explain the source and local switch without inventing that
   conclusion. Public available/busy projection and private event details also
@@ -29,7 +29,7 @@ and the original settings destinations. This observation does not justify anothe
 global reading rule. Opening settings preserves the draft in its current tab;
 the proposal to save automatically before navigation was not adopted.
 
-A separate real two-role staging homework journey first reported missing history
+A separate real two-role staging assignment journey first reported missing history
 immediately after the URL changed. The application destination was still settling.
 The failed report was retained, and the same completed fixture was resumed without
 another creation or status toggle. Waiting for the destination form and record,
@@ -70,10 +70,10 @@ A build environment choice alone did not configure the serving process.
 
 The user-boundary dictionary also led to a concrete consumer correction. The
 assignment DAL returns rows where the caller is issuer OR recipient. An App
-comment called that unscoped read 'my patient tasks', which would mix a
-practitioner's issued assignments into their own care view. The candidate now
+comment called that unscoped read 'my tasks', which would mix a provider-role
+user's issued assignments into their own personal view. The candidate now
 uses the authenticated session id as the explicit recipient for personal tasks,
-and the notification's recipient id for readonly history; a profession is not
+and the notification's recipient id for readonly history; a user role is not
 that resource relation. Window ownership includes viewer and recipient, with
 wrong-scope response tests. This is source and logic evidence only: the queued
 APK predates this correction and cannot establish the final native journey.
@@ -87,7 +87,7 @@ interface implementation and rejects stale generated hooks; a new combined
 assignment/confirmation build is pending. This is a concrete task-local evidence
 boundary, not a reason to require Android checks for unrelated wiki edits.
 
-A subsequent delegated journal-core report named functions and request fields
+A subsequent delegated content-core report named functions and request fields
 that did not exist in its own three files. Direct source review also found that
 random row ids were being used as causal order, while an all-uncertain tag bucket
 was silently omitted. The revised candidate distinguishes an actual timestamp
@@ -102,34 +102,34 @@ availability is inferred from the pure core.
 ## Live release state and actual native follow-up
 
 A later read-only recovery found that the normal auto runner had already promoted
-cde89ce at 18:18:20Z, while a handoff still described production981/staginga975 as
-current. The prior snapshots were valid historical evidence, but their "current"
+a newer release, while a handoff still described older production/staging
+revisions as current. The prior snapshots were valid historical evidence, but their "current"
 wording had expired. Container source, image, BUILD_ID, version API and stored
 promotion/report hashes were reconciled before any shared staging replacement.
 The feature pages now date those observations. Later, the normal runner staged
-dd9 and passed its own six-spec/23-test and SEO gates; the native homework
-experiment waited for the original release lock, then recorded an unchanged dd9
-container before and after. This is a concrete recovery check, not a reason to
+the next release and passed its own six-spec/23-test and SEO gates; the native
+assignment experiment waited for the original release lock, then recorded an
+unchanged staged container before and after. This is a concrete recovery check, not a reason to
 require live infrastructure access for every documentation edit.
 
-The baseline release gate did not include the new homework-history or
+The baseline release gate did not include the new assignment-history or
 confirmation-snapshot journeys. Each owning candidate now registers its own
 formal spec in the existing candidate manifest and Playwright project, preserving
-the host security floor, identity checks and original budget. Actual cde staging
-negative controls reached a settled therapist destination without the completed
-history, and accepted a stale patient confirmation with HTTP200 after one
+the host security floor, identity checks and original budget. Actual staging
+negative controls reached a settled issuer destination without the completed
+history, and accepted a stale recipient confirmation with HTTP200 after one
 concurrent reschedule won. Candidate code and these negative controls do not
 establish a new positive integrated release; each exact candidate still needs
 its full CI and staged evidence. A green baseline report is not evidence for an
 unregistered feature.
 
-EAS0161 subsequently compiled embedded source241a579. The coordinator downloaded
-the official APK, compared its certificate to the installed backup, confirmed the
-staging origin/disabled OTA, and actually installed it on MuMu. Under the dd9
-lease, a Web therapist form created a synthetic assignment; the patient used the
-native notification and task button; the therapist used the native completion
-notification to reach readonly history showing the same stored completion
-instant. Cold launch preserved the patient session. An actual disconnected
+A later cloud build subsequently compiled the corrected embedded source. The
+coordinator downloaded the official APK, compared its certificate to the installed
+backup, confirmed the staging origin/disabled OTA, and actually installed it on an
+Android emulator. Under the staging lease, a Web issuer form created a synthetic
+assignment; the recipient used the native notification and task button; the
+issuer used the native completion notification to reach readonly history showing
+the same stored completion instant. Cold launch preserved the recipient session. An actual disconnected
 refresh showed an error and kept the previous history window. The automatic
 approval review rejected reopening the loopback QA forward; restored-network
 Retry therefore remains unverified, as do native CAS, physical push/video,
@@ -137,38 +137,34 @@ browser recovery and the official release gates.
 
 The completion notification was an older read item reused by the existing daily
 merge, with an old body/date. Successful navigation to history is evidence of
-reachability, not of a fresh unread alert or of timely therapist awareness. That
-remaining user-journey gap stays explicit in the feature's existing TD entry.
+reachability, not of a fresh unread alert or of timely issuer awareness. That
+remaining user-journey gap stays explicit in the feature's existing debt entry.
 No new global reading requirement or parallel wiki schema was added.
 
-Fixed evidence pointers:
-- Web candidate gate and cde failure: mindbridge851c564a77837624d8e67eded08629bfd963129b,
-  docs/audit/feature-release-gates-20261019/confirmation-snapshot/cde-negative.json.
-- Native runtime: mobile1c5426ffaa9a1076b302a4bc6d4ea17ced855707,
-  docs/audit/native-assignment-entry-20261019/0161-runtime/runtime-proof.json.
-- Paired feature page: mindbridge91eabbd8c014e0c376aede878c7c944e3a15da5e,
-  docs/wiki/24-mobile-features/06-daily-life.md.
+Fixed evidence pointers (Web candidate gate and negative control, native runtime
+proof, paired feature page) are retained in the pilot's own audit directory at
+exact revisions.
 
 These are bounded familiar-coordinator observations, not independent comprehension
 or time-saving measurements.
 
 ## Entry summaries can contradict newer evidence lower on the same page
 
-At 22:10Z, native reader4335 correctly identified Web b862/App1c5426f, but
-wiki6.11 still opened with an old main4f/unadopted boundary and a production981
-environment row. Newer source851 receipts were present near the end. Read-only
-recovery independently established normal production fbe adoption at20:44:20Z,
-including main CI39316198348, 7spec24 cases, migration374 and bound artifact/report
-hashes. Thus neither a correct reader source badge nor appending receipts made
+At 22:10Z, the native reader correctly identified the current Web and App
+revisions, but the feature page still opened with an old main/unadopted boundary
+and a stale production environment row. Newer receipts were present near the end.
+Read-only recovery independently established normal production adoption at
+20:44:20Z, including main CI, 7 specs / 24 cases, the expected migration and bound
+artifact/report hashes. Thus neither a correct reader source badge nor appending receipts made
 the feature's entry summary accurate. The bounded documentation follow-up owns
 correction of current entry prose while retaining dated historical evidence.
 
-A second native wiki-task query for assignments/[id]/route.ts returned
+A second native task-lookup query for the assignment item route returned
 "unregistered", even though the assignment page described completion and linked
 the notification deduplication helper. Actual source review showed that this
 omitted route owns the state write, completion eligibility and24-hour existence
 check. A helper edge alone did not route a successor to the producing decision.
-The feature and bell pages need the concrete producer reference and the actual
+The feature and in-app alert pages need the concrete producer reference and the actual
 existing-row/no-new-alert branch. This is a source-coverage correction, not a
 reason to infer missing source means no dependency or to require reading the
 entire site.

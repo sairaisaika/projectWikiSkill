@@ -154,13 +154,14 @@ triggers, and representative negative scenarios. Structural parsers can check
 record shape, never design fitness. Avoid introducing a new mandatory schema before
 trying it on real cases and observing that it helps the engineering decision.
 
-SoulNest example: existing NotifyResult explicitly treats deferred queue acceptance
-as success. That core contract can be sensible while a caller's delivered counter
-and independent bell idempotency remain unfinished. Preserve the queue owner;
-compare a local caller fix against a full receipt ledger before choosing the latter.
-G-72 deliberately retains two questionnaire sets: a broken producer/consumer match
-is a wiring gap, not automatic authorization to merge the sets. Keep these as source-
-bounded examples, not rules imposing SoulNest's architecture on other projects.
+Pilot example: an existing notification result type explicitly treats deferred
+queue acceptance as success. That core contract can be sensible while a caller's
+delivered counter and independent in-app alert idempotency remain unfinished.
+Preserve the queue owner; compare a local caller fix against a full receipt ledger
+before choosing the latter. A recorded decision deliberately retains two form sets:
+a broken producer/consumer match is a wiring gap, not automatic authorization to
+merge the sets. Keep these as source-bounded examples, not rules imposing a pilot
+project's architecture on other projects.
 
 ## Re-enter a decision with evidence, not another deferral
 
@@ -220,7 +221,7 @@ keep each fact's identity, validity scope and owner. A single next-action view m
 aggregate their projections; it must not become an independently stored overall
 ready flag or reinterpret one acknowledgement as all of them. For example, a
 same-occurrence idempotent consent receipt does not establish reuse across later
-appointments, and two questionnaire sets with different predicates must not be
+occurrences, and two form sets with different predicates must not be
 merged solely to simplify a dashboard. Name the original writer, visible consumer,
 completion predicate and invalidation event for each preparation item.
 

@@ -88,7 +88,7 @@ The original Wiki's session mechanism and login consumer received the local
 sequence, actual test/audit sources and open producer gap. A relevant role
 satellite still said that no native calendar screen existed. Reading the actual
 navigation/screen consumer disproved that statement; the existing original page
-was corrected without claiming complete practitioner or device functionality.
+was corrected without claiming complete provider-role or device functionality.
 Original native generators, source checks and the explicitly paired reader ran;
 their green structure did not erase other recorded capability gaps.
 

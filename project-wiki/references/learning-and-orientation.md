@@ -65,8 +65,8 @@ Evidence to report separately:
 - Real navigation, links and rendered diagrams after the edits.
 - Familiar self-review versus independent retelling, with no invented timings.
 
-SoulNest supplied a useful reciprocal example: its producer/consumer pages and
+A pilot project supplied a useful reciprocal example: its producer/consumer pages and
 cross-feature bridge tables explain responsibility well; the missing learning
 entrance exposed this skill's earlier overemphasis on finding edit locations.
-Adopt the principle without prescribing SoulNest's 26 chapters or terminology to
-other projects.
+Adopt the principle without prescribing the pilot's chapter structure or terminology
+to other projects.

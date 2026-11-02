@@ -380,7 +380,7 @@ MCP is optional transport over the same tools, not a prerequisite or another cor
 | Start/delegate | user task, source pair, planned files, native task route | bounded context packet: actors, fields, producers/consumers, failures, checks and allowed edits | existing native indexes reused; all file satellites retained; missing/dirty/mismatched peers reported | real capture/start/delegate and worker show/read observed |
 | Finish/handoff | actual diff, observed checks, selected source pair | updates or justified no-update result at the original entry; exact revision and remaining work | omission mutants and real successor recovery; no inference from delivered packet to read/used | real paired implementation return and earlier16-file pilot reconciled; omission/freshness refusals and remaining runtime capabilities retained |
 | Host lifecycle | actual supported events and reviewed hook definitions | scoped entry/recovery prompts | current Codex and Linux Claude runtime receipts; unsupported host gets explicit CLI fallback | pending |
-| Project pilot | independent theme and scratch-composer engineering tasks | project repair and reusable rule improvement | real worker output/source review, missed capability and wrong schema assumptions retained as negatives | bounded source implementation-through-return observed; product/device acceptance and efficiency unmeasured |
+| Project pilot | independent theme and post-composer engineering tasks | project repair and reusable rule improvement | real worker output/source review, missed capability and wrong schema assumptions retained as negatives | bounded source implementation-through-return observed; product/device acceptance and efficiency unmeasured |
 
 ## Evidence layers
 
@@ -439,7 +439,7 @@ Its isolated scenarios are mechanism tests, not a host lifecycle or independent
 adoption result. The real recovery trial and host lifecycle hooks remain
 required; a valid archive alone does not satisfy this plan's exit criteria.
 
-The native Syleli trial retains 16 planned files, 14 satellite references, one
+The pilot's native trial retains 16 planned files, 14 satellite references, one
 omitted candidate and explicit Web/App revisions. The worker invoked `show` and
 read the host-persisted full output after its 2 KiB preview was clipped. This exposed
 an ergonomics failure: complete transport does not guarantee convenient reading.
@@ -451,7 +451,7 @@ See the [workflow receipt](../evals/reports/native-workflow-20261021.md).
 
 ## Native return context candidate (v0.2.2)
 
-Actual scratch adoption exposed a late native commit acknowledgement requirement.
+Actual pilot adoption exposed a late native commit acknowledgement requirement.
 The bounded follow-up keeps that format/parser in the project and transports its
 optional workflow metadata in every plugin reading view. Old reports say undeclared;
 commands remain quoted, never executed. [Mechanism receipt](../evals/reports/native-return-context-20261022.md)
@@ -473,7 +473,7 @@ reading or hook requirements. This checkpoint does not change the plugin payload
 
 ## Read-only task packets: 0.2.3 source adopted (2026-10-22)
 
-Live Syleli source-structure adoption trial exposed a scope mismatch: `start`
+Live pilot source-structure adoption trial exposed a scope mismatch: `start`
 required `--allow-file`, and its implementation required all captured source
 paths to be editable. The intended fresh Claude task was only to read/interpret
 three files' wiki and deterministic structure facts; no task/session was launched
