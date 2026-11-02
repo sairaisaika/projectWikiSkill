@@ -40,6 +40,7 @@ Example entry text (adapt to the project's existing instructions):
 | Endpoint or relation added | Regenerate all local projections and counts from native IDs; verify full-set retention with an independent oracle rather than editing duplicated test constants |
 | Serialization/state/timing changes | Update authoritative schema, field/transition tables, source-linked local diagrams and relevant decision rationale; rerun actual conformance/recovery tests |
 | One commit's acknowledgement list exceeds ~10 pages | Give the shared file's rules identity and key routing/gate on rule edges; keep uncovered files on the file rule; measure required pages per commit before and after. See [route by rule](change-navigation.md#route-by-rule-not-only-by-file) |
+| Rule scoped to a whole element family or site (base layer, global middleware, default configuration) | Consumer × environment matrix on the rule's owner page; cells not run are recorded as "verified only in …" and pending, never as verified. See [cross-cutting rules](maintenance.md#cross-cutting-rules-need-a-consumer-matrix) |
 
 These rows say what to update. Where the knowledge should live (edit in place, new
 section, split, new page, shared concept, archive or no structural change), which
@@ -246,6 +247,32 @@ A hook runs only on machines that installed it; record that boundary with the
 audit. Record what the audit found working as well (correct entry on every task,
 a gate that exposed a real gap): a negative control keeps "nothing to change"
 available as an outcome.
+
+### Cross-cutting rules need a consumer matrix
+
+A rule that acts on a whole element family or the whole site — a style base
+layer, a global middleware, a default configuration — has every member of that
+family as its consumer, not only the page where it was first wanted, so its
+acceptance is a matrix: consumers (each element kind or route the rule reaches)
+× running environments (rendering engine or runtime, viewport or device class,
+platform, language or script). Implementation difference is one axis of that
+matrix, not a footnote: the same property or option can carry a different limit,
+default or fallback in another engine, so a rule verified under one engine's cap
+is unverified where that cap does not exist. One recorded example (one project,
+2026-11-02): a site-wide typographic rule, added after a walkthrough found about
+forty short last lines, was verified in one engine at one viewport and shipped on
+that single cell; a month later the product owner, on a mobile engine with no
+line-count limit for the same property, saw every short paragraph spread to the
+margin and reported the layout as broken. The repair split the rule by consumer,
+pinned each part to its source and added a reproducible probe per cell. Before
+enabling such a rule: write the matrix on the rule's owner page; mark a cell only
+after running it; record every other cell as "verified only in …" and register
+it as pending, never as verified by extension; and keep the probe that filled
+each cell with the cell, validated first
+([quality model](quality-model.md#validate-the-probe-before-trusting-or-ratcheting-its-numbers)).
+A rule whose reason lives only in a code comment or commit message has no owner
+page to hold that matrix; see
+[wiki evolution](wiki-evolution.md#2-decide-where-the-knowledge-belongs).
 
 ### Pre-edit gate (host delivery of Wiki-first)
 
