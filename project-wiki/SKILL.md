@@ -159,6 +159,9 @@ semantic accuracy, and observed adoption/time. Source hashes prove freshness, no
 truth. Synthetic fixtures and self-tests do not prove independent user adoption.
 Use the quality model's adjustable pilot thresholds; show numerators, denominators,
 failures and unmeasured dimensions. Do not invent timings, search savings, or scores.
+A number that does not move across control conditions is a probe to validate before
+it is reported or used as a baseline; see
+[the quality model](references/quality-model.md#validate-the-probe-before-trusting-or-ratcheting-its-numbers).
 
 The bundled dependency-free Python 3.10+ helper works without installing this skill
 inside the target repository. `<skill>` means this skill's actual directory:

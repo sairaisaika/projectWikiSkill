@@ -12,6 +12,24 @@
 No blended “wiki quality = 97%” across measured and unmeasured dimensions. Show each
 numerator/denominator and mark missing observations **not measured**, never zero or pass.
 
+### Validate the probe before trusting or ratcheting its numbers
+
+A measurement is a claim about the probe as much as about the system. When a
+number is identical across every control condition (rule on, off and replaced),
+or is suspiciously regular, suspect the predicate before the result: decorative
+pseudo-elements counted as content, nested elements counted twice, invisible or
+zero-size nodes counted as visible, a selector that matches the wrong family.
+One recorded example (one project, 2026-11-02): the first probe for short last
+lines counted a list marker as a line, so three comparison modes returned one
+constant that was briefly read as "the rule has no effect"; a review of the
+predicate, not more runs, found it. Treat a constant or too-clean number as a
+probe to validate, not a finding to report. Validate against a known positive
+and a known negative before reporting. Record the predicate's version beside
+every number; when the predicate changes, mark earlier numbers as not comparable
+instead of merging the series. Never pin a ratchet baseline, threshold or
+"before" figure on an unvalidated probe: a ratchet on an artifact locks in the
+artifact.
+
 ## Structural rubric (100 per route)
 
 | Category | Weight | Full-credit criteria |
