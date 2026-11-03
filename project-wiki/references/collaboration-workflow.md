@@ -152,6 +152,16 @@ captures explicitly remain `not_requested`. It does not scan private directories
 or copy file contents into a packet. Relative paths, missing files, directories
 and symlink aliases are refused.
 
+Per-file refusals retain their existing error prefix and append
+`(selection item N)`, a 1-based ordinal in the list being checked. The first
+capture check follows repeated `--preserve-artifact` input order (including
+repeats); saved paths are sorted and deduplicated, so the post-router check and
+later saved-policy checks follow that saved order. This is not a shell argv index
+and need not equal the original capture position. Invalid selection-list shapes
+still receive the list-level error. Diagnostics do not echo the selected path,
+contents or OS error, search for a replacement, or relax refusal/write-new-only
+rules. Caller-guessed paths still require correction by the caller.
+
 Selected paths and SHA256 observations follow start, every reading view and
 delegation. Capture checks before/after the native router; dispatch checks current
 bytes. The final capture must repeat the same selection. Both review preparation

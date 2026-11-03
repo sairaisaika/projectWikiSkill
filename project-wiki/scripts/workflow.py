@@ -68,19 +68,21 @@ def artifact_snapshot(paths: list[str] | None) -> dict[str, str]:
     if not isinstance(paths, list) or not all(isinstance(x, str) and x and '\0' not in x for x in paths):
         raise ValueError('Preserved artifact selection must be a list of absolute file paths')
     result = {}
-    for name in paths:
+    # Ordinals follow this checkpoint's list, not necessarily original CLI order.
+    for ordinal, name in enumerate(paths, 1):
+        item = f' (selection item {ordinal})'
         path = Path(name)
         try:
             if not path.is_absolute() or '..' in path.parts or path.is_symlink():
-                raise ValueError('Preserved artifact must be an absolute real file, not an alias')
+                raise ValueError('Preserved artifact must be an absolute real file, not an alias' + item)
             resolved = path.resolve(strict=True)
             if path != resolved or not resolved.is_file():
-                raise ValueError('Preserved artifact must be an existing real file')
+                raise ValueError('Preserved artifact must be an existing real file' + item)
             digest = file_hash(resolved)
         except OSError as error:
-            raise ValueError('Selected artifact is missing or unreadable') from error
+            raise ValueError('Selected artifact is missing or unreadable' + item) from error
         if digest is None:
-            raise ValueError('Selected artifact is not a file')
+            raise ValueError('Selected artifact is not a file' + item)
         result[str(resolved)] = digest
     return dict(sorted(result.items()))
 
