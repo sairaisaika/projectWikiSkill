@@ -17,7 +17,9 @@ Example entry text (adapt to the project's existing instructions):
 > For interface or tagging changes, the engineering wiki maps tasks to current
 > declarations, implementations, impacts and focused checks. Start there when it
 > saves discovery; verify the cited implementation before editing. If a route is
-> missing/stale, use a targeted search and repair it. Source wins over stale prose.
+> missing/stale, use a targeted search and repair it. Source establishes actual
+> implementation behavior; resolve conflicts with accepted rules or proposals
+> through the evolution guide before changing either.
 
 ## When a change happens
 
@@ -37,6 +39,12 @@ Example entry text (adapt to the project's existing instructions):
 | Human summary disagrees with JSON | Recompute counts/maxima from the report; preserve historical trial scope instead of silently relabeling old results |
 | Endpoint or relation added | Regenerate all local projections and counts from native IDs; verify full-set retention with an independent oracle rather than editing duplicated test constants |
 | Serialization/state/timing changes | Update authoritative schema, field/transition tables, source-linked local diagrams and relevant decision rationale; rerun actual conformance/recovery tests |
+| One commit's acknowledgement list exceeds ~10 pages | Give the shared file's rules identity and key routing/gate on rule edges; keep uncovered files on the file rule; measure required pages per commit before and after. See [route by rule](change-navigation.md#route-by-rule-not-only-by-file) |
+
+These rows say what to update. Where the knowledge should live (edit in place, new
+section, split, new page, shared concept, archive or no structural change), which
+reading the task must close first, how to diagnose a missed read before repairing
+it, and what to do when wiki and source disagree are in [wiki evolution](wiki-evolution.md).
 
 Review changed source as a signal, not as proof that all prose is stale. Normalized
 whole-file hashes intentionally flag conservative review; only update reviewed_at
@@ -208,6 +216,109 @@ python tools/wiki.py evaluate --root . --tasks docs/wiki/eval-tasks.json
 on stale committed snapshots instead of overwriting them and passing. Keep commands
 read-only except the documented index generation. The helper does not render Mermaid,
 verify domain truth, run commands listed in a manifest, or validate live systems.
+
+### Audit the execution surface before adding a rule
+
+A mechanism that exists is not a mechanism that runs. Before diagnosing any miss
+([wiki evolution](wiki-evolution.md#4-diagnose-a-miss-before-repairing-it)) and
+once per review period, record for every wiki mechanism where it actually executes
+and what the last period's evidence showed:
+
+| Mechanism | Runs at (record the actual one) | Evidence to record |
+|---|---|---|
+| Task router (entry, satellites, rule paths) | manual, at task start | Wrong entries, if any; whether its planned-file input covers the same change range as the gate |
+| Touch gate (changed file ⇒ page changed or acknowledged) | pre-push hook / aggregate check / CI | Required versus acknowledged pages per commit; false refusals |
+| Generated-view consistency tests | CI only / pre-push hook / finish script | First-run CI failures for stale views; "regenerate" commits per branch |
+| Anchor test (authored links resolve against the site renderer) | CI only / pre-push hook | Failures and how each was repaired (link edited, heading renamed) |
+| Header ratchet (keywords, verification stamps) | CI only / pre-push hook | Failures; whether the failure named the page |
+| Invariant tables and their gates | CI / pre-push hook | Rows added; real gaps exposed |
+| Finish script (regenerate, test, stage) | manual | Pages edited after it ran without rerunning it |
+| Editor or session hooks | editor; wiring may be untracked | Whether the repository can prove a worker session had it |
+
+Take counts from run logs and branch history, not memory, and state the basis
+beside each number. Expensive failures cluster where a check runs only in CI: on
+one recorded day the three most costly docs failures (stale generated views,
+guessed anchors, unparseable verification stamps) each cost a serial CI round of
+roughly forty minutes plus a repair commit, while the same checks take about
+twenty seconds in a pre-push hook. The repair is to run the check earlier, keep CI
+as the final gate, and offer an explicit, logged skip; it is not another reminder.
+A hook runs only on machines that installed it; record that boundary with the
+audit. Record what the audit found working as well (correct entry on every task,
+a gate that exposed a real gap): a negative control keeps "nothing to change"
+available as an outcome.
+
+### Pre-edit gate (host delivery of Wiki-first)
+
+When workers repeatedly write code first and the page last although the prompt
+says Wiki-first, the repair is a mechanism, not another reminder. The package
+ships an optional Claude `PreToolUse` hook (`Edit|Write|MultiEdit`) running
+`scripts/edit_gate.py`; Codex hooks carry delivery only. It judges a checkout
+only when `.project-wiki/edit-gate.json` exists at its root, and for a path that
+matches `locked` (or appears in `map_file` as `map_row_format`, default
+``| `{path}` |``) it checks two predicates and reports each with its own fix:
+
+- **(a) context** — the `stamp` file (JSON with `files`) is younger than
+  `max_age_hours` and lists the path's repository-relative form; `stamp_command`
+  is printed as the fix with `{file}` filled in;
+- **(b) design** (only with `design_first`) — a handwritten file under `wiki_root`
+  changed since `merge-base(HEAD, base_ref)` (default `origin/main`), in the
+  working tree or untracked, after removing `generated` views. Without a merge-base
+  (b) is not judged and says so. A non-empty `skip_file` waives (b) only and is
+  echoed; an empty one fails (b).
+
+Exit 2 blocks the edit with the reasons on stderr. The gate runs only read-only
+Git subcommands (optional locks off, inherited repository variables dropped),
+executes no project code and writes nothing. Any defect of its own — unreadable
+or malformed config, malformed event, Git failure — passes the edit with
+"gate unavailable" on stderr.
+
+What it proves: the route was expanded for this file, and some handwritten page
+moved on this branch first. What it does not prove: that the worker read the
+page, that the moved page is the owning one, or that the design is right. One
+unrelated line satisfies (b); review and the finish/touch gate stay responsible
+for that. The two gates split the work: this one runs **before** the first edit
+of a locked file; the touch gate runs at **finish or push** and checks that every
+changed file's owning page changed or was acknowledged.
+
+```json
+{
+  "wiki_root": "docs/wiki",
+  "locked": ["src/**", "api/**", "migrations/**"],
+  "map_file": "docs/wiki/file-map.md",
+  "stamp": {"path": ".project-wiki/stamp.json", "max_age_hours": 8},
+  "stamp_command": "<router command> --files {file}",
+  "design_first": true,
+  "generated": ["file-map.md", "index.md"],
+  "base_ref": "origin/main",
+  "skip_file": ".project-wiki/design.skip"
+}
+```
+
+A project that already has its own pre-edit hook keeps it and does not also
+enable this one: two gates with different predicates give two answers. Either
+way, record in the audit above whether the hook is wired on the machines that run
+workers; wiring kept outside the repository is an unproven delivery.
+
+### Checkable rules beat examples
+
+A template line or an example in a README teaches a format once; a rule a gate can
+check and name teaches it every time. Two recurring cases:
+
+- **Verification stamps.** Fix the parseable form: date · commit sha, optionally
+  followed by scope ("verified X; Y not re-verified") and older stamps. A branch
+  or worktree name is not a revision; for uncommitted work write the base commit
+  the tree was verified on plus "worktree (branch)". Put the rule where authors
+  look, beside the template, and make the parser the authority.
+- **Heading anchors.** The site renderer's slug is not GitHub's slug (full-width
+  punctuation, backticks, underscores and brackets differ). Prefer slug-safe
+  headings, without brackets, backticks or underscores, so others cannot guess
+  wrong. When a complex heading must be linked, copy the ID from a CLI that lists
+  the renderer's real ids for a page; do not derive it by habit.
+
+A ratchet or format gate that fails must name the offending page and distinguish
+"no line" from "malformed line"; a bare `false` sends the worker back to CI logs.
+Keep the numeric baseline unchanged when a check gains names: naming is a
+reporting improvement, neither a relaxation nor a tightening.
 
 Independent trials, if authorized, use fresh workers and isolated outputs. Give the
 task, entry and skill without expected route IDs, suspected bug or proposed answer.

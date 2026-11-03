@@ -65,6 +65,12 @@ Adapt records to actual code; do not populate fields with guessed paths.
   wikis link remote responsibility pages rather than escaping the source root.
 - `docs` are Markdown paths with optional real headings/explicit HTML anchors.
   `rules` reference source IDs and optional test files, not just prose with no anchor.
+  A rule row is the schema's invariant: `statement` is the rule, `source_ids` with
+  role implementation enforce it and role consumer depend on it, `tests`/`checks`
+  verify it, and the `docs` anchor declares it. Rule IDs are unique within a route,
+  not site-wide, and there is no per-rule status, ledger citation or generated
+  reverse projection; see [route by rule](change-navigation.md#route-by-rule-not-only-by-file)
+  before using rules to key a gate.
 - `interface` records inputs, outputs, errors and compatibility as understood by a
   caller. Lack of a supported cancellation or global budget port belongs in unknowns,
   not in a fabricated declaration.

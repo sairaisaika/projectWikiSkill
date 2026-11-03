@@ -1,0 +1,57 @@
+{
+  "sourceSha": "ee6c065d38b8ee0d133f6bcdbf55877bbb4367a6",
+  "sourceVersion": "0.2.19 candidate",
+  "payloadFiles": {
+    "SKILL.md": "fb04b447177c84b3578d8e45241fca29b58e6b01224e9081f839b764646b8927",
+    "agents/openai.yaml": "f167ed875f3d9bb4230394c6725b3fc2ee78e58c4221f12fd067b81706c41b34",
+    "references/change-navigation.md": "2bff02bc55eef43101689e9e428b9619398387a4a018df1f39eac8329d1dd650",
+    "references/collaboration-workflow.md": "9a0ef119cdef65ecb6b5ca56cc1a531ad8bb2f94123f5e05ac8e719e084840b7",
+    "references/diagram-framework.md": "e4f64247de1fe70f73e46da05b02e3888e8b610f80affc429e4627a2e40aa0b1",
+    "references/engineering-depth.md": "4a2965e2dfd9e2d7ece0048025db76033c3044196d53e6659f44da40810e613a",
+    "references/feature-completeness.md": "c7acc8a852fc23daeed6b9ddddaaa948a386a6ca96712528fe6b4ed3cd70880b",
+    "references/learning-and-orientation.md": "f92bfbb762206465e7143c400faf7ced07038b813005efc9a465c826fe6a6279",
+    "references/maintenance.md": "fb631214efdeed8732f208cd13fde6f0123d05dbb08d22bb03b359d9d4c2c8dc",
+    "references/native-wiki-adoption.md": "25976b5de7652c0a62468e5a336f0d548868f7087dcefe6a3e24a347fd7f5c30",
+    "references/page-anatomy.md": "b9f9c697a828509124d420acba881f28af844cc873d665bb0c0348d8cb3a52d3",
+    "references/producer-consumer-views.md": "257cef1c03f3f576a8d8815716f88a6d5ca918544e5bf32658ea495b7de787fd",
+    "references/quality-model.md": "fd951601ba46067fdc6a5ad3faabc9ff50408bf2135305c945da25ff1990a939",
+    "references/route-contract.md": "41078569477b7d618d360bc6d110f3dd41fe4500031247c90a0b9cf640fd8d63",
+    "references/systematic-design-review.md": "e080eb832494a9d1c06fb5b79bc972897cdf983daa4fa55e2f147af5e5415094",
+    "references/wiki-evolution.md": "99d4e374411209431c72a1092ab0f44d06ec2ab72a33f9c004ef937d73312a52",
+    "scripts/lifecycle.py": "6041ab00d3ad83a764ad8adde4cdd1f7590c72e593aec8aae34c65c8a4225e4c",
+    "scripts/wiki.py": "52960e9aba76fcea9488415f725ac7ebd7ecab142da7ceefef89dd49dda470d7",
+    "scripts/workflow.py": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+  },
+  "targets": [
+    {
+      "host": "current local Mac Codex",
+      "directory": "~/.codex/skills/project-wiki",
+      "fileCount": 19,
+      "allPayloadFilesMatch": true,
+      "catalogDelivery": true,
+      "instructionRead": "Installed SKILL.md explicitly read after native host catalog delivery; bounded retry succeeded after earlier oversized read.",
+      "correctAdoption": "Task evidence required; not inferred from catalog"
+    },
+    {
+      "host": "current remote Linux Claude",
+      "directory": "~/.claude/skills/project-wiki",
+      "fileCount": 19,
+      "allPayloadFilesMatch": true,
+      "catalogDelivery": true,
+      "nativeSkillInvocation": true,
+      "instructionDeliveryCharacters": 14525,
+      "correctAdoption": "requires product-task evidence"
+    }
+  ],
+  "scope": "Skill-only copy; no plugin registration, hooks, trust, settings or access changes. Native Skill invoked explicitly; not automatic task-start hook evidence.",
+  "ci": {
+    "head": "ee6c065d38b8ee0d133f6bcdbf55877bbb4367a6",
+    "run": 40990893408,
+    "windows313Job": 123852760820,
+    "testedMerge": "961d9c195add454bacf671d4a832bf7be15dc656",
+    "matrixJobs": 4,
+    "tests": 239,
+    "platformSkips": 1,
+    "fixtureTests": 12
+  }
+}
