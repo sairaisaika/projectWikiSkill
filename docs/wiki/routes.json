@@ -1,0 +1,1503 @@
+{
+  "schema_version": 2,
+  "project": "project-wiki skill (maintainer wiki)",
+  "quality": {
+    "min_structural_score": 85,
+    "max_query_words": 450
+  },
+  "task_maps": [
+    {
+      "id": "packet-change",
+      "title": "Change a packet field across the task workflow",
+      "scope": "Declared workflow.py and hook surfaces that read or write packet kinds; not an inferred impact graph.",
+      "docs": [
+        "docs/wiki/architecture.md#packet-kinds",
+        "docs/wiki/engineering-entry.md#per-change-surface-convention"
+      ],
+      "surfaces": [
+        {
+          "id": "produce",
+          "question": "Which command writes the field?",
+          "route_ids": [
+            "workflow-capture",
+            "workflow-delegate"
+          ],
+          "why": "Captures and packets are the producers in architecture.md#packet-kinds."
+        },
+        {
+          "id": "read",
+          "question": "Which readers render it?",
+          "route_ids": [
+            "task-views",
+            "lifecycle-delivery"
+          ],
+          "why": "show and SessionStart delivery must not clip or reinterpret it."
+        },
+        {
+          "id": "return",
+          "question": "Does the return path recheck it?",
+          "route_ids": [
+            "capture-return",
+            "finish-reconciliation"
+          ],
+          "why": "Return recapture and finish recompute state from the packet."
+        }
+      ]
+    }
+  ],
+  "routes": [
+    {
+      "id": "wiki-helper",
+      "title": "Route manifest helper (wiki.py)",
+      "aliases": [
+        "routes.json",
+        "route manifest",
+        "route index",
+        "wiki.py",
+        "structural score",
+        "stale snapshot",
+        "query ranking",
+        "evaluate tasks",
+        "路由清单",
+        "路由索引",
+        "wiki 检查"
+      ],
+      "sources": [
+        {
+          "id": "cli",
+          "role": "declaration",
+          "path": "project-wiki/scripts/wiki.py",
+          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate and exit codes",
+          "symbol": "main"
+        },
+        {
+          "id": "route",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "reason": "Validates one schema 1/2 route record, its sources, docs, rules and evidence",
+          "symbol": "resolve_route"
+        },
+        {
+          "id": "locate",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "reason": "Exactly one Python symbol or needle match per source; no first-match fallback",
+          "symbol": "resolve_source"
+        },
+        {
+          "id": "audit",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "reason": "Per-route structural score against min_structural_score; readiness",
+          "symbol": "audit"
+        },
+        {
+          "id": "rank",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "reason": "Alias/title/id matching that orders query hits",
+          "symbol": "rank"
+        },
+        {
+          "id": "ci",
+          "role": "consumer",
+          "path": ".github/workflows/check.yml",
+          "reason": "CI runs check/evaluate on the fixture and check on this repo",
+          "needle": "wiki.py check --root evals/fixture-project"
+        }
+      ],
+      "docs": [
+        "docs/wiki/architecture.md#wiki-helper",
+        "docs/wiki/invariants.md#wiki-helper-wikipy",
+        "project-wiki/references/route-contract.md#field-semantics"
+      ],
+      "interface": {
+        "inputs": [
+          "--root PATH (default cwd)",
+          "<root>/docs/wiki/routes.json plus the sources and Markdown anchors it names",
+          "query QUESTION [--limit 1..5] [--json]; task [TASK_ID]; evaluate --tasks PATH"
+        ],
+        "outputs": [
+          "JSON reports (plain text for list and non-JSON query)",
+          "build writes only docs/wiki/route-index.json and route-index.md"
+        ],
+        "errors": [
+          "{\"valid\": false, \"error\": ...} with exit 1",
+          "check exits 1 when audit is not ready or the index is stale"
+        ],
+        "compatibility": "Schema 1 stays query/audit-only legacy gap analysis; build and check require schema 2. Field additions must keep existing manifests valid.",
+        "failure_modes": {
+          "returned": [
+            "ValueError/OSError/SyntaxError/TypeError/KeyError become {\"valid\": false} and exit 1",
+            "query keeps a broken selected route as a warning with its doc pointers and exits 1"
+          ],
+          "thrown": [
+            "Exception classes outside main()'s except tuple would propagate as a traceback; none identified in review"
+          ],
+          "unsupported": [
+            "AST symbols only for Python; other languages need a unique needle",
+            "No semantic verification and no execution of recorded checks"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "commands-are-data",
+          "statement": "Recorded check commands are validated as data and never executed.",
+          "source_ids": [
+            "route",
+            "cli"
+          ],
+          "tests": [
+            "tests/test_wiki.py"
+          ]
+        },
+        {
+          "id": "one-match",
+          "statement": "A source resolves to exactly one symbol/needle match; zero or duplicate matches fail instead of guessing.",
+          "source_ids": [
+            "locate"
+          ],
+          "tests": [
+            "tests/test_wiki.py"
+          ]
+        },
+        {
+          "id": "no-average-hiding",
+          "statement": "One route below the floor makes audit not ready; the average cannot hide it.",
+          "source_ids": [
+            "audit"
+          ],
+          "tests": [
+            "tests/test_wiki.py"
+          ]
+        },
+        {
+          "id": "stale-fails-no-repair",
+          "statement": "check fails on a missing, stale or tampered route index and never rewrites it; only build writes.",
+          "source_ids": [
+            "cli",
+            "ci"
+          ],
+          "tests": [
+            "tests/test_wiki.py",
+            "tests/test_skill_package.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Schema changes need route-contract.md, the fixture manifest and its committed index updated together.",
+        "Any edit to a source named in docs/wiki/routes.json (this repo or the fixture) makes check stale until build is rerun."
+      ],
+      "tests": [
+        "tests/test_wiki.py",
+        "tests/test_task_maps.py",
+        "tests/test_engineering_depth.py",
+        "tests/test_skill_package.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        },
+        {
+          "command": "python project-wiki/scripts/wiki.py check --root evals/fixture-project",
+          "scope": "Structure and drift of the synthetic fixture only."
+        },
+        {
+          "command": "python project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --tasks evals/tasks.json",
+          "scope": "Curated routing self-test; not an independent adoption trial."
+        },
+        {
+          "command": "python project-wiki/scripts/wiki.py check --root .",
+          "scope": "Structure and drift of this maintainer wiki; not semantic truth."
+        }
+      ],
+      "boundary": "Structural scoring and source-position drift only; semantic accuracy and independent adoption are not measured.",
+      "unknowns": [
+        "Whether the structural score correlates with editing success in a consumer project."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "project-wiki/scripts/wiki.py",
+            "claim": "main, resolve_route, resolve_source, audit and rank exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "workflow-capture",
+      "title": "Native context capture into a packet input",
+      "aliases": [
+        "native capture",
+        "native-wiki-capture",
+        "native argv",
+        "runtime input",
+        "allow-native-execution",
+        "native report",
+        "原生上下文",
+        "捕获原生"
+      ],
+      "sources": [
+        {
+          "id": "cli",
+          "role": "declaration",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "capture subcommand and its explicit argv/runtime-input options",
+          "needle": "cap = subs.add_parser('capture')"
+        },
+        {
+          "id": "capture",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Opt-in native run, input hashing before/after, report validation",
+          "symbol": "capture"
+        },
+        {
+          "id": "validate",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Native report shape and exact impact-file coverage",
+          "symbol": "validate_native"
+        },
+        {
+          "id": "current",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Recheck that a saved capture is still current before use",
+          "symbol": "check_capture"
+        },
+        {
+          "id": "start",
+          "role": "consumer",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "start builds a work packet only from a current capture",
+          "symbol": "start"
+        },
+        {
+          "id": "return",
+          "role": "caller",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "capture-return reuses capture over the actual diff",
+          "symbol": "capture_return"
+        }
+      ],
+      "docs": [
+        "docs/wiki/architecture.md#workflow-capture",
+        "docs/wiki/architecture.md#ownership-boundary",
+        "project-wiki/references/collaboration-workflow.md#context-capture"
+      ],
+      "interface": {
+        "inputs": [
+          "--root, --query, --native-argv JSON, --runtime-input (repeatable), --files groups (accumulate)",
+          "optional --wiki-root, --peer ALIAS=CHECKOUT, --native-source-context, --preserve-artifact"
+        ],
+        "outputs": [
+          "New native-wiki-capture JSON (exclusive create, at most 4 MiB)",
+          "stdout {\"ok\": true, \"kind\", \"output\", \"limits\"}"
+        ],
+        "errors": [
+          "{\"ok\": false, \"error\", \"completion\": \"not established\"} and exit 1 for ValueError",
+          "{\"ok\": false, \"error\": <fixed generic text>} and exit 1 for the other declared exceptions"
+        ],
+        "compatibility": "schema_version 1; repeated --files groups must keep accumulating; new fields are additive.",
+        "failure_modes": {
+          "returned": [
+            "ValueError becomes a specific JSON error, exit 1",
+            "OSError/KeyError/TypeError/AttributeError/SubprocessError (including the 60 s timeout) become a generic JSON error, exit 1"
+          ],
+          "thrown": [
+            "Exceptions outside main()'s except clauses propagate; none identified in review"
+          ],
+          "unsupported": [
+            "Shell execution, retry, or truncating an oversized report",
+            "Reading argv from wiki text"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "explicit-opt-in",
+          "statement": "No native process runs without --allow-native-execution and at least one --runtime-input.",
+          "source_ids": [
+            "capture",
+            "cli"
+          ],
+          "tests": [
+            "tests/test_workflow.py"
+          ]
+        },
+        {
+          "id": "stable-inputs",
+          "statement": "A capture is rejected when wiki/runtime inputs, peers or preserved artifacts change during the native run.",
+          "source_ids": [
+            "capture"
+          ],
+          "tests": [
+            "tests/test_workflow.py"
+          ]
+        },
+        {
+          "id": "exact-impact",
+          "statement": "Native impact files must equal the requested files, and a registered row with no pages is rejected.",
+          "source_ids": [
+            "validate",
+            "current"
+          ],
+          "tests": [
+            "tests/test_workflow.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Capture fields feed every packet consumer listed in architecture.md#packet-kinds.",
+        "The native report shape is a contract with consumer projects' task-context commands."
+      ],
+      "tests": [
+        "tests/test_workflow.py",
+        "tests/test_readonly_baseline.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Synthetic native routers and temporary Git repositories; a real consumer router is exercised only in dated reports.",
+      "unknowns": [
+        "Behavior with native routers whose report shape differs from the synthetic one beyond the validated fields."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "project-wiki/scripts/workflow.py",
+            "claim": "capture, validate_native and check_capture exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "workflow-delegate",
+      "title": "Start and delegate a wiki work packet",
+      "aliases": [
+        "wiki-work-packet",
+        "work packet",
+        "allowed files",
+        "allow-file",
+        "read-only task",
+        "delegate",
+        "派发",
+        "委派",
+        "工作包"
+      ],
+      "sources": [
+        {
+          "id": "cli",
+          "role": "declaration",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "start subcommand; delegate shares --task-id/--owner/--allow-file/--read-only",
+          "needle": "sta = subs.add_parser('start')"
+        },
+        {
+          "id": "start",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Planned files must be covered by allowed_files; read-only grants none",
+          "symbol": "start"
+        },
+        {
+          "id": "delegate",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Child packet may only narrow allowed_files",
+          "symbol": "delegate"
+        },
+        {
+          "id": "baseline",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "read_only_baseline observation for read-only tasks",
+          "symbol": "readonly_baseline"
+        },
+        {
+          "id": "finish",
+          "role": "consumer",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "finish reports actual files outside allowed_files as unplanned",
+          "symbol": "finish"
+        }
+      ],
+      "docs": [
+        "docs/wiki/architecture.md#workflow-delegate",
+        "docs/wiki/invariants.md#task-workflow-workflowpy-lifecyclepy",
+        "project-wiki/references/collaboration-workflow.md#start-display-and-delegate"
+      ],
+      "interface": {
+        "inputs": [
+          "start --capture --task-id --owner --outcome --acceptance... --capability... [--allow-file]... [--read-only]",
+          "delegate --packet --task-id --owner [--allow-file]... [--read-only]"
+        ],
+        "outputs": [
+          "New wiki-work-packet JSON with dispatch \"not performed\""
+        ],
+        "errors": [
+          "{\"ok\": false, ...} and exit 1 when the capture is stale or scope is widened"
+        ],
+        "compatibility": "A child keeps kind wiki-work-packet and adds parent_task_id; packets without access default to edit.",
+        "failure_modes": {
+          "returned": [
+            "Stale capture, missing planned files in allowed_files, or widened delegation become a JSON error, exit 1"
+          ],
+          "thrown": [
+            "Exceptions outside main()'s except clauses propagate; none identified in review"
+          ],
+          "unsupported": [
+            "Dispatching work or enforcing a filesystem sandbox"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "cover-planned",
+          "statement": "An edit task's allowed_files must include every planned file; a read-only task grants none.",
+          "source_ids": [
+            "start"
+          ],
+          "tests": [
+            "tests/test_workflow.py",
+            "tests/test_readonly_baseline.py"
+          ]
+        },
+        {
+          "id": "narrow-only",
+          "statement": "Delegation can only narrow allowed_files and never widens a read-only parent.",
+          "source_ids": [
+            "delegate",
+            "finish"
+          ],
+          "tests": [
+            "tests/test_workflow.py",
+            "tests/test_readonly_baseline.py"
+          ]
+        }
+      ],
+      "impact": [
+        "allowed_files semantics are rechecked by finish; changing them changes return reconciliation."
+      ],
+      "tests": [
+        "tests/test_workflow.py",
+        "tests/test_readonly_baseline.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Task scope metadata only; whether a worker read or obeyed the packet is not observed by the helper.",
+      "unknowns": [
+        "No in-repo dispatch mechanism; delivery to a worker is host-specific."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "project-wiki/scripts/workflow.py",
+            "claim": "start, delegate and readonly_baseline exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "task-views",
+      "title": "Packet views and snapshot-only reading (show)",
+      "aliases": [
+        "snapshot-only",
+        "--snapshot-only",
+        "show view",
+        "task view",
+        "index view",
+        "path_bases",
+        "快照",
+        "只读视图"
+      ],
+      "sources": [
+        {
+          "id": "cli",
+          "role": "declaration",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "show --view/--path/--snapshot-only options",
+          "needle": "show.add_argument('--snapshot-only'"
+        },
+        {
+          "id": "view",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Renders index/feature/impact/all; snapshot_only skips check_capture",
+          "symbol": "task_view"
+        },
+        {
+          "id": "lifecycle",
+          "role": "consumer",
+          "path": "project-wiki/scripts/lifecycle.py",
+          "reason": "SessionStart delivery renders the snapshot index view",
+          "symbol": "deliver"
+        }
+      ],
+      "docs": [
+        "docs/wiki/architecture.md#task-views",
+        "docs/wiki/architecture.md#path-kinds",
+        "project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git"
+      ],
+      "interface": {
+        "inputs": [
+          "show --packet PATH [--view index|feature|impact|all] [--path KEY] [--snapshot-only]"
+        ],
+        "outputs": [
+          "JSON view on stdout with freshness, path_bases, native_workflow and review_preparation; no output file"
+        ],
+        "errors": [
+          "{\"ok\": false, ...} and exit 1 for an invalid packet, access scope or unknown --path"
+        ],
+        "compatibility": "Default view stays index; snapshot-only must keep working without Git.",
+        "failure_modes": {
+          "returned": [
+            "Without --snapshot-only a stale capture is reported in freshness, not raised"
+          ],
+          "thrown": [
+            "Exceptions outside main()'s except clauses propagate; none identified in review"
+          ],
+          "unsupported": [
+            "Establishing currentness in snapshot-only mode",
+            "Silently clipping native records"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "snapshot-no-git",
+          "statement": "Snapshot-only reading never invokes Git, live-input hashing or a native command and never counts as a fresh dispatch.",
+          "source_ids": [
+            "view",
+            "lifecycle"
+          ],
+          "tests": [
+            "tests/test_workflow.py",
+            "tests/test_readonly_baseline.py",
+            "tests/test_lifecycle.py"
+          ]
+        }
+      ],
+      "impact": [
+        "lifecycle.py delivers this view; view shape changes affect SessionStart output size (6 KiB budget)."
+      ],
+      "tests": [
+        "tests/test_workflow.py",
+        "tests/test_readonly_baseline.py",
+        "tests/test_lifecycle.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Renders saved records; reading by an agent is not observed.",
+      "unknowns": [],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "project-wiki/scripts/workflow.py",
+            "claim": "task_view and the --snapshot-only option exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "capture-return",
+      "title": "Coordinator return recapture over the actual diff",
+      "aliases": [
+        "capture-return",
+        "return capture",
+        "actual diff",
+        "repository_changes",
+        "return_scope",
+        "回收",
+        "实际返回"
+      ],
+      "sources": [
+        {
+          "id": "cli",
+          "role": "declaration",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "capture-return subcommand; argv must equal the saved one",
+          "needle": "rec = subs.add_parser('capture-return'"
+        },
+        {
+          "id": "recapture",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Rechecks saved inputs, collects actual files, reruns capture, rejects movement",
+          "symbol": "capture_return"
+        },
+        {
+          "id": "collector",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Single actual-diff predicate shared with finish",
+          "symbol": "repository_changes"
+        },
+        {
+          "id": "finish",
+          "role": "consumer",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "finish consumes the recapture as --after-capture",
+          "symbol": "finish"
+        }
+      ],
+      "docs": [
+        "docs/wiki/architecture.md#capture-return",
+        "project-wiki/references/collaboration-workflow.md#reconcile-the-actual-return"
+      ],
+      "interface": {
+        "inputs": [
+          "capture-return --packet PATH --native-argv JSON --output NEW [--allow-native-execution]"
+        ],
+        "outputs": [
+          "New native-wiki-capture with return_scope (selection actual_diff, collector repository_changes)"
+        ],
+        "errors": [
+          "{\"ok\": false, ...} and exit 1"
+        ],
+        "compatibility": "Output stays a native-wiki-capture so review-template and finish accept it unchanged.",
+        "failure_modes": {
+          "returned": [
+            "Missing opt-in, differing argv, changed runtime inputs/artifacts, unavailable peers or movement during the run become a JSON error, exit 1"
+          ],
+          "thrown": [
+            "Exceptions outside main()'s except clauses propagate; none identified in review"
+          ],
+          "unsupported": [
+            "Filtering by allowed_files or planned files",
+            "Retrying",
+            "Replacing finish"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "no-allowlist-filter",
+          "statement": "The recapture covers every actual diff file across root and peers; it never intersects with allowed_files.",
+          "source_ids": [
+            "recapture",
+            "collector"
+          ],
+          "tests": [
+            "tests/test_workflow.py"
+          ]
+        },
+        {
+          "id": "same-argv",
+          "statement": "The supplied argv must equal the saved native_argv and requires explicit opt-in.",
+          "source_ids": [
+            "recapture"
+          ],
+          "tests": [
+            "tests/test_workflow.py"
+          ]
+        }
+      ],
+      "impact": [
+        "repository_changes is also used by finish and readonly_baseline; changing it changes all three."
+      ],
+      "tests": [
+        "tests/test_workflow.py",
+        "tests/test_readonly_baseline.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Boundary Git/hash observations, not continuous monitoring; finish still reconciles independently.",
+      "unknowns": [],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "project-wiki/scripts/workflow.py",
+            "claim": "capture_return and repository_changes exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "finish-reconciliation",
+      "title": "Review template and finish reconciliation",
+      "aliases": [
+        "finish",
+        "review-template",
+        "wiki-work-reconciliation",
+        "structural reconciliation",
+        "review template",
+        "satellite disposition",
+        "收尾",
+        "对账"
+      ],
+      "sources": [
+        {
+          "id": "cli",
+          "role": "declaration",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "finish subcommand (--packet --after-capture --review --output)",
+          "needle": "end = subs.add_parser('finish')"
+        },
+        {
+          "id": "template-cli",
+          "role": "declaration",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "review-template subcommand",
+          "needle": "template = subs.add_parser('review-template'"
+        },
+        {
+          "id": "template",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Every satellite, capability and unregistered file starts unreviewed",
+          "symbol": "review_template"
+        },
+        {
+          "id": "finish",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Recomputes the actual diff and lists issues",
+          "symbol": "finish"
+        },
+        {
+          "id": "main",
+          "role": "caller",
+          "path": "project-wiki/scripts/workflow.py",
+          "reason": "Exits 1 when structural_reconciliation is false",
+          "symbol": "main"
+        }
+      ],
+      "docs": [
+        "docs/wiki/architecture.md#finish-reconciliation",
+        "docs/wiki/architecture.md#packet-kinds",
+        "project-wiki/references/collaboration-workflow.md#reconcile-the-actual-return"
+      ],
+      "interface": {
+        "inputs": [
+          "review-template --packet --after-capture --output",
+          "finish --packet --after-capture --review --output"
+        ],
+        "outputs": [
+          "wiki-review-template (unreviewed placeholders)",
+          "wiki-work-reconciliation with structural_reconciliation and issues"
+        ],
+        "errors": [
+          "{\"ok\": false, ...} and exit 1 for invalid inputs; exit 1 with a written report when reconciliation fails"
+        ],
+        "compatibility": "Review pages/capabilities/unregistered stay objects keyed by page/capability/file; lists are rejected.",
+        "failure_modes": {
+          "returned": [
+            "Structural problems are listed in issues and exit 1, not raised",
+            "List-shaped review fields or capability references with line suffixes raise a JSON error, exit 1"
+          ],
+          "thrown": [
+            "Exceptions outside main()'s except clauses propagate; none identified in review"
+          ],
+          "unsupported": [
+            "Editing project files, running checks, certifying semantic review or product completion"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "object-review",
+          "statement": "finish rejects a review whose pages, capabilities or unregistered is a list.",
+          "source_ids": [
+            "finish"
+          ],
+          "tests": [
+            "tests/test_workflow.py"
+          ]
+        },
+        {
+          "id": "updated-needs-diff",
+          "statement": "A page marked updated needs a real change; no_update needs a reason.",
+          "source_ids": [
+            "finish",
+            "main"
+          ],
+          "tests": [
+            "tests/test_workflow.py"
+          ]
+        },
+        {
+          "id": "template-unreviewed",
+          "statement": "review-template never marks a page or capability reviewed.",
+          "source_ids": [
+            "template"
+          ],
+          "tests": [
+            "tests/test_workflow.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Issue strings are read by coordinators; changing them affects handoff text, not a parsed contract in this repo."
+      ],
+      "tests": [
+        "tests/test_workflow.py",
+        "tests/test_readonly_baseline.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Structural closure against the final capture; not semantic review, runtime or product acceptance.",
+      "unknowns": [
+        "No in-repo consumer reads wiki-work-reconciliation."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "project-wiki/scripts/workflow.py",
+            "claim": "review_template and finish exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "lifecycle-delivery",
+      "title": "SessionStart saved-packet delivery hook",
+      "aliases": [
+        "SessionStart",
+        "lifecycle.py",
+        "PROJECT_WIKI_PACKET",
+        "session start hook",
+        "lifecycle hook",
+        "hooks.json",
+        "钩子",
+        "会话启动"
+      ],
+      "sources": [
+        {
+          "id": "claude",
+          "role": "declaration",
+          "path": "hooks/claude.json",
+          "reason": "Claude SessionStart command via runpy",
+          "needle": "'lifecycle.py'"
+        },
+        {
+          "id": "codex",
+          "role": "declaration",
+          "path": "hooks/codex.json",
+          "reason": "Codex SessionStart with commandWindows and context limit",
+          "needle": "\"commandWindows\""
+        },
+        {
+          "id": "deliver",
+          "role": "implementation",
+          "path": "project-wiki/scripts/lifecycle.py",
+          "reason": "Workspace check and snapshot index rendering within 6 KiB",
+          "symbol": "deliver"
+        },
+        {
+          "id": "main",
+          "role": "implementation",
+          "path": "project-wiki/scripts/lifecycle.py",
+          "reason": "Quiet when unset; visible fixed systemMessage on error; once the module has loaded, main exits 0",
+          "symbol": "main"
+        },
+        {
+          "id": "package",
+          "role": "consumer",
+          "path": "scripts/package_plugin.py",
+          "reason": "Hook files are packaged only with --with-lifecycle-hooks",
+          "needle": "hook_inputs = ('hooks/codex.json', 'hooks/claude.json')"
+        }
+      ],
+      "docs": [
+        "docs/wiki/hooks-and-gates.md#lifecycle-delivery",
+        "docs/wiki/architecture.md#lifecyclepy-summary",
+        "docs/wiki/architecture.md#host-manifests",
+        "project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery"
+      ],
+      "interface": {
+        "inputs": [
+          "PROJECT_WIKI_PACKET (absolute regular file)",
+          "SessionStart event JSON on stdin (at most 64 KiB) with source and absolute cwd"
+        ],
+        "outputs": [
+          "hookSpecificOutput.additionalContext labelled UNTRUSTED TASK DATA, or index_delivered false over 6 KiB"
+        ],
+        "errors": [
+          "Fixed systemMessage without packet contents, path or raw error"
+        ],
+        "compatibility": "Exit code stays 0; the start-source set matches the hook matcher in both host files.",
+        "failure_modes": {
+          "returned": [
+            "Bad event, packet, source or workspace becomes the fixed systemMessage, exit 0"
+          ],
+          "thrown": [
+            "A failure loading the sibling workflow.py at import (module level, outside main) propagates as a traceback with a nonzero exit; no other class identified in review"
+          ],
+          "unsupported": [
+            "Truncating the index",
+            "Running Git, the native router or any project command"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "never-blocks",
+          "statement": "Once the module has loaded, main always exits 0 and reports delivery failure without packet contents.",
+          "source_ids": [
+            "main"
+          ],
+          "tests": [
+            "tests/test_lifecycle.py"
+          ]
+        },
+        {
+          "id": "same-workspace",
+          "statement": "A packet is delivered only when the session cwd resolves inside the packet root.",
+          "source_ids": [
+            "deliver"
+          ],
+          "tests": [
+            "tests/test_lifecycle.py"
+          ]
+        },
+        {
+          "id": "profile-closure",
+          "statement": "Hook files ship only in the hook profile, and forged or mixed profiles fail package closure.",
+          "source_ids": [
+            "package",
+            "claude",
+            "codex"
+          ],
+          "tests": [
+            "tests/test_lifecycle.py",
+            "tests/test_legacy_hooks.py",
+            "tests/test_portable_hooks.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Hook JSON changes alter package bytes and the doctor's hook observations."
+      ],
+      "tests": [
+        "tests/test_lifecycle.py",
+        "tests/test_legacy_hooks.py",
+        "tests/test_portable_hooks.py",
+        "tests/test_codex_hooks.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Tests run the script and packaged runpy entry offline; host trust and execution appear only in dated reports.",
+      "unknowns": [
+        "Linux Claude SessionStart delivery has not been observed."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "project-wiki/scripts/lifecycle.py",
+            "claim": "deliver and main exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "edit-gate",
+      "title": "Optional pre-edit wiki gate (Claude PreToolUse)",
+      "aliases": [
+        "pre-edit gate",
+        "edit gate",
+        "edit_gate.py",
+        "edit-gate.json",
+        "PreToolUse",
+        "design_first",
+        "context stamp",
+        "编辑前 钩子",
+        "门禁",
+        "预编辑",
+        "编辑前",
+        "改码前",
+        "拦截 编辑"
+      ],
+      "sources": [
+        {
+          "id": "config",
+          "role": "declaration",
+          "path": "project-wiki/scripts/edit_gate.py",
+          "reason": "Opt-in config keys and types at .project-wiki/edit-gate.json",
+          "symbol": "read_config"
+        },
+        {
+          "id": "judge",
+          "role": "implementation",
+          "path": "project-wiki/scripts/edit_gate.py",
+          "reason": "Locked-path check, (a) context stamp and (b) design-first predicates",
+          "symbol": "judge"
+        },
+        {
+          "id": "main",
+          "role": "implementation",
+          "path": "project-wiki/scripts/edit_gate.py",
+          "reason": "Own defects pass as \"gate unavailable\"; exit 2 only from judge",
+          "symbol": "main"
+        },
+        {
+          "id": "hook",
+          "role": "caller",
+          "path": "hooks/claude.json",
+          "reason": "Claude PreToolUse Edit|Write|MultiEdit registration",
+          "needle": "'edit_gate.py'"
+        }
+      ],
+      "docs": [
+        "docs/wiki/hooks-and-gates.md#edit-gate",
+        "docs/wiki/invariants.md#edit-gate-edit_gatepy",
+        "project-wiki/references/maintenance.md#pre-edit-gate-host-delivery-of-wiki-first"
+      ],
+      "interface": {
+        "inputs": [
+          "PreToolUse event JSON on stdin (at most 64 KiB)",
+          ".project-wiki/edit-gate.json, stamp, optional map and skip files, read-only Git"
+        ],
+        "outputs": [
+          "exit 0 to pass, exit 2 with reasons on stderr to block"
+        ],
+        "errors": [
+          "\"gate unavailable\" notice on stderr with exit 0"
+        ],
+        "compatibility": "No config means every edit passes silently; Codex declares no PreToolUse.",
+        "failure_modes": {
+          "returned": [
+            "Unavailable and OSError/ValueError/KeyError/TypeError/AttributeError/RecursionError become a stderr notice, exit 0"
+          ],
+          "thrown": [
+            "Exceptions outside those classes propagate; none identified in review"
+          ],
+          "unsupported": [
+            "Judging understanding or design correctness",
+            "Codex hosts"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "opt-in",
+          "statement": "Without .project-wiki/edit-gate.json every edit passes silently.",
+          "source_ids": [
+            "config",
+            "judge"
+          ],
+          "tests": [
+            "tests/test_edit_gate.py"
+          ]
+        },
+        {
+          "id": "fail-open",
+          "statement": "A defect of the gate itself passes the edit with a visible \"gate unavailable\" notice.",
+          "source_ids": [
+            "main"
+          ],
+          "tests": [
+            "tests/test_edit_gate.py"
+          ]
+        },
+        {
+          "id": "two-predicates",
+          "statement": "Context and design predicates are reported separately; a skip file waives only design.",
+          "source_ids": [
+            "judge",
+            "hook"
+          ],
+          "tests": [
+            "tests/test_edit_gate.py"
+          ]
+        }
+      ],
+      "impact": [
+        "hooks/claude.json changes alter the hook profile package and its tests."
+      ],
+      "tests": [
+        "tests/test_edit_gate.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Temporary Git repositories and the packaged hook command run offline; no host installation or trigger observed.",
+      "unknowns": [
+        "Whether a real host triggers the gate and whether it changes agent behavior."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "project-wiki/scripts/edit_gate.py",
+            "claim": "read_config, judge and main exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "packaging",
+      "title": "Plugin package build (package_plugin.py)",
+      "aliases": [
+        "package_plugin.py",
+        "packaging layout",
+        "hook layout",
+        "legacy layout",
+        "portable layout",
+        "PACKAGE-SOURCES.json",
+        "with-lifecycle-hooks",
+        "receipt",
+        "打包",
+        "插件包"
+      ],
+      "sources": [
+        {
+          "id": "cli",
+          "role": "declaration",
+          "path": "scripts/package_plugin.py",
+          "reason": "--hook-layout legacy|portable (default legacy)",
+          "needle": "parser.add_argument('--hook-layout'"
+        },
+        {
+          "id": "build",
+          "role": "implementation",
+          "path": "scripts/package_plugin.py",
+          "reason": "Payload closure, receipt and host manifests",
+          "symbol": "build"
+        },
+        {
+          "id": "manifest",
+          "role": "implementation",
+          "path": "scripts/package_plugin.py",
+          "reason": "Portable root manifest with com.openai hooks extension",
+          "symbol": "root_manifest"
+        },
+        {
+          "id": "doctor",
+          "role": "consumer",
+          "path": "scripts/plugin_doctor.py",
+          "reason": "Re-derives and verifies the receipt",
+          "symbol": "inspect"
+        }
+      ],
+      "docs": [
+        "docs/wiki/architecture.md#packaging",
+        "docs/wiki/architecture.md#host-manifests",
+        "docs/wiki/invariants.md#packaging-and-doctor-package_pluginpy-plugin_doctorpy"
+      ],
+      "interface": {
+        "inputs": [
+          "--output NEW_DIR [--with-lifecycle-hooks] [--hook-layout legacy|portable]",
+          "plugin.json, LICENSE, project-wiki/**, scripts/plugin_doctor.py, hooks/*.json"
+        ],
+        "outputs": [
+          "Package directory with PACKAGE-SOURCES.json (schema 2, utf8-crlf-to-lf-v1)",
+          "stdout {\"ok\": true, name, version, payload_files, host_installation: \"not performed\"}"
+        ],
+        "errors": [
+          "{\"ok\": false, \"error\"} and exit 1"
+        ],
+        "compatibility": "legacy stays the default hook layout; portable is valid only with --with-lifecycle-hooks.",
+        "failure_modes": {
+          "returned": [
+            "OSError/ValueError/KeyError become a JSON error, exit 1"
+          ],
+          "thrown": [
+            "Exceptions outside those classes propagate; none identified in review"
+          ],
+          "unsupported": [
+            "Installing, enabling or trusting a package",
+            "Overwriting output or building inside the source checkout"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "closed-payload",
+          "statement": "Only listed suffixes under project-wiki/ are packaged; hidden, unlisted or symlinked inputs fail the build.",
+          "source_ids": [
+            "build",
+            "doctor"
+          ],
+          "tests": [
+            "tests/test_plugin_package.py",
+            "tests/test_package_integrity.py"
+          ]
+        },
+        {
+          "id": "layout-default",
+          "statement": "The hook layout defaults to legacy, and portable requires the hook profile.",
+          "source_ids": [
+            "cli",
+            "build",
+            "manifest"
+          ],
+          "tests": [
+            "tests/test_legacy_hooks.py",
+            "tests/test_portable_hooks.py"
+          ]
+        },
+        {
+          "id": "newline-policy",
+          "statement": "CRLF/LF-only source differences build the same payload while raw input hashes stay distinct.",
+          "source_ids": [
+            "build"
+          ],
+          "tests": [
+            "tests/test_package_newlines.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Receipt fields are re-derived by plugin_doctor.inspect; change both together."
+      ],
+      "tests": [
+        "tests/test_plugin_package.py",
+        "tests/test_legacy_hooks.py",
+        "tests/test_portable_hooks.py",
+        "tests/test_package_newlines.py",
+        "tests/test_package_integrity.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Builds into temporary directories; host installation is outside the builder.",
+      "unknowns": [],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "scripts/package_plugin.py",
+            "claim": "build and root_manifest exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    },
+    {
+      "id": "doctor",
+      "title": "Package and supplied host-evidence doctor (plugin_doctor.py)",
+      "aliases": [
+        "plugin_doctor.py",
+        "doctor",
+        "codex inventory",
+        "codex hooks",
+        "claude transcript",
+        "package_valid",
+        "host evidence",
+        "体检",
+        "诊断"
+      ],
+      "sources": [
+        {
+          "id": "cli",
+          "role": "declaration",
+          "path": "scripts/plugin_doctor.py",
+          "reason": "Options and parser.error pairings for host evidence",
+          "symbol": "main"
+        },
+        {
+          "id": "inspect",
+          "role": "implementation",
+          "path": "scripts/plugin_doctor.py",
+          "reason": "Package integrity and source comparison; fixed unverified adoption layers",
+          "symbol": "inspect"
+        },
+        {
+          "id": "hooks",
+          "role": "implementation",
+          "path": "scripts/plugin_doctor.py",
+          "reason": "Supplied hooks/list snapshot matched lexically; grants no trust",
+          "symbol": "inspect_codex_hooks"
+        },
+        {
+          "id": "inventory",
+          "role": "implementation",
+          "path": "scripts/plugin_doctor.py",
+          "reason": "Supplied plugin inventory matched to name, version and marketplace",
+          "symbol": "inspect_codex_inventory"
+        },
+        {
+          "id": "ship",
+          "role": "consumer",
+          "path": "scripts/package_plugin.py",
+          "reason": "Every package ships the doctor, so doctor edits change package bytes",
+          "needle": "payload['scripts/plugin_doctor.py']"
+        }
+      ],
+      "docs": [
+        "docs/wiki/architecture.md#doctor",
+        "docs/wiki/invariants.md#packaging-and-doctor-package_pluginpy-plugin_doctorpy"
+      ],
+      "interface": {
+        "inputs": [
+          "--package PATH [--source PATH] [--claude-transcript PATH]",
+          "[--codex-inventory PATH --codex-marketplace NAME [--codex-version-file PATH] [--codex-hooks PATH --codex-hooks-cwd STRING]]"
+        ],
+        "outputs": [
+          "One JSON report (schema_version 1) with package_valid, issues, match flags and codex_observation / codex_hooks_observation / cli_observation (each with kind provided-*)"
+        ],
+        "errors": [
+          "Observation-level {\"error\": ...} entries; exit 1 when the package or a source comparison is invalid",
+          "argparse usage error for incomplete pairings"
+        ],
+        "compatibility": "Install, trust, execution, delivery and use stay unverified regardless of supplied evidence.",
+        "failure_modes": {
+          "returned": [
+            "Malformed receipts become issues; malformed host evidence becomes an observation error"
+          ],
+          "thrown": [
+            "parser.error exits 2 for incomplete option pairings"
+          ],
+          "unsupported": [
+            "Running host commands, granting trust, or resolving host path strings"
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "no-trust",
+          "statement": "The doctor never grants trust; adoption layers stay unverified and host status is kept as data.",
+          "source_ids": [
+            "inspect",
+            "hooks"
+          ],
+          "tests": [
+            "tests/test_codex_hooks.py",
+            "tests/test_codex_inventory.py"
+          ]
+        },
+        {
+          "id": "explicit-pairs",
+          "statement": "Host evidence options must be supplied in complete explicit pairs.",
+          "source_ids": [
+            "cli"
+          ],
+          "tests": [
+            "tests/test_codex_hooks.py",
+            "tests/test_codex_inventory.py"
+          ]
+        },
+        {
+          "id": "tamper-detected",
+          "statement": "Tampered, extra or stale payload and changed support tools are reported.",
+          "source_ids": [
+            "inspect",
+            "ship"
+          ],
+          "tests": [
+            "tests/test_plugin_package.py",
+            "tests/test_package_integrity.py"
+          ]
+        }
+      ],
+      "impact": [
+        "Receipt format changes in package_plugin.build must be mirrored here."
+      ],
+      "tests": [
+        "tests/test_plugin_package.py",
+        "tests/test_codex_inventory.py",
+        "tests/test_codex_hooks.py",
+        "tests/test_package_integrity.py",
+        "tests/test_lifecycle.py"
+      ],
+      "checks": [
+        {
+          "command": "python -m unittest discover -s tests -v",
+          "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
+        }
+      ],
+      "boundary": "Reads supplied files only; host state is never queried.",
+      "unknowns": [
+        "Host evidence formats can change between host versions; only the shapes in tests are recognized."
+      ],
+      "evidence": {
+        "implementation": "implemented",
+        "observations": [
+          {
+            "level": "source",
+            "reference": "scripts/plugin_doctor.py",
+            "claim": "main, inspect, inspect_codex_hooks and inspect_codex_inventory exist as named.",
+            "revision": "c062224 working tree",
+            "observed_at": "2026-11-03"
+          }
+        ]
+      },
+      "kind": "interface",
+      "reviewed_at": "2026-11-03"
+    }
+  ]
+}

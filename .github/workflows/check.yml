@@ -20,3 +20,4 @@ jobs:
       - run: python -m unittest discover -s evals/fixture-project/tests -v
       - run: python project-wiki/scripts/wiki.py check --root evals/fixture-project
       - run: python project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --tasks evals/tasks.json
+      - run: python project-wiki/scripts/wiki.py check --root .
