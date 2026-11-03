@@ -3,7 +3,7 @@
 This is a guided follow-up in a real coupled Web/native project. It is not a blind
 trial, a measured speedup, full source coverage, host lifecycle verification or
 business acceptance. Private repository identifiers, machine paths, session IDs,
-account values, clinical content and raw operational logs are excluded.
+account values, sensitive user content and raw operational logs are excluded.
 
 ## Why this follow-up was necessary
 
@@ -71,13 +71,13 @@ server behavior. It did not mount React, execute the real authentication library
 or reach a backend/device. Whether the same timing is reachable through the real
 authentication library's locking remains unverified. Unrelated-participant denial,
 read-only history, target-specific paging, uncertain-result pauses and a
-practitioner retaining ordinary recipient capabilities were considered separately.
+provider-role user retaining ordinary recipient capabilities were considered separately.
 
 In a separate implementation tree, the coordinator then mounted the actual React
 screen, original window model and original API bridge with synthetic session/fetch.
 Six of nine cases failed before repair; nine of nine passed after reusing the
 existing original-viewer option at this caller's two private request sites.
-Positive controls retained ordinary/practitioner recipient behavior and legitimate
+Positive controls retained ordinary/provider-role recipient behavior and legitimate
 provider history. The candidate's full59 suites/738 tests, type check, original
 single-source ratchet plus seven injected self-tests,31 artifact/source guards and
 61 canonical source comparisons passed locally. Exact remote head/source adoption,
