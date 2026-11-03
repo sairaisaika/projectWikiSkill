@@ -22,8 +22,14 @@ classification (2026-10-31); the optional Claude pre-edit gate
 `project-wiki/scripts/edit_gate.py` with `PreToolUse` in `hooks/claude.json`
 (2026-11-02, see [maintenance.md » Pre-edit gate](project-wiki/references/maintenance.md#pre-edit-gate-host-delivery-of-wiki-first));
 consumer matrices and probe validation (2026-11-02); pilot-project references
-neutralized in the guides (2026-11-01). Session log:
-[PROJECT.md » History](PROJECT.md#history) (2026-10-30 to 2026-11-02).
+neutralized in the guides (2026-11-01); wiki-usage lessons (2026-11-03): generated
+blocks inside authored pages (stable row keys, authored-text change predicates,
+hunk-by-hunk merges and a post-merge authored-line guard, see
+[maintenance.md » Generated blocks](project-wiki/references/maintenance.md#generated-blocks-inside-authored-pages)),
+pre-edit gate boundaries (shell writes, stamp writers, waiver binding, shell-hook
+pitfalls), acknowledgement, keyword and stamp-freshness rules, selector exactness,
+and a designed-not-implemented state for design-first pages. Session log:
+[PROJECT.md » History](PROJECT.md#history) (2026-10-30 to 2026-11-03).
 
 ## 0.2.19
 
