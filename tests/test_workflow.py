@@ -1083,6 +1083,65 @@ class PreservedEvidenceTests(unittest.TestCase):
     def guarded(self):
         return self.capture(preserve_artifacts=[str(self.artifact)])
 
+    def test_cli_missing_second_selection_has_private_ordinal(self):
+        target = self.home / 'refused-capture.json'
+        missing = self.home / 'private-missing-evidence.json'
+        with self.assertRaises(ValueError) as raised:
+            wf.artifact_snapshot([str(self.artifact), str(missing)])
+        self.assertIsInstance(raised.exception.__cause__, FileNotFoundError)
+        self.assertEqual(Path(raised.exception.__cause__.filename), missing)
+        cp = subprocess.run([sys.executable, str(ROOT / 'project-wiki/scripts/workflow.py'), 'capture',
+                             '--root', str(self.root), '--query', 'editor task', '--native-argv',
+                             json.dumps([sys.executable, 'native.py']), '--runtime-input', 'native.py',
+                             '--preserve-artifact', str(self.artifact), '--preserve-artifact', str(missing),
+                             '--allow-native-execution', '--output', str(target)], text=True, capture_output=True)
+        self.assertEqual(cp.returncode, 1)
+        self.assertEqual(json.loads(cp.stdout), {
+            'ok': False, 'error': 'Selected artifact is missing or unreadable (selection item 2)',
+            'completion': 'not established'})
+        self.assertFalse(target.exists())
+        for private in (str(self.home), missing.name, self.artifact.read_text(encoding='utf-8')):
+            self.assertNotIn(private, cp.stdout + cp.stderr)
+        self.assertEqual(cp.stderr, '')
+
+    def test_item_ordinal_uses_current_list_not_original_cli_position(self):
+        earlier = self.home / 'aaa-evidence'
+        earlier.write_bytes(b'private contents')
+        paths = [str(self.artifact), str(earlier)]
+        saved = wf.artifact_snapshot(paths)
+        self.assertEqual(list(saved), sorted(paths))
+        self.artifact.unlink()
+        with self.assertRaisesRegex(ValueError, r'\(selection item 1\)$'):
+            wf.artifact_snapshot(paths)
+        with self.assertRaisesRegex(ValueError, r'\(selection item 2\)$'):
+            wf.artifact_snapshot(list(saved))
+
+    def test_item_refusals_keep_prefix_without_paths_or_os_error(self):
+        for invalid, prefix in ((str(self.home), 'Preserved artifact must be an existing real file'),
+                                ('private-relative', 'Preserved artifact must be an absolute real file, not an alias')):
+            with self.subTest(kind=prefix), self.assertRaises(ValueError) as raised:
+                wf.artifact_snapshot([str(self.artifact), invalid])
+            self.assertEqual(str(raised.exception), prefix + ' (selection item 2)')
+        with patch.object(wf, 'file_hash', side_effect=[wf.sha(b'first'), PermissionError(13, 'private OS details', str(self.artifact))]):
+            with self.assertRaises(ValueError) as raised:
+                wf.artifact_snapshot([str(self.artifact), str(self.artifact)])
+        self.assertEqual(str(raised.exception), 'Selected artifact is missing or unreadable (selection item 2)')
+        self.assertNotIn('private OS details', str(raised.exception))
+        with self.assertRaisesRegex(ValueError, '^Preserved artifact selection must be a list of absolute file paths$'):
+            wf.artifact_snapshot(['bad\0path'])
+
+    @unittest.skipUnless(os.name == 'posix' and hasattr(os, 'geteuid') and os.geteuid() != 0,
+                         'Real mode-bit unreadability requires a non-root POSIX process')
+    def test_real_unreadable_second_file(self):
+        unreadable = self.home / 'private-unreadable'
+        unreadable.write_bytes(b'private contents')
+        unreadable.chmod(0)
+        try:
+            with self.assertRaisesRegex(ValueError, r'^Selected artifact is missing or unreadable \(selection item 2\)$'):
+                wf.artifact_snapshot([str(self.artifact), str(unreadable)])
+        finally:
+            unreadable.chmod(0o600)
+
     def test_legacy_unselected_files_are_explicitly_not_observed(self):
         captured = self.capture()
         result = wf.finish(self.packet(captured), self.capture(), self.review())
@@ -1219,8 +1278,9 @@ class PreservedEvidenceTests(unittest.TestCase):
         except OSError as error:
             self.skipTest('This host cannot create symlinks: ' + type(error).__name__)
         for path in (link, parent / 'result'):
-            with self.assertRaisesRegex(ValueError, 'artifact'):
-                self.capture(preserve_artifacts=[str(path)])
+            with self.assertRaisesRegex(ValueError, r'Preserved artifact.*\(selection item 2\)$') as raised:
+                self.capture(preserve_artifacts=[str(self.artifact), str(path)])
+            self.assertNotIn(str(self.home), str(raised.exception))
 
 
 if __name__=='__main__':
