@@ -134,11 +134,11 @@ Record UTF-8 bytes and graph size as context-size proxies, not token savings or 
 speed. Preserve baseline artifacts, raw results and unresolved discovery scope.
 Do not infer that generated equality makes the author-written ledger complete.
 
-## SoulNest pilot feedback (2026-10-15)
+## Pilot feedback (2026-10-15)
 
-Two local scopes (journal sharing and public calendar) adopted 30 endpoints and 35
-relations, retaining missing/unverified edges. Reverse call-site search found an
-additional slots consumer (AvailabilityEditor), and payload inspection corrected
+Two local scopes (a sharing feature and a public schedule view) adopted 30
+endpoints and 35 relations, retaining missing/unverified edges. Reverse call-site
+search found an additional consumer (an editor component), and payload inspection corrected
 an old "prefilled interval" claim to a date-only event. Thus checking image/text
 agreement must be followed by inspecting actual producer and consumer bodies.
 
@@ -150,8 +150,8 @@ The added text increases page size. Keep local extraction and evaluate that trad
 do not market diagram coverage as efficiency. 212 other pages remain unreviewed for
 this representation, including non-functional pages needing applicability decisions.
 
-Further SoulNest review split state assembly from client consumers. The polling GET
-also triggers heartbeat/streak writes; direct client imports include readers,
+Further pilot review split state assembly from client consumers. The polling GET
+also triggers activity-tracking writes; direct client imports include readers,
 refresh-only callers and local patch writers. The server forwards nested metadata
 and announcement text, contradicting an overly broad small-signal description.
 These findings motivated the layer and cache-writer checks above; they are source
@@ -159,10 +159,10 @@ facts and documentation corrections, not proof of an unauthorized disclosure or 
 independent-agent efficiency gain. Native coverage remains the current migration
 inventory; the earlier 212-page number is a historical pilot snapshot.
 
-Reminder follow-up (SoulNest): the detail query required a different message type,
-field location and appointment link from the questionnaire writer. The reminder
-engine treated deferred queue acceptance as success and independently attempted an
-in-app bell even when external channels were disabled. Two isolated mocked caller
+Reminder follow-up (pilot): the detail query required a different message type,
+field location and record link from the form writer. The reminder engine treated
+deferred queue acceptance as success and independently attempted an in-app alert
+even when external channels were disabled. Two isolated mocked caller
 probes confirmed the branch behavior, without live messages. This reinforces the
 handoff and acknowledgement checks; it does not establish real delivery or database
 contents. The migration counts above remain historical snapshots.

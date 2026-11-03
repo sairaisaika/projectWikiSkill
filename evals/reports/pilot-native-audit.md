@@ -1,4 +1,4 @@
-# SoulNest native wiki audit · 2026-10-15
+# Pilot native wiki audit · 2026-10-15
 
 This is a familiar-reviewer application of the skill to an existing wiki, not an
 independent adoption trial or a schema-2 structural score.
@@ -58,14 +58,14 @@ speed comparison and no full page-by-page or arrow-by-arrow semantic certificati
 
 ## 2026-10-19 implementation follow-up
 
-SoulNest adopted native behavior scopes in four existing pages (MFA, profile,
+The pilot adopted native behavior scopes in four existing pages (MFA, profile,
 Web release and staging). One integration assertion required every pilot to keep
 pending wording even after actual acceptance. Removing that maturity assertion
 retained authored-scope presence, dictionary links and full source-to-card
 projection checks. This is a document-contract correction, not expanded product
 acceptance across every role, tier or client.
 
-Actual `wiki-task --files` use exposed another adoption gap: seven login-helper
+Actual use of the native task-lookup CLI's file expansion exposed another adoption gap: seven login-helper
 consumers and an export test had been listed as bare paths in chapter sources,
 which the native `path » symbol` parser did not index. Real symbol entries now
 resolve those eight files to the owning pages through the existing model and CLI;
@@ -73,13 +73,13 @@ the consent caller also reaches its consent page. The final native documentation
 suite passed 325 checks and the reader built 218 pages with 1425 source views.
 Rendered prose or a source-view page alone had not established map registration.
 
-Web PR13/PR14 adopted mandatory main-push CI plus artifact-bound staged E2E/SEO
-gates and the unsqueezed focused editor. Production application source is
-`9c187708bc9d`; wiki closeout is `97ac17edb927`. The exact-source stage ran 23
+Two pilot PRs adopted mandatory main-push CI plus artifact-bound staged E2E/SEO
+gates and the unsqueezed focused editor, with separate production application
+source and wiki closeout commits. The exact-source stage ran 23
 actual passes without skips, flaky results or helper login retries. A user-filled
-production patient test account verified the focused view, draft retention,
+production test account verified the focused view, draft retention,
 unsaved preview and restored content after reload without submitting a save.
-Calendar, real CAPTCHA activation, native-client and remaining audience coverage
+Schedule views, real CAPTCHA activation, native-client and remaining audience coverage
 stay open. These are fitted implementation/acceptance observations, not an
 independent blind trial or evidence of reduced agent working time.
 
@@ -90,24 +90,24 @@ replacement could occur; permanent per-attempt archival remains follow-up work.
 
 ## 2026-10-19 optional language and method route pilot
 
-SoulNest PR16 adds wiki 1.9 as a short disambiguation route: product vocabulary
-links to root CONTEXT, actor/resource terms to the existing 1.7 dictionary, and
+A pilot PR adds a short disambiguation page: product vocabulary links to the
+root glossary, actor/resource terms to the existing dictionary page, and
 review/test/deployment/delivery wording to the existing methods. It adds no
 authorization registry, business-state enum, forbidden-word scanner or startup
-reading requirement. The actual query `wiki用词 方法词典` reaches 1.9 first.
+reading requirement. An actual vocabulary/method query reaches the new page first.
 
 The candidate passed 326 native documentation checks (219 pages); the existing
 root-sidebar check first rejected the missing new-page registration and passed
 after the link was added. The private reader on a separate loopback port showed
-candidate `ab379c01a831`, the same page and a rendered routing diagram, with the
+the candidate commit, the same page and a rendered routing diagram, with the
 existing domain/method links. This records authored structure, actual routing
 and reader adoption in a review candidate, not main or application deployment.
 
-Its concrete example retains a separate evidence boundary: PR15's original
-fixed-clock booking spec fails with a real 409 collision against the same 9c
-application; candidate specs select actual availability and observe three
-passing booking/reschedule flows including owned cancellation/readback. That
-does not close unrelated schema drift, full consultation journeys or native
+Its concrete example retains a separate evidence boundary: an earlier pilot PR's
+original fixed-clock reservation spec fails with a real 409 collision against the
+same application build; candidate specs select actual availability and observe
+three passing reservation/reschedule flows including owned cancellation/readback.
+That does not close unrelated schema drift, full end-to-end session journeys or native
 acceptance. These were familiar-author trials; no independent comprehension,
 time saving or causal efficiency result was measured. The optional approach is
 now guidance in native-wiki-adoption, rather than another required entry layer.

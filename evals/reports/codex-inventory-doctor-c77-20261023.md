@@ -11,7 +11,7 @@ or conflating the result with source, hooks or agent adoption.
 
 The caller still performs the official CLI capture and chooses private input
 files. No repository, account, credential, source path, scoped execution log or
-clinical data is embedded in this public report.
+sensitive user data is embedded in this public report.
 
 ## Actual bounded host check
 

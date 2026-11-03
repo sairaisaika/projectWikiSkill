@@ -1,9 +1,9 @@
 # Native return requirements reach every reading view
 
-This bounded improvement follows an actual Syleli failure: scratch composer commit
-41e2d5c11 had updated feature documentation but the native push gate rejected five
+This bounded improvement follows an actual pilot failure: a post-composer commit
+had updated feature documentation but the native push gate rejected five
 unchanged satellites without its commit acknowledgement. Actual review followed,
-then 5a27 carried the project's required acknowledgement. A generic structural
+then a follow-up commit carried the project's required acknowledgement. A generic structural
 reconciliation had not supplied that native commit requirement early enough.
 
 The native candidate extracts its existing marker/parser/example into one helper.
@@ -20,7 +20,7 @@ is executed or automatically acknowledged.
 - After the change: 23 workflow cases pass; Windows whole suite 100 cases,
   99 pass / 1 existing symlink-privilege skip. Package builder produced 22 payload
   files; source/identity/support doctor checks passed on the v0.2.2 candidate.
-- Syleli candidate: real router JSON/Markdown plus parser parity/negative scenarios,
+- Pilot candidate: real router JSON/Markdown plus parser parity/negative scenarios,
   two suites 38 cases pass; paired wiki finish 348 cases pass and tsc passes. This
   preserves the original native commit-range, missing-range and enforcement policy.
 - Native source, package validation, runtime command execution, agent use and
@@ -28,13 +28,13 @@ is executed or automatically acknowledged.
   evidence, and no efficiency improvement is claimed.
 
 Private QA captures stay outside this repository. Published plugin payload includes
-no Syleli wiki, account data, native logs or credentials. This is a candidate, not
+no pilot wiki, account data, native logs or credentials. This is a candidate, not
 host lifecycle hook adoption or desktop discovery acceptance.
 
 ## Fresh Linux Claude successor receipt
 
-Native source 4becbd0eac9438d7726d403020c4a4617713e0e1 was captured with the helper
-in its explicit runtime closure and Mobile main f06c5bc3 bound separately. A child
+Pinned native source was captured with the helper in its explicit runtime closure
+and a pinned Mobile main bound separately. A child
 packet narrowed edits to the helper; this trial was read-only and made no edits.
 Session fb9449e7-d1d6-46ed-9fdf-7603e2af5349 loaded the private v0.2.2 plugin
 Skill and its workflow reference. Two preliminary broad discovery Bash calls were

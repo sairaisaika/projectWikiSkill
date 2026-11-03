@@ -3,19 +3,18 @@
 Scope: a familiar coordinator's guided recovery of an existing Claude task. This
 is not a fresh-agent comparison, a latency result or product runtime acceptance.
 
-The Syleli scratch-post editor shared its write endpoint with normal posts but
+The pilot's quick-post editor shared its write endpoint with normal posts but
 had a reduced editor and a wrong response-envelope assumption. A first shared
 composer candidate exposed a further missing capability: returning to the drawing
 canvas discarded the rich draft. The coordinator rejected treating that loss as a
 future TODO and used the recovery as the first native workflow pilot.
 
-The real native `wiki-task.ts` was invoked using the installed local Node/tsx
-runtime in the independent scratch worktree. Capture/start/delegate succeeded at
-Web base `b3214a1bf472ec9975d1710a6dc823a26444b802`, with the selected Mobile checkout
-at `f06c5bc3cb0f3f314378dcd354f879d3033e7d79`. The packet retains 16 candidate files,
+The real native task-lookup CLI was invoked using the installed local Node/tsx
+runtime in an independent worktree. Capture/start/delegate succeeded at a pinned
+Web base, with the selected Mobile checkout pinned separately. The packet retains 16 candidate files,
 14 satellite references and one omitted candidate. Seven explicit capabilities
 include title/tag editing, drawing round-trip draft preservation, canonical
-moderation response consumption and private diary isolation. No project wiki or
+moderation response consumption and private-notes isolation. No project wiki or
 source was migrated into the plugin.
 
 The actual resumed worker invoked `workflow.py show` against its delegated packet.
@@ -67,7 +66,7 @@ plus impact reads (21,930 characters combined), without host-persisted clipping 
 those returned blocks. Those sizes describe this fixture, not a general budget
 guarantee. The worker correctly reported the historical packet as stale and exposed
 its old draft-loss statement rather than treating current R2 source as part of that
-snapshot. It listed both satellites for the selected ScratchPatch file and left
+snapshot. It listed both satellites for the selected patch-helper file and left
 semantic/source/browser acceptance unknown. This is an instructed read-only
 retrieval trial, not engineering implementation or a blind efficiency comparison.
 No permanent plugin installation or hook trust was configured during that Linux

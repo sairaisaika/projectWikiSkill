@@ -2,7 +2,7 @@
 
 Scope: one instructed, read-only fresh CLI session using the already installed
 private `project-wiki@project-wiki-internal` v0.2.1 package. This is a synthetic
-fixture query, not Syleli feature implementation, desktop GUI validation, hooks,
+fixture query, not pilot feature implementation, desktop GUI validation, hooks,
 independent workflow adoption or an efficiency comparison.
 
 ## Inputs and observed actions
@@ -23,7 +23,7 @@ The actual `item.completed` command-execution events record:
    `external-source`, with `ExternalSource`, `providerCapabilities` and
    `nodeFeatures` source locations and the interface wiki anchor.
 3. A terminal non-error result that preserves the fixture's optional-count rule
-   and explicitly leaves runtime/Syleli adoption/hook execution unverified.
+   and explicitly leaves runtime/pilot adoption/hook execution unverified.
 
 This establishes discovery and recorded component/tool use in a fresh Codex CLI
 session. It is stronger than an inventory-only installation result, but does not

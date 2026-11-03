@@ -56,7 +56,7 @@ source check or certify a new dispatch. At that initial checkpoint, independent
 semantic review and actual worker use were pending; no installation or host
 refresh was claimed.
 Private raw commands, logs, hashes and task paths stay outside this public report.
-No private account, clinical content, repository identity or session path is
+No private account, sensitive user content, repository identity or session path is
 included here.
 
 ## Subsequent bounded Linux reading and Windows process check

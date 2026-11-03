@@ -18,9 +18,9 @@ trusted hook or automatic lifecycle receipt.
 
 The user-visible capability was a shared personal-calendar entrance with ordinary
 personal arrangements preserved when an account also gained professional powers.
-Another view used the same account as a recipient of care. The worker reused the
+Another view used the same account as a service recipient. The worker reused the
 original APIs and actions, and returned the original feature/navigation pages and
-sole project debt entry. A copied contract or a professional appointment list alone
+sole project debt entry. A copied contract or a provider's schedule list alone
 had not implemented these personal capabilities.
 
 The worker first reached a turn limit while its external process was still alive.
@@ -39,7 +39,7 @@ to the coordinator, not retroactively to the worker.
 | Delete followed by a response for another date window | Empty unrelated window taken as proof of deletion | Reject mismatched window and retain uncertainty | Actual model negative and revised mechanism checks |
 | A previous identical arrangement exists | Unknown create could be confused with an old item | Positive identity/read-before snapshot checks retained | Snapshot/source mechanism, no actual server creation claim |
 | Owner or view changes before dispatch or response | Stale action could still dispatch; old effects might apply | Guard before dispatch, owner-pinned request and scoped reply/effects | Async negatives plus source wiring |
-| A tab gains a new calendar parent screen | Unknown appointment notification fallback changes destination | Explicit existing action-list landing for known and unknown appointment notifications | Pure routing regression; precise entity/actor target still a gap |
+| A tab gains a new calendar parent screen | Unknown reservation notification fallback changes destination | Explicit existing action-list landing for known and unknown reservation notifications | Pure routing regression; precise entity/actor target still a gap |
 | Selected date lies outside retained data | Unloaded day represented as an empty schedule | Unknown/retry state instead of invented absence | Mechanism negative plus UI source review |
 
 The coordinator also found a potential private-editor frame surviving an account
@@ -99,6 +99,6 @@ No new plugin payload or lifecycle hook was changed or installed for this case.
 The engineering task now provides bounded implementation-through-return evidence
 which the earlier read-only trial explicitly lacked. There is still no measured
 routing-time improvement, reduced omission rate, clean no-wiki control, independent
-blind efficiency result, global hook acceptance or complete clinical/user journey.
+blind efficiency result, global hook acceptance or complete end-to-end user journey.
 The project's own native pages and sole debt ledger retain its unfinished product
 work; this report is an evaluation receipt, not another feature backlog.

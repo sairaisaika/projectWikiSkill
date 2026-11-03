@@ -1,4 +1,4 @@
-# SoulNest: state predicates and projection maintenance, 2026-10-18
+# Pilot: state predicates and projection maintenance, 2026-10-18
 
 Familiar-reader follow-up, not an independent agent efficiency experiment.
 
@@ -115,7 +115,7 @@ was waived or relabelled as successful acceptance.
 The actual two-live candidate passed a later full CI (83 static gates, 906 suites,
 11,952 passing cases and 57 contract/type comparisons). Its first runtime harness
 selected the wrong Card variant and was corrected without changing application
-styles. A later witness assumed a journal studio was empty, but a read-only probe
+styles. A later witness assumed a content studio was empty, but a read-only probe
 confirmed fifteen existing article links, no empty text and an enabled studio.
 Both failed attempts retained exact scoped fixture restoration. The next check
 uses the public footer divider, whose presence does not depend on article count;

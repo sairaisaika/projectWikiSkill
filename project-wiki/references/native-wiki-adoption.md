@@ -93,7 +93,7 @@ by the project; do not turn a generic preference for light process into authorit
 to erase a founder's existing review requirements.
 
 For a concrete application and remaining limits, see the repository's
-`evals/reports/soulnest-native-audit.md`.
+`evals/reports/pilot-native-audit.md`.
 
 ## Verify the reading surface
 
