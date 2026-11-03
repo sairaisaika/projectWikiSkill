@@ -84,6 +84,10 @@ does not bypass review of its placement or actual consumer.
 - **Owner.** Is the same rule stated in more than one place, or needed by several
   features? Give it one owner (section 3); other places link and keep only their
   local condition. Copies that drift are a structural problem, not several edits.
+  A code comment or commit message is not a knowledge home: it may point to the
+  owner page, but a rule stated only there has no owner, no route from its
+  symptom and no verification record, and nothing notices when it contradicts
+  itself.
 - **Grain.** Is it a branch, variant or exception of an existing mechanism? Put it in
   that mechanism's section next to the general rule, with its condition. Is it a
   distinct responsibility or user capability with its own producers, consumers,
@@ -159,6 +163,7 @@ layer.
 | Observed | Likely layer | Repair at that layer | Not a repair |
 |---|---|---|---|
 | The fact is not written anywhere authoritative | Rule absent | Write it at its owner (section 2), with its authority and evidence | Adding a reminder elsewhere |
+| The reason for a global rule lives only in a code comment or commit message, and the comment later contradicts itself | Missing content (the rule is in no owner page) plus navigation (no route from the symptom to the rule) | Write the rule at its owner page with its evidence and verification matrix ([maintenance](maintenance.md#cross-cutting-rules-need-a-consumer-matrix)); add the symptom's words to the index | Expanding the code comment |
 | The fact exists but no route from the task reaches it, or it sits in an overview that hides its condition | Linking or granularity | Add the route from the entry readers use; move or qualify the statement; register native sources | Copying the fact into the task page |
 | The route exists but the index, ranking, satellite projection or generated view drops it | Retrieval or projection | Fix native metadata or the selector; test with the original failing query | Telling agents to read more |
 | Workers acknowledge tens of pages per commit, the stamps carry no reasons the gate keeps, and the same rule is restated without an anchor | Granularity and gate keying | Give the rule an identity on one owner page with its mechanism, consumers and gate; key routing and the gate on those edges, leaving uncovered files on the file rule; measure required pages per commit ([change navigation](change-navigation.md#route-by-rule-not-only-by-file)) | Reminding workers to read, or tightening the stamp format |
