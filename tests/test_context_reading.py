@@ -303,3 +303,6 @@ class DatedCurrentSectionTests(unittest.TestCase):
         self.assertNotIn('Declared current section:', shown)
         self.assertIn('Not declared; do not infer it', shown)
         self.assertEqual(reading.replace_current(text, 'Old claim.', 'later'), text)
+        undated = reading.page_projection('# Page\n## Current state\nClaim.\n')
+        undated.update({'path':'page.md','freshness':'saved snapshot only'})
+        self.assertNotIn('Declared current section:', reading.render_page(undated, 'undated.json'))
