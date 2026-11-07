@@ -354,8 +354,16 @@ class ReadingFlowTests(unittest.TestCase):
         self.assertFalse(saved['current_inputs_checked'])
         self.assertIn('saved snapshot',saved['freshness'])
         text=read.render_locator(saved,'/private/context space.json',snapshot_only=True)
-        self.assertIn('--view summary',text)
-        self.assertIn('--snapshot-only',text)
+        command=text.split('Read full context: ',1)[1].splitlines()[0]
+        if sys.platform=='win32':
+            import re
+            argv=[m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",command)]
+        else:
+            import shlex
+            argv=shlex.split(command)
+        self.assertEqual(argv[argv.index('--view')+1],'summary')
+        self.assertEqual(argv[argv.index('--capture')+1],'/private/context space.json')
+        self.assertIn('--snapshot-only',argv)
         self.assertIn('not redelivered or acknowledged as read',text)
         self.assertNotIn('Source behavior reviewed',text)
         self.assertLessEqual(len(text.encode('utf-8')),6000)
