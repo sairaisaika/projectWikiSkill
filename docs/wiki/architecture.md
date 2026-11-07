@@ -1,6 +1,6 @@
 # Architecture
 
-> Reviewed: 2026-11-06, context-reading candidate; only the prepare/reading/helper-format changes were rechecked.
+> Reviewed: 2026-11-07, selected-page candidate based on 59d4ee7; only prepare/reading selection and explicit history labels rechecked.
 
 These are module contracts read from code. All scripts use only the standard library.
 The CLIs primarily print JSON; `wiki.py list`, non-JSON queries and the new
@@ -28,10 +28,19 @@ explicit. `prepare` needs a nonempty file list and the original execution opt-in
 It records tracked/untracked selected changes without attributing authorship or
 claiming pre-edit reading. Output is write-new-only and transport-budget bounded.
 
+A selected `.md` file under the configured Wiki root is saved as a reading page
+without changing the native source-owner inventory. `prepared_reading.selected_wiki_pages`
+records its source-relative file, Wiki-relative page and captured/missing status;
+the compact index labels these as direct selections, not owner declarations.
+Missing planned pages remain explicit and are not created. Existing native pages
+are deduplicated, and snapshot-only views still use only saved text. Paths outside
+the selected Wiki root are not inferred to be Wiki pages.
+
 `context_reading.py` separates authored current-state sections, the first listed
 verification note, older notes and explicit history. Ambiguous body qualifiers
-are review candidates, never auto-promoted from Git ancestry. Product headings
-such as "History editor" remain body content. All captured body/history text is
+are review candidates, never auto-promoted from Git ancestry. Explicit `Verification history`, `Review history` and `核验历史` headings are
+also historical sections. Quoted verification notes inside explicit history remain
+there and cannot become the latest top-level verification note. Product headings such as "History editor" remain body content. All captured body/history text is
 preserved for explicit reading; snapshots do not reopen live pages or invoke Git.
 
 `show --capture` defaults to the summary; impact/feature show one complete native

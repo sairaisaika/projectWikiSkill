@@ -1,14 +1,14 @@
 ---
 type: Project
-updated_at: 2026-11-06T00:00:00+00:00
+updated_at: 2026-11-07T08:08:26.763715+00:00
 history_count: 16
 ---
 # projectWikiSkill
 Native knowledge: README, project-wiki/SKILL.md and project-wiki/references; evaluations in evals/reports. The skill's own maintainer wiki lives in docs/wiki (founder decision 2026-11-03; dogfooded by wiki.py check in CI); shipped method stays in SKILL.md/references; history in CHANGELOG.md; do not restate status outside docs/wiki/status.md; new History entries link docs/wiki/status.md instead of restating status or caveats.
 Architecture: dependency-free Python 3.10+ helper; workflow.py captures explicit native JSON routes, snapshots selected evidence and reconciles returns. plugin.json is version identity; packaging never installs or grants trust.
 Conventions: selected evidence refuses missing/aliased/non-file inputs, exposes no contents in capture; outputs write-new-only. Capture input order precedes saved sorted unique selection. Separate source tests, installed host and real adoption.
-Current task: merged source and bounded installation recorded; real worker adoption remains a separate observation. See docs/wiki/status.md#current-state.
-Checks: full source suite (280 tests, one platform skip), fixture suite (12), routing self-test and maintainer Wiki pass; plain/legacy-hook/portable-hook package doctors match source. Cross-platform CI tracked on the PR. Commands: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTests in tests/test_workflow.py; python3 project-wiki/scripts/wiki.py check --root . (rerun `build` after editing any source named in docs/wiki/routes.json). Test fixtures are synthetic and portable; OS-specific skips are explicit.
+Current task: isolated selected-Wiki-page preparation repair. A live guided maintenance task selected a Wiki file that had no native owner edge; prepare omitted that page from saved reading views. Preserve native ownership gaps while capturing the explicitly selected page. Installed host payload stays unchanged during active work. See docs/wiki/status.md#current-state.
+Checks: candidate full source289 tests (one platform skip), reading34, fixture12, fixture check/evaluate and maintainer Wiki build/check pass; three package profiles match source/identity. Candidate PR CI and installed candidate adoption remain pending. Evidence: evals/reports/selected-wiki-context-20261107.md.
 ## History
 - 2026-10-29: Source candidate0.2.18 adds private-safe selection ordinals; existing policy/JSON envelope and sorted saved selections retained. Focused17 and full239 tests passed (one Windows-only skip); independent review passed; next real iOS capture identified missing selection item2 and succeeded after original-image repair. Claude scoped evidence return and structural reconciliation passed; shared site/product acceptance and installation remain separate/pending. Plan and eval record red/green and documentation-link correction.
 
