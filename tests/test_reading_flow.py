@@ -126,6 +126,14 @@ class ReadingFlowTests(unittest.TestCase):
         with patch.object(wf,'capture',side_effect=AssertionError('redundant native')),redirect_stdout(io.StringIO()) as log:
             self.assertEqual(wf.main(args),0)
         self.assertIn('REUSED',log.getvalue());self.assertEqual(out.read_bytes(),before);self.assertEqual(out.stat().st_mtime_ns,stamp)
+        self.assertNotIn('FILE → ALL DECLARED OWNER PAGES:',log.getvalue())
+        self.assertNotIn('src/editor.py →',log.getvalue())
+        self.assertIn('Read full context:',log.getvalue())
+        with redirect_stdout(io.StringIO()) as expanded:
+            self.assertEqual(wf.main(['show','--capture',str(out),'--view','summary','--format','json']),0)
+        full=json.loads(expanded.getvalue())
+        self.assertEqual(full['files'][0]['pages'],['feature.md','consumer.md'])
+        self.assertEqual(full['unexpanded_candidates'][0]['path'],'unexpanded.md')
     def test_reuse_never_overwrites_stale_artifact_or_follows_symlink(self):
         out=Path(self.tmp.name)/'context.json';c=self.prepare();wf.write_new(out,c)
         before=out.read_bytes();(self.root/'src/editor.py').write_text('changed', encoding="utf-8")
@@ -319,7 +327,13 @@ class ReadingFlowTests(unittest.TestCase):
             current=(folder/'context.json').read_bytes()
             if saved is not None:self.assertEqual(saved,current)
             saved=current
-            command=cp.stdout.split('\nNEXT: ',1)[1].strip()
+            if reuse:
+                self.assertNotIn('FILE → ALL DECLARED OWNER PAGES:',cp.stdout)
+                self.assertIn('files=200',cp.stdout)
+                self.assertNotIn('\nNEXT: ',cp.stdout)
+                command=cp.stdout.split('Read full context: ',1)[1].splitlines()[0]
+            else:
+                command=cp.stdout.split('\nNEXT: ',1)[1].strip()
             if sys.platform=='win32':
                 import re
                 argv=[m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",command)]
@@ -327,6 +341,24 @@ class ReadingFlowTests(unittest.TestCase):
             continued=subprocess.run(argv,cwd=Path(self.tmp.name),capture_output=True,text=True, encoding="utf-8")
             self.assertEqual(continued.returncode,0,continued.stdout+continued.stderr)
             self.assertIn('DISPLAY',continued.stdout)
+
+    def test_locator_keeps_missing_scope_counts_and_snapshot_only_boundary(self):
+        c=self.prepare();read=wf.reading_module()
+        v=copy.deepcopy(read.summary(c));v['unregistered_files']=['src/unknown.py'];v['preparation']['selected_paths_with_changes']=['src/editor.py']
+        compact=read.locator_summary(v)
+        self.assertEqual(compact['unregistered'],1)
+        self.assertEqual(compact['preparation_changes'],1)
+        self.assertEqual(compact['unexpanded_candidates'],1)
+        with patch.object(wf,'check_capture',side_effect=AssertionError('live read')):
+            saved=wf.capture_view(c,'locator',snapshot_only=True)
+        self.assertFalse(saved['current_inputs_checked'])
+        self.assertIn('saved snapshot',saved['freshness'])
+        text=read.render_locator(saved,'/private/context space.json',snapshot_only=True)
+        self.assertIn('--view summary',text)
+        self.assertIn('--snapshot-only',text)
+        self.assertIn('not redelivered or acknowledged as read',text)
+        self.assertNotIn('Source behavior reviewed',text)
+        self.assertLessEqual(len(text.encode('utf-8')),6000)
 
     def test_preamble_and_keyword_metadata_stay_outside_replaced_current_section(self):
         read=wf.reading_module();old='# Page\n\n> 关键词：date · reader\n> 核验：2026-11-01 · abc1234\nIntroductory prose.\n\n## 当前状态\nold contract\n\n## Mechanism\nImplementation.\n'

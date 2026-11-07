@@ -136,6 +136,32 @@ def render_summary(view: dict, artifact: str, budget: int=6000, *, cursor=None, 
                      budget=budget, cursor=cursor, line_budget=line_budget)['text']
 
 
+def locator_summary(view: dict) -> dict:
+    """A saved-context locator, not a second delivery of the complete index."""
+    return {'selected_files':len(view['files']), 'saved_pages':len(view['pages']),
+            'unregistered':len(view['unregistered_files']),
+            'unexpanded_candidates':len(view['unexpanded_candidates']),
+            'preparation_changes':len(view['preparation'].get('selected_paths_with_changes',[])),
+            'source_revision':view['source_revision'], 'native_exit_code':view['native_exit_code'],
+            'limits':'Details remain in the saved capture; not redelivered or acknowledged as read.'}
+
+
+def render_locator(view: dict, artifact: str, budget: int=6000, *, cursor=None, command=None, line_budget=60, snapshot_only=False) -> str:
+    full=read_command(artifact,'summary')
+    continuation=list(command or read_command(artifact,'locator'))
+    if snapshot_only:
+        full+=['--snapshot-only']
+        if '--snapshot-only' not in continuation:continuation+=['--snapshot-only']
+    text=('SAVED CONTEXT LOCATOR — complete details are retained, not repeated\n'
+          +f"Scope counts: files={view['selected_files']}; saved pages={view['saved_pages']}; unregistered={view['unregistered']}; unexpanded candidates={view['unexpanded_candidates']}; preparation changes={view['preparation_changes']}\n"
+          +f"Source: {view['source_revision']}; native result: exit {view['native_exit_code']}\n"
+          +'Freshness: '+view.get('freshness','capture-time data')+'\n'
+          +view['limits']+'\n'
+          +'Read full context: '+shell_command(full)+'\n')
+    return text_page(text, 'locator:'+artifact, continuation,
+                     budget=budget,cursor=cursor,line_budget=line_budget)['text']
+
+
 def select_section(markdown: str, title: str) -> str:
     lines=markdown.splitlines(keepends=True);headings=[];fence=None
     for i,line in enumerate(lines):

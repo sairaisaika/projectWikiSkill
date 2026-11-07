@@ -3,6 +3,21 @@
 
 
 
+
+## Current state
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+|0.2.25 candidate|361 collected /360 executed /1 platform skip locally;44 focused pass; platform CI pending|isolated branch|pending|not installed; Linux remains0.2.24|not yet delivered|one Codex duplicate-index counterexample led to this change; new-version adoption unmeasured|not inferred|
+|0.2.24|[matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42377141265)|PR50 plus documentation updates|three recorded matching profiles|Linux manual static copy matches21/21 current payload files; other hosts unchanged|installed helper used in real Codex takeover|one actual prepare1.302s/reuse0.182s, unchanged capture; saved state diff read fully and applied; native source-index miss required correction|bounded source/document and declared observations only|
+
+No automatic updater was added. The source/installed/agent-use distinction remains; a short locator is not a reading acknowledgement. Counterevidence and prior guided-task limits remain in history. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [saved application](../../evals/reports/apply-saved-state-20261107.md).
+
+## Historical evidence
+
+### State snapshot 2026-11-07T17:13:36.620226+00:00
+
+```markdown
 ## Current state
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
@@ -26,7 +41,7 @@ Evidence: [reading flow](../../evals/reports/reading-flow-20261107.md),
 [saved previews/history](../../evals/reports/state-preview-20261107.md),
 [exact saved application](../../evals/reports/apply-saved-state-20261107.md).
 
-## Historical evidence
+```
 
 ### State snapshot 2026-11-07T13:46:55.288255+00:00
 
