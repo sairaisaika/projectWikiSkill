@@ -561,7 +561,10 @@
         "show --capture",
         "current state",
         "historical evidence",
-        "历史核验"
+        "历史核验",
+        "selected Wiki page",
+        "unregistered Markdown",
+        "核验历史"
       ],
       "sources": [
         {
@@ -605,6 +608,20 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "render_summary",
           "reason": "Complete scope index with explicit display-budget refusal rather than silent clipping"
+        },
+        {
+          "id": "page-collection",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "collect_pages",
+          "reason": "Deduplicates native owner/query pages and explicitly selected Wiki pages without inventing owner edges"
+        },
+        {
+          "id": "direct-page-selection",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "prepare",
+          "reason": "Records explicitly selected Wiki page status separately from source-owner registration"
         }
       ],
       "docs": [
@@ -616,7 +633,8 @@
       "interface": {
         "inputs": [
           "show --packet PATH [--view index|feature|impact|all] [--path KEY] [--snapshot-only]",
-          "show also accepts --capture with summary/page/history and an exact path/section; snapshot-only never reads live inputs"
+          "show also accepts --capture with summary/page/history and an exact path/section; snapshot-only never reads live inputs",
+          "prepare --files may directly select Markdown inside the configured Wiki root; the saved selected_wiki_pages list is distinct from native owner declarations"
         ],
         "outputs": [
           "JSON view on stdout with freshness, path_bases, native_workflow and review_preparation; no output file"
@@ -650,6 +668,18 @@
             "tests/test_workflow.py",
             "tests/test_readonly_baseline.py",
             "tests/test_lifecycle.py"
+          ]
+        },
+        {
+          "id": "direct-wiki-selection",
+          "statement": "Direct Wiki selection does not erase native unregistered inputs, create missing pages or infer pages outside the selected Wiki root.",
+          "source_ids": [
+            "direct-page-selection",
+            "page-collection",
+            "capture-view"
+          ],
+          "tests": [
+            "tests/test_context_reading.py"
           ]
         }
       ],

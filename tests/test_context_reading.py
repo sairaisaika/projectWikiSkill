@@ -189,4 +189,75 @@ class ContextReadingTests(unittest.TestCase):
         cp=subprocess.run([sys.executable,str(ROOT/'project-wiki/scripts/wiki.py'),'audit','--root',str(self.root)],text=True,capture_output=True)
         self.assertEqual(cp.returncode,1);self.assertFalse(json.loads(cp.stdout)['valid'])
 
+
+    def unregistered_router(self):
+        (self.root/'native.py').write_text("import json,sys\nq=sys.argv[1];fs=sys.argv[sys.argv.index('--files')+1:]\nprint(json.dumps({'query':q,'cards':[],'impact':[{'file':f,'pages':[],'unregistered':True} for f in fs],'omitted':[],'placementIssues':[],'limits':'registered scope only'}))\n",encoding='utf-8')
+    def test_explicit_wiki_selection_is_readable_without_inventing_ownership(self):
+        self.unregistered_router()
+        (self.root/'docs/wiki/selected.md').write_text('# Selected\n## Current state\nCandidate only.\n## Mechanism\nThe selected document itself.\n',encoding='utf-8')
+        c=self.prepare(['docs/wiki/selected.md'],query='unknown')
+        v=self.view(c);p=self.view(c,'page','selected.md')
+        self.assertEqual(v['unregistered_files'],['docs/wiki/selected.md'])
+        self.assertEqual(v['files'][0]['pages'],[])
+        self.assertIn('Candidate only.',p['authored_current_state'])
+        self.assertIn('The selected document itself.',p['body_markdown'])
+        self.assertEqual(v['selected_wiki_pages'],[{'file':'docs/wiki/selected.md','path':'selected.md','status':'captured'}])
+        self.assertIn('not owner declarations',wf.render_context_summary(v,'saved.json'))
+    def test_explicit_wiki_selection_deduplicates_an_existing_native_page(self):
+        c=self.prepare(['src/editor.py','docs/wiki/feature.md'])
+        self.assertEqual(list(c['prepared_reading']['pages']),['consumer.md','feature.md'])
+        self.assertEqual(self.view(c)['selected_wiki_pages'][0]['path'],'feature.md')
+    def test_missing_planned_wiki_page_is_explicit_and_is_not_created(self):
+        self.unregistered_router();c=self.prepare(['docs/wiki/future.md'])
+        self.assertEqual(self.view(c)['selected_wiki_pages'],[{'file':'docs/wiki/future.md','path':'future.md','status':'not present in Wiki snapshot'}])
+        self.assertFalse((self.root/'docs/wiki/future.md').exists())
+        with self.assertRaisesRegex(ValueError,'not present in.*snapshot'):self.view(c,'page','future.md')
+    def test_directly_selected_page_can_be_read_after_source_disappears(self):
+        self.unregistered_router();p=self.root/'docs/wiki/selected.md';p.write_text(PAGE,encoding='utf-8')
+        c=self.prepare(['docs/wiki/selected.md']);p.unlink()
+        with patch.object(wf,'git',side_effect=AssertionError('no live reads')):
+            v=self.view(c,'page','selected.md',snapshot_only=True)
+        self.assertIn('One writer serves',v['body_markdown']);self.assertFalse(v['current_inputs_checked'])
+    def test_similarly_named_directory_is_not_a_selected_wiki_page(self):
+        self.unregistered_router();p=self.root/'docs/wiki-other/private.md';p.parent.mkdir();p.write_text('# Outside\nnot Wiki content\n')
+        c=self.prepare(['docs/wiki-other/private.md'])
+        self.assertEqual(self.view(c)['selected_wiki_pages'],[])
+        self.assertNotIn('not Wiki content',json.dumps(c))
+    def test_explicit_pages_follow_the_configured_wiki_root(self):
+        self.unregistered_router();wiki=self.root/'knowledge';wiki.mkdir();(wiki/'selected.md').write_text(PAGE,encoding='utf-8')
+        c=self.prepare(['knowledge/selected.md'],wiki_root='knowledge')
+        self.assertIn('One writer serves',self.view(c,'page','selected.md')['body_markdown'])
+        self.assertEqual(self.view(c)['selected_wiki_pages'][0]['path'],'selected.md')
+    def test_large_direct_page_refuses_full_display_but_delivers_selected_section(self):
+        self.unregistered_router();(self.root/'docs/wiki/large.md').write_text('# Long\n## Large\n'+'x'*9000+'\n## Needed\nExact detail.\n',encoding='utf-8')
+        c=self.prepare(['docs/wiki/large.md']);p=self.view(c,'page','large.md')
+        full=wf.reading_module().render_page(p,'saved.json')
+        self.assertIn('not delivered',full);self.assertNotIn('xxxx',full)
+        self.assertIn('Exact detail',wf.reading_module().render_page(p,'saved.json',section='Needed'))
+    def test_explicit_verification_history_headings_are_separated(self):
+        for heading in ['核验历史','Verification history','Review history']:
+            with self.subTest(heading=heading):
+                p=wf.reading_module().page_projection('# F\n## Current state\nCandidate.\n## '+heading+'\nOld pending branch.\n## Mechanism\nNow.\n')
+                self.assertNotIn('Old pending',p['body_markdown'])
+                self.assertIn('Old pending',p['history_markdown'])
+                self.assertNotIn('Old pending',p['authored_current_state'])
+
+    def test_verification_note_inside_explicit_history_is_not_promoted_or_lost(self):
+        p=wf.reading_module().page_projection('# F\n## Current state\nCandidate.\n## 核验历史\n> 核验：2020-01-01 old pending branch\n')
+        self.assertIsNone(p['latest_verification_note'])
+        self.assertIn('2020-01-01 old pending branch',p['history_markdown'])
+        p['freshness']='snapshot'
+        self.assertIn('2020-01-01 old pending branch',wf.reading_module().render_page(p,'saved.json',history=True))
+
+    def test_summary_does_not_report_no_history_after_notes_move_to_history(self):
+        (self.root/'docs/wiki/feature.md').write_text('# F\n## Current state\nCandidate.\n## 核验历史\n> 核验：2020-01-01 older review\n',encoding='utf-8')
+        v=self.view(self.prepare());page=next(p for p in v['pages'] if p['path']=='feature.md')
+        self.assertEqual(page['historical_notes'],0)
+        self.assertTrue(page['history_present'])
+        self.assertIn('history=present; older notes=0',wf.render_context_summary(v,'saved.json'))
+    def test_missing_selected_page_error_names_actual_snapshot_gap(self):
+        self.unregistered_router();c=self.prepare(['docs/wiki/future.md'])
+        with self.assertRaisesRegex(ValueError,'not present in.*snapshot.*future.md'):
+            self.view(c,'page','future.md')
+
 if __name__=='__main__':unittest.main()

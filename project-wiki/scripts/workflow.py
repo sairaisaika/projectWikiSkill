@@ -713,8 +713,23 @@ def prepare(root: Path, query: str, files: list[str], program: list[str], runtim
             raise ValueError('Observed revisions require explicit non-option LABEL=REV values')
         observations[label] = {'declared_ref':ref, 'resolved_sha':git(root, 'rev-parse', '--verify', ref+'^{commit}').decode().strip(),
                                'provenance':'caller supplied; local Git resolution only, not deployment or capability verification'}
+    # A selected Wiki document is itself readable context, even when the native
+    # source-owner index has no edge for Markdown. Keep that gap unchanged.
+    selected_pages = []
+    for name in value['files']:
+        try:
+            page = PurePosixPath(name).relative_to(PurePosixPath(value['wiki_root']))
+        except ValueError:
+            continue
+        if page.suffix != '.md':
+            continue
+        selected_pages.append({'file': name, 'path': page.as_posix(),
+                               'status': 'captured' if name in value['base']['inputs'] else 'not present in Wiki snapshot'})
     value['prepared_reading'] = {
-        'schema_version':1, 'pages':reading_module().collect_pages(value['native_report'], read_page),
+        'schema_version':1,
+        'pages':reading_module().collect_pages(value['native_report'], read_page,
+                                               [row['path'] for row in selected_pages if row['status']=='captured']),
+        'selected_wiki_pages':selected_pages,
         'observed_revisions':observations,
         'preparation':{'prepared_at':datetime.now(timezone.utc).isoformat(),
                        'selected_paths_with_changes':sorted(changed.intersection(value['files'])),
@@ -748,7 +763,11 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
         result=reading_module().summary(value)
     elif view in ('page','history'):
         pages=value.get('prepared_reading',{}).get('pages',{})
-        if path not in pages:raise ValueError('Select a captured page from prepare; older captures do not contain saved page views')
+        if path not in pages:
+            selected = value.get('prepared_reading',{}).get('selected_wiki_pages',[])
+            if any(row['path']==path and row['status']!='captured' for row in selected):
+                raise ValueError('Selected Wiki page is not present in the captured snapshot: '+str(path))
+            raise ValueError('Select a captured page from prepare; older captures do not contain saved page views')
         result=dict(pages[path]); result['path']=path
     elif view in ('feature','impact'):
         key,field=('cards','path') if view=='feature' else ('impact','file')
