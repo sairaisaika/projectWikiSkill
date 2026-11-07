@@ -14,6 +14,13 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
+## 0.2.24
+
+- Add `apply-state --plan` to apply the exact reviewed state proposal without
+  repeating body/verification arguments or regenerating the plan. Existing
+  source-byte and target checks remain; receipts expose the exact command.
+- Clarify the verification-line input shape; retain the existing combined apply.
+
 ## 0.2.23
 
 - Keep state snapshots outside following generated blocks and preserve recognized
