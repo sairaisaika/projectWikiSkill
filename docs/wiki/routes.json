@@ -193,7 +193,8 @@
         "tests/test_wiki.py",
         "tests/test_task_maps.py",
         "tests/test_engineering_depth.py",
-        "tests/test_skill_package.py"
+        "tests/test_skill_package.py",
+        "tests/test_context_reading.py"
       ],
       "checks": [
         {
@@ -230,7 +231,7 @@
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-03"
+      "reviewed_at": "2026-11-06"
     },
     {
       "id": "workflow-capture",
@@ -243,7 +244,9 @@
         "allow-native-execution",
         "native report",
         "原生上下文",
-        "捕获原生"
+        "捕获原生",
+        "file-first preparation",
+        "文件级上下文前置"
       ],
       "sources": [
         {
@@ -287,21 +290,31 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "capture-return reuses capture over the actual diff",
           "symbol": "capture_return"
+        },
+        {
+          "id": "prepare",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "prepare",
+          "reason": "One native capture with file owners, saved page views and explicit existing-change observation"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#workflow-capture",
         "docs/wiki/architecture.md#ownership-boundary",
-        "project-wiki/references/collaboration-workflow.md#context-capture"
+        "project-wiki/references/collaboration-workflow.md#context-capture",
+        "project-wiki/references/collaboration-workflow.md#file-first-preparation"
       ],
       "interface": {
         "inputs": [
           "--root, --query, --native-argv JSON, --runtime-input (repeatable), --files groups (accumulate)",
-          "optional --wiki-root, --peer ALIAS=CHECKOUT, --native-source-context, --preserve-artifact"
+          "optional --wiki-root, --peer ALIAS=CHECKOUT, --native-source-context, --preserve-artifact",
+          "prepare additionally requires nonempty --files; optional --observed-revision LABEL=REV is caller data, not live verification"
         ],
         "outputs": [
           "New native-wiki-capture JSON (exclusive create, at most 4 MiB)",
-          "stdout {\"ok\": true, \"kind\", \"output\", \"limits\"}"
+          "stdout {\"ok\": true, \"kind\", \"output\", \"limits\"}",
+          "prepare: saved native-wiki-capture with prepared_reading; complete compact index or explicit undelivered display"
         ],
         "errors": [
           "{\"ok\": false, \"error\", \"completion\": \"not established\"} and exit 1 for ValueError",
@@ -362,7 +375,8 @@
       ],
       "tests": [
         "tests/test_workflow.py",
-        "tests/test_readonly_baseline.py"
+        "tests/test_readonly_baseline.py",
+        "tests/test_context_reading.py"
       ],
       "checks": [
         {
@@ -387,7 +401,7 @@
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-03"
+      "reviewed_at": "2026-11-06"
     },
     {
       "id": "workflow-delegate",
@@ -537,7 +551,10 @@
         "index view",
         "path_bases",
         "快照",
-        "只读视图"
+        "只读视图",
+        "compact context summary",
+        "current history split",
+        "现状 历史"
       ],
       "sources": [
         {
@@ -560,16 +577,39 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "SessionStart delivery renders the snapshot index view",
           "symbol": "deliver"
+        },
+        {
+          "id": "capture-view",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "capture_view",
+          "reason": "Fresh or snapshot-only views over a saved native context without a task packet"
+        },
+        {
+          "id": "page-projection",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "page_projection",
+          "reason": "Separate authored state, verification notes and explicit history without deployment inference"
+        },
+        {
+          "id": "compact",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "render_summary",
+          "reason": "Complete scope index with explicit display-budget refusal rather than silent clipping"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#task-views",
         "docs/wiki/architecture.md#path-kinds",
-        "project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git"
+        "project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git",
+        "docs/wiki/architecture.md#file-first-preparation-and-state-reading"
       ],
       "interface": {
         "inputs": [
-          "show --packet PATH [--view index|feature|impact|all] [--path KEY] [--snapshot-only]"
+          "show --packet PATH [--view index|feature|impact|all] [--path KEY] [--snapshot-only]",
+          "show also accepts --capture with summary/page/history and an exact path/section; snapshot-only never reads live inputs"
         ],
         "outputs": [
           "JSON view on stdout with freshness, path_bases, native_workflow and review_preparation; no output file"
@@ -577,7 +617,7 @@
         "errors": [
           "{\"ok\": false, ...} and exit 1 for an invalid packet, access scope or unknown --path"
         ],
-        "compatibility": "Default view stays index; snapshot-only must keep working without Git.",
+        "compatibility": "Default view stays index; snapshot-only must keep working without Git. Existing packet index/feature/impact/all remain supported; index key order puts omissions first. Saved page views require prepare.",
         "failure_modes": {
           "returned": [
             "Without --snapshot-only a stale capture is reported in freshness, not raised"
@@ -612,7 +652,8 @@
       "tests": [
         "tests/test_workflow.py",
         "tests/test_readonly_baseline.py",
-        "tests/test_lifecycle.py"
+        "tests/test_lifecycle.py",
+        "tests/test_context_reading.py"
       ],
       "checks": [
         {
@@ -635,7 +676,7 @@
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-03"
+      "reviewed_at": "2026-11-06"
     },
     {
       "id": "capture-return",
