@@ -146,7 +146,7 @@ often found:
 | Navigation and metadata | The fact exists but the route, keywords, anchor rule or stamp rule does not reach or hold it; an example stands where a checkable rule should | Repair the route or the rule's wording; expose the consumer's real ids |
 | Tooling and gate | A check exists but runs only in CI, reads a different change range than the gate, or fails without naming the case | Run the check earlier, align inputs, name failures ([maintenance](maintenance.md#audit-the-execution-surface-before-adding-a-rule)) |
 | Agent adoption | The relevant section or finish step was demonstrably available and the worker skipped it | Record it; lower the step's cost only if repeated |
-| Process and architecture | The failure follows from how artifacts are stored or merged (committed generated views make every merge conflict with open peers) | A decision for the owner; record it, do not patch around it in pages |
+| Process and architecture | The failure follows from how artifacts are stored or merged (committed generated views make every merge conflict with open peers; resolving a page that mixes generated blocks and prose by taking one side drops the other side's authored lines while every gate stays green) | A decision for the owner; record it, do not patch around it in pages. Until it is decided, resolve and guard merges as in [maintenance](maintenance.md#merging-files-that-mix-authored-and-generated-text) |
 
 Several layers can hold at once; record each. "No wiki content change" is a valid
 and common outcome. On one recorded day, none of eight classified miss types was
@@ -179,7 +179,10 @@ that returned; whether the relevant section was in the delivered text or only
 reachable by a further read; whether output was truncated, paginated or cut by a
 size limit; and whether access controls hid it. Permission to open a file is not
 delivery. When these cannot be established, record the layer as unknown rather than
-choosing the one that blames the reader.
+choosing the one that blames the reader. Diagnose a retrieval miss by replaying the
+selector against the wiki at the task's base revision, not by inference: an
+inferred cause (a candidate limit) can be the opposite of the replay (no
+registered term matched).
 
 **Wiki and source disagree.** First classify the wiki statement:
 
@@ -240,6 +243,18 @@ not explain an older failure, and a failed run does not invalidate a later verif
 artifact. Do not promote an observation from one environment, profile or audience to
 others.
 
+When a later change supersedes part of a mechanism, revise the parent statement and
+every diagram node that states the old behavior; a newer sub-bullet appended under
+an unchanged parent leaves the page contradicting itself.
+
+A design-first workflow changes the page before the code exists. Write the intended
+behavior under an explicit "designed, not implemented" marker, with no
+verification stamp citing source or tests that do not exist yet and no completion
+badge. The finish step promotes it to current state only once the evidence exists;
+an abandoned slice leaves a proposal, not a false current claim. Acceptance at
+finish: every such marker on a touched page is either promoted with its evidence
+or still says designed.
+
 ### When planning, Wiki editing and implementation have different owners
 
 Use this optional handoff when the task deliberately separates those roles; a
@@ -251,6 +266,9 @@ accepted but not implemented, alongside the observed current behavior.
 Return that reviewed section to the implementer with the source/peer identities,
 changed constraints and file ownership. Confirm what was actually read; a hash
 identifies bytes but does not prove adoption. Late reading remains late reading.
+Facts handed over in a task packet are claims, even when the packet says they need
+not be rediscovered: verify each against source or its cited reference before it
+enters a current-state page.
 If source discovery changes the contract, return the specific difference to its
 owner before implementing a conflicting interpretation. After independent checks,
 the Wiki owner promotes only evidenced behavior to current candidate state, names

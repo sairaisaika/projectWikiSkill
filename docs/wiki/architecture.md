@@ -1,6 +1,6 @@
 # Architecture
 
-> Reviewed: 2026-11-03 against c062224
+> Reviewed: 2026-11-03 against c062224; task-views known gap verified against fc310fe
 
 These are module contracts read from code. All scripts use only the standard library.
 The four CLIs print JSON (plain text for `wiki.py list` and `query` without `--json`) and
@@ -41,6 +41,7 @@ summaries). Rationale and dated evidence live in
 - **CLI**: `show --packet PATH [--view {index,feature,impact,all}] [--path KEY] [--snapshot-only]`. The default view is `index`. `feature` and `impact` need one exact `--path` taken from the index. Output goes to stdout; there is no `--output`.
 - **Behavior**: without `--snapshot-only` it re-runs the capture currentness check and reports `freshness`. With `--snapshot-only` it renders saved records only. Every view carries `path_bases`, `native_workflow` (quoted, not executed), `view_observation` and `review_preparation`. `lifecycle.py` consumes the snapshot index view.
 - **Never**: calls Git in snapshot-only mode, clips native records silently, or authorizes dispatch.
+- **Known gap**: the index view adds `native_index` (with `omitted_candidates`) after every header field, so a reader that cuts `show` output by line count loses the omitted list first, against [change-navigation.md#make-the-first-wiki-read-useful](../../project-wiki/references/change-navigation.md#make-the-first-wiki-read-useful). No test pins the key order.
 
 ## capture-return
 
