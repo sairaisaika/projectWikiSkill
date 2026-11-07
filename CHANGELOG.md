@@ -14,6 +14,10 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
+## 0.2.27
+
+Recognize dated current-state headings through the existing common projection and state rotation. Keep their dates visible as authored labels, archive replaced headings verbatim, and remove the old heading date from new state. Fenced/history/nondate headings and older saved projections retain their boundaries. Evidence and verification layers: [status](docs/wiki/status.md#current-state).
+
 ## 0.2.26
 
 Captured page/history reads and state updates accept a saved Wiki key or its

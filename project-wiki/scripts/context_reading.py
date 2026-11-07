@@ -14,7 +14,7 @@ import shlex
 import sys
 
 HISTORY = re.compile(r'^(?:history|historical (?:evidence|notes|records)|verification history|review history|核验历史|archive|archived|历史|历史记录|历史证据|归档|迁出的历史)(?:\s*[（(].*[)）])?$',re.I)
-CURRENT = re.compile(r'^(current(?: state| status)?|当前(?:状态|现状)?|现状)$',re.I)
+CURRENT = re.compile(r'^(?P<label>current(?: state| status)?|当前(?:状态|现状)?|现状)(?:\s*[（(](?P<date>[0-9]{4}-[0-9]{2}-[0-9]{2})[)）])?$',re.I)
 QUALIFIER = re.compile(r'未合入|未部署|未上线|待部署|源码候选|not (?:yet )?(?:merged|deployed|released)|branch.only',re.I)
 VERIFY = re.compile(r'^>\s*(?:核验|Reviewed|Verification)\s*[:：]\s*(.*)',re.I)
 GENERATED_BEGIN = re.compile(r'^\s{0,3}<!--\s*(?:[\w.-]+:begin(?=\W|$)|begin(?=\W|$))',re.I)
@@ -188,7 +188,9 @@ def render_page(view: dict, artifact: str, history: bool=False, section: str | N
                   +'Current state: '+('declared; read its section separately' if view['authored_current_state'] else 'unknown')
                   +'; recorded verification metadata is available with --format json.\n'+body)
         else:
-            text=('AUTHORED CURRENT STATE (not independently verified)\n'+('Declared below in its original section.' if view['authored_current_state'] else 'Not declared; do not infer it from the latest note.')+
+            declared=[row['title'] for row in view.get('section_index',[]) if not row['history'] and (match:=CURRENT.fullmatch(row['title'])) and match['date']] if view['authored_current_state'] else []
+            declaration=('Declared current section: '+'; '.join(declared)+'\n') if declared else ''
+            text=('AUTHORED CURRENT STATE (not independently verified)\n'+declaration+('Declared below in its original section.' if view['authored_current_state'] else 'Not declared; do not infer it from the latest note.')+
                   '\nLATEST LISTED VERIFICATION NOTE (recorded evidence, not deployment)\n'+str(view['latest_verification_note'])+
                   '\nAUTHORED BODY — qualifiers may need owner review\n'+body)
     text += '\nHistorical material is separate: --view history. Freshness: '+view['freshness']+'\n'
@@ -358,6 +360,10 @@ def replace_current(text: str, current: str, recorded_at: str, verification: str
         _,kept_rows=heading_rows(''.join(kept_lines))
         insert=next((i for i,d,_,_ in kept_rows if d>1),len(kept_lines))
     heading=lines[spans[0][0]].rstrip('\r\n') if spans else '## Current state'
+    if spans:
+        depth,title=parse_heading(heading)
+        match=CURRENT.fullmatch(title)
+        if match and match['date']:heading='#'*depth+' '+match['label']
     section='\n'+heading+'\n\n'+current+'\n\n'
     if pending_note:section='\n'+pending_note+section
     kept_lines.insert(insert,section)
