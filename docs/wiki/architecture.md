@@ -230,24 +230,26 @@ quoted to readers. Rationale:
 > Reviewed: 2026-11-03 against c062224; task-views known gap verified against fc310fe
 
 
-### State-preview stdout follow-up (design; not implemented)
+### Saved state-preview reader (design; not implemented)
 
-The first guided0.2.22 task used bounded impact views, but `update-state` still
-printed its entire page-sized JSON plan after saving the same plan to an output
-file. The worker clipped that stdout before reading the saved proposal/diff.
-Bounded display must cover this operation too, without another reminder or gate.
+The first guided0.2.22 task read bounded impact views, then inspected a saved state
+proposal by printing its diff directly. Initial attribution to operation stdout
+was corrected by source inspection: `update-state` already returns compact JSON,
+not the page-sized plan. Keep that receipt contract and add a bounded reader for
+the saved proposal instead of adding reminders, gates or another workflow.
 
-For captures opting into bounded-v1, the operation will print a compact receipt
-and an exact command to read the saved preview. A pure `show-state` reader will
-show a saved diff or proposal with the existing byte/line cursor mechanism; it
-must not rerun native collection or apply a write during continuation. The full
-plan stays in the explicit output artifact. `--format json` remains a deliberate
-complete export, and older captures keep their prior default for compatibility.
-Plan kind/hash checks bind the shown proposal; cursor identity binds the chosen
-saved content/view. Preview/apply source-byte semantics remain unchanged. Test
-large Unicode plans, full reconstruction, changed-plan/cross-view cursors, old
-capture/explicit-JSON compatibility, and no write/native execution on reads.
+New plans will retain the exact original page bytes alongside the existing
+proposal. A pure `show-state --plan PATH --view diff|proposed` will validate saved
+hashes and use the existing byte/line cursor mechanism. Continuation must not
+inspect live project inputs, rerun native collection or apply writes. Old plans
+remain readable in proposed mode; diff requires a saved original, never an
+inferred reconstruction. Explicit JSON remains a deliberate complete export.
+The existing compact operation receipt will add an exact preview-reader command.
+Test large Unicode previews, complete reconstruction, changed-plan/cross-view
+cursors, legacy proposals, explicit JSON, and read-only behavior after apply.
 
-This does not prevent an agent from piping an unrelated legacy native query to
-`tail`. In the guided task, a newly planned file triggered the host's pre-existing
-native-command hint; that external routing limit remains separate evidence.
+The earlier initial design assumption is superseded by this source verification;
+there was no implementation of that assumption. An unrelated remaining boundary:
+a newly planned file triggered the host's old native-command hint, and the worker
+piped that query to `tail`. A saved-preview reader cannot prevent arbitrary raw
+native calls; that external route stays separate evidence.
