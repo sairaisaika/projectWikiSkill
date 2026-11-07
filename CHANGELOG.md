@@ -14,6 +14,13 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
+## 0.2.25
+
+Identical current `prepare` calls now return a small saved-context locator instead
+of repeating the file/owner index. First preparation and explicit summary/JSON
+reading keep complete scope; locator continuations and snapshot-only remain bounded.
+See [the measured task and counterexamples](evals/reports/reuse-locator-20261107.md).
+
 ## 0.2.24
 
 - Add `apply-state --plan` to apply the exact reviewed state proposal without

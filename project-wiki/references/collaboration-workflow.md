@@ -60,7 +60,11 @@ and support `--format text` for bounded agent reading.
 Repeated `prepare` with the same existing `--output` reuses it only when the
 normalized request, helper identity, Wiki/runtime/peer inputs, selected source
 baseline and observed revision refs match. It validates freshness without running
-the native router and does not rewrite capture bytes/timestamps. Changed scope or
+the native router and does not rewrite capture bytes/timestamps. A cache hit prints
+a bounded locator with scope/missing-input counts and an exact `show --view summary`
+command, rather than repeating the whole index. That explicit summary retains every
+file/owner and bounded continuation; `show --view locator` reopens only the locator.
+Neither view records that details have been read. Changed scope or
 stale inputs require a distinct output; no old evidence is silently refreshed.
 `capture` and other packet outputs remain write-new-only. A reused capture does
 not prove a host task stamp still exists, that an agent read it, or that a native
