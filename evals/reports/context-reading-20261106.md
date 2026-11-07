@@ -70,3 +70,11 @@ current-state metadata exceeds the display budget.
 - Plain, legacy-hook and portable-hook packages match source and identity 0.2.20
   under doctor. This is package closure, not installation or hook execution.
 - Cross-platform CI remains a separate observation on the final PR head.
+
+## Maintainer routing correction
+
+The final self-query `prepare` initially returned zero candidates: the route had
+only the longer phrase "file-first preparation". The failed result was retained
+before adding the command's exact name to that existing route. Replay now reaches
+workflow-capture, with no new route or selector change. This informed repair is
+not independent retrieval validation.

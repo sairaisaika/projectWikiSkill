@@ -246,7 +246,10 @@
         "原生上下文",
         "捕获原生",
         "file-first preparation",
-        "文件级上下文前置"
+        "文件级上下文前置",
+        "prepare",
+        "workflow.py prepare",
+        "文件级上下文"
       ],
       "sources": [
         {
@@ -554,7 +557,11 @@
         "只读视图",
         "compact context summary",
         "current history split",
-        "现状 历史"
+        "现状 历史",
+        "show --capture",
+        "current state",
+        "historical evidence",
+        "历史核验"
       ],
       "sources": [
         {
