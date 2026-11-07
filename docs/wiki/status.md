@@ -4,6 +4,21 @@
 
 
 
+
+## Current state
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+|0.2.26 candidate|365 collected /364 executed /1 local platform skip;48 focused pass; fixture/check/evaluation pass; platform CI pending|isolated path-repair branch|pending|not installed|not delivered|exact bad-path replay only, saved context unchanged|not inferred|
+|0.2.25|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42395696217), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42396074414);361 collected /360 executed /1 local platform skip|PR51, main12f2992 tree matches tested65fe838|source/package unit checks pass; no new hook configuration|Linux manual copy21/21 matches12f2992, quiet boundary17:24:13Z, old copy retained|fresh Skill payload delivery observed17:30:44Z|CI audit prepared file contexts and used NEXT before Wiki application; one wrong-basis page call needed retry; nightly script owner still unregistered and retained as a gap|bounded observations, not general efficiency or product acceptance|
+
+No automatic updater was added; settings/original sessions and other hosts remain unchanged. One controlled same-scope repeat reduced stdout2829→840 bytes, with complete context recoverable; no token/fee claim. Guided tasks and source/host/use are separate. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [captured paths](../../evals/reports/captured-page-path-20261107.md).
+
+## Historical evidence
+
+### State snapshot 2026-11-07T17:58:44.758338+00:00
+
+```markdown
 ## Current state
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
@@ -13,7 +28,7 @@
 
 No automatic updater was added. The source/installed/agent-use distinction remains; a short locator is not a reading acknowledgement. Counterevidence and prior guided-task limits remain in history. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [saved application](../../evals/reports/apply-saved-state-20261107.md).
 
-## Historical evidence
+```
 
 ### State snapshot 2026-11-07T17:13:36.620226+00:00
 

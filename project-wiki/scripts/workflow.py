@@ -706,7 +706,7 @@ def prepare_request(root, query, files, program, runtime_inputs, observed_revisi
 
 def state_update(value: dict, path: str, current: str, recorded_at: str, verification: str | None=None) -> dict:
     # Check saved evidence integrity; unrelated source edits are expected at finish.
-    capture_view(value,'page',path,snapshot_only=True)
+    path=capture_view(value,'page',path,snapshot_only=True)['path']
     root=Path(value['root']).resolve()
     name=relative(value['wiki_root']+'/'+relative(path))
     source=within(root,name)
@@ -847,6 +847,19 @@ def prepare(root: Path, query: str, files: list[str], program: list[str], runtim
     return value
 
 
+def captured_page_key(value: dict, path: str | None) -> str | None:
+    """Resolve only exact saved keys; never probe paths or invent ownership."""
+    if not isinstance(path,str):return path
+    reading=value.get('prepared_reading',{})
+    known=set(reading.get('pages',{})) | {r['path'] for r in reading.get('selected_wiki_pages',[]) if isinstance(r.get('path'),str)}
+    candidates={path} if path in known else set()
+    prefix=value['wiki_root'].rstrip('/')+'/'
+    if path.startswith(prefix) and path[len(prefix):] in known:candidates.add(path[len(prefix):])
+    if len(candidates)>1:
+        raise ValueError('Ambiguous captured Wiki page path; select an unambiguous saved key or repository-relative path')
+    return next(iter(candidates)) if candidates else path
+
+
 def capture_view(value: dict, view: str = 'summary', path: str | None = None, *, snapshot_only: bool = False) -> dict:
     if value.get('kind') != 'native-wiki-capture' or value.get('schema_version') != 1 or report_hash(value['native_report']) != value.get('native_report_canonical_sha256'):
         raise ValueError('Native context was changed or is unavailable')
@@ -868,12 +881,15 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
         result=reading_module().summary(value)
         if view=='locator':result=reading_module().locator_summary(result)
     elif view in ('page','history'):
+        path=captured_page_key(value,path)
         pages=value.get('prepared_reading',{}).get('pages',{})
         if path not in pages:
             selected = value.get('prepared_reading',{}).get('selected_wiki_pages',[])
             if any(row['path']==path and row['status']!='captured' for row in selected):
                 raise ValueError('Selected Wiki page is not present in the captured snapshot: '+str(path))
-            raise ValueError('Select a captured page from prepare; older captures do not contain saved page views')
+            if not pages:
+                raise ValueError('No saved page views in this capture; use prepare before reading a page')
+            raise ValueError('Requested Wiki page is not captured. Use a saved Wiki key or matching repository-relative path; list keys with show --view summary')
         result=dict(pages[path]); result['path']=path
     elif view in ('feature','impact'):
         key,field=('cards','path') if view=='feature' else ('impact','file')
