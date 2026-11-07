@@ -300,6 +300,13 @@
           "path": "project-wiki/scripts/workflow.py",
           "symbol": "prepare",
           "reason": "One native capture with file owners, saved page views and explicit existing-change observation"
+        },
+        {
+          "id": "prepare-reuse",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "prepare_request",
+          "reason": "Exact request identity for immutable current prepare reuse"
         }
       ],
       "docs": [
@@ -312,12 +319,13 @@
         "inputs": [
           "--root, --query, --native-argv JSON, --runtime-input (repeatable), --files groups (accumulate)",
           "optional --wiki-root, --peer ALIAS=CHECKOUT, --native-source-context, --preserve-artifact",
-          "prepare additionally requires nonempty --files; optional --observed-revision LABEL=REV is caller data, not live verification"
+          "prepare additionally requires nonempty --files; optional --observed-revision LABEL=REV is caller data, not live verification",
+          "Existing prepare output may be reused only for an identical current declared request; native execution and capture-time rewriting are skipped on a valid hit."
         ],
         "outputs": [
           "New native-wiki-capture JSON (exclusive create, at most 4 MiB)",
           "stdout {\"ok\": true, \"kind\", \"output\", \"limits\"}",
-          "prepare: saved native-wiki-capture with prepared_reading; complete compact index or explicit undelivered display"
+          "prepare: saved native-wiki-capture with prepared_reading; bounded compact index with exact continuation"
         ],
         "errors": [
           "{\"ok\": false, \"error\", \"completion\": \"not established\"} and exit 1 for ValueError",
@@ -379,7 +387,8 @@
       "tests": [
         "tests/test_workflow.py",
         "tests/test_readonly_baseline.py",
-        "tests/test_context_reading.py"
+        "tests/test_context_reading.py",
+        "tests/test_reading_flow.py"
       ],
       "checks": [
         {
@@ -564,7 +573,14 @@
         "历史核验",
         "selected Wiki page",
         "unregistered Markdown",
-        "核验历史"
+        "核验历史",
+        "output truncation",
+        "continuation cursor",
+        "reuse prepare",
+        "update-state",
+        "现状更新",
+        "输出分页",
+        "重复检索"
       ],
       "sources": [
         {
@@ -607,7 +623,7 @@
           "role": "implementation",
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "render_summary",
-          "reason": "Complete scope index with explicit display-budget refusal rather than silent clipping"
+          "reason": "Complete saved scope index displayed through bounded byte/line continuations"
         },
         {
           "id": "page-collection",
@@ -622,27 +638,60 @@
           "path": "project-wiki/scripts/workflow.py",
           "symbol": "prepare",
           "reason": "Records explicitly selected Wiki page status separately from source-owner registration"
+        },
+        {
+          "id": "text-page",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "text_page",
+          "reason": "Exact bounded text continuation across large Unicode lines and sections"
+        },
+        {
+          "id": "state-preview",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "state_update",
+          "reason": "Source-bound authored-state replacement preview"
+        },
+        {
+          "id": "state-apply",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "apply_state",
+          "reason": "Explicit atomic update of an unchanged selected Wiki page"
+        },
+        {
+          "id": "state-rotation",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "replace_current",
+          "reason": "Retain previous current sections and verification notes verbatim in history"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#task-views",
         "docs/wiki/architecture.md#path-kinds",
         "project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git",
-        "docs/wiki/architecture.md#file-first-preparation-and-state-reading"
+        "docs/wiki/architecture.md#file-first-preparation-and-state-reading",
+        "docs/wiki/architecture.md#bounded-continuation-reuse-and-authored-state-updates"
       ],
       "interface": {
         "inputs": [
           "show --packet PATH [--view index|feature|impact|all] [--path KEY] [--snapshot-only]",
           "show also accepts --capture with summary/page/history and an exact path/section; snapshot-only never reads live inputs",
-          "prepare --files may directly select Markdown inside the configured Wiki root; the saved selected_wiki_pages list is distinct from native owner declarations"
+          "prepare --files may directly select Markdown inside the configured Wiki root; the saved selected_wiki_pages list is distinct from native owner declarations",
+          "Text show views accept --cursor from the same saved content/view/path/section; --format json remains a complete machine export.",
+          "update-state --capture --path --state-file --output [--apply] replaces authored current state and rotates old state/verification notes."
         ],
         "outputs": [
-          "JSON view on stdout with freshness, path_bases, native_workflow and review_preparation; no output file"
+          "New prepared capture text defaults are bounded to6000 UTF-8 bytes/60 lines, with exact NEXT command and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",
+          "Explicit --format json exports the full unchanged view shape; update-state writes a private preview and optionally the unchanged selected Wiki Markdown page."
         ],
         "errors": [
-          "{\"ok\": false, ...} and exit 1 for an invalid packet, access scope or unknown --path"
+          "{\"ok\": false, ...} and exit 1 for an invalid packet, access scope or unknown --path",
+          "Changed/mismatched cursor, stale/different prepare reuse or stale/escaping state target fails explicitly; no source overwrite on stale target."
         ],
-        "compatibility": "Default view stays index; snapshot-only must keep working without Git. Existing packet index/feature/impact/all remain supported; index key order puts omissions first. Saved page views require prepare.",
+        "compatibility": "Default view stays index; snapshot-only must keep working without Git. Existing packet index/feature/impact/all remain supported; index key order puts omissions first. Saved page views require prepare. New prepared captures opt into bounded text with prepared_reading.text_display; old capture and packet JSON defaults remain unchanged.",
         "failure_modes": {
           "returned": [
             "Without --snapshot-only a stale capture is reported in freshness, not raised"
@@ -681,6 +730,19 @@
           "tests": [
             "tests/test_context_reading.py"
           ]
+        },
+        {
+          "id": "bounded-reading-and-state-rotation",
+          "statement": "Bounded text continuations preserve every character; state application preserves prior evidence and checks original page bytes, never inferring deployment or business truth.",
+          "source_ids": [
+            "text-page",
+            "state-preview",
+            "state-apply",
+            "state-rotation"
+          ],
+          "tests": [
+            "tests/test_reading_flow.py"
+          ]
         }
       ],
       "impact": [
@@ -690,7 +752,8 @@
         "tests/test_workflow.py",
         "tests/test_readonly_baseline.py",
         "tests/test_lifecycle.py",
-        "tests/test_context_reading.py"
+        "tests/test_context_reading.py",
+        "tests/test_reading_flow.py"
       ],
       "checks": [
         {
@@ -698,7 +761,7 @@
           "scope": "Offline synthetic fixtures and temporary Git repositories; no installed host, hook trust or real consumer project."
         }
       ],
-      "boundary": "Renders saved records; reading by an agent is not observed.",
+      "boundary": "Saved projections and explicit authored-state transforms; reading, semantic correctness, installation and live acceptance remain separately observed.",
       "unknowns": [],
       "evidence": {
         "implementation": "implemented",

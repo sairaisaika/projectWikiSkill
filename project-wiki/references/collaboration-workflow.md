@@ -46,11 +46,55 @@ source-owner index calls them unregistered. The index keeps that gap and lists
 direct page selection separately; selecting a page does not declare ownership.
 A planned Wiki page absent from the snapshot is listed as unavailable and is not
 created or given an invented reading view. The default text is an index, not the full
-page text. When it cannot fit the display budget it says **not delivered**, gives
-counts and the artifact pointer, and exposes no partial index as complete.
-`show --format json` returns the complete selected record; `--section` selects an
-exact captured body heading when a page is long. Historical evidence has its own
-view, and older verification notes are not treated as current deployment.
+page text. New prepared capture text views deliver bounded continuations (6000 UTF-8
+bytes and 60 lines); the printed `NEXT` command carries the same source, view,
+path, section and snapshot-only mode. It resumes at the exact next character,
+including inside an oversized section or Unicode line. Changed text or a mismatched
+view rejects the cursor rather than continuing into different evidence. Each
+part states its displayed range and whether more remains; a displayed prefix is
+never labeled the complete view. `--section` remains available as a direct route.
+`--format json` deliberately exports the complete selected record without display
+pagination; legacy capture/raw-native and packet views retain their JSON default for existing clients,
+and support `--format text` for bounded agent reading.
+
+Repeated `prepare` with the same existing `--output` reuses it only when the
+normalized request, helper identity, Wiki/runtime/peer inputs, selected source
+baseline and observed revision refs match. It validates freshness without running
+the native router and does not rewrite capture bytes/timestamps. Changed scope or
+stale inputs require a distinct output; no old evidence is silently refreshed.
+`capture` and other packet outputs remain write-new-only. A reused capture does
+not prove a host task stamp still exists, that an agent read it, or that a native
+report with a nonzero exit became successful.
+
+### Updating an authored current section
+
+After verifying the intended source behavior, place the new **current-section body**
+in a UTF-8 file, then use the same saved page context:
+
+```sh
+python <skill>/scripts/workflow.py update-state --capture <context.json> \
+  --path feature.md --state-file <current-body.md> --output <new-preview.json>
+# Optional application in an isolated owned checkout:
+python <skill>/scripts/workflow.py update-state --capture <context.json> \
+  --path feature.md --state-file <current-body.md> --output <new-apply.json> --apply
+```
+
+This previews the proposed full Markdown and original/proposed hashes. Application
+checks original page bytes and atomically replaces only that Wiki Markdown file;
+unrelated source edits do not force a new context. A changed page needs a fresh
+capture. Previous current sections and older top-level verification lines
+are retained verbatim in fenced historical snapshots, alongside existing history;
+one latest recorded note stays in place for native provenance readers. An optional
+`--verification` supplies a new single caller-authored note and archives the old one.
+No note is invented from Git. Existing current-heading spelling/level is preserved
+so ordinary section links continue to resolve;
+normal body/code examples remain in place. A repeated identical update is a no-op.
+Do not supply a whole page as the current body. The helper cannot decide which
+business claim is true, discover production state, or make a current product
+promise from Git ancestry. Feature current sections should describe same-version
+source contracts; timed integration/runtime observations remain with the existing
+handoff/release evidence. The write is an optimistic byte check, not a multiwriter
+lease; use the project's ordinary isolated-branch ownership.
 
 `prepare` reports existing changes among selected paths at capture time. This is
 not a reading receipt: preparation after edits cannot certify earlier reading,
