@@ -56,6 +56,31 @@ pages have no invented page view. Live selected-source drift is historical data,
 not current context. Caller-declared revision observations are not production
 or capability verification. See [the command](../../project-wiki/references/collaboration-workflow.md#file-first-preparation).
 
+## Reading-flow revision design (not implemented)
+
+Observed maintenance work still pipes long output through shell clipping, repeats
+native searches over unchanged input and appends temporal notes into current
+sections. The next bounded repair changes the existing prepare/show path:
+
+- Text views are byte-bounded continuations over saved text, with an exact next
+  command bound to capture/view/path/section identity. A large section or a single
+  long Unicode line remains reachable without searching headings or dumping JSON.
+- Repeating prepare against the same existing output reuses only an exact matching
+  request with current declared inputs and selected-source baseline; mismatched or
+  stale evidence stays immutable and asks for a distinct artifact. No native scan
+  on a valid reuse; changed scope takes the ordinary explicit capture path.
+- An explicit state-update operation replaces one authored current section and
+  rotates the previous section plus accumulated verification notes into history,
+  preserving unrelated body and existing history. It produces a preview; optional
+  application checks original bytes and writes atomically. Caller-authored current
+  facts remain claims, never inferred deployment or business acceptance.
+
+Regression evidence will cover cursor identity, all-text reconstruction, giant
+Unicode lines/sections, unchanged native-call counts, changed scope/input refusal,
+state/history preservation, repeat updates and stale write refusal. Structural
+checks, host installation, actual delivery and a post-reset real task stay separate.
+No new completion gate, task registry, background updater or runtime promotion.
+
 ## workflow-capture
 
 `workflow.py capture` turns one native task-context report into a `native-wiki-capture`.
