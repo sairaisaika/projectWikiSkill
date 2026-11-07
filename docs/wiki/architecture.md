@@ -88,8 +88,8 @@ page inside the selected Wiki root, preserving mode and refusing symlink targets
 Previous current sections and older verification lines are retained verbatim
 in fenced history; one latest recorded note remains for native provenance readers.
 Optional --verification supplies a new caller-authored single note and archives
-the previous one, never inventing a verification from Git. The original current
-heading and preamble/keyword metadata positions are retained; native section links
+the previous one, never inventing a verification from Git. Recognized current headings accept an optional ISO date in ASCII or full-width parentheses; the reader displays a dated declared heading without certifying its date or claims; undated page output stays unchanged. On changed-state rotation a dated heading loses its old date while its original dated heading/body are archived verbatim. Nondate qualifiers, historical sections and fenced examples are not promoted. Older saved unknown projections remain unknown until a new preparation. Undated current
+headings and preamble/keyword metadata positions are retained; native section links
 are checked separately. Existing history/body stay intact, repeated identical updates
 are no-ops. ATX closing hashes/indentation are normalized consistently for projection,
 section selection and rotation; fenced examples stay literal. The new state body
