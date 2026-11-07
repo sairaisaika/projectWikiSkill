@@ -52,7 +52,7 @@ The candidate saved one page (43,678 authored body characters) and returned it
 through the saved-page API while retaining the empty owner list and unregistered
 input. This is a coordinator replay, not worker adoption of the candidate.
 
-## Acceptance boundary
+## Historical pre-installation acceptance boundary
 
 The active worker continues using installed 0.2.20. This candidate has not replaced
 that installation, been merged, or established better delivery across independent
@@ -101,3 +101,40 @@ maintainer Wiki build/check pass. Fresh plain/legacy/portable packages each matc
 0.2.21 source, support inputs, byte identities and version. Cross-platform CI for
 this final source is recorded separately when it completes. No installed host
 was changed by packaging or review.
+
+
+## Bounded host adoption and actual use
+
+PR47 merged as 5a7918c, with the same source tree as final tested 03c21b2.
+The final source matrix passed on Ubuntu/Windows with Python 3.10/3.13.
+One Linux Claude skill-only installation was atomically exchanged at a helper-idle
+boundary: all 21 payload files matched the merged source, settings stayed unchanged,
+and the previous tree was retained. Old application sessions were not restarted.
+No auto-updater or wider host rollout was introduced.
+
+A fresh real maintenance task then loaded that installation. Its prepare capture
+included both directly selected Wiki pages through selected_wiki_pages, while
+native ownership gaps stayed explicit. The worker opened relevant original
+sections before its first product-source edit. Explicit history and current-state
+views were used; oversized pages required a named section rather than silent
+clipping. File-index delivery is not proof that every satellite original was read.
+New test infrastructure still required a separate source search. The coordinator
+completed independent acceptance after the worker's account limit interrupted
+final integration. Product source tests and controlled browser scenarios are not
+live backend, deployment, mobile-device or production acceptance.
+
+Earlier guided work still required semantic Wiki rework: green structural checks
+had accepted mixed historical/current prose and parallel copies of integration
+state. Existing feature pages now describe same-version contracts; timestamped
+integration evidence belongs in the task handoff. This was a consumer structure
+repair, not a new warning or gate. One reported stamp failure proved to be an edit
+attempt preceding preparation, and was corrected in the consumer friction log.
+A later alleged design-base bypass was unverified; launch evidence had already
+supplied the explicit base. Neither allegation justified changing a gate.
+
+This is guided observational evidence of successful delivery and use on one host.
+It does not establish lower token costs, causal efficiency gains, complete file
+coverage, or autonomous correctness. A dispatcher improvement that supplies the
+exact task-file path was prepared after repeated worker searches, but had no next
+real-task sample before the quota window ended. Private raw task/account traces
+remain outside this public repository.
