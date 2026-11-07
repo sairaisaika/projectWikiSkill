@@ -253,3 +253,19 @@ there was no implementation of that assumption. An unrelated remaining boundary:
 a newly planned file triggered the host's old native-command hint, and the worker
 piped that query to `tail`. A saved-preview reader cannot prevent arbitrary raw
 native calls; that external route stays separate evidence.
+
+
+### Archive placement follow-up (design checkpoint)
+
+Independent reconciliation of the first real state update found that its saved
+proposal contained the old current section, but the consumer's subsequent native
+generation removed it. The archive entry had been inserted immediately before the
+next heading, after the opening generated-block comment that precedes that heading.
+Structural/anchor checks did not prove byte preservation through regeneration.
+
+Insert new entries immediately after an existing authored history heading instead
+of at the next heading boundary. This keeps the previous history unchanged and
+avoids consuming the next section's leading generated-block marker. With no history,
+continue appending a new history section after the full page. Test both exact
+insertion and a simulated native generated-block rewrite, then rerun a real native
+generator before claiming preservation. No new reminder, gate or status inference.
