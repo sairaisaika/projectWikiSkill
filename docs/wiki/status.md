@@ -5,7 +5,7 @@
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
-| 0.2.23 candidate |346 Linux cases passed, one platform skip;12 new saved-preview cases; platform CI pending | isolated branch; not yet merged | pending refreshed profiles | none for0.2.23; Linux remains0.2.22 |0.2.23 not delivered | no worker use of0.2.23 yet | not inferred |
+| 0.2.23 candidate |351 Linux cases passed, one platform skip;17 new saved-preview/boundary cases; platform CI pending | isolated branch; not yet merged | pending refreshed profiles | none for0.2.23; Linux remains0.2.22 |0.2.23 not delivered | no worker use of0.2.23 yet | not inferred |
 
 The bounded reading/reuse/state mechanics in0.2.22 remain installed on one Linux
 Claude manual skill copy. Its guided fresh task received the payload and read both
