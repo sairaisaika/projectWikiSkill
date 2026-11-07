@@ -325,7 +325,7 @@
         "outputs": [
           "New native-wiki-capture JSON (exclusive create, at most 4 MiB)",
           "stdout {\"ok\": true, \"kind\", \"output\", \"limits\"}",
-          "prepare: saved native-wiki-capture with prepared_reading; bounded compact index with exact continuation"
+          "prepare: saved native-wiki-capture with prepared_reading; first call opens the complete saved index through bounded parts, identical current reuse returns a bounded locator with an exact summary-reading command"
         ],
         "errors": [
           "{\"ok\": false, \"error\", \"completion\": \"not established\"} and exit 1 for ValueError",
@@ -666,6 +666,20 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "replace_current",
           "reason": "Retain previous current sections and verification notes verbatim in history"
+        },
+        {
+          "id": "context-locator",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "locator_summary",
+          "reason": "Scope/missing-input counts without repeating complete owner records"
+        },
+        {
+          "id": "locator-display",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "render_locator",
+          "reason": "Bounded locator and exact full-summary command, with snapshot-only freshness preserved"
         }
       ],
       "docs": [
@@ -681,7 +695,8 @@
           "show also accepts --capture with summary/page/history and an exact path/section; snapshot-only never reads live inputs",
           "prepare --files may directly select Markdown inside the configured Wiki root; the saved selected_wiki_pages list is distinct from native owner declarations",
           "Text show views accept --cursor from the same saved content/view/path/section; --format json remains a complete machine export.",
-          "update-state --capture --path --state-file --output [--apply] replaces authored current state and rotates old state/verification notes."
+          "update-state --capture --path --state-file --output [--apply] replaces authored current state and rotates old state/verification notes.",
+          "show --capture PATH --view locator [--snapshot-only]: saved scope counts and a summary-reading command; no repeated file/owner delivery"
         ],
         "outputs": [
           "New prepared capture text defaults are bounded to6000 UTF-8 bytes/60 lines, with exact NEXT command and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",

@@ -1,6 +1,6 @@
 # Architecture
 
-> Reviewed: 2026-11-07 against reading-flow source; file-first preparation, bounded text continuations and explicit authored-state updates rechecked. Host/adoption status lives in status.md.
+> Reviewed: 2026-11-07; bounded reuse locator and task-view contract only; other sections retain their earlier review scope.
 
 These are module contracts read from code. All scripts use only the standard library.
 The CLIs primarily print JSON; `wiki.py list`, non-JSON queries and the new
@@ -72,7 +72,11 @@ Explicit `--format json` is an unpaginated machine export, not a bounded display
 Wiki root, peers, observed refs, preserved artifacts and reader implementation.
 Repeated prepare at the same output validates the request and current declared
 inputs, selected-source baseline and observed refs, then reuses original bytes and
-capture time without calling the native router. It never silently refreshes stale
+capture time without calling the native router. A valid hit returns a bounded
+`locator` (scope counts, missing-input counts and an exact `show --view summary`
+command), not another copy of the file/owner index. The complete summary and JSON
+exports remain available; snapshot-only locators still make no currentness claim.
+It never silently refreshes stale
 or differently scoped evidence. This is reuse over a declared closure, not a cache
 of the entire project or a check of external host task-stamp existence.
 

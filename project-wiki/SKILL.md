@@ -26,7 +26,8 @@ text views deliver at most 6000 UTF-8 bytes / 60 lines and an exact continuation
 command bound to that saved view. Sections remain optional, including for a
 single oversized section. JSON export remains explicit and complete. Repeating
 prepare with the same output reuses an identical current request without native
-execution; stale or different requests keep the old artifact and need a new path.
+execution and returns a short locator instead of repeating the index; its exact
+`show --view summary` command reopens all saved owners when needed; stale or different requests keep the old artifact and need a new path.
 
 Preparation records already changed selected paths; it does not certify that
 reading preceded those changes. A restricted reader uses `--snapshot-only` on the
