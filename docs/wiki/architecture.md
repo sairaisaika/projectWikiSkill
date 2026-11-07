@@ -1,6 +1,6 @@
 # Architecture
 
-> Reviewed: 2026-11-07, selected-page candidate based on 59d4ee7; only prepare/reading selection and explicit history labels rechecked.
+> Reviewed: 2026-11-07 against reading-flow source; file-first preparation, bounded text continuations and explicit authored-state updates rechecked. Host/adoption status lives in status.md.
 
 These are module contracts read from code. All scripts use only the standard library.
 The CLIs primarily print JSON; `wiki.py list`, non-JSON queries and the new
@@ -26,7 +26,7 @@ summaries). Rationale and dated evidence live in
 manifest: every requested file keeps all native owners and all omissions remain
 explicit. `prepare` needs a nonempty file list and the original execution opt-in.
 It records tracked/untracked selected changes without attributing authorship or
-claiming pre-edit reading. Output is write-new-only and transport-budget bounded.
+claiming pre-edit reading. New captures are transport-budget bounded. An identical prepare request may reuse its current existing output without native execution or rewriting; different/stale artifacts remain immutable. Other capture/packet outputs remain write-new-only.
 
 A selected `.md` file under the configured Wiki root is saved as a reading page
 without changing the native source-owner inventory. `prepared_reading.selected_wiki_pages`
@@ -49,12 +49,54 @@ there and cannot become the latest top-level verification note. Product headings
 preserved for explicit reading; snapshots do not reopen live pages or invoke Git.
 
 `show --capture` defaults to the summary; impact/feature show one complete native
-record, page shows saved authored body, history shows older material. A long body
-returns a section index instead of a partial page. New views also accept a work
+record, page shows saved authored body, history shows older material. Long text views are continued within 6000 UTF-8 bytes and 60 lines; the exact NEXT command is bound to saved text and preserves view/path/section/format/snapshot mode. Large sections and Unicode single lines remain reachable. Explicit JSON export remains complete. New views also accept a work
 packet through its existing saved context. Legacy captures without prepared
 pages have no invented page view. Live selected-source drift is historical data,
 not current context. Caller-declared revision observations are not production
 or capability verification. See [the command](../../project-wiki/references/collaboration-workflow.md#file-first-preparation).
+
+## Bounded continuation, reuse and authored-state updates
+
+`context_reading.text_page` emits an explicit character range and COMPLETE/PARTIAL
+status, within 6000 UTF-8 bytes and 60 lines. CLI stdout explicitly uses UTF-8/LF so Windows newline translation does not inflate the wire budget. A digest-bound cursor resumes the exact
+saved view; text changes or a different capture/view/path/section reject the cursor.
+The printed command preserves snapshot-only mode and explicit text format. Shell
+commands are quoted for POSIX or PowerShell on the running host. Scope is neither
+silently clipped nor falsely called fully delivered; a cursor never certifies reading.
+New prepared captures carry the additive text_display=bounded-v1 marker and
+default to bounded text, including impact/feature/all. Older captures, raw native
+captures and packet views retain default JSON for active clients; `--format text` bounds them too.
+Explicit `--format json` is an unpaginated machine export, not a bounded display.
+
+`prepare_request` binds root/query/selected files/native prefix/runtime inputs,
+Wiki root, peers, observed refs, preserved artifacts and reader implementation.
+Repeated prepare at the same output validates the request and current declared
+inputs, selected-source baseline and observed refs, then reuses original bytes and
+capture time without calling the native router. It never silently refreshes stale
+or differently scoped evidence. This is reuse over a declared closure, not a cache
+of the entire project or a check of external host task-stamp existence.
+
+`update-state --capture --path --state-file --output [--apply]` previews an authored
+current-section replacement and original/proposed hashes. `state_update` requires
+the selected captured page still match its original bytes; unrelated code edits
+are allowed at finish. `apply_state` atomically replaces that unchanged Markdown
+page inside the selected Wiki root, preserving mode and refusing symlink targets.
+Previous current sections and older verification lines are retained verbatim
+in fenced history; one latest recorded note remains for native provenance readers.
+Optional --verification supplies a new caller-authored single note and archives
+the previous one, never inventing a verification from Git. The original current
+heading and preamble/keyword metadata positions are retained; native section links
+are checked separately. Existing history/body stay intact, repeated identical updates
+are no-ops. ATX closing hashes/indentation are normalized consistently for projection,
+section selection and rotation; fenced examples stay literal. The new state body
+cannot inject top-level/history sections, temporal verification notes or an unclosed
+code fence. These are local transform input checks, not completion gates.
+
+Caller-authored state remains claims. The tool cannot infer business correctness,
+deployment, rollout, or acceptance from source/Git. Applying is an optimistic byte
+check in an owned isolated checkout, not a concurrent-writer lease. No background
+updater, new registry or task gate is introduced. Regression and adoption evidence:
+[reading-flow report](../../evals/reports/reading-flow-20261107.md).
 
 ## workflow-capture
 
@@ -79,8 +121,8 @@ reading views are described above, with legacy packet views retained below.
 
 - **CLI**: `show --packet PATH [--view {index,feature,impact,all}] [--path KEY] [--snapshot-only]`. The default view is `index`. `feature` and `impact` need one exact `--path` taken from the index. Output goes to stdout; there is no `--output`.
 - **Behavior**: without `--snapshot-only` it re-runs the capture currentness check and reports `freshness`. With `--snapshot-only` it renders saved records only. The legacy index/feature/impact/all packet views carry `path_bases`, `native_workflow` (quoted, not executed), `view_observation` and `review_preparation`. New summary/page/history views expose saved reading projections and freshness, plus task scope when invoked with a packet; the complete native return contract remains in the saved capture. `lifecycle.py` consumes the snapshot index view.
-- **Never**: calls Git in snapshot-only mode, clips native records silently, or authorizes dispatch.
-- **Implemented candidate**: packet index puts native_index first and omitted candidates first inside it. `prepare` defaults to a compact complete index; an oversized index is explicitly undelivered. Behavioral coverage is in `tests/test_context_reading.py`; installation/adoption is separate.
+- **Never**: calls Git in snapshot-only mode, clips native records silently, or authorizes dispatch. The separate explicit update-state --apply operation can edit its selected Wiki page; show never writes.
+- **Implemented candidate**: packet index puts native_index first and omitted candidates first inside it. `prepare` defaults to a compact scope index; oversized indexes use explicit bounded continuation. Behavioral coverage is in `tests/test_context_reading.py`; installation/adoption is separate.
 
 ## capture-return
 
