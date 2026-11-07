@@ -78,3 +78,12 @@ only the longer phrase "file-first preparation". The failed result was retained
 before adding the command's exact name to that existing route. Replay now reaches
 workflow-capture, with no new route or selector change. This informed repair is
 not independent retrieval validation.
+
+## Cross-platform correction
+
+The first final-head Windows run failed one new path-basis assertion: the fixture
+used the runner's short temporary pathname while capture correctly stored its
+resolved long pathname. The assertion now compares the resolved expected Path,
+retaining the check that the reported base identifies the real selected root.
+No production path policy was changed. Final-head CI is re-run after this test
+portability repair; earlier Linux success is not substituted for that result.

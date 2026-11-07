@@ -64,7 +64,7 @@ class ContextReadingTests(unittest.TestCase):
         self.assertEqual(v['preparation']['selected_paths_with_changes'],[])
         self.assertEqual(c['evidence']['agent_use'],'unverified')
         self.assertEqual(v['path_bases']['wiki_root'],'docs/wiki')
-        self.assertEqual(v['path_bases']['source_root'],str(self.root))
+        self.assertEqual(Path(v['path_bases']['source_root']),self.root.resolve())
     def test_unknown_query_still_delivers_file_context(self):
         v=self.view(self.prepare(query='unknown'))
         self.assertEqual(v['files'][0]['file'],'src/editor.py')
