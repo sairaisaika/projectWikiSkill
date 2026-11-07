@@ -763,7 +763,11 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
         result=reading_module().summary(value)
     elif view in ('page','history'):
         pages=value.get('prepared_reading',{}).get('pages',{})
-        if path not in pages:raise ValueError('Select a captured page from prepare; older captures do not contain saved page views')
+        if path not in pages:
+            selected = value.get('prepared_reading',{}).get('selected_wiki_pages',[])
+            if any(row['path']==path and row['status']!='captured' for row in selected):
+                raise ValueError('Selected Wiki page is not present in the captured snapshot: '+str(path))
+            raise ValueError('Select a captured page from prepare; older captures do not contain saved page views')
         result=dict(pages[path]); result['path']=path
     elif view in ('feature','impact'):
         key,field=('cards','path') if view=='feature' else ('impact','file')

@@ -211,7 +211,7 @@ class ContextReadingTests(unittest.TestCase):
         self.unregistered_router();c=self.prepare(['docs/wiki/future.md'])
         self.assertEqual(self.view(c)['selected_wiki_pages'],[{'file':'docs/wiki/future.md','path':'future.md','status':'not present in Wiki snapshot'}])
         self.assertFalse((self.root/'docs/wiki/future.md').exists())
-        with self.assertRaisesRegex(ValueError,'captured page'):self.view(c,'page','future.md')
+        with self.assertRaisesRegex(ValueError,'not present in.*snapshot'):self.view(c,'page','future.md')
     def test_directly_selected_page_can_be_read_after_source_disappears(self):
         self.unregistered_router();p=self.root/'docs/wiki/selected.md';p.write_text(PAGE,encoding='utf-8')
         c=self.prepare(['docs/wiki/selected.md']);p.unlink()
@@ -248,5 +248,16 @@ class ContextReadingTests(unittest.TestCase):
         self.assertIn('2020-01-01 old pending branch',p['history_markdown'])
         p['freshness']='snapshot'
         self.assertIn('2020-01-01 old pending branch',wf.reading_module().render_page(p,'saved.json',history=True))
+
+    def test_summary_does_not_report_no_history_after_notes_move_to_history(self):
+        (self.root/'docs/wiki/feature.md').write_text('# F\n## Current state\nCandidate.\n## 核验历史\n> 核验：2020-01-01 older review\n',encoding='utf-8')
+        v=self.view(self.prepare());page=next(p for p in v['pages'] if p['path']=='feature.md')
+        self.assertEqual(page['historical_notes'],0)
+        self.assertTrue(page['history_present'])
+        self.assertIn('history=present; older notes=0',wf.render_context_summary(v,'saved.json'))
+    def test_missing_selected_page_error_names_actual_snapshot_gap(self):
+        self.unregistered_router();c=self.prepare(['docs/wiki/future.md'])
+        with self.assertRaisesRegex(ValueError,'not present in.*snapshot.*future.md'):
+            self.view(c,'page','future.md')
 
 if __name__=='__main__':unittest.main()

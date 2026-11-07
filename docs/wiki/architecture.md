@@ -32,6 +32,8 @@ A selected `.md` file under the configured Wiki root is saved as a reading page
 without changing the native source-owner inventory. `prepared_reading.selected_wiki_pages`
 records its source-relative file, Wiki-relative page and captured/missing status;
 the compact index labels these as direct selections, not owner declarations.
+Explicit history presence is shown separately from older top-level note counts;
+moving a note into history cannot make the index claim there is no history.
 Missing planned pages remain explicit and are not created. Existing native pages
 are deduplicated, and snapshot-only views still use only saved text. Paths outside
 the selected Wiki root are not inferred to be Wiki pages.
@@ -39,7 +41,10 @@ the selected Wiki root are not inferred to be Wiki pages.
 `context_reading.py` separates authored current-state sections, the first listed
 verification note, older notes and explicit history. Ambiguous body qualifiers
 are review candidates, never auto-promoted from Git ancestry. Explicit `Verification history`, `Review history` and `核验历史` headings are
-also historical sections. Quoted verification notes inside explicit history remain
+also historical sections. This is an exact heading convention, not a semantic
+classifier: a current product feature with an identical heading would also move
+to the history view. Give such a feature an unambiguous heading. A trailing
+verification note under a final history section belongs to that history. Quoted verification notes inside explicit history remain
 there and cannot become the latest top-level verification note. Product headings such as "History editor" remain body content. All captured body/history text is
 preserved for explicit reading; snapshots do not reopen live pages or invoke Git.
 
