@@ -17,6 +17,10 @@ import re
 import sys
 
 
+class MissingManifest(ValueError):
+    """This helper's manifest format has not been adopted; no project error inferred."""
+
+
 class Invalid(ValueError):
     """An actionable manifest, path or source error."""
 
@@ -54,7 +58,10 @@ def read_json(path):
 
 
 def load(root):
-    manifest = read_json(local(root, 'docs/wiki/routes.json'))
+    route_file = local(root, 'docs/wiki/routes.json')
+    if not route_file.exists() and not route_file.is_symlink():
+        raise MissingManifest('No helper routes.json; use the project native router when it already has one')
+    manifest = read_json(route_file)
     if not isinstance(manifest, dict) or type(manifest.get('schema_version')) is not int or manifest.get('schema_version') not in (1, 2):
         raise Invalid('Expected schema_version 1 (legacy) or 2')
     if not text(manifest.get('project')) or not isinstance(manifest.get('routes'), list):
@@ -852,6 +859,16 @@ def main(argv=None):
               'diagram_coverage': report['diagram_coverage'],
               'scope': 'structure and drift, not semantic truth or runtime acceptance'})
         return 1 if stale else 0
+    except MissingManifest as error:
+        markers=[]
+        for name in ('docs/wiki/INDEX.md','docs/wiki/MAP.md','scripts/wiki-task.ts','scripts/wiki-task.py'):
+            try:
+                if local(root,name).is_file():markers.append(name)
+            except Invalid:pass
+        emit({'valid':False,'error_code':'helper_manifest_missing','error':str(error),'native_markers':markers,
+              'next_step':'Read the project entry/native-wiki-adoption guide. For native JSON routes use workflow.py prepare with explicit --files, reviewed --native-argv prefix and --runtime-input plus execution opt-in. Do not create a second manifest merely to satisfy this helper.',
+              'reference':'references/native-wiki-adoption.md','native_execution':'not performed'})
+        return 2
     except (ValueError, OSError, SyntaxError, TypeError, KeyError) as error:
         emit({'valid': False, 'error': str(error)})
         return 1

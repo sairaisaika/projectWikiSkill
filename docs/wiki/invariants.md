@@ -1,6 +1,6 @@
 # Invariants
 
-> Reviewed: 2026-11-03 against c062224
+> Reviewed: 2026-11-06, context-reading invariant rows added; older rows retain their scoped evidence.
 
 This page is an **index** from each guarded behaviour to the code that enforces it and the
 tests that guard it. The tests are the source of truth: if a row and a test disagree, the test
@@ -71,3 +71,13 @@ At review time this gave 255 `def test_` methods in 15 files. The suite runs wit
 `python -m unittest discover -s tests -v`, the first of the two test commands in
 [check.yml](../../.github/workflows/check.yml). The second runs `evals/fixture-project/tests`. When a test is renamed or
 removed, fix the row here in the same change. A test name that no longer greps is a stale row.
+
+## Context reading candidate
+
+| Invariant | Implementation | Behavioral evidence |
+|---|---|---|
+| File context retains all owners despite query misses; omissions and unregistered files remain visible | workflow.prepare / context_reading.summary | tests/test_context_reading.py |
+| Preparation is not a prior-reading certificate; selected dirty paths are explicit | workflow.prepare | tests/test_context_reading.py |
+| Snapshot page/history reading never invokes Git or reopens current pages | workflow.capture_view | tests/test_context_reading.py |
+| History is projected separately; authored state and declared refs never establish live capabilities | context_reading.page_projection | tests/test_context_reading.py |
+| Display overflow is explicitly undelivered, not a truncated completeness claim | context_reading.render_summary / render_page | tests/test_context_reading.py |

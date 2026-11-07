@@ -1,16 +1,23 @@
 # Version status
 
-> Reviewed: 2026-11-03 against c062224
+## Current state
 
-One row per version. Each cell says what a record shows for that layer; each `yes`
-links the record. Cells come from [evals/reports/](../../evals/reports/README.md) (including
-JSON receipts), [PLUGIN_PLAN.md](../../docs/PLUGIN_PLAN.md),
-[PROJECT.md » History](../../PROJECT.md#history) and, where noted, this repository's git
-history. See also [CHANGELOG.md](../../CHANGELOG.md).
-Caveats live in the linked report, not here. When new evidence arrives, change the
-cell and its link; do not add a paragraph.
+- Main observed for this source review: fc310fe, identity 0.2.19. PR45 bf2d12b is a separate
+  documentation candidate. The older adoption matrix below is historical,
+  not a current statement that main is still on 0.2.17.
+- Independent context-reading source candidate: identity 0.2.20. Implemented
+  prepare, compact scope delivery, captured current/history views and actionable
+  native-format guidance. Source, fixture and three package profiles pass local checks; cross-platform
+  CI is separate. Verification scope is recorded in the [evaluation](../../evals/reports/context-reading-20261106.md).
+- No host installation, hook activation, consumer project mutation, independent
+  fresh-agent adoption or efficiency improvement is claimed.
 
-## Status table
+## Historical evidence
+
+Earlier status and installation observations are preserved below as records;
+read their original dates and evidence scopes. They do not override current state.
+
+### Status table
 
 | Version | Source CI | main adopted | package closure | installed host(s) | hook discovered | trusted | delivered | agent use observed | business acceptance |
 |---|---|---|---|---|---|---|---|---|---|
@@ -31,7 +38,7 @@ cell and its link; do not add a paragraph.
 | 0.2.6 | [yes](../../evals/reports/codex-inventory-doctor-c77-20261023.md#host-adoption-after-source-merge) | [yes](../../evals/reports/codex-inventory-doctor-c77-20261023.md#host-adoption-after-source-merge) | [yes](../../evals/reports/codex-inventory-doctor-c77-20261023.md#host-adoption-after-source-merge) | [yes](../../evals/reports/codex-inventory-doctor-c77-20261023.md#host-adoption-after-source-merge) | n/a | n/a | unknown | [yes](../../evals/reports/source-sdk-boundaries-c80-20261023.md) | pending |
 | 0.2.5 | [yes](../../docs/PLUGIN_PLAN.md#codex-inventory-observations-026-candidate) | [yes](../../evals/reports/host-adoption-v025-20261022.md) | [yes](../../evals/reports/host-adoption-v025-20261022.md#official-windows-update-and-observed-cache-replacement) | [yes](../../evals/reports/host-adoption-v025-20261022.md#official-windows-update-and-observed-cache-replacement) | n/a | n/a | [yes](../../evals/reports/host-adoption-v025-20261022.md#fresh-codex-cli-observation) | [yes](../../evals/reports/host-adoption-v025-20261022.md#fresh-codex-cli-observation) | pending |
 
-## Legend
+### Legend
 
 | Cell | Meaning |
 |---|---|
@@ -52,13 +59,13 @@ Column meanings:
 - **agent use observed**: an agent used this version's skill, helper or delivered context in recorded work. Test suites, command replays and doctor runs do not count. Not proof of correct or efficient use.
 - **business acceptance**: the consumer project's own outcome was accepted. No version has this; every report keeps it separate.
 
-## Notes on specific cells
+### Notes on specific cells
 
 - Installed hosts: 0.2.5 to 0.2.17 "yes" means one Windows Codex host via the official plugin CLI. 0.2.19 "yes" means skill-only copies (no hooks) on a Mac Codex and a Linux Claude host.
 - 0.2.5 Source CI: recorded in PLUGIN_PLAN ("exact main CI green"), not in a report.
 - main adopted for 0.2.8, 0.2.13, 0.2.15 and 0.2.16 comes from `git log --merges origin/main` (8679084, 58073d4, 6de3f3e, dc771f3); no report records it and their CI result is unrecorded. origin/main is at 0.2.17 (b8a1782), so 0.2.18, 0.2.19 and the post-ee6c065 payload are not on main.
 
-## Canonical copies
+### Canonical copies
 
 | Copy | What it is | Last recorded state |
 |---|---|---|

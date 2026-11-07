@@ -1,0 +1,192 @@
+"""Usable context delivery without another gate or implicit native execution."""
+import copy
+import importlib.util
+import json
+from pathlib import Path
+import subprocess
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[1]
+spec = importlib.util.spec_from_file_location('context_workflow', ROOT/'project-wiki/scripts/workflow.py')
+wf = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(wf)
+
+NATIVE = '''import json,sys
+q=sys.argv[1]; files=sys.argv[sys.argv.index('--files')+1:]
+print(json.dumps({'query':q,'cards':[] if q=='unknown' else [{'path':'feature.md','title':'Editor'}],
+ 'impact':[{'file':f,'pages':[{'path':'feature.md','title':'Editor'},{'path':'consumer.md','title':'Reader'}], 'unregistered':False} for f in files],
+ 'omitted':[{'path':'unexpanded.md','title':'Not yet read'}], 'placementIssues':[], 'limits':'registered scope only'}))
+'''
+PAGE = '''# Feature
+> 核验：2026-11-06 · abc1234 工作树，未部署｜2026-10-01 · def5678 旧记录
+
+## Current state
+Source behavior reviewed; runtime acceptance unknown.
+
+## Mechanism
+One writer serves the reader.
+
+## History
+An older not deployed claim retained for provenance.
+'''
+
+class ContextReadingTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)/'repo'; self.root.mkdir()
+        (self.root/'docs/wiki').mkdir(parents=True); (self.root/'src').mkdir()
+        for name,text in [('feature',PAGE),('consumer','# Reader\n'),('unexpanded','# Candidate\n')]:
+            (self.root/f'docs/wiki/{name}.md').write_text(text,encoding='utf-8')
+        (self.root/'native.py').write_text(NATIVE,encoding='utf-8')
+        (self.root/'src/editor.py').write_text('title = None\n',encoding='utf-8')
+        self.git('init'); self.git('config','user.name','Fixture'); self.git('config','user.email','fixture@example.invalid')
+        self.git('add','.'); self.git('commit','-m','baseline')
+    def git(self,*args):
+        return subprocess.check_output(['git','-C',str(self.root),*args],stderr=subprocess.PIPE).decode().strip()
+    def prepare(self,files=None,query='editor',**kw):
+        return wf.prepare(self.root,query,files or ['src/editor.py'],[sys.executable,'native.py'],['native.py'],allow_execution=True,**kw)
+    def view(self,value,view='summary',path=None,**kw):
+        return wf.capture_view(value,view,path,**kw)
+    def test_index_places_omissions_before_long_metadata(self):
+        c=wf.capture(self.root,'editor',['src/editor.py'],[sys.executable,'native.py'],['native.py'],allow_execution=True)
+        p=wf.start(c,'task','owner','edit',['src/editor.py'],['source evidence'],['title'])
+        v=wf.task_view(p,'index')
+        self.assertEqual(next(iter(v)),'native_index')
+        self.assertEqual(next(iter(v['native_index'])),'omitted_candidates')
+    def test_prepare_has_no_packet_ceremony_and_keeps_every_owner(self):
+        c=self.prepare();v=self.view(c)
+        self.assertEqual(c['kind'],'native-wiki-capture')
+        self.assertEqual(v['files'][0]['pages'],['feature.md','consumer.md'])
+        self.assertEqual(v['unexpanded_candidates'][0]['path'],'unexpanded.md')
+        self.assertEqual(v['preparation']['selected_paths_with_changes'],[])
+        self.assertEqual(c['evidence']['agent_use'],'unverified')
+        self.assertEqual(v['path_bases']['wiki_root'],'docs/wiki')
+        self.assertEqual(Path(v['path_bases']['source_root']),self.root.resolve())
+    def test_unknown_query_still_delivers_file_context(self):
+        v=self.view(self.prepare(query='unknown'))
+        self.assertEqual(v['files'][0]['file'],'src/editor.py')
+        self.assertEqual(len(v['files'][0]['pages']),2)
+    def test_existing_changes_cannot_be_reported_as_pre_edit_reading(self):
+        (self.root/'src/editor.py').write_text('title = "changed"\n')
+        (self.root/'src/new.py').write_text('new = True\n')
+        v=self.view(self.prepare(['src/editor.py','src/new.py']))
+        self.assertEqual(v['preparation']['selected_paths_with_changes'],['src/editor.py','src/new.py'])
+        self.assertEqual(v['preparation']['reading_before_edits'],'not established')
+    def test_page_default_separates_history_without_promoting_claims(self):
+        c=self.prepare(observed_revisions={'deployed':'HEAD'})
+        p=self.view(c,'page','feature.md')
+        self.assertIn('One writer',p['body_markdown'])
+        self.assertNotIn('An older not deployed',p['body_markdown'])
+        self.assertIn('runtime acceptance unknown',p['authored_current_state'])
+        self.assertIn('未部署',p['latest_verification_note']['text'])
+        self.assertEqual(p['currentness'],'authored claims; not independently verified')
+        h=self.view(c,'history','feature.md')
+        self.assertIn('An older not deployed',h['history_markdown'])
+        self.assertIn('旧记录',h['historical_verification_notes'][0]['text'])
+    def test_absent_current_section_is_unknown_not_latest_stamp(self):
+        (self.root/'docs/wiki/feature.md').write_text('# F\n> Reviewed: 2020-01-01 old not deployed\n',encoding='utf-8')
+        p=self.view(self.prepare(),'page','feature.md')
+        self.assertIsNone(p['authored_current_state'])
+        self.assertIn('not independently verified',p['currentness'])
+    def test_snapshot_page_does_not_read_git_or_live_pages(self):
+        c=self.prepare()
+        (self.root/'docs/wiki/feature.md').unlink()
+        with patch.object(wf,'git',side_effect=AssertionError('must not invoke Git')):
+            p=self.view(c,'page','feature.md',snapshot_only=True)
+        self.assertIn('One writer',p['body_markdown'])
+        self.assertFalse(p['current_inputs_checked'])
+    def test_selected_source_change_is_reported_as_historical(self):
+        c=self.prepare();(self.root/'src/editor.py').write_text('changed = True\n')
+        self.assertFalse(self.view(c)['current_inputs_checked'])
+        self.assertIn('historical',self.view(c)['freshness'])
+    def test_history_named_product_feature_is_not_hidden_as_evidence(self):
+        text='# History editor\n## Version history behavior\nCurrent feature detail.\n'
+        (self.root/'docs/wiki/feature.md').write_text(text)
+        p=self.view(self.prepare(),'page','feature.md')
+        self.assertIn('Current feature detail',p['body_markdown'])
+        self.assertEqual(p['history_markdown'],'')
+    def test_page_budget_returns_section_index_not_a_partial_body(self):
+        c=self.prepare();p=self.view(c,'page','feature.md')
+        p['body_markdown']+='x'*9000
+        text=wf.reading_module().render_page(p,'context.json',budget=1000)
+        self.assertIn('body not delivered',text);self.assertIn('Mechanism',text)
+        self.assertNotIn('xxxx',text)
+    def test_section_expansion_ignores_code_block_headings(self):
+        text='## Mechanism\nExample:\n```markdown\n## Mechanism\n# fake end\n```\nActual detail.\n## Other\nOutside.\n'
+        selected=wf.reading_module().select_section(text,'Mechanism')
+        self.assertIn('Actual detail',selected);self.assertNotIn('Outside',selected)
+    def test_projection_does_not_treat_fenced_history_as_real_history(self):
+        p=wf.reading_module().page_projection('# F\n````markdown\n```\n## History\nExample only.\n````\n## Mechanism\nReal body.\n')
+        self.assertEqual(p['history_markdown'],'')
+        self.assertIn('Real body',p['body_markdown'])
+        self.assertEqual([x['title'] for x in p['section_index']],['F','Mechanism'])
+    def test_selected_section_is_not_blocked_by_large_state_metadata(self):
+        p=self.view(self.prepare(),'page','feature.md')
+        p['authored_current_state']='x'*9000
+        text=wf.reading_module().render_page(p,'context.json',section='Mechanism',budget=1000)
+        self.assertIn('One writer serves',text);self.assertNotIn('not delivered',text)
+    def test_impact_mismatch_names_missing_extra_and_counts(self):
+        c=self.prepare();r=copy.deepcopy(c['native_report']);r['impact'][0]['file']='src/wrong.py'
+        with self.assertRaisesRegex(ValueError,'requested=1, returned=1.*editor.py.*wrong.py'):
+            wf.validate_native(r,'editor',['src/editor.py'],self.root,'docs/wiki')
+    def test_live_stale_view_is_historical(self):
+        c=self.prepare();(self.root/'docs/wiki/feature.md').write_text('# changed\n')
+        v=self.view(c)
+        self.assertFalse(v['current_inputs_checked']);self.assertIn('historical',v['freshness'])
+    def test_saved_page_tamper_is_rejected(self):
+        c=self.prepare();c['prepared_reading']['pages']['feature.md']['body_markdown']='forged'
+        with self.assertRaisesRegex(ValueError,'reading.*changed'):self.view(c,snapshot_only=True)
+    def test_large_summary_is_explicitly_undelivered_not_clipped(self):
+        v=self.view(self.prepare())
+        v['files']=[{'file':f'src/item{i}.py','pages':['feature.md'],'unregistered':False} for i in range(1000)]
+        text=wf.render_context_summary(v,'saved-context.json',budget=700)
+        self.assertIn('not delivered',text)
+        self.assertIn('1000',text);self.assertIn('saved-context.json',text)
+        self.assertNotIn('item0.py',text)
+    def test_unregistered_input_is_visible_in_complete_index(self):
+        native=(self.root/'native.py').read_text()
+        native=native.replace("'pages':[{'path'", "'pages':[] if f=='src/unknown.py' else [{'path'",1)
+        native=native.replace("'unregistered':False", "'unregistered':f=='src/unknown.py'",1)
+        (self.root/'native.py').write_text(native)
+        v=self.view(self.prepare(['src/editor.py','src/unknown.py']))
+        self.assertEqual(v['unregistered_files'],['src/unknown.py'])
+        self.assertEqual(len(v['files']),2)
+    def test_saved_context_budget_refuses_instead_of_writing_unreadable_capture(self):
+        captured=wf.capture(self.root,'editor',['src/editor.py'],[sys.executable,'native.py'],['native.py'],allow_execution=True)
+        with patch.object(wf,'capture',return_value=captured), patch.object(wf,'MAX_REPORT',100):
+            with self.assertRaisesRegex(ValueError,'saved-artifact budget'):
+                self.prepare()
+    def test_observed_revision_does_not_promote_old_deployment_claim(self):
+        c=self.prepare(observed_revisions={'deployed':'HEAD'})
+        text=wf.render_context_summary(self.view(c),'context.json')
+        self.assertIn('CALLER-DECLARED',text)
+        self.assertIn('未部署',self.view(c,'page','feature.md')['latest_verification_note']['text'])
+    def test_prepare_refuses_empty_files_and_implicit_execution(self):
+        with self.assertRaisesRegex(ValueError,'--files'):wf.prepare(self.root,'editor',[],[sys.executable,'native.py'],['native.py'],allow_execution=True)
+        with self.assertRaisesRegex(ValueError,'opt-in'):wf.prepare(self.root,'editor',['src/editor.py'],[sys.executable,'native.py'],['native.py'])
+    def test_capture_help_explains_prefix_and_automatic_arguments(self):
+        cp=subprocess.run([sys.executable,str(ROOT/'project-wiki/scripts/workflow.py'),'capture','--help'],text=True,capture_output=True)
+        self.assertEqual(cp.returncode,0);self.assertIn('prefix',cp.stdout);self.assertIn('--json',cp.stdout)
+    def test_prepare_cli_writes_new_context_and_prints_compact_scope(self):
+        out=Path(self.tmp.name)/'context.json'
+        args=[sys.executable,str(ROOT/'project-wiki/scripts/workflow.py'),'prepare','--root',str(self.root),'--query','editor','--files','src/editor.py','--runtime-input','native.py','--native-argv',json.dumps([sys.executable,'native.py']),'--allow-native-execution','--output',str(out)]
+        cp=subprocess.run(args,text=True,capture_output=True);self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
+        self.assertIn('UNEXPANDED',cp.stdout);self.assertIn('src/editor.py',cp.stdout)
+        self.assertNotIn('native_report_canonical_sha256',cp.stdout)
+        before=out.read_bytes();cp=subprocess.run(args,text=True,capture_output=True)
+        self.assertNotEqual(cp.returncode,0);self.assertEqual(out.read_bytes(),before)
+    def test_native_manifest_absence_has_actionable_nonmutating_result(self):
+        (self.root/'docs/wiki/INDEX.md').write_text('# Native index\n')
+        cp=subprocess.run([sys.executable,str(ROOT/'project-wiki/scripts/wiki.py'),'audit','--root',str(self.root)],text=True,capture_output=True)
+        self.assertEqual(cp.returncode,2)
+        r=json.loads(cp.stdout);self.assertEqual(r['error_code'],'helper_manifest_missing')
+        self.assertIn('prepare',r['next_step']);self.assertFalse((self.root/'docs/wiki/routes.json').exists())
+    def test_corrupt_manifest_is_still_an_error_not_native_adoption(self):
+        (self.root/'docs/wiki/routes.json').write_text('{broken')
+        cp=subprocess.run([sys.executable,str(ROOT/'project-wiki/scripts/wiki.py'),'audit','--root',str(self.root)],text=True,capture_output=True)
+        self.assertEqual(cp.returncode,1);self.assertFalse(json.loads(cp.stdout)['valid'])
+
+if __name__=='__main__':unittest.main()

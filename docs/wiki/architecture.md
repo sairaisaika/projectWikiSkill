@@ -1,10 +1,11 @@
 # Architecture
 
-> Reviewed: 2026-11-03 against c062224; task-views known gap verified against fc310fe
+> Reviewed: 2026-11-06, context-reading candidate; only the prepare/reading/helper-format changes were rechecked.
 
 These are module contracts read from code. All scripts use only the standard library.
-The four CLIs print JSON (plain text for `wiki.py list` and `query` without `--json`) and
-exit 1 on an error they report. The two hooks exit 0 on their own errors once loaded (see their
+The CLIs primarily print JSON; `wiki.py list`, non-JSON queries and the new
+workflow preparation/reading views print text by default. Reported errors normally
+exit 1; missing helper format exits 2 with adoption guidance. The two hooks exit 0 on their own errors once loaded (see their
 summaries). Rationale and dated evidence live in
 [collaboration-workflow.md](../../project-wiki/references/collaboration-workflow.md) and
 [evals/reports](../../evals/reports/README.md). Start at [engineering-entry.md](engineering-entry.md).
@@ -13,10 +14,33 @@ summaries). Rationale and dated evidence live in
 
 `project-wiki/scripts/wiki.py` validates and navigates a project's route manifest.
 
-- **CLI**: `query|task|list|audit|build|check|evaluate`. Every command takes `--root PATH` (default: cwd). `query QUESTION [--limit {1..5}] [--json]` (limit defaults to 2). `task [TASK_ID]`. `evaluate --tasks PATH`.
+- **CLI**: `query|task|list|audit|build|check|evaluate`. Missing this helper’s manifest returns actionable adoption guidance and exit 2, without invoking a native router or creating a manifest. A malformed existing manifest still fails. Every command takes `--root PATH` (default: cwd). `query QUESTION [--limit {1..5}] [--json]` (limit defaults to 2). `task [TASK_ID]`. `evaluate --tasks PATH`.
 - **Inputs**: `<root>/docs/wiki/routes.json` (`schema_version` 1 or 2; see [route-contract.md](../../project-wiki/references/route-contract.md)) and the source files and Markdown anchors it references.
 - **Outputs**: `build` writes `docs/wiki/route-index.json` and `route-index.md`. `build` and `check` print the audit report and exit 1 when the audit is not ready (nothing is written). Otherwise `check` reports `snapshot_stale` and exits 1 when the index is stale. `audit` exits 1 when not ready. `query` exits 1 when a hit carries a warning. `evaluate` exits 1 below its thresholds.
 - **Never**: executes recorded commands or project code, or writes any file except through `build`.
+
+## File-first preparation and state reading
+
+`workflow.py prepare` reuses the native `capture` validation and stores a
+`prepared_reading` projection plus integrity digest. There is no new gate or
+manifest: every requested file keeps all native owners and all omissions remain
+explicit. `prepare` needs a nonempty file list and the original execution opt-in.
+It records tracked/untracked selected changes without attributing authorship or
+claiming pre-edit reading. Output is write-new-only and transport-budget bounded.
+
+`context_reading.py` separates authored current-state sections, the first listed
+verification note, older notes and explicit history. Ambiguous body qualifiers
+are review candidates, never auto-promoted from Git ancestry. Product headings
+such as "History editor" remain body content. All captured body/history text is
+preserved for explicit reading; snapshots do not reopen live pages or invoke Git.
+
+`show --capture` defaults to the summary; impact/feature show one complete native
+record, page shows saved authored body, history shows older material. A long body
+returns a section index instead of a partial page. New views also accept a work
+packet through its existing saved context. Legacy captures without prepared
+pages have no invented page view. Live selected-source drift is historical data,
+not current context. Caller-declared revision observations are not production
+or capability verification. See [the command](../../project-wiki/references/collaboration-workflow.md#file-first-preparation).
 
 ## workflow-capture
 
@@ -36,12 +60,13 @@ summaries). Rationale and dated evidence live in
 
 ## task-views
 
-`workflow.py show` (function `task_view`) renders a packet for a reader.
+`workflow.py show` renders a saved capture or packet for a reader; new capture
+reading views are described above, with legacy packet views retained below.
 
 - **CLI**: `show --packet PATH [--view {index,feature,impact,all}] [--path KEY] [--snapshot-only]`. The default view is `index`. `feature` and `impact` need one exact `--path` taken from the index. Output goes to stdout; there is no `--output`.
-- **Behavior**: without `--snapshot-only` it re-runs the capture currentness check and reports `freshness`. With `--snapshot-only` it renders saved records only. Every view carries `path_bases`, `native_workflow` (quoted, not executed), `view_observation` and `review_preparation`. `lifecycle.py` consumes the snapshot index view.
+- **Behavior**: without `--snapshot-only` it re-runs the capture currentness check and reports `freshness`. With `--snapshot-only` it renders saved records only. The legacy index/feature/impact/all packet views carry `path_bases`, `native_workflow` (quoted, not executed), `view_observation` and `review_preparation`. New summary/page/history views expose saved reading projections and freshness, plus task scope when invoked with a packet; the complete native return contract remains in the saved capture. `lifecycle.py` consumes the snapshot index view.
 - **Never**: calls Git in snapshot-only mode, clips native records silently, or authorizes dispatch.
-- **Known gap**: the index view adds `native_index` (with `omitted_candidates`) after every header field, so a reader that cuts `show` output by line count loses the omitted list first, against [change-navigation.md#make-the-first-wiki-read-useful](../../project-wiki/references/change-navigation.md#make-the-first-wiki-read-useful). No test pins the key order.
+- **Implemented candidate**: packet index puts native_index first and omitted candidates first inside it. `prepare` defaults to a compact complete index; an oversized index is explicitly undelivered. Behavioral coverage is in `tests/test_context_reading.py`; installation/adoption is separate.
 
 ## capture-return
 
@@ -143,3 +168,7 @@ requested files exactly. A registered row with empty
 string `title` and a `path` that exists under `wiki_root`. An optional `workflow` object is
 quoted to readers. Rationale:
 [PLUGIN_PLAN.md#architecture-and-ownership](../PLUGIN_PLAN.md#architecture-and-ownership).
+
+## Historical evidence
+
+> Reviewed: 2026-11-03 against c062224; task-views known gap verified against fc310fe

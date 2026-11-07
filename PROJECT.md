@@ -1,14 +1,14 @@
 ---
 type: Project
-updated_at: 2026-11-03T00:00:00+00:00
-history_count: 15
+updated_at: 2026-11-06T00:00:00+00:00
+history_count: 16
 ---
 # projectWikiSkill
 Native knowledge: README, project-wiki/SKILL.md and project-wiki/references; evaluations in evals/reports. The skill's own maintainer wiki lives in docs/wiki (founder decision 2026-11-03; dogfooded by wiki.py check in CI); shipped method stays in SKILL.md/references; history in CHANGELOG.md; do not restate status outside docs/wiki/status.md; new History entries link docs/wiki/status.md instead of restating status or caveats.
 Architecture: dependency-free Python 3.10+ helper; workflow.py captures explicit native JSON routes, snapshots selected evidence and reconciles returns. plugin.json is version identity; packaging never installs or grants trust.
 Conventions: selected evidence refuses missing/aliased/non-file inputs, exposes no contents in capture; outputs write-new-only. Capture input order precedes saved sorted unique selection. Separate source tests, installed host and real adoption.
-Current task: docs/WIKI_EVOLUTION_PIPELINE_PLAN_20261029.md. Evolve the project-to-Wiki maintenance paradigm from actual task evidence; Claude owns reference/maintenance, Root owns entry/evaluation/shared checkpoint. Status: see docs/wiki/status.md.
-Checks: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTests in tests/test_workflow.py; python3 project-wiki/scripts/wiki.py check --root . (rerun `build` after editing any source named in docs/wiki/routes.json). Test fixtures are synthetic and portable; OS-specific skips are explicit.
+Current task and adoption: see docs/wiki/status.md#current-state.
+Checks: full source suite (280 tests, one platform skip), fixture suite (12), routing self-test and maintainer Wiki pass; plain/legacy-hook/portable-hook package doctors match source. Cross-platform CI tracked on the PR. Commands: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTests in tests/test_workflow.py; python3 project-wiki/scripts/wiki.py check --root . (rerun `build` after editing any source named in docs/wiki/routes.json). Test fixtures are synthetic and portable; OS-specific skips are explicit.
 ## History
 - 2026-10-29: Source candidate0.2.18 adds private-safe selection ordinals; existing policy/JSON envelope and sorted saved selections retained. Focused17 and full239 tests passed (one Windows-only skip); independent review passed; next real iOS capture identified missing selection item2 and succeeded after original-image repair. Claude scoped evidence return and structural reconciliation passed; shared site/product acceptance and installation remain separate/pending. Plan and eval record red/green and documentation-link correction.
 
@@ -33,3 +33,5 @@ Checks: python3 -m unittest discover -s tests -v; targeted PreservedEvidenceTest
 - 2026-11-03: Maintainer wiki docs/wiki (10 schema-2 routes, generated route index) added and checked in CI by wiki.py check --root .; README version history moved to CHANGELOG.md; this session log stays here. Status: docs/wiki/status.md.
 - 2026-11-03: Package build + doctor at c062224 matched for both profiles (default 25, hook profile 26 payload files; package valid, source/support/input/identity match). Status: docs/wiki/status.md.
 - 2026-11-03: Seventeen wiki-usage lessons from a pilot project (generic observation) folded into references as checkable rules with acceptance tests; no helper, hook or test change. maintenance.md: new "Generated blocks inside authored pages" (stable row keys; authored-text change predicates; hunk-by-hunk merge with a machine decision for generated-only conflicts, ledger union, no prefix de-duplication; post-merge authored-line guard with a restored-at-HEAD view), pre-edit gate boundaries (shell writes unseen, stamp writer, designed-not-implemented, bound waiver, shell-hook SIGPIPE and per-worktree copies), stamp freshness, acknowledgement and keyword rules, state combinations in the consumer matrix; change-navigation.md shared exemptions, omitted-first output, query-independent file expansion, process-word collisions, authored-text and stacked-branch gate notes, exact-before-containment seeding; wiki-evolution.md base-revision replay, merge example, supersession, design-first state, handoff facts as claims; page-anatomy.md prose identifiers. Maintainer wiki records the code gaps this exposes (in-page generated blocks and unbound waiver in edit_gate.py; omitted list placed last in the show index). Status: docs/wiki/status.md.
+
+- 2026-11-06: Native context-reading candidate and bounded PR45 review; see docs/wiki/status.md#current-state and evals/reports/context-reading-20261106.md.
