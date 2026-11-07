@@ -4,11 +4,18 @@
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
-| 0.2.20 | [PR head: passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42335123267); merge-head CI checked separately | [PR45](https://github.com/sairaisaika/projectWikiSkill/pull/45), [PR46](https://github.com/sairaisaika/projectWikiSkill/pull/46), merge cc2bfa0 | [three source-matching profiles](../../evals/reports/context-reading-20261106.md#source-verification-receipts) | [one Linux Claude skill-only copy, 21/21 bytes matched](../../evals/reports/context-reading-20261106.md#merged-source-and-bounded-installation) | not observed for the new copy | no post-update eligible sample observed | unmeasured |
+| 0.2.20 | [PR head: passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42335123267); merge-head CI checked separately | [PR45](https://github.com/sairaisaika/projectWikiSkill/pull/45), [PR46](https://github.com/sairaisaika/projectWikiSkill/pull/46), merge cc2bfa0 | [three source-matching profiles](../../evals/reports/context-reading-20261106.md#source-verification-receipts) | [one Linux Claude skill-only copy, 21/21 bytes matched](../../evals/reports/context-reading-20261106.md#merged-source-and-bounded-installation) | [fresh Claude task delivery](../../evals/reports/selected-wiki-context-20261107.md#observation) | [guided source task and Wiki rework](../../evals/reports/selected-wiki-context-20261107.md#observation) | Source behavior accepted after Wiki rework; live acceptance and efficiency unmeasured |
 
 The installed payload is bound to cc2bfa0 (same tree as reviewed 5dbacfa).
-Installation and a coordinator snapshot smoke test are separate from delivery,
-real worker use and improved task outcomes. See the scoped evidence below.
+Installation, actual delivery, guided worker use, semantic rework and live outcomes
+remain separate evidence. The subsequent guided observation is linked above; it
+does not establish general efficiency improvement.
+
+## 0.2.21 candidate
+
+Directly selected Wiki-page preparation and explicit verification-history reading
+are changed on an isolated branch, with source tests and coordinator replay. The
+active worker installation stays at 0.2.20. See the [candidate report](../../evals/reports/selected-wiki-context-20261107.md).
 
 ## Historical evidence
 
