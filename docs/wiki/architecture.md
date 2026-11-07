@@ -275,3 +275,18 @@ an old current section. Recognized `name:begin` / `BEGIN` HTML block markers mus
 bound authored current/history projection and current replacement; markers inside
 fenced examples remain literal. Preserve the generated block itself and verify its
 regeneration independently from the archived old state.
+
+
+### Applying the reviewed saved plan (design; not implemented)
+
+The second guided task reviewed saved previews but had to reconstruct the body and
+verification arguments for `update-state --apply`, producing a new plan rather
+than applying the reviewed one. Add `apply-state --plan PATH` as an explicit write
+operation over the existing saved-plan applier. It must not rerun collection,
+re-read a body file, reconstruct verification text or overwrite the reviewed plan.
+Reuse the existing kind/hash, target-root, symlink and original-source-byte checks.
+Expose an exact apply argv in the compact preview receipt; keep the original
+single-operation `update-state --apply` compatible. A stale source still refuses
+application rather than silently refreshing. The operation is not a business or
+human approval certificate. Test exact reviewed bytes, changed external body,
+stale/tampered plans, no-op, legacy plans and no native/Git/recomputation calls.
