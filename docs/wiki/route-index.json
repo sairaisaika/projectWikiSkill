@@ -434,7 +434,7 @@
           "reason": "capture subcommand and its explicit argv/runtime-input options",
           "needle": "cap = subs.add_parser('capture')",
           "line": 1015,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "capture",
@@ -443,7 +443,7 @@
           "reason": "Opt-in native run, input hashing before/after, report validation",
           "symbol": "capture",
           "line": 281,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "validate",
@@ -452,7 +452,7 @@
           "reason": "Native report shape and exact impact-file coverage",
           "symbol": "validate_native",
           "line": 193,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "current",
@@ -461,7 +461,7 @@
           "reason": "Recheck that a saved capture is still current before use",
           "symbol": "check_capture",
           "line": 346,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "start",
@@ -470,7 +470,7 @@
           "reason": "start builds a work packet only from a current capture",
           "symbol": "start",
           "line": 376,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "return",
@@ -479,7 +479,7 @@
           "reason": "capture-return reuses capture over the actual diff",
           "symbol": "capture_return",
           "line": 465,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "prepare",
@@ -488,7 +488,7 @@
           "symbol": "prepare",
           "reason": "One native capture with file owners, saved page views and explicit existing-change observation",
           "line": 784,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "prepare-reuse",
@@ -497,7 +497,7 @@
           "symbol": "prepare_request",
           "reason": "Exact request identity for immutable current prepare reuse",
           "line": 693,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         }
       ]
     },
@@ -645,7 +645,7 @@
           "reason": "start subcommand; delegate shares --task-id/--owner/--allow-file/--read-only",
           "needle": "sta = subs.add_parser('start')",
           "line": 1023,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "start",
@@ -654,7 +654,7 @@
           "reason": "Planned files must be covered by allowed_files; read-only grants none",
           "symbol": "start",
           "line": 376,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "delegate",
@@ -663,7 +663,7 @@
           "reason": "Child packet may only narrow allowed_files",
           "symbol": "delegate",
           "line": 407,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "baseline",
@@ -672,7 +672,7 @@
           "reason": "read_only_baseline observation for read-only tasks",
           "symbol": "readonly_baseline",
           "line": 534,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "finish",
@@ -681,7 +681,7 @@
           "reason": "finish reports actual files outside allowed_files as unplanned",
           "symbol": "finish",
           "line": 582,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         }
       ]
     },
@@ -918,7 +918,7 @@
           "reason": "show --view/--path/--snapshot-only options",
           "needle": "show.add_argument('--snapshot-only'",
           "line": 1051,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "view",
@@ -927,7 +927,7 @@
           "reason": "Renders index/feature/impact/all; snapshot_only skips check_capture",
           "symbol": "task_view",
           "line": 892,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "lifecycle",
@@ -945,7 +945,7 @@
           "symbol": "capture_view",
           "reason": "Fresh or snapshot-only views over a saved native context without a task packet",
           "line": 850,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "page-projection",
@@ -981,7 +981,7 @@
           "symbol": "prepare",
           "reason": "Records explicitly selected Wiki page status separately from source-owner registration",
           "line": 784,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "text-page",
@@ -999,7 +999,7 @@
           "symbol": "state_update",
           "reason": "Source-bound authored-state replacement preview",
           "line": 707,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "state-apply",
@@ -1008,7 +1008,7 @@
           "symbol": "apply_state",
           "reason": "Explicit atomic update of an unchanged selected Wiki page",
           "line": 753,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "state-rotation",
@@ -1152,7 +1152,7 @@
           "reason": "capture-return subcommand; argv must equal the saved one",
           "needle": "rec = subs.add_parser('capture-return'",
           "line": 1019,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "recapture",
@@ -1161,7 +1161,7 @@
           "reason": "Rechecks saved inputs, collects actual files, reruns capture, rejects movement",
           "symbol": "capture_return",
           "line": 465,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "collector",
@@ -1170,7 +1170,7 @@
           "reason": "Single actual-diff predicate shared with finish",
           "symbol": "repository_changes",
           "line": 436,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "finish",
@@ -1179,7 +1179,7 @@
           "reason": "finish consumes the recapture as --after-capture",
           "symbol": "finish",
           "line": 582,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         }
       ]
     },
@@ -1336,7 +1336,7 @@
           "reason": "finish subcommand (--packet --after-capture --review --output)",
           "needle": "end = subs.add_parser('finish')",
           "line": 1035,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "template-cli",
@@ -1345,7 +1345,7 @@
           "reason": "review-template subcommand",
           "needle": "template = subs.add_parser('review-template'",
           "line": 1039,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "template",
@@ -1354,7 +1354,7 @@
           "reason": "Every satellite, capability and unregistered file starts unreviewed",
           "symbol": "review_template",
           "line": 550,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "finish",
@@ -1363,7 +1363,7 @@
           "reason": "Recomputes the actual diff and lists issues",
           "symbol": "finish",
           "line": 582,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         },
         {
           "id": "main",
@@ -1372,7 +1372,7 @@
           "reason": "Exits 1 when structural_reconciliation is false",
           "symbol": "main",
           "line": 1009,
-          "sha256": "c206398025aaf4f21b6fbd483b3fe3461736ae240c16e5769de066c762f6b00f"
+          "sha256": "e592c1fc1eee3326dd1d1666309785364bbd33457d5ed278b4eb701c0941375c"
         }
       ]
     },
