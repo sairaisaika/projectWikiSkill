@@ -55,6 +55,8 @@ Example source block, with positions resolved at publication time:
 
 The helper validates route/diagram references; it does **not** verify that these
 human-authored blocks substantiate prose or every message. Review that separately.
+Check inline code identifiers in prose against the page's registered sources as
+well: a removed symbol cited in prose passes every source-row check.
 
 ## Interaction details that change an implementation plan
 

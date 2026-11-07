@@ -41,6 +41,7 @@ Example entry text (adapt to the project's existing instructions):
 | Serialization/state/timing changes | Update authoritative schema, field/transition tables, source-linked local diagrams and relevant decision rationale; rerun actual conformance/recovery tests |
 | One commit's acknowledgement list exceeds ~10 pages | Give the shared file's rules identity and key routing/gate on rule edges; keep uncovered files on the file rule; measure required pages per commit before and after. See [route by rule](change-navigation.md#route-by-rule-not-only-by-file) |
 | Rule scoped to a whole element family or site (base layer, global middleware, default configuration) | Consumer × environment matrix on the rule's owner page; cells not run are recorded as "verified only in …" and pending, never as verified. See [cross-cutting rules](maintenance.md#cross-cutting-rules-need-a-consumer-matrix) |
+| A generator writes blocks into authored pages | Stable row keys; change predicates compare authored text; merges resolved hunk by hunk and checked for lost authored lines. See [generated blocks](maintenance.md#generated-blocks-inside-authored-pages) |
 
 These rows say what to update. Where the knowledge should live (edit in place, new
 section, split, new page, shared concept, archive or no structural change), which
@@ -234,7 +235,7 @@ and what the last period's evidence showed:
 | Header ratchet (keywords, verification stamps) | CI only / pre-push hook | Failures; whether the failure named the page |
 | Invariant tables and their gates | CI / pre-push hook | Rows added; real gaps exposed |
 | Finish script (regenerate, test, stage) | manual | Pages edited after it ran without rerunning it |
-| Editor or session hooks | editor; wiring may be untracked | Whether the repository can prove a worker session had it |
+| Editor or session hooks | editor; wiring may be untracked | Whether the repository can prove a worker session had it; which checkout's copy of the hook each worktree executes |
 
 Take counts from run logs and branch history, not memory, and state the basis
 beside each number. Expensive failures cluster where a check runs only in CI: on
@@ -270,9 +271,77 @@ after running it; record every other cell as "verified only in …" and register
 it as pending, never as verified by extension; and keep the probe that filled
 each cell with the cell, validated first
 ([quality model](quality-model.md#validate-the-probe-before-trusting-or-ratcheting-its-numbers)).
+When the code can apply two states to one element at once (an emphasis mode and a
+highlight, a selection and a hover), add those combinations as consumers: a claim
+proven for each state alone is unverified for the combination, where the effective
+value can depend on rule order in the compiled output rather than on what the
+component intended. Name the combinations the code makes possible and test each.
 A rule whose reason lives only in a code comment or commit message has no owner
 page to hold that matrix; see
 [wiki evolution](wiki-evolution.md#2-decide-where-the-knowledge-belongs).
+
+### Generated blocks inside authored pages
+
+When a generator writes blocks between markers inside authored pages (satellite
+lists, reverse indexes, invariant projections), three rules keep regeneration from
+hiding or destroying authored text. Each has an acceptance test; run it on a
+synthetic change before trusting the generator or a gate that reads its pages.
+Not committing generated views at all (computing them in CI or in the reader) is
+the structural alternative and a decision for the owner
+([wiki evolution](wiki-evolution.md#4-diagnose-a-miss-before-repairing-it)); these
+rules apply while they are committed.
+
+#### Key derived rows on stable identities
+
+A block written into many pages keys its rows on stable identities (item ID,
+anchor slug), never on source line numbers or positions. A position key turns one
+row inserted in the middle of a ledger into a rewrite of every page that cites a
+later item: every open branch conflicts and every page looks changed to
+change-based gates. Keep positions only in one aggregate view (this helper's
+`route-index` is one) or compute them at render time. Acceptance: insert one row
+in the middle of the source and regenerate; only the aggregate view may change.
+
+#### Compare authored text, not files
+
+A predicate that decides "this page changed" — a touch gate counting a page as
+updated, a design-first check counting a wiki change as a written design —
+compares the page's authored text at base and at head, with generated blocks
+removed by their markers and whole generated files removed by path. Comparing
+files lets regeneration alone satisfy it: one regeneration that touches every
+page makes the touch gate require nothing and the design check pass on every
+branch. Acceptance: a self-test in which hundreds of pages change only inside
+generated blocks; the predicate must report none of them as changed.
+
+#### Merging files that mix authored and generated text
+
+Never resolve such a file by taking one side's whole file and regenerating: that
+discards the other side's non-conflicting authored lines, and gates stay green
+because generated drift satisfies them. The decision is mechanical:
+
+1. Build the two candidate resolutions that keep every auto-merged hunk and
+   resolve each conflict hunk to one side (with Git, `git merge-file -p --ours`
+   and `--theirs` over the three index stages; `checkout --ours` takes the whole
+   side and is the failure above). Strip generated blocks from both.
+2. Equal ⇒ every conflict lies inside generated blocks: keep either candidate and
+   regenerate with the native command.
+3. Different ⇒ resolve the remaining authored hunks by hand, one hunk at a time,
+   from both parents.
+4. Append-only ledgers (debt lists, changelogs, logs) where both sides added
+   entries at the same position keep both sides' entries; then check for
+   colliding IDs.
+5. Code and tests are never resolved by de-duplicating lines that share a prefix;
+   lines that look identical are often distinct. Run the type check and the
+   related tests before committing the merge.
+
+Guard every merge for lost authored lines: for each file, take the authored lines
+(generated blocks stripped) that each parent added since the merge base, and
+require every one to be present in the merge result, or listed as a deliberate
+removal with its reason. Run it before pushing a merge. When auditing historical
+merges, add the current HEAD as a second view: a line missing from the merge but
+present again at HEAD is reported as restored; only lines still missing at HEAD
+fail. Acceptance: a synthetic merge in which one side edits a page's generated
+block and the other adds an authored line elsewhere on that page; a whole-side
+resolution must fail the guard and the stepwise resolution must pass it.
 
 ### Pre-edit gate (host delivery of Wiki-first)
 
@@ -289,9 +358,12 @@ matches `locked` (or appears in `map_file` as `map_row_format`, default
   is printed as the fix with `{file}` filled in;
 - **(b) design** (only with `design_first`) — a handwritten file under `wiki_root`
   changed since `merge-base(HEAD, base_ref)` (default `origin/main`), in the
-  working tree or untracked, after removing `generated` views. Without a merge-base
-  (b) is not judged and says so. A non-empty `skip_file` waives (b) only and is
-  echoed; an empty one fails (b).
+  working tree or untracked, after removing `generated` views. `generated` holds
+  file globs only: a page whose only change is a regenerated in-page block still
+  counts as handwritten here, unlike the
+  [authored-text rule](maintenance.md#compare-authored-text-not-files). Without a
+  merge-base (b) is not judged and says so. A non-empty `skip_file` waives (b)
+  only and is echoed; an empty one fails (b).
 
 Exit 2 blocks the edit with the reasons on stderr. The gate runs only read-only
 Git subcommands (optional locks off, inherited repository variables dropped),
@@ -303,9 +375,30 @@ What it proves: the route was expanded for this file, and some handwritten page
 moved on this branch first. What it does not prove: that the worker read the
 page, that the moved page is the owning one, or that the design is right. One
 unrelated line satisfies (b); review and the finish/touch gate stay responsible
-for that. The two gates split the work: this one runs **before** the first edit
+for that. What it does not see: writes made through a shell (redirections,
+heredocs, generators, formatters) never pass through the editor tools the hook
+matches. State that boundary on the project's gate page; the touch gate is the
+backstop. The two gates split the work: this one runs **before** the first edit
 of a locked file; the touch gate runs at **finish or push** and checks that every
 changed file's owning page changed or was acknowledged.
+
+Keep both inputs honest:
+
+- **The stamp is evidence only if the worker's routing wrote it.** Test suites
+  that run the router from the repository root refresh the stamp, extend its age,
+  overwrite its query and add fixture paths. Give the router a no-stamp switch or
+  environment variable that every test sets, or run those tests in a temporary
+  directory, and record the writer in the stamp. Acceptance: a full test run
+  leaves the stamp's bytes and modification time unchanged.
+- **A design written before the code is a proposal.** Mark it designed, not
+  implemented, until the evidence exists
+  ([wiki evolution](wiki-evolution.md#6-keep-current-state-and-historical-evidence-apart)).
+- **A design waiver is bound and narrow.** The shipped `skip_file` is checked only
+  for non-empty text; it carries no revision or age, so remove it when the task
+  ends. A project gate binds a waiver to `{reason, head, at}`, voids it when HEAD
+  moves or after the stamp lifetime, echoes it at finish as a proposed
+  acknowledgement, and accepts it only for "no design needed". A defect in the
+  gate itself takes a separate, logged override, not the design waiver.
 
 ```json
 {
@@ -326,16 +419,40 @@ enable this one: two gates with different predicates give two answers. Either
 way, record in the audit above whether the hook is wired on the machines that run
 workers; wiring kept outside the repository is an unproven delivery.
 
+A hook a project writes in a shell must survive large input. Under
+`set -o pipefail`, never end a pipeline over many lines with an early-exit
+consumer (`grep -q`, `head`): the consumer exits at the first match, the producer
+receives SIGPIPE (status 141), and the pipeline reports failure exactly when there
+is a lot of input. Collect the output into a variable, then test it for
+emptiness; treat a failed producer as "gate unavailable", never as empty output.
+Automate the hook's self-tests, including hundreds of dirty files and a failing
+Git command. A hook executed from each worktree's own copy is fixed only where the
+fix has been merged: pin the hook command to one stable checkout, or notify open
+worktrees when the gate changes.
+
 ### Checkable rules beat examples
 
 A template line or an example in a README teaches a format once; a rule a gate can
-check and name teaches it every time. Two recurring cases:
+check and name teaches it every time. Recurring cases:
 
 - **Verification stamps.** Fix the parseable form: date · commit sha, optionally
   followed by scope ("verified X; Y not re-verified") and older stamps. A branch
   or worktree name is not a revision; for uncommitted work write the base commit
   the tree was verified on plus "worktree (branch)". Put the rule where authors
-  look, beside the template, and make the parser the authority.
+  look, beside the template, and make the parser the authority. Deployment
+  qualifiers ("not deployed", "branch", "worktree") expire silently once the
+  change merges and ships: after each release, list the stamps whose commit is an
+  ancestor of the deployed revision while they still carry such a qualifier.
+  Keep one current stamp per page and move superseded segments to history; a
+  dozen segments on one line hide the current state.
+- **Acknowledgement lines.** If the syntax allows a reason per page, the parser
+  accepts `page (reason), page (reason)` or fails naming the line; dropping
+  everything after the first bracket acknowledges one page and reports the rest
+  as missing. Test the parser with a line that gives several pages each a reason.
+- **Feature-entrance keywords.** An entrance carries both the words users and
+  reporters use and the code symbols, as two kinds a header check can tell
+  apart; the check names the page that lacks either kind. A symbol-only keyword
+  line is invisible to a symptom phrased in user words.
 - **Heading anchors.** The site renderer's slug is not GitHub's slug (full-width
   punctuation, backticks, underscores and brackets differ). Prefer slug-safe
   headings, without brackets, backticks or underscores, so others cannot guess

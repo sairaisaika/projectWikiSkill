@@ -11,8 +11,10 @@ into scope. Recheck the actual working delta during development; a post-commit
 touch gate cannot substitute for this planning aid. The planning aid and the gate
 must read the same change range: a working-delta input that sees only uncommitted
 changes goes empty after a commit and under-reports against a gate keyed on the
-merge base. Keep the ordinary first read short and make the deeper records
-directly reachable.
+merge base. They also share one exemption list (ledgers, invariant tables), and
+the planning aid prints the pages the gate will require apart from hints;
+otherwise workers acknowledge pages the gate never needed. Keep the ordinary
+first read short and make the deeper records directly reachable.
 
 An actor dictionary link alone may leave the task response ambiguous. When the
 feature has an authored behavior-scope section, project its actual resource,
@@ -28,6 +30,11 @@ explicit source dependencies, ordinary prose links and shared-file similarity.
 Do not recursively expand all common infrastructure and call that a causal impact
 graph. State when candidates are truncated; never silently truncate a file's
 registered satellite inventory or treat an absent inventory as no consumers.
+Print the count and names of omitted candidates first: readers and wrappers
+often cut long output by line count, and a list placed after the expanded cards
+is lost first. Planned-file expansion does not depend on the query matching:
+when the query misses, still expand and record the files and report the miss as
+missing navigation, so no one hunts for a query that unlocks a gate.
 
 Test real task phrasing as well as canonical keywords. Domain nouns and action
 terms are useful anchors alongside long exact phrases and identifiers. Unknown
@@ -35,7 +42,11 @@ queries must expose missing navigation, not produce a plausible guess. Save the
 first failed query before repairing metadata; adding the same query to regression
 is a self-test, not an independent usability trial. Include compound tasks,
 negative controls, a high-fan-out change and variants the user did not explicitly
-name. A tool call proves neither reading nor semantic coverage.
+name. A tool call proves neither reading nor semantic coverage. Keep the wiki's
+own process words (finish, close-out, done, check) from competing with product
+words: a page about the documentation workflow ranks for a product query only
+when the query also names the workflow. Feature entrances carry both user words
+and code symbols as a [checkable header rule](maintenance.md#checkable-rules-beat-examples).
 
 Use this when a request spans multiple interfaces or a route stops at a large
 factory. Keep ordinary one-surface queries simple.
@@ -107,6 +118,12 @@ Files no invariant covers keep the old criterion. A hit is by file path, not by
 whether the diff touched the symbol: an unrelated line in the same file still
 raises the path. Prefer one extra chip path to a missed one, and record the cost.
 
+A page counts as changed only when its authored text changed; strip generated
+blocks first ([maintenance](maintenance.md#compare-authored-text-not-files)). On
+stacked branches the range includes lower slices' acknowledgements, which satisfy
+the upper slice and vanish when the lower one merges; print, for each required
+page, which commit acknowledged it.
+
 ### Mapping onto the route contract
 
 In the [route contract](route-contract.md), `rules[{id, statement, source_ids,
@@ -135,6 +152,13 @@ ranking as well as missing metadata. Many aliases for one noun must not overwhel
 a page covering several distinct requested capabilities. Preserve exact route-ID
 selection, unknown-query disclosure, and seeds for every recognized surface in a
 compound request; improve the native selector rather than creating a parallel index.
+
+Seed a query term from exact keyword equality before containment, and break ties
+by exactness before any path order: otherwise a neighbor page that gains a longer
+keyword containing the term captures it from the page whose keyword is exactly
+that term. After adding keywords, rerun the original failing query and compare
+the full selected and omitted lists with its earlier output; a repair can collapse
+several correct seeds into one card.
 
 Save the original failure, test a dense single-topic negative against a sparse
 multi-topic route, and retain generic-entry and unrelated compound regressions.
