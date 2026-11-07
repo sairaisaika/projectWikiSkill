@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import re
 
-HISTORY = re.compile(r'^(?:history|historical (?:evidence|notes|records)|archive|archived|历史|历史记录|历史证据|归档|迁出的历史)(?:\s*[（(].*[)）])?$',re.I)
+HISTORY = re.compile(r'^(?:history|historical (?:evidence|notes|records)|verification history|review history|核验历史|archive|archived|历史|历史记录|历史证据|归档|迁出的历史)(?:\s*[（(].*[)）])?$',re.I)
 CURRENT = re.compile(r'^(current(?: state| status)?|当前(?:状态|现状)?|现状)$',re.I)
 QUALIFIER = re.compile(r'未合入|未部署|未上线|待部署|源码候选|not (?:yet )?(?:merged|deployed|released)|branch.only',re.I)
 VERIFY = re.compile(r'^>\s*(?:核验|Reviewed|Verification)\s*[:：]\s*(.*)',re.I)
@@ -37,7 +37,10 @@ def page_projection(text: str) -> dict:
             elif CURRENT.fullmatch(title.strip()):current_level=level
             headings.append({'title':title,'line':number,'history':history_level is not None})
         if not fenced and (match:=VERIFY.match(line)):
-            notes.extend({'line':number,'text':part.strip()} for part in match[1].split('｜') if part.strip())
+            if history_level is not None:
+                history.append(line)  # Explicit history stays readable, never a current note.
+            else:
+                notes.extend({'line':number,'text':part.strip()} for part in match[1].split('｜') if part.strip())
             continue
         if history_level is not None:
             history.append(line);continue
@@ -54,15 +57,17 @@ def page_projection(text: str) -> dict:
             'limits':'First listed note is a recorded verification, not current deployment. History is projected, never rewritten. Body qualifiers stay visible for review.'}
 
 
-def collect_pages(report: dict, read_page) -> dict:
+def collect_pages(report: dict, read_page, selected_pages=()) -> dict:
     names={row['path'] for row in report['cards']}
+    names.update(selected_pages)
     names.update(page['path'] for row in report['impact'] for page in row['pages'])
     return {name:page_projection(read_page(name)) for name in sorted(names)}
 
 
 def summary(value: dict) -> dict:
     native=value['native_report'];reading=value.get('prepared_reading',{})
-    return {'unexpanded_candidates':native['omitted'],
+    return {'selected_wiki_pages':reading.get('selected_wiki_pages',[]),
+            'unexpanded_candidates':native['omitted'],
             'unregistered_files':[row['file'] for row in native['impact'] if row['unregistered']],
             'preparation':reading.get('preparation',{'reading_before_edits':'not established','status':'older capture; no preparation observation'}),
             'files':[{'file':row['file'],'pages':[page['path'] for page in row['pages']],
@@ -93,6 +98,9 @@ def render_summary(view: dict, artifact: str, budget: int=6000) -> str:
     if bases['peers']:lines.append('PEER SOURCE BASES: '+', '.join(alias+'='+root for alias,root in bases['peers'].items()))
     lines.append('FILE → ALL DECLARED OWNER PAGES:')
     lines.extend('  '+row['file']+' → '+(', '.join(row['pages']) or 'UNREGISTERED') for row in view['files'])
+    if view.get('selected_wiki_pages'):
+        lines.append('DIRECTLY SELECTED WIKI PAGES (not owner declarations):')
+        lines.extend('  '+row['file']+' → '+row['path']+' ['+row['status']+']' for row in view['selected_wiki_pages'])
     lines.append('PAGE STATE (authored, not live verification):')
     lines.extend(f"  {p['path']}: current={'declared' if p['current_state_declared'] else 'unknown'}; history={p['historical_notes']}; qualifiers to review={p['qualifiers_needing_review']}" for p in view['pages'])
     if view['observed_revisions']:

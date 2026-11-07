@@ -40,7 +40,12 @@ is broken and not a request to create a second manifest.
 
 The saved artifact is the existing native capture, plus captured reading views.
 It retains every file/owner, unregistered input and unexpanded candidate; a query
-miss does not discard file context. The default text is an index, not the full
+miss does not discard file context. Explicitly selected Markdown files inside the
+configured Wiki root are also saved for page/history reading, even when the native
+source-owner index calls them unregistered. The index keeps that gap and lists
+direct page selection separately; selecting a page does not declare ownership.
+A planned Wiki page absent from the snapshot is listed as unavailable and is not
+created or given an invented reading view. The default text is an index, not the full
 page text. When it cannot fit the display budget it says **not delivered**, gives
 counts and the artifact pointer, and exposes no partial index as complete.
 `show --format json` returns the complete selected record; `--section` selects an

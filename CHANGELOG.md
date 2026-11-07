@@ -14,6 +14,13 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
+## Unreleased
+
+Selected Wiki documents now enter prepared page/history views even without native
+source-owner registration. Native ownership gaps remain unchanged; missing planned
+pages are explicit. Exact verification-history headings are separated from current
+body content. [Regression and native replay evidence](evals/reports/selected-wiki-context-20261107.md).
+
 ## 0.2.20 source candidate
 
 File-first native preparation without packet ceremony; complete compact indexes
