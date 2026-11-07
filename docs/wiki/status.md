@@ -1,16 +1,21 @@
 # Version status
 
+
 ## Current state
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
-| 0.2.22 | [final334 source matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42364450790), Ubuntu/Windows × Python3.10/3.13 | [PR48](https://github.com/sairaisaika/projectWikiSkill/pull/48), merge0d30ecf (same tree as tested9241185) | three refreshed source/support/input/identity-matching profiles | one Linux Claude skill-only copy;21/21 payload files match0d30ecf | pending next fresh task | pending post-reset real task; coordinator replay is separate | not inferred; live product and efficiency unmeasured |
+| 0.2.23 candidate |346 Linux cases passed, one platform skip;12 new saved-preview cases; platform CI pending | isolated branch; not yet merged | pending refreshed profiles | none for0.2.23; Linux remains0.2.22 |0.2.23 not delivered | no worker use of0.2.23 yet | not inferred |
 
-The Linux copy is manually pinned to0d30ecf. It was atomically exchanged while
-no direct installed helper process was observed, with previous tree retained and
-settings unchanged. Old sessions were not restarted; Windows/Mac copies were not
-updated. No background updater was added. Actual post-reset use must be recorded
-separately in the [reading-flow report](../../evals/reports/reading-flow-20261107.md).
+The bounded reading/reuse/state mechanics in0.2.22 remain installed on one Linux
+Claude manual skill copy. Its guided fresh task received the payload and read both
+primary file impacts and the owning original before implementation. It also used
+raw native `tail` when scope expanded, and edited some secondary documents before
+collecting their file contexts. These are counterevidence, not full conformance.
+The state operation itself already emits a compact receipt; source verification
+corrected an initial attribution of long output to that operation.0.2.23 adds a
+saved-preview reader; it is not installed or worker-verified yet. Evidence and
+limits: [saved-preview report](../../evals/reports/state-preview-20261107.md).
 
 ## Historical evidence
 
@@ -124,3 +129,20 @@ at [Current state](#current-state). These earlier rows are not live inventory.
 Historical lag measurement (before the Linux update): since ee6c065, source had changed 11
 `project-wiki/` files (SKILL.md and 10 references) and added
 `scripts/edit_gate.py`. Check with `git diff --stat ee6c065 HEAD -- project-wiki`.
+
+### State snapshot 2026-11-07T12:53:10.031338+00:00
+
+```markdown
+## Current state
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+| 0.2.22 | [final334 source matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42364450790), Ubuntu/Windows × Python3.10/3.13 | [PR48](https://github.com/sairaisaika/projectWikiSkill/pull/48), merge0d30ecf (same tree as tested9241185) | three refreshed source/support/input/identity-matching profiles | one Linux Claude skill-only copy;21/21 payload files match0d30ecf | pending next fresh task | pending post-reset real task; coordinator replay is separate | not inferred; live product and efficiency unmeasured |
+
+The Linux copy is manually pinned to0d30ecf. It was atomically exchanged while
+no direct installed helper process was observed, with previous tree retained and
+settings unchanged. Old sessions were not restarted; Windows/Mac copies were not
+updated. No background updater was added. Actual post-reset use must be recorded
+separately in the [reading-flow report](../../evals/reports/reading-flow-20261107.md).
+
+```

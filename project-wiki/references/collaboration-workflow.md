@@ -74,12 +74,22 @@ in a UTF-8 file, then use the same saved page context:
 ```sh
 python <skill>/scripts/workflow.py update-state --capture <context.json> \
   --path feature.md --state-file <current-body.md> --output <new-preview.json>
+# Read the saved diff/proposal with bounded continuation, not cat/head:
+python <skill>/scripts/workflow.py show-state --plan <new-preview.json> --view diff
 # Optional application in an isolated owned checkout:
 python <skill>/scripts/workflow.py update-state --capture <context.json> \
   --path feature.md --state-file <current-body.md> --output <new-apply.json> --apply
 ```
 
-This previews the proposed full Markdown and original/proposed hashes. Application
+The output artifact retains the exact original and proposed Markdown plus their
+hashes. The operation keeps its compact JSON receipt and adds `read_preview_argv`;
+it does not print the full page. `show-state` defaults to6000 UTF-8 bytes/60 lines,
+with exact content/view-bound NEXT commands. Reading a saved proposal after apply
+still reads captured bytes, not live source, and does not apply again. Explicit
+`--format json` exports the complete selected view. Older plans have no original
+snapshot: use `--view proposed`, never reconstruct an unrecorded diff. Both saved
+hashes are checked; these are integrity checks, not semantic approval. Plans retain
+the existing4MiB transport budget and fail before apply if they do not fit. Application
 checks original page bytes and atomically replaces only that Wiki Markdown file;
 unrelated source edits do not force a new context. A changed page needs a fresh
 capture. Previous current sections and older top-level verification lines
