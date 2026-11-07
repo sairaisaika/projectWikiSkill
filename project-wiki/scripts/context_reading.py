@@ -188,7 +188,7 @@ def render_page(view: dict, artifact: str, history: bool=False, section: str | N
                   +'Current state: '+('declared; read its section separately' if view['authored_current_state'] else 'unknown')
                   +'; recorded verification metadata is available with --format json.\n'+body)
         else:
-            declared=[row['title'] for row in view.get('section_index',[]) if not row['history'] and CURRENT.fullmatch(row['title'])] if view['authored_current_state'] else []
+            declared=[row['title'] for row in view.get('section_index',[]) if not row['history'] and (match:=CURRENT.fullmatch(row['title'])) and match['date']] if view['authored_current_state'] else []
             declaration=('Declared current section: '+'; '.join(declared)+'\n') if declared else ''
             text=('AUTHORED CURRENT STATE (not independently verified)\n'+declaration+('Declared below in its original section.' if view['authored_current_state'] else 'Not declared; do not infer it from the latest note.')+
                   '\nLATEST LISTED VERIFICATION NOTE (recorded evidence, not deployment)\n'+str(view['latest_verification_note'])+
