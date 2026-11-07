@@ -14,6 +14,16 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
+## 0.2.23
+
+- Keep state snapshots outside following generated blocks and preserve recognized
+  generated openers when replacing current sections; verify native regeneration.
+- Add a bounded, read-only `show-state` view of saved state proposals and diffs,
+  with resumable byte/line cursors and explicit complete JSON export.
+- Retain exact original page bytes in new preview artifacts and add a reader
+  command to the existing compact receipt. Older plans stay readable as proposals;
+  source checks and application semantics are unchanged.
+
 ## 0.2.22
 
 Bounded capture text continuations (bytes and lines), current exact-request prepare
