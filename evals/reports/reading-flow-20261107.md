@@ -121,3 +121,20 @@ Settings and installed-plugin registry hashes stayed unchanged. This is a bounde
 manual installation, not a global process lease or evidence of active-session
 reload. There is still no updater for that copied skill, and other hosts were not
 changed. Fresh real-task delivery/use remains pending until a new available session.
+
+
+### Post-reset actual use and preservation correction
+
+A fresh guided0.2.22 task loaded the verified Linux copy and read both primary
+file impacts and the owning original before product edits. It reused the prepared
+context for those reads, but expanded scope through a raw native query piped to
+tail and collected some secondary-document contexts after editing. The page was
+read directly, so no worker cursor/cache-hit claim follows from that task.
+
+Independent return review found the proposed old-current snapshot had been placed
+inside the next generated block and was removed by native regeneration. Earlier
+structural/render checks had not tested this byte-preservation step. The saved
+proposal retained the original for exact recovery.0.2.23 corrects that boundary,
+verified by old-loss/new-retention on the real native generator;0.2.24 inherits the
+repair. See the later saved-preview report and current version table. The initial
+source/install checkpoints above must not be read as full successful adoption.

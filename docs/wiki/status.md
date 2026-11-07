@@ -2,6 +2,35 @@
 
 
 
+
+## Current state
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+|0.2.24|[final matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42377141265);360 Linux cases ran,1 platform skip;9 new cases also passed locally on Windows|[PR50](https://github.com/sairaisaika/projectWikiSkill/pull/50),675abca same tree as tested d5866cf; includes PR48/49 repairs|three final source/support/input/identity-matching profiles|one Linux Claude manual skill copy,21/21 payload files match675abca|fresh0.2.24 task loaded installed Skill and helper|one approved saved plan read in two complete bounded parts and applied once; no plan rewrite or recollection; byte equality retained through native generation|bounded source/document acceptance only; live deployment and general efficiency unmeasured|
+
+The Linux copy remains manually pinned to675abca; no updater was added. Settings
+and plugin registry stayed unchanged, old sessions were not restarted, and other
+host installations were not changed. Later Wiki-only commits do not imply that a
+new payload was installed. Actual observations are guided tasks with different
+scopes, not an independent blind comparison.
+
+Counterevidence remains: the earlier0.2.22 task clipped raw native output and read
+some secondary contexts late; the0.2.23 task used NEXT but filtered some preview
+chunks and reread one cursor.0.2.22 history also disappeared during native
+generation until the0.2.23 boundary correction. Neither initial structural checks
+nor an installation was sufficient adoption evidence. Remaining shell filtering,
+locale defaults and unrelated legacy routes are not declared solved.
+
+Evidence: [reading flow](../../evals/reports/reading-flow-20261107.md),
+[saved previews/history](../../evals/reports/state-preview-20261107.md),
+[exact saved application](../../evals/reports/apply-saved-state-20261107.md).
+
+## Historical evidence
+
+### State snapshot 2026-11-07T13:46:55.288255+00:00
+
+```markdown
 ## Current state
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
@@ -19,7 +48,7 @@ Source/installation/use details remain distinct:
 [preview/history repair](../../evals/reports/state-preview-20261107.md),
 [exact saved application](../../evals/reports/apply-saved-state-20261107.md).
 
-## Historical evidence
+```
 
 ### State snapshot 2026-11-07T13:26:24.065033+00:00
 

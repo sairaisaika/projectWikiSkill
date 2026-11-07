@@ -69,3 +69,20 @@ behaviors fail by assertion on0.2.22 (current projection included the opener and
 replacement consumed it), and pass with the correction. These checks supplement
 the real generator counterexample, not replace it. Arbitrary unrecognized native
 marker formats remain outside this heuristic and need their native adapter.
+
+
+### Bounded installation and fresh guided use
+
+Final source b14fa04 passed all four platform jobs in run42374939151,351 Linux
+cases (one platform skip),17 new cases on Linux/Windows and three matching final
+package profiles. Merge9945aca matched the tested tree; one helper-idle atomic
+Linux copy exchange retained its old tree, verified21 files and changed no settings.
+
+The next real documentation task loaded0.2.23, read three owning originals and its
+relevant debt section before edits, used show-state and NEXT, and retained histories
+through native generation. It nevertheless filtered/cut some preview output and
+reread one cursor to recover continuation. Independent review also found semantic
+contradictions outside the new Current tables and lost historical heading anchors;
+those were corrected from actual source and retained as history. No whole-task
+conformance, semantic automation or efficiency improvement is claimed. Its repeated
+apply-argument extraction motivated0.2.24, not another instruction-only patch.
