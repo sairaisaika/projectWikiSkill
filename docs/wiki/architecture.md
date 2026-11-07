@@ -228,3 +228,50 @@ quoted to readers. Rationale:
 ## Historical evidence
 
 > Reviewed: 2026-11-03 against c062224; task-views known gap verified against fc310fe
+
+
+### Saved state-preview reader (0.2.23)
+
+The first guided0.2.22 task read bounded impact views, then inspected a saved state
+proposal by printing its diff directly. Initial attribution to operation stdout
+was corrected by source inspection: `update-state` already returns compact JSON,
+not the page-sized plan. Keep that receipt contract and add a bounded reader for
+the saved proposal instead of adding reminders, gates or another workflow.
+
+New plans retain the exact original page bytes alongside the existing
+proposal. Pure `show-state --plan PATH --view diff|proposed` validates saved
+hashes and uses the existing byte/line cursor mechanism. Continuation must not
+inspect live project inputs, rerun native collection or apply writes. Old plans
+remain readable in proposed mode; diff requires a saved original, never an
+inferred reconstruction. Explicit JSON remains a deliberate complete export.
+The existing compact operation receipt will add an exact preview-reader command.
+Test large Unicode previews, complete reconstruction, changed-plan/cross-view
+cursors, legacy proposals, explicit JSON, and read-only behavior after apply.
+
+The earlier initial design assumption is superseded by this source verification;
+there was no implementation of that assumption. An unrelated remaining boundary:
+a newly planned file triggered the host's old native-command hint, and the worker
+piped that query to `tail`. A saved-preview reader cannot prevent arbitrary raw
+native calls; that external route stays separate evidence.
+
+
+### Archive placement follow-up (design checkpoint)
+
+Independent reconciliation of the first real state update found that its saved
+proposal contained the old current section, but the consumer's subsequent native
+generation removed it. The archive entry had been inserted immediately before the
+next heading, after the opening generated-block comment that precedes that heading.
+Structural/anchor checks did not prove byte preservation through regeneration.
+
+Insert new entries immediately after an existing authored history heading instead
+of at the next heading boundary. This keeps the previous history unchanged and
+avoids consuming the next section's leading generated-block marker. With no history,
+continue appending a new history section after the full page. Test both exact
+insertion and a simulated native generated-block rewrite, then rerun a real native
+generator before claiming preservation. No new reminder, gate or status inference.
+
+The same next-heading boundary can also consume a generated opener when replacing
+an old current section. Recognized `name:begin` / `BEGIN` HTML block markers must
+bound authored current/history projection and current replacement; markers inside
+fenced examples remain literal. Preserve the generated block itself and verify its
+regeneration independently from the archived old state.

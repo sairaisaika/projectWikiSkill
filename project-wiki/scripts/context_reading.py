@@ -17,6 +17,7 @@ HISTORY = re.compile(r'^(?:history|historical (?:evidence|notes|records)|verific
 CURRENT = re.compile(r'^(current(?: state| status)?|当前(?:状态|现状)?|现状)$',re.I)
 QUALIFIER = re.compile(r'未合入|未部署|未上线|待部署|源码候选|not (?:yet )?(?:merged|deployed|released)|branch.only',re.I)
 VERIFY = re.compile(r'^>\s*(?:核验|Reviewed|Verification)\s*[:：]\s*(.*)',re.I)
+GENERATED_BEGIN = re.compile(r'^\s{0,3}<!--\s*(?:[\w.-]+:begin(?=\W|$)|begin(?=\W|$))',re.I)
 
 
 def fence_transition(line: str, fence: str | None) -> tuple[bool, str | None]:
@@ -41,6 +42,8 @@ def page_projection(text: str) -> dict:
     for number,line in enumerate(text.splitlines(keepends=True),1):
         marker,fence=fence_transition(line,fence)
         fenced=marker or fence is not None
+        if not fenced and GENERATED_BEGIN.match(line):
+            current_level=None; history_level=None
         heading=None if fenced else parse_heading(line)
         if heading:
             level,title=heading
@@ -282,6 +285,11 @@ def replace_current(text: str, current: str, recorded_at: str, verification: str
     for i,depth,title,historical in rows:
         if not historical and CURRENT.fullmatch(title):
             end=next((j for j,d,_,_ in rows if j>i and d<=depth),len(lines))
+            fence=None
+            for j in range(i+1,end):
+                marker,fence=fence_transition(lines[j],fence)
+                if not marker and fence is None and GENERATED_BEGIN.match(lines[j]):
+                    end=j;break
             spans.append((i,end))
     projection=page_projection(text)
     current_note=projection['latest_verification_note']
@@ -336,7 +344,10 @@ def replace_current(text: str, current: str, recorded_at: str, verification: str
         history_heading=next(((i,d) for i,d,title,_ in reversed(updated_rows) if HISTORY.fullmatch(title)),None)
         if history_heading:
             a,depth=history_heading
-            end=next((i for i,d,_,_ in updated_rows if i>a and d<=depth),len(updated_lines))
+            # The next heading can be preceded by its generated-block opener.
+            # Inserting there puts authored history inside regenerable content.
+            # Place the newest snapshot directly under the authored history heading.
+            end=a+1
         else:
             updated_lines.append('\n## History\n');end=len(updated_lines)
         entry='\n### State snapshot '+recorded_at+'\n\n'+fence+'markdown\n'+archived

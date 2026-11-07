@@ -8,6 +8,7 @@ installs hooks, executes wiki check commands or certifies a worker's claims.
 from __future__ import annotations
 
 import argparse
+import difflib
 import hashlib
 import importlib.util
 from datetime import datetime, timezone
@@ -715,9 +716,38 @@ def state_update(value: dict, path: str, current: str, recorded_at: str, verific
     text=source.read_bytes().decode('utf-8')
     proposed=reading_module().replace_current(text,current,recorded_at,verification)
     return {'schema_version':1,'kind':'wiki-current-state-update','root':str(root),'page':name,'wiki_root':value['wiki_root'],
-            'expected_sha256':expected,'proposed_markdown':proposed,'proposed_sha256':sha(proposed.encode('utf-8')),
+            'expected_sha256':expected,'original_markdown':text,'proposed_markdown':proposed,'proposed_sha256':sha(proposed.encode('utf-8')),
             'changed':text!=proposed,'recorded_at':recorded_at,
             'limits':'Caller-authored current claims; no semantic, deployment or business inference. Previous state and older notes preserved in history; one latest recorded note remains. Apply is an optimistic source-byte check, not a concurrent writer lease.'}
+
+
+
+def state_preview(plan: dict, view: str = 'diff') -> dict:
+    """Read saved bytes only; neither live freshness nor evidence of application."""
+    if plan.get('kind') != 'wiki-current-state-update' or plan.get('schema_version') != 1:
+        raise ValueError('Expected a Wiki current-state update plan')
+    proposed = plan.get('proposed_markdown')
+    if not isinstance(proposed, str) or sha(proposed.encode('utf-8')) != plan.get('proposed_sha256'):
+        raise ValueError('Saved proposed state hash differs')
+    original = plan.get('original_markdown')
+    if original is not None and (not isinstance(original, str) or sha(original.encode('utf-8')) != plan.get('expected_sha256')):
+        raise ValueError('Saved original state hash differs')
+    if view == 'diff':
+        if original is None:
+            raise ValueError('This older plan has no saved original; use --view proposed, not an inferred diff')
+        chunks = difflib.unified_diff(original.splitlines(keepends=True), proposed.splitlines(keepends=True),
+                                      fromfile=str(plan.get('page'))+' (captured)',
+                                      tofile=str(plan.get('page'))+' (proposed)')
+        # Explicitly mark missing final newlines rather than concatenating -old+new.
+        markdown = ''.join(line if line.endswith('\n') else line+'\n\\ No newline at end of file\n'
+                           for line in chunks) or '(no changes)\n'
+    elif view == 'proposed':
+        markdown = proposed
+    else:
+        raise ValueError('Select diff or proposed for a saved state preview')
+    return {'kind':'wiki-state-preview-view','view':view,'page':plan.get('page'),
+            'expected_sha256':plan.get('expected_sha256'),'proposed_sha256':plan['proposed_sha256'],
+            'markdown':markdown,'limits':'Saved proposal only; no live inputs checked, no write performed, and application or deployment is not established.'}
 
 
 def apply_state(plan: dict) -> None:
@@ -1019,6 +1049,11 @@ def main(argv=None) -> int:
     show.add_argument('--path', help='Exact feature path or impacted file from the index')
     show.add_argument('--cursor', help='Exact continuation token from the previous bounded text view')
     show.add_argument('--snapshot-only', action='store_true', help='Render saved records without Git/live-input checks; never establishes currentness or authorizes new work')
+    preview = subs.add_parser('show-state', help='Read a saved state proposal/diff in bounded parts; no source checks or writes')
+    preview.add_argument('--plan', type=Path, required=True)
+    preview.add_argument('--view', choices=('diff','proposed'), default='diff')
+    preview.add_argument('--format', choices=('text','json'), default='text')
+    preview.add_argument('--cursor', help='Exact continuation token from the same saved plan and view')
     state = subs.add_parser('update-state', help='Preview an authored current-state replacement; optionally apply to the unchanged Wiki page')
     state.add_argument('--capture', type=Path, required=True)
     state.add_argument('--path', required=True, help='Exact captured Wiki-relative page')
@@ -1052,6 +1087,20 @@ def main(argv=None) -> int:
                 identity=json.dumps([str(source),view,args.path,args.section],ensure_ascii=False)
                 print(reading_module().text_page(text,identity,command,cursor=args.cursor,budget=5999,line_budget=59)['text'])
             return 0
+        if args.command == 'show-state':
+            if args.cursor and args.format != 'text':
+                raise ValueError('--cursor is for bounded text, not JSON export')
+            source = args.plan.resolve()
+            shown = state_preview(read_json(source), args.view)
+            if args.format == 'json':
+                print(json.dumps(shown,ensure_ascii=False,indent=2))
+            else:
+                text = 'SAVED STATE PREVIEW — '+args.view+'\n'+shown['limits']+'\n\n'+shown['markdown']
+                command = [sys.executable,str(Path(__file__).resolve()),'show-state','--plan',str(source),
+                           '--view',args.view,'--format','text']
+                identity = json.dumps([str(source),args.view,shown['page'],shown['expected_sha256'],shown['proposed_sha256']],ensure_ascii=False)
+                print(reading_module().text_page(text,identity,command,cursor=args.cursor,budget=5999,line_budget=59)['text'])
+            return 0
         if args.command == 'prepare':
             if args.output.is_symlink():raise ValueError('Output cannot be a symlink')
             reuse=read_json(args.output) if args.output.exists() else None
@@ -1080,7 +1129,8 @@ def main(argv=None) -> int:
             write_new(args.output,result)
             if args.apply:apply_state(result)
             print(json.dumps({'ok':True,'output':str(args.output),'page':result['page'],'changed':result['changed'],
-                              'applied':args.apply,'limits':result['limits']},ensure_ascii=False))
+                              'applied':args.apply,'limits':result['limits'],
+                              'read_preview_argv':[sys.executable,str(Path(__file__).resolve()),'show-state','--plan',str(args.output.resolve()),'--view','diff']},ensure_ascii=False))
             return 0
         if args.command == 'capture':
             result = capture(args.root, args.query, args.files, json.loads(args.native_argv), args.runtime_input,
