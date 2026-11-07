@@ -4,6 +4,25 @@
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
+| 0.2.21 | [final source matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42355922508), Ubuntu/Windows × Python 3.10/3.13 | [PR47](https://github.com/sairaisaika/projectWikiSkill/pull/47), merge 5a7918c (same tree as tested 03c21b2) | [three byte-matching profiles](../../evals/reports/selected-wiki-context-20261107.md#final-0221-candidate-verification) | one Linux Claude skill-only copy; 21/21 payload files match 5a7918c | fresh task loaded installed skill and helper | selected Wiki originals captured and read before product edit | bounded source-task acceptance; live product and efficiency unknown |
+
+Installation and actual use evidence: [bounded adoption](../../evals/reports/selected-wiki-context-20261107.md#bounded-host-adoption-and-actual-use).
+The Linux copy is pinned to 5a7918c; no auto-updater was added. Existing sessions
+were not restarted. Windows and Mac copies were not updated in this task.
+
+## Historical evidence
+
+Earlier status and installation observations are preserved below as records;
+read their original dates and evidence scopes. They do not override current state.
+
+### Superseded 0.2.20 / candidate observation
+
+The following was recorded before the bounded 0.2.21 installation.
+
+#### Previous current state
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
 | 0.2.20 | [PR head: passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42335123267); merge-head CI checked separately | [PR45](https://github.com/sairaisaika/projectWikiSkill/pull/45), [PR46](https://github.com/sairaisaika/projectWikiSkill/pull/46), merge cc2bfa0 | [three source-matching profiles](../../evals/reports/context-reading-20261106.md#source-verification-receipts) | [one Linux Claude skill-only copy, 21/21 bytes matched](../../evals/reports/context-reading-20261106.md#merged-source-and-bounded-installation) | [fresh Claude task delivery](../../evals/reports/selected-wiki-context-20261107.md#observation) | [guided source task and Wiki rework](../../evals/reports/selected-wiki-context-20261107.md#observation) | Source behavior accepted after Wiki rework; live acceptance and efficiency unmeasured |
 
 The installed payload is bound to cc2bfa0 (same tree as reviewed 5dbacfa).
@@ -11,16 +30,12 @@ Installation, actual delivery, guided worker use, semantic rework and live outco
 remain separate evidence. The subsequent guided observation is linked above; it
 does not establish general efficiency improvement.
 
-## 0.2.21 candidate
+#### Previous candidate state
 
 Directly selected Wiki-page preparation and explicit verification-history reading
 are changed on an isolated branch, with source tests and coordinator replay. The
 active worker installation stays at 0.2.20. See the [candidate report](../../evals/reports/selected-wiki-context-20261107.md).
 
-## Historical evidence
-
-Earlier status and installation observations are preserved below as records;
-read their original dates and evidence scopes. They do not override current state.
 
 ### Status table
 
@@ -68,17 +83,17 @@ Column meanings:
 
 - Installed hosts: 0.2.5 to 0.2.17 "yes" means one Windows Codex host via the official plugin CLI. 0.2.19 "yes" means skill-only copies (no hooks) on a Mac Codex and a Linux Claude host.
 - 0.2.5 Source CI: recorded in PLUGIN_PLAN ("exact main CI green"), not in a report.
-- main adopted for 0.2.8, 0.2.13, 0.2.15 and 0.2.16 comes from `git log --merges origin/main` (8679084, 58073d4, 6de3f3e, dc771f3); no report records it and their CI result is unrecorded. origin/main is at 0.2.17 (b8a1782), so 0.2.18, 0.2.19 and the post-ee6c065 payload are not on main.
+- main adopted for 0.2.8, 0.2.13, 0.2.15 and 0.2.16 comes from `git log --merges origin/main` (8679084, 58073d4, 6de3f3e, dc771f3); no report records it and their CI result is unrecorded. That historical inspection was at main 0.2.17 (b8a1782); its pending cells are observations from that date, not the current merge state.
 
 ### Canonical copies
 
 | Copy | What it is | Last recorded state |
 |---|---|---|
-| This repository, [`project-wiki/`](../../project-wiki/SKILL.md) + [`plugin.json`](../../plugin.json) | The only editable source. `plugin.json` is the version identity; packages are generated projections | HEAD c062224, identity 0.2.19 |
-| Linux Claude `~/.claude/skills/project-wiki` | Skill-only copy, pinned | Matching all 19 payload files of the ee6c065 / be9f68e tree ([receipt](../../evals/reports/host-skill-only-20261030.json); unchanged at [PROJECT.md » History](../../PROJECT.md#history) 2026-10-31) |
+| This repository, [`project-wiki/`](../../project-wiki/SKILL.md) + [`plugin.json`](../../plugin.json) | The only editable source. `plugin.json` is the version identity; packages are generated projections | Source identity 0.2.21; merged 5a7918c; see Current state |
+| Linux Claude `~/.claude/skills/project-wiki` | Skill-only copy, pinned | 21 payload files match 5a7918c; bounded adoption evidence linked above |
 | Mac Codex `~/.codex/skills/project-wiki` | Skill-only copy, pinned | 19 files from ee6c065 ([receipt](../../evals/reports/host-skill-only-20261030.json)) |
 | Windows Codex plugin install | Official plugin CLI install with hook profile | 0.2.17 ([report](../../evals/reports/supplied-hook-observations-c179-20261025.md#normal-source-and-bounded-host-adoption)) |
 
-The pinned skill-only copies lag HEAD. Since ee6c065, HEAD has changed 11
+Historical lag measurement (before the Linux update): since ee6c065, source had changed 11
 `project-wiki/` files (SKILL.md and 10 references) and added
 `scripts/edit_gate.py`. Check with `git diff --stat ee6c065 HEAD -- project-wiki`.
