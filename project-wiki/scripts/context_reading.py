@@ -74,6 +74,7 @@ def summary(value: dict) -> dict:
                       'unregistered':row['unregistered']} for row in native['impact']],
             'pages':[{'path':name,'current_state_declared':page['authored_current_state'] is not None,
                       'historical_notes':len(page['historical_verification_notes']),
+                      'history_present':bool(page['history_markdown'].strip() or page['historical_verification_notes']),
                       'qualifiers_needing_review':len(page['qualifier_review_candidates'])}
                      for name,page in reading.get('pages',{}).items()],
             'path_bases':{'source_root':value['root'],'wiki_root':value['wiki_root'],
@@ -102,7 +103,7 @@ def render_summary(view: dict, artifact: str, budget: int=6000) -> str:
         lines.append('DIRECTLY SELECTED WIKI PAGES (not owner declarations):')
         lines.extend('  '+row['file']+' → '+row['path']+' ['+row['status']+']' for row in view['selected_wiki_pages'])
     lines.append('PAGE STATE (authored, not live verification):')
-    lines.extend(f"  {p['path']}: current={'declared' if p['current_state_declared'] else 'unknown'}; history={p['historical_notes']}; qualifiers to review={p['qualifiers_needing_review']}" for p in view['pages'])
+    lines.extend(f"  {p['path']}: current={'declared' if p['current_state_declared'] else 'unknown'}; history={'present' if p.get('history_present', p['historical_notes'] > 0) else 'none'}; older notes={p['historical_notes']}; qualifiers to review={p['qualifiers_needing_review']}" for p in view['pages'])
     if view['observed_revisions']:
         lines.append('CALLER-DECLARED REVISIONS (not live verification): '+', '.join(label+'='+row['resolved_sha'] for label,row in view['observed_revisions'].items()))
     lines.extend(['Source: '+view['source_revision'],'Freshness: '+view.get('freshness','capture-time data'),

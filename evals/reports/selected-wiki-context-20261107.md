@@ -72,3 +72,32 @@ separate evidence. Token/time savings and causal improvement are unmeasured.
 - The packaged skill also passes the standard skill-format validator on Windows.
 - Cross-platform PR CI remains pending until a run is observed; local Linux
   tests do not stand in for Windows/Python matrix results.
+
+
+## Independent review and follow-up
+
+A fresh Claude reviewer kept the candidate checkout unchanged, reran all 289
+source tests and exercised old/new captures through the real CLI in temporary
+fixtures. No P1/P2 was reported. Five P3 observations were assessed separately.
+Two concrete reading problems were fixed before the 0.2.21 candidate: history
+present only in explicit sections had misleadingly rendered as history=0, and a
+missing page in a new capture used an error about old capture format. Two new
+regressions failed first; the index now distinguishes history presence and older
+note counts, and the error names the missing captured page.
+
+Exact history headings remain a convention with documented ambiguity for product
+features of the same title. A note placed inside history stays historical by
+intent. Lowercase `.md` is the supported selection/inventory convention; closing
+ATX hashes and cross-platform uppercase extensions were not broadened here.
+The independent review covered the first candidate; Codex reviewed the small
+follow-up, and source/fixture/packaging/CI are rerun for the final identity.
+
+
+## Final 0.2.21 candidate verification
+
+After the two review-driven fixes, all 291 source tests run successfully (one
+platform skip), including 36 reading cases. Fixture12, fixture check/evaluate and
+maintainer Wiki build/check pass. Fresh plain/legacy/portable packages each match
+0.2.21 source, support inputs, byte identities and version. Cross-platform CI for
+this final source is recorded separately when it completes. No installed host
+was changed by packaging or review.

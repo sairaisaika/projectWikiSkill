@@ -11,7 +11,7 @@ Installation, actual delivery, guided worker use, semantic rework and live outco
 remain separate evidence. The subsequent guided observation is linked above; it
 does not establish general efficiency improvement.
 
-## Unreleased candidate
+## 0.2.21 candidate
 
 Directly selected Wiki-page preparation and explicit verification-history reading
 are changed on an isolated branch, with source tests and coordinator replay. The
