@@ -10,6 +10,13 @@ Installation and actual use evidence: [bounded adoption](../../evals/reports/sel
 The Linux copy is pinned to 5a7918c; no auto-updater was added. Existing sessions
 were not restarted. Windows and Mac copies were not updated in this task.
 
+## 0.2.22 reading-flow candidate
+
+An isolated source revision adds bounded continuation, current exact-request reuse
+and explicit source-bound state/history updates. The installed host remains0.2.21.
+Source/fixture/package checks and subsequent host/fresh-task evidence are separate:
+[reading-flow report](../../evals/reports/reading-flow-20261107.md).
+
 ## Historical evidence
 
 Earlier status and installation observations are preserved below as records;

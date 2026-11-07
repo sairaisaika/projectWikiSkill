@@ -108,12 +108,12 @@ class ContextReadingTests(unittest.TestCase):
         p=self.view(self.prepare(),'page','feature.md')
         self.assertIn('Current feature detail',p['body_markdown'])
         self.assertEqual(p['history_markdown'],'')
-    def test_page_budget_returns_section_index_not_a_partial_body(self):
+    def test_page_budget_delivers_explicit_partial_body_and_continuation(self):
         c=self.prepare();p=self.view(c,'page','feature.md')
         p['body_markdown']+='x'*9000
         text=wf.reading_module().render_page(p,'context.json',budget=1000)
-        self.assertIn('body not delivered',text);self.assertIn('Mechanism',text)
-        self.assertNotIn('xxxx',text)
+        self.assertIn('PARTIAL',text);self.assertIn('--cursor',text)
+        self.assertLessEqual(len(text.encode('utf-8')),1000)
     def test_section_expansion_ignores_code_block_headings(self):
         text='## Mechanism\nExample:\n```markdown\n## Mechanism\n# fake end\n```\nActual detail.\n## Other\nOutside.\n'
         selected=wf.reading_module().select_section(text,'Mechanism')
@@ -139,13 +139,13 @@ class ContextReadingTests(unittest.TestCase):
     def test_saved_page_tamper_is_rejected(self):
         c=self.prepare();c['prepared_reading']['pages']['feature.md']['body_markdown']='forged'
         with self.assertRaisesRegex(ValueError,'reading.*changed'):self.view(c,snapshot_only=True)
-    def test_large_summary_is_explicitly_undelivered_not_clipped(self):
+    def test_large_summary_is_explicitly_partial_with_continuation(self):
         v=self.view(self.prepare())
         v['files']=[{'file':f'src/item{i}.py','pages':['feature.md'],'unregistered':False} for i in range(1000)]
         text=wf.render_context_summary(v,'saved-context.json',budget=700)
-        self.assertIn('not delivered',text)
-        self.assertIn('1000',text);self.assertIn('saved-context.json',text)
-        self.assertNotIn('item0.py',text)
+        self.assertIn('PARTIAL',text);self.assertIn('--cursor',text)
+        self.assertIn('saved-context.json',text)
+        self.assertLessEqual(len(text.encode('utf-8')),700)
     def test_unregistered_input_is_visible_in_complete_index(self):
         native=(self.root/'native.py').read_text()
         native=native.replace("'pages':[{'path'", "'pages':[] if f=='src/unknown.py' else [{'path'",1)
@@ -177,7 +177,7 @@ class ContextReadingTests(unittest.TestCase):
         self.assertIn('UNEXPANDED',cp.stdout);self.assertIn('src/editor.py',cp.stdout)
         self.assertNotIn('native_report_canonical_sha256',cp.stdout)
         before=out.read_bytes();cp=subprocess.run(args,text=True,capture_output=True)
-        self.assertNotEqual(cp.returncode,0);self.assertEqual(out.read_bytes(),before)
+        self.assertEqual(cp.returncode,0);self.assertIn('REUSED',cp.stdout);self.assertEqual(out.read_bytes(),before)
     def test_native_manifest_absence_has_actionable_nonmutating_result(self):
         (self.root/'docs/wiki/INDEX.md').write_text('# Native index\n')
         cp=subprocess.run([sys.executable,str(ROOT/'project-wiki/scripts/wiki.py'),'audit','--root',str(self.root)],text=True,capture_output=True)
@@ -228,11 +228,11 @@ class ContextReadingTests(unittest.TestCase):
         c=self.prepare(['knowledge/selected.md'],wiki_root='knowledge')
         self.assertIn('One writer serves',self.view(c,'page','selected.md')['body_markdown'])
         self.assertEqual(self.view(c)['selected_wiki_pages'][0]['path'],'selected.md')
-    def test_large_direct_page_refuses_full_display_but_delivers_selected_section(self):
+    def test_large_direct_page_continues_and_still_supports_selected_section(self):
         self.unregistered_router();(self.root/'docs/wiki/large.md').write_text('# Long\n## Large\n'+'x'*9000+'\n## Needed\nExact detail.\n',encoding='utf-8')
         c=self.prepare(['docs/wiki/large.md']);p=self.view(c,'page','large.md')
         full=wf.reading_module().render_page(p,'saved.json')
-        self.assertIn('not delivered',full);self.assertNotIn('xxxx',full)
+        self.assertIn('PARTIAL',full);self.assertIn('--cursor',full);self.assertLessEqual(len(full.encode('utf-8')),6000)
         self.assertIn('Exact detail',wf.reading_module().render_page(p,'saved.json',section='Needed'))
     def test_explicit_verification_history_headings_are_separated(self):
         for heading in ['核验历史','Verification history','Review history']:
