@@ -38,6 +38,10 @@ does not infer the supplied facts. The compact receipt supplies an exact
 `show-state --plan <saved-preview.json> --view diff` command. This reads the saved
 diff or proposal in bounded parts without consulting live source or applying it;
 `--view proposed` also reads older plans lacking an original snapshot.
+The receipt also provides `apply-state --plan <saved-preview.json>` to apply those
+exact reviewed bytes without resending body or verification arguments. It checks
+the unchanged original page and leaves the reviewed artifact untouched. The
+single-operation `update-state --apply` remains available.
 See the concrete command linked above.
 Use start/delegate/finish only when
 that coordination protocol is actually needed; existing project gates stay native.

@@ -277,7 +277,7 @@ fenced examples remain literal. Preserve the generated block itself and verify i
 regeneration independently from the archived old state.
 
 
-### Applying the reviewed saved plan (design; not implemented)
+### Applying the reviewed saved plan (0.2.24)
 
 The second guided task reviewed saved previews but had to reconstruct the body and
 verification arguments for `update-state --apply`, producing a new plan rather
