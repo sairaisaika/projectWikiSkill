@@ -21,12 +21,21 @@ Read a selected file's complete impact record, then the relevant page sections
 with `show --capture … --view impact|page --path …`. `--view history` keeps older
 verification notes separate. A page lacking an explicit current-state section
 stays unknown; a listed note or caller-declared deployed revision is not a live
-capability certificate. Default displays never silently clip a scope: oversized
-views report not delivered and point to the saved artifact/section selection.
+capability certificate. New prepared captures default to bounded text: oversized
+text views deliver at most 6000 UTF-8 bytes / 60 lines and an exact continuation
+command bound to that saved view. Sections remain optional, including for a
+single oversized section. JSON export remains explicit and complete. Repeating
+prepare with the same output reuses an identical current request without native
+execution; stale or different requests keep the old artifact and need a new path.
 
 Preparation records already changed selected paths; it does not certify that
 reading preceded those changes. A restricted reader uses `--snapshot-only` on the
-saved context, without Git or live-page reads. Use start/delegate/finish only when
+saved context, without Git or live-page reads. For a current-section update,
+`update-state` previews the replacement and moves previous state/verification
+notes into history while retaining one latest record; `--apply` writes only if
+original page bytes still match. Existing current-heading anchors are preserved. It
+does not infer the supplied facts. See the concrete command linked above.
+Use start/delegate/finish only when
 that coordination protocol is actually needed; existing project gates stay native.
 
 ## Choose the work

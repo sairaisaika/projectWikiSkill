@@ -2,7 +2,7 @@
 
 Capture and capture-return run an explicit caller-supplied native command, with
 opt-in and no shell. Other operations inspect projections and Git, except saved-only
-show views, which do not inspect live inputs; none edits project sources,
+show views, which do not inspect live inputs. Explicit update-state --apply edits only its source-bound Wiki page; other operations never edit project sources,
 installs hooks, executes wiki check commands or certifies a worker's claims.
 """
 from __future__ import annotations
@@ -12,6 +12,7 @@ import hashlib
 import importlib.util
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path, PurePosixPath
 import subprocess
 import sys
@@ -688,12 +689,85 @@ def reading_module():
     return module
 
 
+def prepare_request(root, query, files, program, runtime_inputs, observed_revisions, kwargs):
+    if not kwargs.get('allow_execution'):
+        raise ValueError('Native preparation requires explicit opt-in, including reuse')
+    root=Path(root).resolve()
+    return {'root':str(root),'query':query,'files':sorted(set(relative(f) for f in files)),
+            'native_argv':program,'runtime_inputs':runtime_inputs,
+            'wiki_root':kwargs.get('wiki_root','docs/wiki'),
+            'peers':{a:str(Path(r).resolve()) for a,r in (kwargs.get('peers') or {}).items()},
+            'native_source_context':kwargs.get('native_source_context'),
+            'preserve_artifacts':sorted(str(Path(p).resolve()) for p in (kwargs.get('preserve_artifacts') or [])),
+            'observed_revisions':observed_revisions,
+            'reader_sha256':sha(Path(__file__).read_bytes()+Path(__file__).with_name('context_reading.py').read_bytes())}
+
+
+def state_update(value: dict, path: str, current: str, recorded_at: str, verification: str | None=None) -> dict:
+    # Check saved evidence integrity; unrelated source edits are expected at finish.
+    capture_view(value,'page',path,snapshot_only=True)
+    root=Path(value['root']).resolve()
+    name=relative(value['wiki_root']+'/'+relative(path))
+    source=within(root,name)
+    expected=value['base']['inputs'].get(name)
+    if expected is None or file_hash(source)!=expected:
+        raise ValueError('Captured Wiki page changed; prepare its current bytes before updating state')
+    text=source.read_bytes().decode('utf-8')
+    proposed=reading_module().replace_current(text,current,recorded_at,verification)
+    return {'schema_version':1,'kind':'wiki-current-state-update','root':str(root),'page':name,'wiki_root':value['wiki_root'],
+            'expected_sha256':expected,'proposed_markdown':proposed,'proposed_sha256':sha(proposed.encode('utf-8')),
+            'changed':text!=proposed,'recorded_at':recorded_at,
+            'limits':'Caller-authored current claims; no semantic, deployment or business inference. Previous state and older notes preserved in history; one latest recorded note remains. Apply is an optimistic source-byte check, not a concurrent writer lease.'}
+
+
+def apply_state(plan: dict) -> None:
+    if plan.get('kind')!='wiki-current-state-update' or plan.get('schema_version')!=1:
+        raise ValueError('Expected a Wiki current-state update plan')
+    root=Path(plan['root']).resolve();source=within(root,plan['page'])
+    wiki=relative(plan['wiki_root']);page=relative(plan['page'])
+    try: selected=PurePosixPath(page).relative_to(PurePosixPath(wiki))
+    except ValueError as error:raise ValueError('State target must stay inside the selected Wiki root') from error
+    if selected.suffix!='.md':raise ValueError('State target must be a Markdown Wiki page')
+    parent=root
+    for part in PurePosixPath(page).parts:
+        parent/=part
+        if parent.is_symlink():raise ValueError('State target cannot traverse a symlink')
+    proposed=plan['proposed_markdown'].encode('utf-8')
+    if sha(proposed)!=plan.get('proposed_sha256'):
+        raise ValueError('State update plan changed; proposed hash differs')
+    if file_hash(source)!=plan.get('expected_sha256'):
+        raise ValueError('Wiki page changed after preview; state update is stale')
+    if not plan['changed']:return
+    temporary=None
+    try:
+        with tempfile.NamedTemporaryFile(dir=source.parent,prefix='.wiki-state-',delete=False) as out:
+            temporary=Path(out.name);out.write(proposed);out.flush();os.fsync(out.fileno())
+        temporary.chmod(source.stat().st_mode)
+        within(root,plan['page'])
+        if file_hash(source)!=plan['expected_sha256']:
+            raise ValueError('Wiki page changed before apply; update is stale')
+        os.replace(temporary,source)
+    finally:
+        if temporary is not None and temporary.exists():temporary.unlink()
+
+
 def prepare(root: Path, query: str, files: list[str], program: list[str], runtime_inputs: list[str],
-            *, observed_revisions: dict[str, str] | None = None, **kwargs) -> dict:
+            *, observed_revisions: dict[str, str] | None = None, reuse: dict | None = None, **kwargs) -> dict:
     """One explicit native capture; no task/owner/dispatch ceremony or new gate."""
     if not files:
         raise ValueError('prepare requires --files; find candidate paths with the native query first')
+    request = prepare_request(root, query, files, program, runtime_inputs, observed_revisions or {}, kwargs)
+    if reuse is not None:
+        if reuse.get('prepare_request') != request:
+            raise ValueError('Existing artifact belongs to a different prepare request; select a new output path')
+        check_capture(reuse)
+        for label,ref in (observed_revisions or {}).items():
+            resolved=git(Path(reuse['root']), 'rev-parse', '--verify', ref+'^{commit}').decode().strip()
+            if resolved != reuse['prepared_reading']['observed_revisions'][label]['resolved_sha']:
+                raise ValueError('Observed revision changed; select a new output path')
+        return reuse
     value = capture(root, query, files, program, runtime_inputs, **kwargs)
+    value['prepare_request'] = request
     root = Path(value['root'])
     changed = set(x.decode() for x in git(root, 'diff', '--name-only', '-z', 'HEAD').split(b'\0') if x)
     changed.update(value['baseline_untracked'])
@@ -727,6 +801,7 @@ def prepare(root: Path, query: str, files: list[str], program: list[str], runtim
                                'status': 'captured' if name in value['base']['inputs'] else 'not present in Wiki snapshot'})
     value['prepared_reading'] = {
         'schema_version':1,
+        'text_display':'bounded-v1',
         'pages':reading_module().collect_pages(value['native_report'], read_page,
                                                [row['path'] for row in selected_pages if row['status']=='captured']),
         'selected_wiki_pages':selected_pages,
@@ -780,8 +855,8 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
     return result
 
 
-def render_context_summary(view: dict, artifact: str, budget: int=6000) -> str:
-    return reading_module().render_summary(view, artifact, budget)
+def render_context_summary(view: dict, artifact: str, budget: int=6000, **kwargs) -> str:
+    return reading_module().render_summary(view, artifact, budget, **kwargs)
 
 
 def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snapshot_only: bool = False) -> dict:
@@ -903,7 +978,7 @@ def capture_arguments(parser):
 
 def main(argv=None) -> int:
     if hasattr(sys.stdout, 'reconfigure'):
-        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stdout.reconfigure(encoding='utf-8',newline='\n')
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest='command', required=True)
     prep = subs.add_parser('prepare', help='Prepare file-level context and compact reading views without a work packet')
@@ -942,25 +1017,44 @@ def main(argv=None) -> int:
     show.add_argument('--format', choices=('text','json'))
     show.add_argument('--section', help='Exact captured body heading; avoids printing an oversized page')
     show.add_argument('--path', help='Exact feature path or impacted file from the index')
+    show.add_argument('--cursor', help='Exact continuation token from the previous bounded text view')
     show.add_argument('--snapshot-only', action='store_true', help='Render saved records without Git/live-input checks; never establishes currentness or authorizes new work')
+    state = subs.add_parser('update-state', help='Preview an authored current-state replacement; optionally apply to the unchanged Wiki page')
+    state.add_argument('--capture', type=Path, required=True)
+    state.add_argument('--path', required=True, help='Exact captured Wiki-relative page')
+    state.add_argument('--state-file', type=Path, required=True, help='UTF-8 current-state body, not history/verification notes')
+    state.add_argument('--verification', help='Optional caller-authored single verification line; the previous note is retained in history, never inferred')
+    state.add_argument('--apply', action='store_true', help='Explicitly write only the unchanged selected Wiki page atomically')
+    state.add_argument('--output',type=Path,required=True,help='New private preview JSON; never overwrite')
     for sub in (cap, prep, rec, sta, de, end, template):
-        sub.add_argument('--output', type=Path, required=True, help='New private projection path; never overwrite')
+        sub.add_argument('--output', type=Path, required=True, help=('New context path, or reuse an identical current prepare capture without rewriting' if sub is prep else 'New private projection path; never overwrite'))
     args = parser.parse_args(argv)
     try:
         if args.command == 'show':
             view=args.view or ('summary' if args.capture else 'index')
-            source=args.capture or args.packet
+            source=(args.capture or args.packet).resolve()
             value=read_json(source)
             shown=(capture_view(value,view,args.path,snapshot_only=args.snapshot_only) if args.capture else
                    task_view(value,view,args.path,snapshot_only=args.snapshot_only))
-            fmt=args.format or ('text' if view in ('summary','page','history') else 'json')
+            bounded_capture=args.capture and value.get('prepared_reading',{}).get('text_display')=='bounded-v1'
+            fmt=args.format or ('text' if bounded_capture or view in ('summary','page','history') else 'json')
+            if args.cursor and fmt!='text':raise ValueError('--cursor is for bounded text views, not JSON export')
+            command=[sys.executable,str(Path(__file__).resolve()),'show','--capture' if args.capture else '--packet',str(source),'--view',view]
+            if args.path:command+=['--path',args.path]
+            if args.section:command+=['--section',args.section]
+            if args.snapshot_only:command+=['--snapshot-only']
+            if fmt=='text':command+=['--format','text']
             if fmt=='json':print(json.dumps(shown,ensure_ascii=False,indent=2))
-            elif view=='summary':print(render_context_summary(shown,str(source)))
-            elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section))
-            else:raise ValueError('Text format is available for summary/page/history; use JSON for full native records')
+            elif view=='summary':print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59))
+            elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section,cursor=args.cursor,command=command,budget=5999,line_budget=59))
+            else:
+                text=json.dumps(shown,ensure_ascii=False,indent=2)+'\n'
+                identity=json.dumps([str(source),view,args.path,args.section],ensure_ascii=False)
+                print(reading_module().text_page(text,identity,command,cursor=args.cursor,budget=5999,line_budget=59)['text'])
             return 0
         if args.command == 'prepare':
-            if args.output.exists() or args.output.is_symlink():raise ValueError('Output already exists; select a new context path')
+            if args.output.is_symlink():raise ValueError('Output cannot be a symlink')
+            reuse=read_json(args.output) if args.output.exists() else None
             observations={}
             for entry in args.observed_revision:
                 if '=' not in entry:raise ValueError('Use --observed-revision LABEL=REV')
@@ -971,9 +1065,22 @@ def main(argv=None) -> int:
                            wiki_root=args.wiki_root,allow_execution=args.allow_native_execution,
                            peers=dict(entry.split('=',1) for entry in args.peer),
                            native_source_context=args.native_source_context,preserve_artifacts=args.preserve_artifact,
-                           observed_revisions=observations)
+                           observed_revisions=observations,reuse=reuse)
+            if reuse is None:write_new(args.output,result)
+            prefix="REUSED CURRENT CONTEXT — no native execution, capture unchanged\n" if reuse is not None else ''
+            shown=capture_view(result)
+            print(prefix+render_context_summary(shown,str(args.output.resolve()),
+                                               budget=5999-len(prefix.encode('utf-8')),
+                                               line_budget=58 if prefix else 59))
+            return 0
+        if args.command == 'update-state':
+            if args.output.exists() or args.output.is_symlink():raise ValueError('Preview output already exists; choose a new path')
+            current=args.state_file.read_bytes().decode('utf-8-sig')
+            result=state_update(read_json(args.capture),args.path,current,datetime.now(timezone.utc).isoformat(),args.verification)
             write_new(args.output,result)
-            print(render_context_summary(capture_view(result,snapshot_only=True),str(args.output)))
+            if args.apply:apply_state(result)
+            print(json.dumps({'ok':True,'output':str(args.output),'page':result['page'],'changed':result['changed'],
+                              'applied':args.apply,'limits':result['limits']},ensure_ascii=False))
             return 0
         if args.command == 'capture':
             result = capture(args.root, args.query, args.files, json.loads(args.native_argv), args.runtime_input,

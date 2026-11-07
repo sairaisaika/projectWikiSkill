@@ -14,6 +14,13 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
+## 0.2.22
+
+Bounded capture text continuations (bytes and lines), current exact-request prepare
+reuse, and explicit source-bound authored-state replacement with retained history.
+Evidence and limits: [reading-flow report](evals/reports/reading-flow-20261107.md).
+Current source/host/use status remains in [status](docs/wiki/status.md#current-state).
+
 ## 0.2.21 source candidate
 
 Selected Wiki documents now enter prepared page/history views even without native
