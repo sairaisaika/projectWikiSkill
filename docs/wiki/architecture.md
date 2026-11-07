@@ -269,3 +269,9 @@ avoids consuming the next section's leading generated-block marker. With no hist
 continue appending a new history section after the full page. Test both exact
 insertion and a simulated native generated-block rewrite, then rerun a real native
 generator before claiming preservation. No new reminder, gate or status inference.
+
+The same next-heading boundary can also consume a generated opener when replacing
+an old current section. Recognized `name:begin` / `BEGIN` HTML block markers must
+bound authored current/history projection and current replacement; markers inside
+fenced examples remain literal. Preserve the generated block itself and verify its
+regeneration independently from the archived old state.
