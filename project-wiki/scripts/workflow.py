@@ -1054,11 +1054,13 @@ def main(argv=None) -> int:
     preview.add_argument('--view', choices=('diff','proposed'), default='diff')
     preview.add_argument('--format', choices=('text','json'), default='text')
     preview.add_argument('--cursor', help='Exact continuation token from the same saved plan and view')
+    apply = subs.add_parser('apply-state', help='Explicitly apply exactly a saved state plan to its unchanged source page')
+    apply.add_argument('--plan', type=Path, required=True)
     state = subs.add_parser('update-state', help='Preview an authored current-state replacement; optionally apply to the unchanged Wiki page')
     state.add_argument('--capture', type=Path, required=True)
     state.add_argument('--path', required=True, help='Exact captured Wiki-relative page')
     state.add_argument('--state-file', type=Path, required=True, help='UTF-8 current-state body, not history/verification notes')
-    state.add_argument('--verification', help='Optional caller-authored single verification line; the previous note is retained in history, never inferred')
+    state.add_argument('--verification', help='Optional full single line, e.g. > Verification: source reviewed (or > 核验：...); no history separator. Previous evidence is archived, not inferred')
     state.add_argument('--apply', action='store_true', help='Explicitly write only the unchanged selected Wiki page atomically')
     state.add_argument('--output',type=Path,required=True,help='New private preview JSON; never overwrite')
     for sub in (cap, prep, rec, sta, de, end, template):
@@ -1101,6 +1103,15 @@ def main(argv=None) -> int:
                 identity = json.dumps([str(source),args.view,shown['page'],shown['expected_sha256'],shown['proposed_sha256']],ensure_ascii=False)
                 print(reading_module().text_page(text,identity,command,cursor=args.cursor,budget=5999,line_budget=59)['text'])
             return 0
+        if args.command == 'apply-state':
+            source = args.plan.resolve()
+            result = read_json(source)
+            apply_state(result)
+            print(json.dumps({'ok':True,'plan':str(source),'page':result['page'],
+                              'changed':result['changed'],'applied':True,
+                              'proposed_sha256':result['proposed_sha256'],
+                              'limits':'Exact saved proposal applied to unchanged source bytes; no native recollection, plan rewrite, semantic approval or deployment claim.'},ensure_ascii=False))
+            return 0
         if args.command == 'prepare':
             if args.output.is_symlink():raise ValueError('Output cannot be a symlink')
             reuse=read_json(args.output) if args.output.exists() else None
@@ -1130,7 +1141,8 @@ def main(argv=None) -> int:
             if args.apply:apply_state(result)
             print(json.dumps({'ok':True,'output':str(args.output),'page':result['page'],'changed':result['changed'],
                               'applied':args.apply,'limits':result['limits'],
-                              'read_preview_argv':[sys.executable,str(Path(__file__).resolve()),'show-state','--plan',str(args.output.resolve()),'--view','diff']},ensure_ascii=False))
+                              'read_preview_argv':[sys.executable,str(Path(__file__).resolve()),'show-state','--plan',str(args.output.resolve()),'--view','diff'],
+                              'apply_preview_argv':[sys.executable,str(Path(__file__).resolve()),'apply-state','--plan',str(args.output.resolve())]},ensure_ascii=False))
             return 0
         if args.command == 'capture':
             result = capture(args.root, args.query, args.files, json.loads(args.native_argv), args.runtime_input,

@@ -76,10 +76,19 @@ python <skill>/scripts/workflow.py update-state --capture <context.json> \
   --path feature.md --state-file <current-body.md> --output <new-preview.json>
 # Read the saved diff/proposal with bounded continuation, not cat/head:
 python <skill>/scripts/workflow.py show-state --plan <new-preview.json> --view diff
-# Optional application in an isolated owned checkout:
+# Apply that exact reviewed artifact (receipt: apply_preview_argv):
+python <skill>/scripts/workflow.py apply-state --plan <new-preview.json>
+# Alternatively, one explicit preview-and-apply operation in an owned checkout:
 python <skill>/scripts/workflow.py update-state --capture <context.json> \
   --path feature.md --state-file <current-body.md> --output <new-apply.json> --apply
 ```
+
+`apply-state` reads only the reviewed plan and checks the same page/root/symlink
+and source-byte conditions. It does not rerun collection, re-read a body file,
+rebuild verification text or rewrite the plan. Changed source requires a new
+reviewed plan; the command is not a business-approval certificate. The full
+verification argument, when supplied to update-state, is a single complete line
+such as `> Verification: source reviewed` or `> 核验：源码已核`.
 
 The output artifact retains the exact original and proposed Markdown plus their
 hashes. The operation keeps its compact JSON receipt and adds `read_preview_argv`;
