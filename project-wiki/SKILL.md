@@ -18,7 +18,9 @@ runtime inputs remain explicit and reviewed; execution still needs opt-in.
 See [the concrete command](references/collaboration-workflow.md#file-first-preparation).
 
 Read a selected file's complete impact record, then the relevant page sections
-with `show --capture … --view impact|page --path …`. `--view history` keeps older
+with `show --capture … --view impact|page --path …`. Captured page/history reads
+and current-state updates accept either the saved Wiki key or its repository-relative
+Wiki path; both resolve only to the same saved page. `--view history` keeps older
 verification notes separate. A page lacking an explicit current-state section
 stays unknown; a listed note or caller-declared deployed revision is not a live
 capability certificate. New prepared captures default to bounded text: oversized

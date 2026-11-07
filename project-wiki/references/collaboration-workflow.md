@@ -38,6 +38,11 @@ inputs. The helper does not infer executable argv from Wiki prose. Missing helpe
 `routes.json` is a format/adoption result (exit2), not evidence that a native Wiki
 is broken and not a request to create a second manifest.
 
+For capture page/history views and `update-state`, `--path feature.md` and
+`--path docs/wiki/feature.md` select the same saved page when `docs/wiki` is the
+configured Wiki root. Only exact saved keys are resolved; unknown, escaping or
+ambiguous inputs are rejected, and no file lookup is added in snapshot-only mode.
+
 The saved artifact is the existing native capture, plus captured reading views.
 It retains every file/owner, unregistered input and unexpanded candidate; a query
 miss does not discard file context. Explicitly selected Markdown files inside the
