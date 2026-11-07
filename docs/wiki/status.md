@@ -4,23 +4,40 @@
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
+| 0.2.22 | [final334 source matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42364450790), Ubuntu/Windows × Python3.10/3.13 | [PR48](https://github.com/sairaisaika/projectWikiSkill/pull/48), merge0d30ecf (same tree as tested9241185) | three refreshed source/support/input/identity-matching profiles | one Linux Claude skill-only copy;21/21 payload files match0d30ecf | pending next fresh task | pending post-reset real task; coordinator replay is separate | not inferred; live product and efficiency unmeasured |
+
+The Linux copy is manually pinned to0d30ecf. It was atomically exchanged while
+no direct installed helper process was observed, with previous tree retained and
+settings unchanged. Old sessions were not restarted; Windows/Mac copies were not
+updated. No background updater was added. Actual post-reset use must be recorded
+separately in the [reading-flow report](../../evals/reports/reading-flow-20261107.md).
+
+## Historical evidence
+
+Earlier status and installation observations are preserved below as records;
+read their original dates and evidence scopes. They do not override current state.
+
+### Before the0.2.22 source/installation checkpoint
+
+The following observations predate the bounded0.2.22 installation.
+
+### Previous0.2.21 current-state observation
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
 | 0.2.21 | [final source matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42355922508), Ubuntu/Windows × Python 3.10/3.13 | [PR47](https://github.com/sairaisaika/projectWikiSkill/pull/47), merge 5a7918c (same tree as tested 03c21b2) | [three byte-matching profiles](../../evals/reports/selected-wiki-context-20261107.md#final-0221-candidate-verification) | one Linux Claude skill-only copy; 21/21 payload files match 5a7918c | fresh task loaded installed skill and helper | selected Wiki originals captured and read before product edit | bounded source-task acceptance; live product and efficiency unknown |
 
 Installation and actual use evidence: [bounded adoption](../../evals/reports/selected-wiki-context-20261107.md#bounded-host-adoption-and-actual-use).
 The Linux copy is pinned to 5a7918c; no auto-updater was added. Existing sessions
 were not restarted. Windows and Mac copies were not updated in this task.
 
-## 0.2.22 reading-flow candidate
+### Earlier0.2.22 candidate observation
 
 An isolated source revision adds bounded continuation, current exact-request reuse
 and explicit source-bound state/history updates. The installed host remains0.2.21.
 Source/fixture/package checks and subsequent host/fresh-task evidence are separate:
 [reading-flow report](../../evals/reports/reading-flow-20261107.md).
 
-## Historical evidence
-
-Earlier status and installation observations are preserved below as records;
-read their original dates and evidence scopes. They do not override current state.
 
 ### Superseded 0.2.20 / candidate observation
 
@@ -96,8 +113,8 @@ Column meanings:
 
 | Copy | What it is | Last recorded state |
 |---|---|---|
-| This repository, [`project-wiki/`](../../project-wiki/SKILL.md) + [`plugin.json`](../../plugin.json) | The only editable source. `plugin.json` is the version identity; packages are generated projections | Source identity 0.2.21; merged 5a7918c; see Current state |
-| Linux Claude `~/.claude/skills/project-wiki` | Skill-only copy, pinned | 21 payload files match 5a7918c; bounded adoption evidence linked above |
+| This repository, [`project-wiki/`](../../project-wiki/SKILL.md) + [`plugin.json`](../../plugin.json) | The only editable source. `plugin.json` is the version identity; packages are generated projections | Source identity0.2.22; merged0d30ecf; see Current state |
+| Linux Claude `~/.claude/skills/project-wiki` | Skill-only copy, pinned | 21 payload files match0d30ecf; bounded installation evidence linked above |
 | Mac Codex `~/.codex/skills/project-wiki` | Skill-only copy, pinned | 19 files from ee6c065 ([receipt](../../evals/reports/host-skill-only-20261030.json)) |
 | Windows Codex plugin install | Official plugin CLI install with hook profile | 0.2.17 ([report](../../evals/reports/supplied-hook-observations-c179-20261025.md#normal-source-and-bounded-host-adoption)) |
 
