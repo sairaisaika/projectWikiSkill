@@ -14,6 +14,13 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
+## 0.2.26
+
+Captured page/history reads and state updates accept a saved Wiki key or its
+repository-relative path, without probing new files. Both target the same saved
+page; ambiguity is rejected. Missing keys now differ from captures without page
+views. [Actual-task failure and replay](evals/reports/captured-page-path-20261107.md).
+
 ## 0.2.25
 
 Identical current `prepare` calls now return a small saved-context locator instead

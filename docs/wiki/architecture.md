@@ -120,6 +120,13 @@ updater, new registry or task gate is introduced. Regression and adoption eviden
 
 ## task-views
 
+Capture page/history and current-state input paths accept an exact saved Wiki key
+or that page’s repository-relative Wiki path. `captured_page_key` resolves stored
+keys only, rejects ambiguity, and performs no filesystem/Git lookup. State previews
+use the resolved canonical key before constructing the existing protected target.
+An unknown key in a populated capture is distinct from an older capture without
+saved page views; existing integrity and source-byte checks remain unchanged.
+
 `workflow.py show` renders a saved capture or packet for a reader; new capture
 reading views are described above, with legacy packet views retained below.
 

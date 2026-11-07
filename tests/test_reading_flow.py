@@ -368,6 +368,59 @@ class ReadingFlowTests(unittest.TestCase):
         self.assertNotIn('Source behavior reviewed',text)
         self.assertLessEqual(len(text.encode('utf-8')),6000)
 
+    def test_repository_relative_page_and_history_use_the_same_saved_key(self):
+        c=self.prepare()
+        with patch.object(wf,'check_capture',side_effect=AssertionError('live read')):
+            for kind in ['page','history']:
+                plain=wf.capture_view(c,kind,'feature.md',snapshot_only=True)
+                alias=wf.capture_view(c,kind,'docs/wiki/feature.md',snapshot_only=True)
+                self.assertEqual(alias,plain)
+                self.assertEqual(alias['path'],'feature.md')
+
+    def test_repository_relative_state_plan_targets_the_same_captured_file(self):
+        c=self.prepare()
+        plain=wf.state_update(c,'feature.md','Source corrected.','now')
+        alias=wf.state_update(c,'docs/wiki/feature.md','Source corrected.','now')
+        self.assertEqual(alias,plain)
+        self.assertEqual(alias['page'],'docs/wiki/feature.md')
+        wf.apply_state(alias)
+        self.assertIn('Source corrected.',(self.root/'docs/wiki/feature.md').read_text())
+        self.assertFalse((self.root/'docs/wiki/docs').exists())
+
+    def test_unknown_and_ambiguous_page_keys_do_not_redirect(self):
+        c=self.prepare()
+        with self.assertRaisesRegex(ValueError,'not captured'):
+            wf.capture_view(c,'page','docs/wiki/unknown.md',snapshot_only=True)
+        with self.assertRaisesRegex(ValueError,'not captured'):
+            wf.capture_view(c,'page','docs/wiki/../../outside.md',snapshot_only=True)
+        with self.assertRaisesRegex(ValueError,'not captured') as error:
+            wf.capture_view(c,'page','x'*20000,snapshot_only=True)
+        self.assertLess(len(str(error.exception)),1000)
+        ambiguous=copy.deepcopy(c)
+        ambiguous['prepared_reading']['pages']['docs/wiki/feature.md']={}
+        with self.assertRaisesRegex(ValueError,'Ambiguous'):
+            wf.captured_page_key(ambiguous,'docs/wiki/feature.md')
+        old=copy.deepcopy(c);old.pop('prepared_reading');old.pop('prepared_reading_sha256')
+        with self.assertRaisesRegex(ValueError,'No saved page views'):
+            wf.capture_view(old,'page','feature.md',snapshot_only=True)
+
+    def test_repository_relative_cli_continuation_preserves_snapshot_only(self):
+        import shlex,os,re
+        page=self.root/'docs/wiki/feature.md'
+        page.write_text('# Feature\n\n## Mechanism\n'+'夜鹭'*1500+'\n',encoding='utf-8')
+        c=self.prepare();out=Path(self.tmp.name)/'capture space.json';wf.write_new(out,c)
+        args=['show','--capture',str(out),'--view','page','--path','docs/wiki/feature.md','--section','Mechanism','--snapshot-only']
+        with patch.object(wf,'check_capture',side_effect=AssertionError('live read')),redirect_stdout(io.StringIO()) as first:
+            self.assertEqual(wf.main(args),0)
+        command=first.getvalue().split('\nNEXT: ',1)[1].strip()
+        argv=([m.replace("''","'")for m in re.findall(r"'((?:''|[^'])*)'",command)] if sys.platform=='win32' else shlex.split(command))
+        self.assertIn('--snapshot-only',argv)
+        self.assertEqual(argv[argv.index('--path')+1],'docs/wiki/feature.md')
+        result=subprocess.run(argv,cwd=Path(self.tmp.name),env={**os.environ,'PATH':''},capture_output=True,text=True,encoding='utf-8')
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        self.assertIn('COMPLETE VIEW',result.stdout)
+        self.assertIn('saved snapshot only',result.stdout)
+
     def test_preamble_and_keyword_metadata_stay_outside_replaced_current_section(self):
         read=wf.reading_module();old='# Page\n\n> 关键词：date · reader\n> 核验：2026-11-01 · abc1234\nIntroductory prose.\n\n## 当前状态\nold contract\n\n## Mechanism\nImplementation.\n'
         new=read.replace_current(old,'New contract.','now')

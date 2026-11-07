@@ -680,6 +680,13 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "render_locator",
           "reason": "Bounded locator and exact full-summary command, with snapshot-only freshness preserved"
+        },
+        {
+          "id": "captured-page-path",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "captured_page_key",
+          "reason": "Resolve exact saved Wiki/repository spellings without filesystem reads; reject ambiguous selection"
         }
       ],
       "docs": [
@@ -696,7 +703,8 @@
           "prepare --files may directly select Markdown inside the configured Wiki root; the saved selected_wiki_pages list is distinct from native owner declarations",
           "Text show views accept --cursor from the same saved content/view/path/section; --format json remains a complete machine export.",
           "update-state --capture --path --state-file --output [--apply] replaces authored current state and rotates old state/verification notes.",
-          "show --capture PATH --view locator [--snapshot-only]: saved scope counts and a summary-reading command; no repeated file/owner delivery"
+          "show --capture PATH --view locator [--snapshot-only]: saved scope counts and a summary-reading command; no repeated file/owner delivery",
+          "Capture page/history and update-state accept saved Wiki-relative keys or matching repository-relative Wiki paths; no alias outside captured keys is created."
         ],
         "outputs": [
           "New prepared capture text defaults are bounded to6000 UTF-8 bytes/60 lines, with exact NEXT command and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",
