@@ -34,7 +34,11 @@ saved context, without Git or live-page reads. For a current-section update,
 `update-state` previews the replacement and moves previous state/verification
 notes into history while retaining one latest record; `--apply` writes only if
 original page bytes still match. Existing current-heading anchors are preserved. It
-does not infer the supplied facts. See the concrete command linked above.
+does not infer the supplied facts. The compact receipt supplies an exact
+`show-state --plan <saved-preview.json> --view diff` command. This reads the saved
+diff or proposal in bounded parts without consulting live source or applying it;
+`--view proposed` also reads older plans lacking an original snapshot.
+See the concrete command linked above.
 Use start/delegate/finish only when
 that coordination protocol is actually needed; existing project gates stay native.
 

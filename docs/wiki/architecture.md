@@ -230,7 +230,7 @@ quoted to readers. Rationale:
 > Reviewed: 2026-11-03 against c062224; task-views known gap verified against fc310fe
 
 
-### Saved state-preview reader (design; not implemented)
+### Saved state-preview reader (0.2.23)
 
 The first guided0.2.22 task read bounded impact views, then inspected a saved state
 proposal by printing its diff directly. Initial attribution to operation stdout
@@ -238,9 +238,9 @@ was corrected by source inspection: `update-state` already returns compact JSON,
 not the page-sized plan. Keep that receipt contract and add a bounded reader for
 the saved proposal instead of adding reminders, gates or another workflow.
 
-New plans will retain the exact original page bytes alongside the existing
-proposal. A pure `show-state --plan PATH --view diff|proposed` will validate saved
-hashes and use the existing byte/line cursor mechanism. Continuation must not
+New plans retain the exact original page bytes alongside the existing
+proposal. Pure `show-state --plan PATH --view diff|proposed` validates saved
+hashes and uses the existing byte/line cursor mechanism. Continuation must not
 inspect live project inputs, rerun native collection or apply writes. Old plans
 remain readable in proposed mode; diff requires a saved original, never an
 inferred reconstruction. Explicit JSON remains a deliberate complete export.
