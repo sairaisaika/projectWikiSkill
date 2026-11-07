@@ -6,7 +6,7 @@
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
-|0.2.24 candidate|359 Linux cases ran, one platform skip;8 new saved-apply cases; final matrix pending|isolated source branch|pending refreshed profiles|none for0.2.24; Linux remains0.2.23|not yet delivered for0.2.24|not yet observed for0.2.24|not inferred|
+|0.2.24 candidate|360 Linux cases ran, one platform skip;9 new saved-apply cases; final matrix pending|isolated source branch|pending refreshed profiles|none for0.2.24; Linux remains0.2.23|not yet delivered for0.2.24|not yet observed for0.2.24|not inferred|
 
 The installed0.2.23 payload was delivered to a fresh guided documentation task.
 It read the three owning originals before editing, used saved previews and NEXT,

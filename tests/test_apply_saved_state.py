@@ -27,10 +27,17 @@ class ApplySavedStateTests(unittest.TestCase):
         self.assertEqual(page.read_bytes(),plan['proposed_markdown'].encode())
         self.assertEqual(path.read_bytes(),saved);self.assertEqual(path.stat().st_mtime_ns,stamp)
         self.assertEqual(receipt['proposed_sha256'],plan['proposed_sha256']);self.assertTrue(receipt['applied'])
+    def test_explicit_crlf_original_and_reviewed_proposal_preserve_exact_bytes(self):
+        page=self.root/'docs/wiki/feature.md'
+        original=page.read_bytes().replace(b'\r\n',b'\n').replace(b'\n',b'\r\n');page.write_bytes(original)
+        plan=wf.state_update(self.prepare(),'feature.md','New source; live unknown.','reviewed-crlf')
+        path=Path(self.tmp.name)/'crlf-plan.json';wf.write_new(path,plan)
+        self.assertEqual(plan['original_markdown'].encode('utf-8'),original)
+        self.assertEqual(self.apply(path)[0],0);self.assertEqual(page.read_bytes(),plan['proposed_markdown'].encode('utf-8'))
     def test_body_file_and_external_runtime_changes_are_not_reinterpreted(self):
         page,plan,path=self.saved();body=Path(self.tmp.name)/'body.md';body.write_text('DIFFERENT later body',encoding='utf-8')
         (self.root/'src/editor.py').write_text('unrelated source edit',encoding='utf-8')
-        self.assertEqual(self.apply(path)[0],0);self.assertEqual(page.read_text(encoding='utf-8'),plan['proposed_markdown'])
+        self.assertEqual(self.apply(path)[0],0);self.assertEqual(page.read_bytes(),plan['proposed_markdown'].encode('utf-8'))
     def test_stale_source_is_rejected_without_overwriting_it_or_the_plan(self):
         page,plan,path=self.saved();page.write_text('other actor page',encoding='utf-8');saved=path.read_bytes()
         code,receipt=self.apply(path);self.assertEqual(code,1)
@@ -53,7 +60,7 @@ class ApplySavedStateTests(unittest.TestCase):
             self.assertEqual(self.apply(path)[0],0)
     def test_legacy_plan_without_original_snapshot_still_applies(self):
         page,plan,path=self.saved();del plan['original_markdown'];path.write_text(json.dumps(plan),encoding='utf-8')
-        self.assertEqual(self.apply(path)[0],0);self.assertEqual(page.read_text(encoding='utf-8'),plan['proposed_markdown'])
+        self.assertEqual(self.apply(path)[0],0);self.assertEqual(page.read_bytes(),plan['proposed_markdown'].encode('utf-8'))
     def test_preview_receipt_supplies_apply_command_for_that_exact_artifact(self):
         capture=Path(self.tmp.name)/'context.json';wf.write_new(capture,self.prepare());state=Path(self.tmp.name)/'state.md';state.write_text('Reviewed source; live unknown.',encoding='utf-8');out=Path(self.tmp.name)/'preview.json';buf=io.StringIO()
         with redirect_stdout(buf):self.assertEqual(wf.main(['update-state','--capture',str(capture),'--path','feature.md','--state-file',str(state),'--output',str(out)]),0)
