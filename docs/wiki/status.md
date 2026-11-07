@@ -111,10 +111,13 @@ Column meanings:
 
 ### Canonical copies
 
+Historical copy observations; the current source/host record is the single table
+at [Current state](#current-state). These earlier rows are not live inventory.
+
 | Copy | What it is | Last recorded state |
 |---|---|---|
-| This repository, [`project-wiki/`](../../project-wiki/SKILL.md) + [`plugin.json`](../../plugin.json) | The only editable source. `plugin.json` is the version identity; packages are generated projections | Source identity0.2.22; merged0d30ecf; see Current state |
-| Linux Claude `~/.claude/skills/project-wiki` | Skill-only copy, pinned | 21 payload files match0d30ecf; bounded installation evidence linked above |
+| This repository, [`project-wiki/`](../../project-wiki/SKILL.md) + [`plugin.json`](../../plugin.json) | The only editable source. `plugin.json` is the version identity; packages are generated projections | Source identity 0.2.21; merged 5a7918c; see the dated observation above |
+| Linux Claude `~/.claude/skills/project-wiki` | Skill-only copy, pinned | 21 payload files match 5a7918c; this is the previous dated installation observation |
 | Mac Codex `~/.codex/skills/project-wiki` | Skill-only copy, pinned | 19 files from ee6c065 ([receipt](../../evals/reports/host-skill-only-20261030.json)) |
 | Windows Codex plugin install | Official plugin CLI install with hook profile | 0.2.17 ([report](../../evals/reports/supplied-hook-observations-c179-20261025.md#normal-source-and-bounded-host-adoption)) |
 

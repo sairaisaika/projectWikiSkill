@@ -1,5 +1,10 @@
 # Reading-flow repair (0.2.22)
 
+Current source/host/delivery/use state is maintained only in
+[the version status table](../../docs/wiki/status.md#current-state). Evidence below
+retains the order and scope of earlier checkpoints; an earlier pending statement
+does not override that table.
+
 ## Problem and resulting behavior
 
 Guided real work still clipped long shell output, repeated native queries over
@@ -23,7 +28,15 @@ The maintainer Wiki architecture design was committed before implementation.
   explicit caller-supplied replacement archives the previous note. Neither note
   nor current prose is inferred as business truth or deployment acceptance.
 
-## Source regressions and controls
+## Evidence boundaries
+
+Reading is not understanding; capture freshness covers declared inputs only.
+State writing cannot certify caller-supplied facts. Source tests and coordinator
+replay are not worker adoption, deployment or causal efficiency evidence.
+
+## History (source and adoption checkpoints)
+
+### Source regressions and controls
 
 Forty-three new cases cover reconstruction of long Unicode text, byte/line budgets,
 view-bound cursors, real CLI continuations from relative paths and reuse output,
@@ -38,7 +51,7 @@ without relying on missing new APIs. New transform APIs have separate new behavi
 and preservation tests. Four existing expectations intentionally changed from
 refusal/nonreuse to explicit bounded continuation/current reuse.
 
-## Native coordinator replay
+### Native coordinator replay
 
 A separate stable consumer checkout used its real native router through a reviewed
 counting wrapper. First prepare made one native call, identical reuse made none,
@@ -56,7 +69,7 @@ After applying caller-explicit provenance and regenerating the native index, the
 native completeness/rendered-link checks passed251 cases. The initial failures
 are retained privately; no active developer checkout was altered.
 
-## Verification and remaining acceptance
+### Verification and remaining acceptance
 
 Final full source, fixture, packaging and platform-CI receipts are recorded after
 the source checkpoint. Host update and post-reset fresh-task use remain pending.
@@ -69,7 +82,7 @@ facts. No token/time savings or causal comparison is claimed. A fresh available
 worker must validate actual use on an unrelated owned task before adoption closes.
 
 
-## Initial source checkpoint verification
+### Initial source checkpoint verification
 
 The final source suite ran333 cases successfully with one explicit platform skip;
 42 reading-flow regressions are included. Before/after SHA256 over both runtime
@@ -80,7 +93,7 @@ stand in for host installation or a fresh real worker. Packaging and platform CI
 follow the source checkpoint; adoption remains pending.
 
 
-## Windows follow-up
+### Windows follow-up
 
 First source CI passed Linux but failed on Windows3.13. New test readers used the
 Windows locale codec for UTF-8 subprocess output and Markdown, causing a decode
@@ -91,7 +104,7 @@ checks the actual bytes. Budgets and preservation assertions were retained, not
 relaxed. Final source/matrix verification must pass before host update.
 
 
-## Final source, packages and bounded installation
+### Final source, packages and bounded installation
 
 Final source9241185 passes334 Linux cases (one platform skip), including43 new
 reading-flow cases. All four Ubuntu/Windows × Python3.10/3.13 jobs passed in
