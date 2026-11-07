@@ -1,6 +1,29 @@
 # Version status
 
 
+
+## Current state
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+|0.2.24 candidate|359 Linux cases ran, one platform skip;8 new saved-apply cases; final matrix pending|isolated source branch|pending refreshed profiles|none for0.2.24; Linux remains0.2.23|not yet delivered for0.2.24|not yet observed for0.2.24|not inferred|
+
+The installed0.2.23 payload was delivered to a fresh guided documentation task.
+It read the three owning originals before editing, used saved previews and NEXT,
+and retained history through native generation. Some preview chunks were filtered
+or clipped afterward; not all displayed preview bytes were read. No platform
+truncation marker is not proof of complete reading.0.2.24 addresses its repeated
+apply-parameter handling, not arbitrary shell filters or general efficiency.
+
+Source/installation/use details remain distinct:
+[preview/history repair](../../evals/reports/state-preview-20261107.md),
+[exact saved application](../../evals/reports/apply-saved-state-20261107.md).
+
+## Historical evidence
+
+### State snapshot 2026-11-07T13:26:24.065033+00:00
+
+```markdown
 ## Current state
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
@@ -17,7 +40,7 @@ corrected an initial attribution of long output to that operation.0.2.23 adds a
 saved-preview reader; it is not installed or worker-verified yet. Evidence and
 limits: [saved-preview report](../../evals/reports/state-preview-20261107.md).
 
-## Historical evidence
+```
 
 Earlier status and installation observations are preserved below as records;
 read their original dates and evidence scopes. They do not override current state.
