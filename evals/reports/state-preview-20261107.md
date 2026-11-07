@@ -42,10 +42,30 @@ large. State source-byte/apply semantics are otherwise unchanged.
 
 ## Source verification checkpoint
 
-Twelve new cases cover full Unicode diff/proposal reconstruction through actual
+Seventeen new cases cover full Unicode diff/proposal reconstruction through actual
 CLI continuations, wire byte/line budgets, relative paths, content/view-bound
 cursors, hash rejection, legacy proposals, explicit JSON, no-change and newline
 handling, no live/native/write operations on reads, compact receipts and source
-preservation at the artifact budget boundary. The full Linux suite passed346 cases
+preservation at the artifact budget boundary. The full Linux suite passed351 cases
 with one platform skip. Source CI, packages, installation and fresh0.2.23 worker
 use follow this checkpoint and must be recorded separately.
+
+
+### Native regeneration counterexample
+
+Independent return review found that0.2.22 placed the old state snapshot between
+the next generated block's opener and its heading. The actual native generator
+then removed it while structural checks stayed green. The saved worker proposal
+still contained the original, so the loss was recoverable and must not be reported
+as successful history retention. An isolated replay on the same real page confirms
+old behavior: present before generation, absent afterward. With0.2.23 the full old
+current state remains after the real generator and251 native document/link checks
+pass. No active developer tree was changed by the replay.
+
+New snapshots now go immediately under the authored history heading. Recognized
+name:begin/BEGIN comments also bound current projection/replacement, preserving
+the following generated opener; fenced examples remain literal. Two existing pure
+behaviors fail by assertion on0.2.22 (current projection included the opener and
+replacement consumed it), and pass with the correction. These checks supplement
+the real generator counterexample, not replace it. Arbitrary unrecognized native
+marker formats remain outside this heuristic and need their native adapter.

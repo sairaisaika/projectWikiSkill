@@ -100,6 +100,41 @@ class StatePreviewTests(unittest.TestCase):
     def test_missing_final_newline_is_visible_in_diff(self):
         d=wf.state_preview(plan_for('old','new'))['markdown']
         self.assertIn('-old\n\\ No newline at end of file\n+new\n\\ No newline at end of file\n',d)
+    def test_archive_is_outside_following_generated_block_and_survives_regeneration(self):
+        old = '# Page\n## Current state\nOLD SOURCE CLAIM\n## History\nearlier record\n\n<!-- page-satellites:begin -->\n## Generated\nold generated text\n<!-- page-satellites:end -->\n'
+        updated = wf.reading_module().replace_current(old,'new source claim','now')
+        self.assertLess(updated.index('### State snapshot'),updated.index('<!-- page-satellites:begin -->'))
+        regenerated = re.sub(r'<!-- page-satellites:begin -->.*?<!-- page-satellites:end -->',
+                             '<!-- page-satellites:begin -->\n## Generated\nnew generation\n<!-- page-satellites:end -->',updated,flags=re.S)
+        projected = wf.reading_module().page_projection(regenerated)
+        self.assertIn('OLD SOURCE CLAIM',projected['history_markdown'])
+        self.assertEqual(projected['authored_current_state'],'new source claim')
+        self.assertIn('earlier record',regenerated)
+    def test_new_history_without_existing_section_is_after_complete_generated_block(self):
+        old = '# Page\n## Current state\nold claim\n<!-- generated:begin -->\n## Generated\nrows\n<!-- generated:end -->\n'
+        updated = wf.reading_module().replace_current(old,'new claim','now')
+        self.assertGreater(updated.index('### State snapshot'),updated.index('<!-- generated:end -->'))
+        self.assertIn('old claim',wf.reading_module().page_projection(updated)['history_markdown'])
+    def test_current_section_preserves_following_generated_opener_and_projection(self):
+        old = '# Page\n## Current state\nold claim\n<!-- generated:begin -->\n## Generated\nrows\n<!-- generated:end -->\n'
+        projected = wf.reading_module().page_projection(old)
+        self.assertEqual(projected['authored_current_state'],'old claim')
+        updated = wf.reading_module().replace_current(old,'new claim','now')
+        self.assertIn('<!-- generated:begin -->\n## Generated\nrows\n<!-- generated:end -->',updated)
+        regenerated = re.sub(r'<!-- generated:begin -->.*?<!-- generated:end -->',
+                             '<!-- generated:begin -->\n## Generated\nnew rows\n<!-- generated:end -->',updated,flags=re.S)
+        self.assertIn('old claim',wf.reading_module().page_projection(regenerated)['history_markdown'])
+    def test_generated_begin_inside_fenced_current_example_is_literal(self):
+        old = '# Page\n## Current state\nold claim\n```html\n<!-- generated:begin -->\n```\nmore old claims\n## Body\nstable\n'
+        updated = wf.reading_module().replace_current(old,'new claim','now')
+        history = wf.reading_module().page_projection(updated)['history_markdown']
+        self.assertIn('more old claims',history);self.assertIn('```html\n<!-- generated:begin -->\n```',history)
+        self.assertNotIn('more old claims',wf.reading_module().page_projection(updated)['authored_current_state'])
+    def test_begin_generated_marker_bounds_authored_current(self):
+        old = '# Page\n## Current state\nold claim\n<!-- BEGIN GENERATED -->\n## Generated\nrows\n<!-- END GENERATED -->\n'
+        self.assertEqual(wf.reading_module().page_projection(old)['authored_current_state'],'old claim')
+        updated=wf.reading_module().replace_current(old,'new claim','now')
+        self.assertIn('<!-- BEGIN GENERATED -->\n## Generated',updated)
     def test_giant_single_unicode_line_respects_binary_wire_budget(self):
         self.path.write_text(json.dumps(plan_for('old\n','\U00010348\u591c\u9e6d'*8000)),encoding='utf-8')
         cp=subprocess.run([sys.executable,str(wf.__file__),'show-state','--plan',str(self.path)],capture_output=True)

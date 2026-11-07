@@ -953,8 +953,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "page_projection",
           "reason": "Separate authored state, verification notes and explicit history without deployment inference",
-          "line": 38,
-          "sha256": "388a6b47b3a3c66de4801c3906371bc4823e9dca614cbb002a0fa681775eedc9"
+          "line": 39,
+          "sha256": "1b66cab40a474ffcc5c7065ec2892b8a2a2872bd3e69f20970fba4d39ff10fe6"
         },
         {
           "id": "compact",
@@ -962,8 +962,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "render_summary",
           "reason": "Complete saved scope index displayed through bounded byte/line continuations",
-          "line": 130,
-          "sha256": "388a6b47b3a3c66de4801c3906371bc4823e9dca614cbb002a0fa681775eedc9"
+          "line": 133,
+          "sha256": "1b66cab40a474ffcc5c7065ec2892b8a2a2872bd3e69f20970fba4d39ff10fe6"
         },
         {
           "id": "page-collection",
@@ -971,8 +971,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "collect_pages",
           "reason": "Deduplicates native owner/query pages and explicitly selected Wiki pages without inventing owner edges",
-          "line": 73,
-          "sha256": "388a6b47b3a3c66de4801c3906371bc4823e9dca614cbb002a0fa681775eedc9"
+          "line": 76,
+          "sha256": "1b66cab40a474ffcc5c7065ec2892b8a2a2872bd3e69f20970fba4d39ff10fe6"
         },
         {
           "id": "direct-page-selection",
@@ -989,8 +989,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "text_page",
           "reason": "Exact bounded text continuation across large Unicode lines and sections",
-          "line": 185,
-          "sha256": "388a6b47b3a3c66de4801c3906371bc4823e9dca614cbb002a0fa681775eedc9"
+          "line": 188,
+          "sha256": "1b66cab40a474ffcc5c7065ec2892b8a2a2872bd3e69f20970fba4d39ff10fe6"
         },
         {
           "id": "state-preview",
@@ -1016,8 +1016,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "replace_current",
           "reason": "Retain previous current sections and verification notes verbatim in history",
-          "line": 254,
-          "sha256": "388a6b47b3a3c66de4801c3906371bc4823e9dca614cbb002a0fa681775eedc9"
+          "line": 257,
+          "sha256": "1b66cab40a474ffcc5c7065ec2892b8a2a2872bd3e69f20970fba4d39ff10fe6"
         }
       ]
     },
