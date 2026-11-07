@@ -149,7 +149,8 @@
         "tests/test_wiki.py",
         "tests/test_task_maps.py",
         "tests/test_engineering_depth.py",
-        "tests/test_skill_package.py"
+        "tests/test_skill_package.py",
+        "tests/test_context_reading.py"
       ],
       "checks": [
         {
@@ -186,7 +187,7 @@
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-03",
+      "reviewed_at": "2026-11-06",
       "locations": [
         {
           "id": "cli",
@@ -194,8 +195,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "argparse subcommands query|task|list|audit|build|check|evaluate and exit codes",
           "symbol": "main",
-          "line": 796,
-          "sha256": "52960e9aba76fcea9488415f725ac7ebd7ecab142da7ceefef89dd49dda470d7"
+          "line": 803,
+          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
         },
         {
           "id": "route",
@@ -203,8 +204,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Validates one schema 1/2 route record, its sources, docs, rules and evidence",
           "symbol": "resolve_route",
-          "line": 412,
-          "sha256": "52960e9aba76fcea9488415f725ac7ebd7ecab142da7ceefef89dd49dda470d7"
+          "line": 419,
+          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
         },
         {
           "id": "locate",
@@ -212,8 +213,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Exactly one Python symbol or needle match per source; no first-match fallback",
           "symbol": "resolve_source",
-          "line": 152,
-          "sha256": "52960e9aba76fcea9488415f725ac7ebd7ecab142da7ceefef89dd49dda470d7"
+          "line": 159,
+          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
         },
         {
           "id": "audit",
@@ -221,8 +222,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Per-route structural score against min_structural_score; readiness",
           "symbol": "audit",
-          "line": 538,
-          "sha256": "52960e9aba76fcea9488415f725ac7ebd7ecab142da7ceefef89dd49dda470d7"
+          "line": 545,
+          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
         },
         {
           "id": "rank",
@@ -230,8 +231,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Alias/title/id matching that orders query hits",
           "symbol": "rank",
-          "line": 593,
-          "sha256": "52960e9aba76fcea9488415f725ac7ebd7ecab142da7ceefef89dd49dda470d7"
+          "line": 600,
+          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
         },
         {
           "id": "ci",
@@ -255,7 +256,9 @@
         "allow-native-execution",
         "native report",
         "原生上下文",
-        "捕获原生"
+        "捕获原生",
+        "file-first preparation",
+        "文件级上下文前置"
       ],
       "sources": [
         {
@@ -299,21 +302,31 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "capture-return reuses capture over the actual diff",
           "symbol": "capture_return"
+        },
+        {
+          "id": "prepare",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "prepare",
+          "reason": "One native capture with file owners, saved page views and explicit existing-change observation"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#workflow-capture",
         "docs/wiki/architecture.md#ownership-boundary",
-        "project-wiki/references/collaboration-workflow.md#context-capture"
+        "project-wiki/references/collaboration-workflow.md#context-capture",
+        "project-wiki/references/collaboration-workflow.md#file-first-preparation"
       ],
       "interface": {
         "inputs": [
           "--root, --query, --native-argv JSON, --runtime-input (repeatable), --files groups (accumulate)",
-          "optional --wiki-root, --peer ALIAS=CHECKOUT, --native-source-context, --preserve-artifact"
+          "optional --wiki-root, --peer ALIAS=CHECKOUT, --native-source-context, --preserve-artifact",
+          "prepare additionally requires nonempty --files; optional --observed-revision LABEL=REV is caller data, not live verification"
         ],
         "outputs": [
           "New native-wiki-capture JSON (exclusive create, at most 4 MiB)",
-          "stdout {\"ok\": true, \"kind\", \"output\", \"limits\"}"
+          "stdout {\"ok\": true, \"kind\", \"output\", \"limits\"}",
+          "prepare: saved native-wiki-capture with prepared_reading; complete compact index or explicit undelivered display"
         ],
         "errors": [
           "{\"ok\": false, \"error\", \"completion\": \"not established\"} and exit 1 for ValueError",
@@ -374,7 +387,8 @@
       ],
       "tests": [
         "tests/test_workflow.py",
-        "tests/test_readonly_baseline.py"
+        "tests/test_readonly_baseline.py",
+        "tests/test_context_reading.py"
       ],
       "checks": [
         {
@@ -399,7 +413,7 @@
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-03",
+      "reviewed_at": "2026-11-06",
       "locations": [
         {
           "id": "cli",
@@ -407,8 +421,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "capture subcommand and its explicit argv/runtime-input options",
           "needle": "cap = subs.add_parser('capture')",
-          "line": 775,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 891,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "capture",
@@ -416,8 +430,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Opt-in native run, input hashing before/after, report validation",
           "symbol": "capture",
-          "line": 273,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 279,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "validate",
@@ -425,8 +439,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Native report shape and exact impact-file coverage",
           "symbol": "validate_native",
-          "line": 189,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 191,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "current",
@@ -434,8 +448,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Recheck that a saved capture is still current before use",
           "symbol": "check_capture",
-          "line": 336,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 344,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "start",
@@ -443,8 +457,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "start builds a work packet only from a current capture",
           "symbol": "start",
-          "line": 364,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 374,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "return",
@@ -452,8 +466,17 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "capture-return reuses capture over the actual diff",
           "symbol": "capture_return",
-          "line": 453,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 463,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
+        },
+        {
+          "id": "prepare",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "prepare",
+          "reason": "One native capture with file owners, saved page views and explicit existing-change observation",
+          "line": 691,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         }
       ]
     },
@@ -600,8 +623,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "start subcommand; delegate shares --task-id/--owner/--allow-file/--read-only",
           "needle": "sta = subs.add_parser('start')",
-          "line": 791,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 899,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "start",
@@ -609,8 +632,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Planned files must be covered by allowed_files; read-only grants none",
           "symbol": "start",
-          "line": 364,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 374,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "delegate",
@@ -618,8 +641,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Child packet may only narrow allowed_files",
           "symbol": "delegate",
-          "line": 395,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 405,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "baseline",
@@ -627,8 +650,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "read_only_baseline observation for read-only tasks",
           "symbol": "readonly_baseline",
-          "line": 522,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 532,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "finish",
@@ -636,8 +659,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "finish reports actual files outside allowed_files as unplanned",
           "symbol": "finish",
-          "line": 570,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 580,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         }
       ]
     },
@@ -652,7 +675,10 @@
         "index view",
         "path_bases",
         "快照",
-        "只读视图"
+        "只读视图",
+        "compact context summary",
+        "current history split",
+        "现状 历史"
       ],
       "sources": [
         {
@@ -675,16 +701,39 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "SessionStart delivery renders the snapshot index view",
           "symbol": "deliver"
+        },
+        {
+          "id": "capture-view",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "capture_view",
+          "reason": "Fresh or snapshot-only views over a saved native context without a task packet"
+        },
+        {
+          "id": "page-projection",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "page_projection",
+          "reason": "Separate authored state, verification notes and explicit history without deployment inference"
+        },
+        {
+          "id": "compact",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "render_summary",
+          "reason": "Complete scope index with explicit display-budget refusal rather than silent clipping"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#task-views",
         "docs/wiki/architecture.md#path-kinds",
-        "project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git"
+        "project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git",
+        "docs/wiki/architecture.md#file-first-preparation-and-state-reading"
       ],
       "interface": {
         "inputs": [
-          "show --packet PATH [--view index|feature|impact|all] [--path KEY] [--snapshot-only]"
+          "show --packet PATH [--view index|feature|impact|all] [--path KEY] [--snapshot-only]",
+          "show also accepts --capture with summary/page/history and an exact path/section; snapshot-only never reads live inputs"
         ],
         "outputs": [
           "JSON view on stdout with freshness, path_bases, native_workflow and review_preparation; no output file"
@@ -692,7 +741,7 @@
         "errors": [
           "{\"ok\": false, ...} and exit 1 for an invalid packet, access scope or unknown --path"
         ],
-        "compatibility": "Default view stays index; snapshot-only must keep working without Git.",
+        "compatibility": "Default view stays index; snapshot-only must keep working without Git. Existing packet index/feature/impact/all remain supported; index key order puts omissions first. Saved page views require prepare.",
         "failure_modes": {
           "returned": [
             "Without --snapshot-only a stale capture is reported in freshness, not raised"
@@ -727,7 +776,8 @@
       "tests": [
         "tests/test_workflow.py",
         "tests/test_readonly_baseline.py",
-        "tests/test_lifecycle.py"
+        "tests/test_lifecycle.py",
+        "tests/test_context_reading.py"
       ],
       "checks": [
         {
@@ -750,7 +800,7 @@
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-03",
+      "reviewed_at": "2026-11-06",
       "locations": [
         {
           "id": "cli",
@@ -758,8 +808,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "show --view/--path/--snapshot-only options",
           "needle": "show.add_argument('--snapshot-only'",
-          "line": 814,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 926,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "view",
@@ -767,8 +817,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Renders index/feature/impact/all; snapshot_only skips check_capture",
           "symbol": "task_view",
-          "line": 674,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 768,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "lifecycle",
@@ -778,6 +828,33 @@
           "symbol": "deliver",
           "line": 27,
           "sha256": "6041ab00d3ad83a764ad8adde4cdd1f7590c72e593aec8aae34c65c8a4225e4c"
+        },
+        {
+          "id": "capture-view",
+          "role": "implementation",
+          "path": "project-wiki/scripts/workflow.py",
+          "symbol": "capture_view",
+          "reason": "Fresh or snapshot-only views over a saved native context without a task packet",
+          "line": 730,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
+        },
+        {
+          "id": "page-projection",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "page_projection",
+          "reason": "Separate authored state, verification notes and explicit history without deployment inference",
+          "line": 25,
+          "sha256": "43fc96d3eab62bfe3cbab1ca0d3c138afbf040961382958e6b9df35135c07cd2"
+        },
+        {
+          "id": "compact",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "render_summary",
+          "reason": "Complete scope index with explicit display-budget refusal rather than silent clipping",
+          "line": 83,
+          "sha256": "43fc96d3eab62bfe3cbab1ca0d3c138afbf040961382958e6b9df35135c07cd2"
         }
       ]
     },
@@ -911,8 +988,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "capture-return subcommand; argv must equal the saved one",
           "needle": "rec = subs.add_parser('capture-return'",
-          "line": 787,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 895,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "recapture",
@@ -920,8 +997,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Rechecks saved inputs, collects actual files, reruns capture, rejects movement",
           "symbol": "capture_return",
-          "line": 453,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 463,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "collector",
@@ -929,8 +1006,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Single actual-diff predicate shared with finish",
           "symbol": "repository_changes",
-          "line": 424,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 434,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "finish",
@@ -938,8 +1015,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "finish consumes the recapture as --after-capture",
           "symbol": "finish",
-          "line": 570,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 580,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         }
       ]
     },
@@ -1095,8 +1172,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "finish subcommand (--packet --after-capture --review --output)",
           "needle": "end = subs.add_parser('finish')",
-          "line": 803,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 911,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "template-cli",
@@ -1104,8 +1181,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "review-template subcommand",
           "needle": "template = subs.add_parser('review-template'",
-          "line": 807,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 915,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "template",
@@ -1113,8 +1190,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Every satellite, capability and unregistered file starts unreviewed",
           "symbol": "review_template",
-          "line": 538,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 548,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "finish",
@@ -1122,8 +1199,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Recomputes the actual diff and lists issues",
           "symbol": "finish",
-          "line": 570,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 580,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         },
         {
           "id": "main",
@@ -1131,8 +1208,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Exits 1 when structural_reconciliation is false",
           "symbol": "main",
-          "line": 770,
-          "sha256": "c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2"
+          "line": 885,
+          "sha256": "7256d0c177c6baf815db9cf3d028e35df371ce3e1f5fc4ce7d6fe44f34fd9a68"
         }
       ]
     },
@@ -1952,7 +2029,8 @@
           "docs": [
             "docs/wiki/architecture.md#workflow-capture",
             "docs/wiki/architecture.md#ownership-boundary",
-            "project-wiki/references/collaboration-workflow.md#context-capture"
+            "project-wiki/references/collaboration-workflow.md#context-capture",
+            "project-wiki/references/collaboration-workflow.md#file-first-preparation"
           ]
         },
         {
@@ -1970,7 +2048,8 @@
           "docs": [
             "docs/wiki/architecture.md#task-views",
             "docs/wiki/architecture.md#path-kinds",
-            "project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git"
+            "project-wiki/references/collaboration-workflow.md#reading-when-the-worker-cannot-invoke-git",
+            "docs/wiki/architecture.md#file-first-preparation-and-state-reading"
           ]
         },
         {
