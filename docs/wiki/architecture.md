@@ -228,3 +228,26 @@ quoted to readers. Rationale:
 ## Historical evidence
 
 > Reviewed: 2026-11-03 against c062224; task-views known gap verified against fc310fe
+
+
+### State-preview stdout follow-up (design; not implemented)
+
+The first guided0.2.22 task used bounded impact views, but `update-state` still
+printed its entire page-sized JSON plan after saving the same plan to an output
+file. The worker clipped that stdout before reading the saved proposal/diff.
+Bounded display must cover this operation too, without another reminder or gate.
+
+For captures opting into bounded-v1, the operation will print a compact receipt
+and an exact command to read the saved preview. A pure `show-state` reader will
+show a saved diff or proposal with the existing byte/line cursor mechanism; it
+must not rerun native collection or apply a write during continuation. The full
+plan stays in the explicit output artifact. `--format json` remains a deliberate
+complete export, and older captures keep their prior default for compatibility.
+Plan kind/hash checks bind the shown proposal; cursor identity binds the chosen
+saved content/view. Preview/apply source-byte semantics remain unchanged. Test
+large Unicode plans, full reconstruction, changed-plan/cross-view cursors, old
+capture/explicit-JSON compatibility, and no write/native execution on reads.
+
+This does not prevent an agent from piping an unrelated legacy native query to
+`tail`. In the guided task, a newly planned file triggered the host's pre-existing
+native-command hint; that external routing limit remains separate evidence.
