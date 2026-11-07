@@ -89,3 +89,22 @@ now explicitly uses UTF-8. Runtime stdout also explicitly uses LF, so Windows CR
 translation cannot exceed the promised wire-byte limit; a new binary stdout test
 checks the actual bytes. Budgets and preservation assertions were retained, not
 relaxed. Final source/matrix verification must pass before host update.
+
+
+## Final source, packages and bounded installation
+
+Final source9241185 passes334 Linux cases (one platform skip), including43 new
+reading-flow cases. All four Ubuntu/Windows × Python3.10/3.13 jobs passed in
+[final PR CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42364450790).
+A local Windows3.13 run also passed43 new cases with one symlink-availability skip.
+The merged0d30ecf tree matches that tested head. Three refreshed plain/legacy/
+portable packages match final source, support files, input bytes and identity.
+Earlier packages and first Windows failures are superseded, not reused.
+
+One Linux Claude skill-only copy was atomically exchanged to the merged payload,
+with21/21 tracked file hashes matching and the old tree retained. No direct helper
+process was observed at both switch boundaries; existing sessions were not restarted.
+Settings and installed-plugin registry hashes stayed unchanged. This is a bounded
+manual installation, not a global process lease or evidence of active-session
+reload. There is still no updater for that copied skill, and other hosts were not
+changed. Fresh real-task delivery/use remains pending until a new available session.
