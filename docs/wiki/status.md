@@ -5,6 +5,24 @@
 
 
 
+
+## Current state
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+|0.2.27|[main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42407941201), Ubuntu/Windows × Python3.10/3.13;369 collected /368 executed /1 local platform skip; fixtures/check/evaluation passed|PR53 merged ae22f740f1d26c56e1adf20daca42a2da8e0bc75; installed payload equals tested e04ddd59|source/unit checks passed; no new updater/hooks|Linux atomic directory exchange20:03:49Z;21/21 files match merge ae22; no active helper observed; old0.2.26 retained|existing session instructions not forcibly refreshed; other hosts unchanged|Codex real20.2 current-state preview/apply archived complete old body and every old verification line; original Claude hit Fable limit18:38–18:39Z, no new reset time or natural0.2.27 adoption evidence|not inferred|
+|0.2.26|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42400300691), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42401197822);365 collected /364 executed /1 local platform skip|PR52 main2eb2c48, payload equals tested940e3ae|source checks pass|Linux atomic directory exchange18:38:12Z,21/21 files match; no active helper; old0.2.25 retained|existing session instructions not forced to refresh|installed helper replays original bad path successfully; original release S2 task used native wiki-task/head before installation and reached model limit, so no natural0.2.26 adoption claim|not inferred|
+|0.2.25|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42395696217), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42396074414);361 collected /360 executed /1 local platform skip|PR51, main12f2992 tree matches tested65fe838|source/package unit checks pass; no new hook configuration|Linux manual copy21/21 matches12f2992, quiet boundary17:24:13Z, old copy retained|fresh Skill payload delivery observed17:30:44Z|CI audit prepared file contexts and used NEXT before Wiki application; one wrong-basis page call needed retry; nightly script owner still unregistered and retained as a gap|bounded observations, not general efficiency or product acceptance|
+
+Dated-heading handling is bounded to the common reader/state transform: it does not infer the latest true deployment from dates. See [dated-state evidence](../../evals/reports/dated-state-20261107.md).
+
+No automatic updater was added; settings/original sessions and other hosts remain unchanged. One controlled same-scope repeat reduced stdout2829→840 bytes, with complete context recoverable; no token/fee claim. Guided tasks and source/host/use are separate. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [captured paths](../../evals/reports/captured-page-path-20261107.md).
+
+## Historical evidence
+
+### State snapshot 2026-11-07T20:19:47.147493+00:00
+
+```markdown
 ## Current state
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
@@ -17,7 +35,7 @@ Dated-heading work is bounded to the common reader/state transform: it does not 
 
 No automatic updater was added; settings/original sessions and other hosts remain unchanged. One controlled same-scope repeat reduced stdout2829→840 bytes, with complete context recoverable; no token/fee claim. Guided tasks and source/host/use are separate. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [captured paths](../../evals/reports/captured-page-path-20261107.md).
 
-## Historical evidence
+```
 
 ### State snapshot 2026-11-07T17:58:44.758338+00:00
 
