@@ -87,3 +87,5 @@ records real0.2.4 capture/start/read-only delegation, source/consumer inspection
 three independently found and reproduced counterexamples, and a reconciled clean
 return retaining a capability gap. Runtime-executor/test-manifest failures and
 pending device/rollout acceptance remain separate; no payload or hook change.
+
+- [Reused-context locator (2026-11-07)](reuse-locator-20261107.md): real duplicate-index observation, compact reuse and complete-context recovery.

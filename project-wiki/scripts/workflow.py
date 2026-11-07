@@ -864,8 +864,9 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
         except (OSError, ValueError, KeyError, subprocess.SubprocessError):
             freshness='historical projection; current inputs changed or unavailable'
     native=value['native_report']
-    if view=='summary':
+    if view in ('summary','locator'):
         result=reading_module().summary(value)
+        if view=='locator':result=reading_module().locator_summary(result)
     elif view in ('page','history'):
         pages=value.get('prepared_reading',{}).get('pages',{})
         if path not in pages:
@@ -1043,7 +1044,7 @@ def main(argv=None) -> int:
     selected = show.add_mutually_exclusive_group(required=True)
     selected.add_argument('--packet', type=Path)
     selected.add_argument('--capture', type=Path)
-    show.add_argument('--view', choices=('summary', 'page', 'history', 'index', 'feature', 'impact', 'all'))
+    show.add_argument('--view', choices=('summary', 'locator', 'page', 'history', 'index', 'feature', 'impact', 'all'))
     show.add_argument('--format', choices=('text','json'))
     show.add_argument('--section', help='Exact captured body heading; avoids printing an oversized page')
     show.add_argument('--path', help='Exact feature path or impacted file from the index')
@@ -1074,7 +1075,7 @@ def main(argv=None) -> int:
             shown=(capture_view(value,view,args.path,snapshot_only=args.snapshot_only) if args.capture else
                    task_view(value,view,args.path,snapshot_only=args.snapshot_only))
             bounded_capture=args.capture and value.get('prepared_reading',{}).get('text_display')=='bounded-v1'
-            fmt=args.format or ('text' if bounded_capture or view in ('summary','page','history') else 'json')
+            fmt=args.format or ('text' if bounded_capture or view in ('summary','locator','page','history') else 'json')
             if args.cursor and fmt!='text':raise ValueError('--cursor is for bounded text views, not JSON export')
             command=[sys.executable,str(Path(__file__).resolve()),'show','--capture' if args.capture else '--packet',str(source),'--view',view]
             if args.path:command+=['--path',args.path]
@@ -1082,6 +1083,7 @@ def main(argv=None) -> int:
             if args.snapshot_only:command+=['--snapshot-only']
             if fmt=='text':command+=['--format','text']
             if fmt=='json':print(json.dumps(shown,ensure_ascii=False,indent=2))
+            elif view=='locator':print(reading_module().render_locator(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59,snapshot_only=args.snapshot_only))
             elif view=='summary':print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59))
             elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section,cursor=args.cursor,command=command,budget=5999,line_budget=59))
             else:
@@ -1128,8 +1130,9 @@ def main(argv=None) -> int:
                            observed_revisions=observations,reuse=reuse)
             if reuse is None:write_new(args.output,result)
             prefix="REUSED CURRENT CONTEXT — no native execution, capture unchanged\n" if reuse is not None else ''
-            shown=capture_view(result)
-            print(prefix+render_context_summary(shown,str(args.output.resolve()),
+            shown=capture_view(result,'locator' if reuse is not None else 'summary')
+            renderer=reading_module().render_locator if reuse is not None else render_context_summary
+            print(prefix+renderer(shown,str(args.output.resolve()),
                                                budget=5999-len(prefix.encode('utf-8')),
                                                line_budget=58 if prefix else 59))
             return 0
