@@ -978,7 +978,7 @@ def capture_arguments(parser):
 
 def main(argv=None) -> int:
     if hasattr(sys.stdout, 'reconfigure'):
-        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stdout.reconfigure(encoding='utf-8',newline='\n')
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest='command', required=True)
     prep = subs.add_parser('prepare', help='Prepare file-level context and compact reading views without a work packet')

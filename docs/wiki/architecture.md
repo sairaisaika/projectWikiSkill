@@ -58,7 +58,7 @@ or capability verification. See [the command](../../project-wiki/references/coll
 ## Bounded continuation, reuse and authored-state updates
 
 `context_reading.text_page` emits an explicit character range and COMPLETE/PARTIAL
-status, within 6000 UTF-8 bytes and 60 lines. A digest-bound cursor resumes the exact
+status, within 6000 UTF-8 bytes and 60 lines. CLI stdout explicitly uses UTF-8/LF so Windows newline translation does not inflate the wire budget. A digest-bound cursor resumes the exact
 saved view; text changes or a different capture/view/path/section reject the cursor.
 The printed command preserves snapshot-only mode and explicit text format. Shell
 commands are quoted for POSIX or PowerShell on the running host. Scope is neither

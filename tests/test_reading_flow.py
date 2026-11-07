@@ -82,7 +82,7 @@ class ReadingFlowTests(unittest.TestCase):
         c=self.prepare();c['native_report']['impact'][0]['pages'][0]['details']='符号'*7000
         c['native_report_canonical_sha256']=wf.report_hash(c['native_report'])
         out=Path(self.tmp.name)/'capture.json';wf.write_new(out,c)
-        cp=subprocess.run([sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','impact','--path','src/editor.py','--snapshot-only'],capture_output=True,text=True)
+        cp=subprocess.run([sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','impact','--path','src/editor.py','--snapshot-only'],capture_output=True,text=True, encoding="utf-8")
         self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
         self.assertLessEqual(len(cp.stdout.encode()),6001);self.assertIn('--cursor',cp.stdout)
 
@@ -128,12 +128,12 @@ class ReadingFlowTests(unittest.TestCase):
         self.assertIn('REUSED',log.getvalue());self.assertEqual(out.read_bytes(),before);self.assertEqual(out.stat().st_mtime_ns,stamp)
     def test_reuse_never_overwrites_stale_artifact_or_follows_symlink(self):
         out=Path(self.tmp.name)/'context.json';c=self.prepare();wf.write_new(out,c)
-        before=out.read_bytes();(self.root/'src/editor.py').write_text('changed')
+        before=out.read_bytes();(self.root/'src/editor.py').write_text('changed', encoding="utf-8")
         with self.assertRaisesRegex(ValueError,'changed|stale'):self.prepare(reuse=wf.read_json(out))
         self.assertEqual(out.read_bytes(),before)
 
     def test_replace_current_rotates_previous_and_notes_preserves_body(self):
-        read=wf.reading_module();old=(self.root/'docs/wiki/feature.md').read_text()
+        read=wf.reading_module();old=(self.root/'docs/wiki/feature.md').read_text(encoding="utf-8")
         new=read.replace_current(old,'New source contract. Runtime unknown.\n','2026-11-07T10:00:00Z')
         p=read.page_projection(new)
         self.assertEqual(p['authored_current_state'],'New source contract. Runtime unknown.')
@@ -158,13 +158,13 @@ class ReadingFlowTests(unittest.TestCase):
         plan=wf.state_update(c,'feature.md','Verified source contract; live unknown.\n','2026-11-07Z')
         self.assertEqual(p.read_bytes(),old);self.assertIn('proposed_markdown',plan)
         wf.apply_state(plan)
-        self.assertIn('Verified source contract',p.read_text())
+        self.assertIn('Verified source contract',p.read_text(encoding="utf-8"))
         with self.assertRaisesRegex(ValueError,'changed|stale'):wf.apply_state(plan)
     def test_state_update_preserves_unrelated_source_changes_and_refuses_page_drift(self):
-        c=self.prepare();(self.root/'src/editor.py').write_text('intended source edit\n')
+        c=self.prepare();(self.root/'src/editor.py').write_text('intended source edit\n', encoding="utf-8")
         plan=wf.state_update(c,'feature.md','New contract.\n','now')
-        self.assertEqual((self.root/'src/editor.py').read_text(),'intended source edit\n')
-        p=self.root/'docs/wiki/feature.md';p.write_text('# other writer\n')
+        self.assertEqual((self.root/'src/editor.py').read_text(encoding="utf-8"),'intended source edit\n')
+        p=self.root/'docs/wiki/feature.md';p.write_text('# other writer\n', encoding="utf-8")
         with self.assertRaisesRegex(ValueError,'changed|stale'):wf.apply_state(plan)
     def test_state_apply_refuses_changed_plan_and_escaping_or_symlink_target(self):
         c=self.prepare();plan=wf.state_update(c,'feature.md','new','now')
@@ -198,7 +198,7 @@ class ReadingFlowTests(unittest.TestCase):
         args=[sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','impact','--path','src/editor.py','--snapshot-only']
         chunks=[]
         for _ in range(30):
-            cp=subprocess.run(args,capture_output=True,text=True)
+            cp=subprocess.run(args,capture_output=True,text=True, encoding="utf-8")
             self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
             self.assertLessEqual(len(cp.stdout.encode()),6001)
             self.assertLessEqual(len(cp.stdout.splitlines()),61)
@@ -218,14 +218,14 @@ class ReadingFlowTests(unittest.TestCase):
         self.assertEqual(''.join(chunks),expected)
     def test_cli_state_preview_then_apply_and_second_noop(self):
         out=Path(self.tmp.name)/'context.json';wf.write_new(out,self.prepare())
-        state=Path(self.tmp.name)/'state.md';state.write_text('Same-version mechanism. Live unknown.\n')
+        state=Path(self.tmp.name)/'state.md';state.write_text('Same-version mechanism. Live unknown.\n', encoding="utf-8")
         target=self.root/'docs/wiki/feature.md';old=target.read_bytes()
         args=['update-state','--capture',str(out),'--path','feature.md','--state-file',str(state),'--output',str(Path(self.tmp.name)/'preview.json')]
         with redirect_stdout(io.StringIO()):self.assertEqual(wf.main(args),0)
         self.assertEqual(target.read_bytes(),old)
         args[-1]=str(Path(self.tmp.name)/'applied.json')
         with redirect_stdout(io.StringIO()):self.assertEqual(wf.main(args+['--apply']),0)
-        projected=wf.reading_module().page_projection(target.read_text())
+        projected=wf.reading_module().page_projection(target.read_text(encoding="utf-8"))
         self.assertEqual(projected['authored_current_state'],'Same-version mechanism. Live unknown.')
         self.assertIn('abc1234',projected['history_markdown'])
         fresh=Path(self.tmp.name)/'fresh.json';wf.write_new(fresh,self.prepare())
@@ -288,7 +288,7 @@ class ReadingFlowTests(unittest.TestCase):
         c['native_report_canonical_sha256']=wf.report_hash(c['native_report'])
         packet=wf.start(c,'task','owner','edit',['src/editor.py'],['source evidence'],['title'])
         out=Path(self.tmp.name)/'packet.json';wf.write_new(out,packet)
-        cp=subprocess.run([sys.executable,str(wf.__file__),'show','--packet',str(out),'--view','impact','--path','src/editor.py','--snapshot-only','--format','text'],capture_output=True,text=True)
+        cp=subprocess.run([sys.executable,str(wf.__file__),'show','--packet',str(out),'--view','impact','--path','src/editor.py','--snapshot-only','--format','text'],capture_output=True,text=True, encoding="utf-8")
         self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
         next_command=cp.stdout.split('\nNEXT: ',1)[1].strip()
         self.assertIn('--format',next_command)
@@ -296,7 +296,7 @@ class ReadingFlowTests(unittest.TestCase):
             import re
             argv=[m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",next_command)]
         else:argv=shlex.split(next_command)
-        continued=subprocess.run(argv,capture_output=True,text=True)
+        continued=subprocess.run(argv,capture_output=True,text=True, encoding="utf-8")
         self.assertEqual(continued.returncode,0,continued.stdout+continued.stderr)
         self.assertIn('DISPLAY',continued.stdout)
 
@@ -312,7 +312,7 @@ class ReadingFlowTests(unittest.TestCase):
         args=[sys.executable,str(wf.__file__),'prepare','--root',str(self.root),'--query','editor','--files',*[f'src/f{i}.py' for i in range(200)],'--runtime-input','native.py','--native-argv',json.dumps([sys.executable,'native.py']),'--allow-native-execution','--output','context space/context.json']
         saved=None
         for reuse in [False,True]:
-            cp=subprocess.run(args,cwd=self.root,capture_output=True,text=True)
+            cp=subprocess.run(args,cwd=self.root,capture_output=True,text=True, encoding="utf-8")
             self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
             self.assertLessEqual(len(cp.stdout.encode()),6000);self.assertLessEqual(len(cp.stdout.splitlines()),60)
             if reuse:self.assertIn('REUSED',cp.stdout)
@@ -324,7 +324,7 @@ class ReadingFlowTests(unittest.TestCase):
                 import re
                 argv=[m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",command)]
             else:argv=shlex.split(command)
-            continued=subprocess.run(argv,cwd=Path(self.tmp.name),capture_output=True,text=True)
+            continued=subprocess.run(argv,cwd=Path(self.tmp.name),capture_output=True,text=True, encoding="utf-8")
             self.assertEqual(continued.returncode,0,continued.stdout+continued.stderr)
             self.assertIn('DISPLAY',continued.stdout)
 
@@ -362,8 +362,18 @@ class ReadingFlowTests(unittest.TestCase):
         c=self.prepare();c['prepared_reading'].pop('text_display')
         c['prepared_reading_sha256']=wf.report_hash(c['prepared_reading'])
         out=Path(self.tmp.name)/'legacy.json';wf.write_new(out,c)
-        cp=subprocess.run([sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','impact','--path','src/editor.py','--snapshot-only'],capture_output=True,text=True)
+        cp=subprocess.run([sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','impact','--path','src/editor.py','--snapshot-only'],capture_output=True,text=True, encoding="utf-8")
         self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
         self.assertEqual(json.loads(cp.stdout)['native_context']['impact'][0]['file'],'src/editor.py')
-        bounded=subprocess.run([sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','impact','--path','src/editor.py','--snapshot-only','--format','text'],capture_output=True,text=True)
+        bounded=subprocess.run([sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','impact','--path','src/editor.py','--snapshot-only','--format','text'],capture_output=True,text=True, encoding="utf-8")
         self.assertEqual(bounded.returncode,0,bounded.stdout+bounded.stderr);self.assertIn('COMPLETE VIEW',bounded.stdout)
+
+    def test_cli_raw_stdout_stays_within_utf8_byte_budget_and_lf_wire_format(self):
+        c=self.prepare();c['native_report']['impact'][0]['pages'][0]['details']='规则'*8000
+        c['native_report_canonical_sha256']=wf.report_hash(c['native_report'])
+        out=Path(self.tmp.name)/'capture.json';wf.write_new(out,c)
+        cp=subprocess.run([sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','impact','--path','src/editor.py','--snapshot-only'],capture_output=True)
+        self.assertEqual(cp.returncode,0,cp.stderr.decode('utf-8'))
+        self.assertLessEqual(len(cp.stdout),6000)
+        self.assertNotIn(b'\r\n',cp.stdout)
+        self.assertIn('--cursor',cp.stdout.decode('utf-8'))

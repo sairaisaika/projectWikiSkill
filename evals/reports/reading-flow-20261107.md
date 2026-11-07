@@ -25,7 +25,7 @@ The maintainer Wiki architecture design was committed before implementation.
 
 ## Source regressions and controls
 
-Forty-two new cases cover reconstruction of long Unicode text, byte/line budgets,
+Forty-three new cases cover reconstruction of long Unicode text, byte/line budgets,
 view-bound cursors, real CLI continuations from relative paths and reuse output,
 legacy JSON compatibility, no redundant native execution, changed inputs/refs and
 requests, immutable stale evidence, native heading anchors/preamble, state/history
@@ -69,7 +69,7 @@ facts. No token/time savings or causal comparison is claimed. A fresh available
 worker must validate actual use on an unrelated owned task before adoption closes.
 
 
-## Source checkpoint verification
+## Initial source checkpoint verification
 
 The final source suite ran333 cases successfully with one explicit platform skip;
 42 reading-flow regressions are included. Before/after SHA256 over both runtime
@@ -78,3 +78,14 @@ Fixture12, fixture check/evaluate and maintainer Wiki build/check passed. Real
 native reading replay and251 state/render checks are scoped above; they do not
 stand in for host installation or a fresh real worker. Packaging and platform CI
 follow the source checkpoint; adoption remains pending.
+
+
+## Windows follow-up
+
+First source CI passed Linux but failed on Windows3.13. New test readers used the
+Windows locale codec for UTF-8 subprocess output and Markdown, causing a decode
+exception, mojibake byte inflation and a false missing-history assertion. Test I/O
+now explicitly uses UTF-8. Runtime stdout also explicitly uses LF, so Windows CRLF
+translation cannot exceed the promised wire-byte limit; a new binary stdout test
+checks the actual bytes. Budgets and preservation assertions were retained, not
+relaxed. Final source/matrix verification must pass before host update.
