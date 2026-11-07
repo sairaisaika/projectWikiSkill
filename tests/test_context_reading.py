@@ -261,3 +261,45 @@ class ContextReadingTests(unittest.TestCase):
             self.view(c,'page','future.md')
 
 if __name__=='__main__':unittest.main()
+
+
+class DatedCurrentSectionTests(unittest.TestCase):
+    def test_dated_localized_sections_are_authored_claims_with_visible_date(self):
+        reading = wf.reading_module()
+        for title in ['当前状态（2026-11-06）', '现状 (2026-11-06)', 'Current state (2026-11-06)', 'Current status（2026-11-06）']:
+            with self.subTest(title=title):
+                text = '# Release\n## '+title+'\nOld deployment claim.\n## Mechanism\nOne writer.\n'
+                view = reading.page_projection(text)
+                self.assertEqual(view['authored_current_state'], 'Old deployment claim.')
+                view.update({'path':'release.md','freshness':'saved snapshot only'})
+                shown = reading.render_page(view, 'saved.json')
+                self.assertIn('Declared current section: '+title, shown)
+                self.assertIn('not independently verified', shown)
+
+    def test_dated_replacement_archives_old_title_and_does_not_keep_its_date_on_new_state(self):
+        reading = wf.reading_module()
+        old = '# Release\n## 当前状态（2026-11-06）\nOld deployment claim.\n## Mechanism\nOne writer.\n'
+        new = reading.replace_current(old, 'New source evidence; runtime unknown.', '2026-11-07')
+        self.assertEqual(reading.page_projection(new)['authored_current_state'], 'New source evidence; runtime unknown.')
+        self.assertIn('## 当前状态\n', new)
+        self.assertIn('## 当前状态（2026-11-06）\nOld deployment claim.', reading.page_projection(new)['history_markdown'])
+        self.assertIn('## Mechanism\nOne writer.', new)
+        self.assertEqual(reading.replace_current(new, 'New source evidence; runtime unknown.', 'later'), new)
+
+    def test_qualified_nondate_headings_and_fenced_or_historical_dates_are_not_current(self):
+        reading = wf.reading_module()
+        for title in ['Current state (planned)', '当前验收位置（2026-11-06）', '历史当前状态（2026-11-06）']:
+            self.assertIsNone(reading.page_projection('# Page\n## '+title+'\nclaim\n')['authored_current_state'])
+        text = '# Page\n```markdown\n## 当前状态（2026-11-06）\nquoted\n```\n## History\n### Current state (2026-11-05)\nhistorical\n'
+        self.assertIsNone(reading.page_projection(text)['authored_current_state'])
+
+
+    def test_older_saved_unknown_projection_is_not_reinterpreted_by_new_reader(self):
+        reading = wf.reading_module()
+        text = '# Page\n## 当前状态（2026-11-06）\nOld claim.\n'
+        old_view = reading.page_projection(text)
+        old_view.update({'authored_current_state':None,'path':'page.md','freshness':'saved snapshot only'})
+        shown = reading.render_page(old_view, 'old.json')
+        self.assertNotIn('Declared current section:', shown)
+        self.assertIn('Not declared; do not infer it', shown)
+        self.assertEqual(reading.replace_current(text, 'Old claim.', 'later'), text)
