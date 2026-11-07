@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
+from datetime import datetime, timezone
 import json
 from pathlib import Path, PurePosixPath
 import subprocess
@@ -196,7 +198,11 @@ def validate_native(report: dict, query: str, files: list[str], root: Path, wiki
         raise ValueError('Native evidence limits are required')
     actual = [row['file'] for row in report['impact']]
     if len(actual) != len(set(actual)) or set(actual) != set(files):
-        raise ValueError('Native impact omitted or substituted requested files')
+        missing=sorted(set(files)-set(actual)); extra=sorted(set(actual)-set(files))
+        detail=lambda items: json.dumps(items[:5],ensure_ascii=True)+(f' (+{len(items)-5} more)' if len(items)>5 else '')
+        raise ValueError('Native impact omitted or substituted requested files: '
+                         f'requested={len(files)}, returned={len(actual)}, '
+                         f'missing={detail(missing)}, unexpected={detail(extra)}, duplicates={len(actual)-len(set(actual))}')
     wiki = within(root, wiki_root)
     for card in report['cards']:
         if not isinstance(card.get('title'), str):
@@ -277,8 +283,10 @@ def capture(root: Path, query: str, files: list[str], program: list[str], runtim
     root = root.resolve()
     if not allow_execution:
         raise ValueError('Native execution requires explicit opt-in; wiki text is never executable configuration')
-    if not isinstance(program, list) or not program or not all(isinstance(x, str) and x for x in program) or not runtime_inputs:
-        raise ValueError('Declare native argv and its reviewed runtime inputs')
+    if not isinstance(program, list) or not program or not all(isinstance(x, str) and x for x in program):
+        raise ValueError('--native-argv must be a non-empty JSON program prefix; the helper appends query --json --files')
+    if not runtime_inputs:
+        raise ValueError('Declare native argv and its reviewed runtime inputs: missing --runtime-input')
     if not query.strip() or query.startswith('-'):
         raise ValueError('A non-option task query is required')
     files = sorted(set(relative(f) for f in files))
@@ -340,6 +348,8 @@ def check_capture(value: dict, *, require_current: bool = True) -> Path:
     artifact_paths, artifact_hashes = artifact_fields(value)
     if require_current and artifact_snapshot(artifact_paths) != artifact_hashes:
         raise ValueError('Preserved artifact changed after capture')
+    if 'prepared_reading' in value and report_hash(value['prepared_reading']) != value.get('prepared_reading_sha256'):
+        raise ValueError('Prepared reading was changed; prepare a new context')
     if report_hash(value['native_report']) != value.get('native_report_canonical_sha256'):
         raise ValueError('Native context was changed after capture; regenerate instead of editing its projection')
     if require_current and input_snapshot(root, value['wiki_root'], value['runtime_inputs']) != value['base']:
@@ -671,12 +681,101 @@ def write_new(path: Path, value: dict) -> None:
         out.write(encoded)
 
 
+def reading_module():
+    spec = importlib.util.spec_from_file_location('project_wiki_context_reading', Path(__file__).with_name('context_reading.py'))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def prepare(root: Path, query: str, files: list[str], program: list[str], runtime_inputs: list[str],
+            *, observed_revisions: dict[str, str] | None = None, **kwargs) -> dict:
+    """One explicit native capture; no task/owner/dispatch ceremony or new gate."""
+    if not files:
+        raise ValueError('prepare requires --files; find candidate paths with the native query first')
+    value = capture(root, query, files, program, runtime_inputs, **kwargs)
+    root = Path(value['root'])
+    changed = set(x.decode() for x in git(root, 'diff', '--name-only', '-z', 'HEAD').split(b'\0') if x)
+    changed.update(value['baseline_untracked'])
+    for alias, peer in value['peers'].items():
+        if peer['available']:
+            changed.update(alias + '/' + x.decode() for x in git(Path(peer['root']), 'diff', '--name-only', '-z', 'HEAD').split(b'\0') if x)
+            changed.update(alias + '/' + x for x in value['baseline_peer_untracked'][alias])
+    def read_page(name):
+        path = within(within(root, value['wiki_root']), name)
+        raw = path.read_bytes()
+        if sha(raw) != value['base']['inputs'].get(path.relative_to(root).as_posix()):
+            raise ValueError('Wiki page changed while preparing reading views')
+        return raw.decode('utf-8-sig')
+    observations = {}
+    for label, ref in (observed_revisions or {}).items():
+        if not label or not ref or ref.startswith('-'):
+            raise ValueError('Observed revisions require explicit non-option LABEL=REV values')
+        observations[label] = {'declared_ref':ref, 'resolved_sha':git(root, 'rev-parse', '--verify', ref+'^{commit}').decode().strip(),
+                               'provenance':'caller supplied; local Git resolution only, not deployment or capability verification'}
+    value['prepared_reading'] = {
+        'schema_version':1, 'pages':reading_module().collect_pages(value['native_report'], read_page),
+        'observed_revisions':observations,
+        'preparation':{'prepared_at':datetime.now(timezone.utc).isoformat(),
+                       'selected_paths_with_changes':sorted(changed.intersection(value['files'])),
+                       'reading_before_edits':'not established',
+                       'meaning':'Existing selected changes are observed, not attributed. Context captured afterward cannot certify prior reading.'}}
+    value['prepared_reading_sha256'] = report_hash(value['prepared_reading'])
+    if len((json.dumps(value, ensure_ascii=False, indent=2)+'\n').encode('utf-8')) > MAX_REPORT:
+        raise ValueError('Prepared context exceeds saved-artifact budget; split the explicit file scope; no context was silently truncated')
+    check_capture(value)
+    return value
+
+
+def capture_view(value: dict, view: str = 'summary', path: str | None = None, *, snapshot_only: bool = False) -> dict:
+    if value.get('kind') != 'native-wiki-capture' or value.get('schema_version') != 1 or report_hash(value['native_report']) != value.get('native_report_canonical_sha256'):
+        raise ValueError('Native context was changed or is unavailable')
+    if 'prepared_reading' in value and report_hash(value['prepared_reading']) != value.get('prepared_reading_sha256'):
+        raise ValueError('Prepared reading was changed; prepare a new context')
+    current=False
+    freshness='saved snapshot only; current inputs not checked'
+    if not snapshot_only:
+        try:
+            check_capture(value)
+            if any(source_hash(Path(value['root']),name,value.get('peers',{})) != old
+                   for name,old in value.get('planned_source_hashes',{}).items()):
+                raise ValueError('Selected source baseline changed after preparation')
+            current=True; freshness='current for declared inputs; runtime and reading unverified'
+        except (OSError, ValueError, KeyError, subprocess.SubprocessError):
+            freshness='historical projection; current inputs changed or unavailable'
+    native=value['native_report']
+    if view=='summary':
+        result=reading_module().summary(value)
+    elif view in ('page','history'):
+        pages=value.get('prepared_reading',{}).get('pages',{})
+        if path not in pages:raise ValueError('Select a captured page from prepare; older captures do not contain saved page views')
+        result=dict(pages[path]); result['path']=path
+    elif view in ('feature','impact'):
+        key,field=('cards','path') if view=='feature' else ('impact','file')
+        rows=[row for row in native[key] if row[field]==path]
+        if len(rows)!=1:raise ValueError('Select one exact feature or file from the context index')
+        result={'native_context':{key:rows,'limits':native['limits']}}
+    elif view=='all':result={'native_context':native}
+    else:raise ValueError('Unsupported context view')
+    result['freshness']=freshness;result['current_inputs_checked']=current
+    return result
+
+
+def render_context_summary(view: dict, artifact: str, budget: int=6000) -> str:
+    return reading_module().render_summary(view, artifact, budget)
+
+
 def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snapshot_only: bool = False) -> dict:
     """Expose full native records or an explicit index; never silently clip them."""
     if packet.get('kind') != 'wiki-work-packet':
         raise ValueError('Expected a wiki work packet')
     if packet.get('access', 'edit') not in ('edit', 'read_only') or (packet.get('access') == 'read_only' and packet['allowed_files']):
         raise ValueError('Invalid task access scope')
+    if view in ('summary', 'page', 'history'):
+        shown = capture_view(packet['context'], view, path, snapshot_only=snapshot_only)
+        shown['task_scope'] = {key:packet.get(key) for key in ('task_id','owner','access','allowed_files','return_requirements')}
+        if packet.get('access') == 'read_only':shown['read_only_baseline'] = packet.get('read_only_baseline', {'status':'unavailable'})
+        return shown
     current = False
     if snapshot_only:
         # A constrained reader may be forbidden to invoke even read-only Git.
@@ -744,11 +843,13 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snaps
     if view == 'index':
         result.pop('native_context')
         result['native_index'] = {
+            'omitted_candidates': native['omitted'],
             'features': [{'path': row['path'], 'title': row['title']} for row in native['cards']],
             'files': [{'file': row['file'], 'satellite_count': len(row['pages']),
                        'unregistered': row['unregistered']} for row in native['impact']],
-            'omitted_candidates': native['omitted'], 'placementIssues': native['placementIssues'],
+            'placementIssues': native['placementIssues'],
             'limits': native['limits']}
+        result = {'native_index':result.pop('native_index'), **result}
         mode_flag = ' --snapshot-only' if snapshot_only else ''
         result['expansion'] = {'feature': 'show --packet <same-packet>' + mode_flag + ' --view feature --path <feature-path>',
                                'impact': 'show --packet <same-packet>' + mode_flag + ' --view impact --path <file>',
@@ -767,23 +868,30 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snaps
     return result
 
 
+def capture_arguments(parser):
+    parser.add_argument('--root', type=Path, required=True)
+    parser.add_argument('--wiki-root', default='docs/wiki')
+    parser.add_argument('--query', required=True)
+    parser.add_argument('--files', action='extend', nargs='*', default=[],
+                     help='Planned file groups accumulate; repeating the option never replaces earlier paths')
+    parser.add_argument('--runtime-input', action='append', default=[], help='Repeat for each reviewed native runtime input; required before execution')
+    parser.add_argument('--native-argv', required=True, help='JSON program prefix only; helper appends query --json --files <paths>; never read from wiki text')
+    parser.add_argument('--allow-native-execution', action='store_true')
+    parser.add_argument('--peer', action='append', default=[], help='Explicit alias=checkout; missing is not an empty diff')
+    parser.add_argument('--native-source-context', help='Caller-selected JSON pointer to native {label: {root, revision}} observations; compare every selected checkout')
+    parser.add_argument('--preserve-artifact', action='append', default=[], help='Explicit absolute existing evidence file to hash-check; no write prevention or continuous monitoring')
+
+
 def main(argv=None) -> int:
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest='command', required=True)
+    prep = subs.add_parser('prepare', help='Prepare file-level context and compact reading views without a work packet')
     cap = subs.add_parser('capture')
-    cap.add_argument('--root', type=Path, required=True)
-    cap.add_argument('--wiki-root', default='docs/wiki')
-    cap.add_argument('--query', required=True)
-    cap.add_argument('--files', action='extend', nargs='*', default=[],
-                     help='Planned file groups accumulate; repeating the option never replaces earlier paths')
-    cap.add_argument('--runtime-input', action='append', default=[])
-    cap.add_argument('--native-argv', required=True, help='Explicit JSON argv; never read from wiki text')
-    cap.add_argument('--allow-native-execution', action='store_true')
-    cap.add_argument('--peer', action='append', default=[], help='Explicit alias=checkout; missing is not an empty diff')
-    cap.add_argument('--native-source-context', help='Caller-selected JSON pointer to native {label: {root, revision}} observations; compare every selected checkout')
-    cap.add_argument('--preserve-artifact', action='append', default=[], help='Explicit absolute existing evidence file to hash-check; no write prevention or continuous monitoring')
+    capture_arguments(cap)
+    capture_arguments(prep)
+    prep.add_argument('--observed-revision', action='append', default=[], help='Optional LABEL=REV observation; local Git resolution is not live acceptance')
     rec = subs.add_parser('capture-return', help='Coordinator: recapture every actual diff file across the task root/peers using the original final collector')
     rec.add_argument('--packet', type=Path, required=True)
     rec.add_argument('--native-argv', required=True, help='Explicit reviewed JSON argv, must equal the original capture; never execute a command selected from Wiki text')
@@ -808,16 +916,45 @@ def main(argv=None) -> int:
     template.add_argument('--packet', type=Path, required=True)
     template.add_argument('--after-capture', type=Path, required=True)
     show = subs.add_parser('show')
-    show.add_argument('--packet', type=Path, required=True)
-    show.add_argument('--view', choices=('index', 'feature', 'impact', 'all'), default='index')
+    selected = show.add_mutually_exclusive_group(required=True)
+    selected.add_argument('--packet', type=Path)
+    selected.add_argument('--capture', type=Path)
+    show.add_argument('--view', choices=('summary', 'page', 'history', 'index', 'feature', 'impact', 'all'))
+    show.add_argument('--format', choices=('text','json'))
+    show.add_argument('--section', help='Exact captured body heading; avoids printing an oversized page')
     show.add_argument('--path', help='Exact feature path or impacted file from the index')
     show.add_argument('--snapshot-only', action='store_true', help='Render saved records without Git/live-input checks; never establishes currentness or authorizes new work')
-    for sub in (cap, rec, sta, de, end, template):
+    for sub in (cap, prep, rec, sta, de, end, template):
         sub.add_argument('--output', type=Path, required=True, help='New private projection path; never overwrite')
     args = parser.parse_args(argv)
     try:
         if args.command == 'show':
-            print(json.dumps(task_view(read_json(args.packet), args.view, args.path, snapshot_only=args.snapshot_only), ensure_ascii=False, indent=2))
+            view=args.view or ('summary' if args.capture else 'index')
+            source=args.capture or args.packet
+            value=read_json(source)
+            shown=(capture_view(value,view,args.path,snapshot_only=args.snapshot_only) if args.capture else
+                   task_view(value,view,args.path,snapshot_only=args.snapshot_only))
+            fmt=args.format or ('text' if view in ('summary','page','history') else 'json')
+            if fmt=='json':print(json.dumps(shown,ensure_ascii=False,indent=2))
+            elif view=='summary':print(render_context_summary(shown,str(source)))
+            elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section))
+            else:raise ValueError('Text format is available for summary/page/history; use JSON for full native records')
+            return 0
+        if args.command == 'prepare':
+            if args.output.exists() or args.output.is_symlink():raise ValueError('Output already exists; select a new context path')
+            observations={}
+            for entry in args.observed_revision:
+                if '=' not in entry:raise ValueError('Use --observed-revision LABEL=REV')
+                label,ref=entry.split('=',1)
+                if label in observations:raise ValueError('Duplicate observed revision label')
+                observations[label]=ref
+            result=prepare(args.root,args.query,args.files,json.loads(args.native_argv),args.runtime_input,
+                           wiki_root=args.wiki_root,allow_execution=args.allow_native_execution,
+                           peers=dict(entry.split('=',1) for entry in args.peer),
+                           native_source_context=args.native_source_context,preserve_artifacts=args.preserve_artifact,
+                           observed_revisions=observations)
+            write_new(args.output,result)
+            print(render_context_summary(capture_view(result,snapshot_only=True),str(args.output)))
             return 0
         if args.command == 'capture':
             result = capture(args.root, args.query, args.files, json.loads(args.native_argv), args.runtime_input,

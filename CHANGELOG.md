@@ -14,7 +14,15 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
-## Unreleased (still identified as 0.2.19)
+## 0.2.20 source candidate
+
+File-first native preparation without packet ceremony; complete compact indexes
+with explicit display overflow; captured page/current/history reading; existing
+selected-change observations; actionable missing-format diagnostics. Native
+execution opt-in, scope validation and old packet APIs retained. No host update,
+new hook, gate activation or adoption claim. See [current state](docs/wiki/status.md#current-state).
+
+## Earlier source changes under 0.2.19
 
 Payload changes after the pinned ee6c065 copies, with no version bump: split-owner
 handoff guidance (2026-10-30); rule-based routing, invariant tables and five-layer miss

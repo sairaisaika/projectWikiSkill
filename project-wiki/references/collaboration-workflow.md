@@ -15,6 +15,57 @@ so changes to those rules make captured context stale.
 Projects without this shape keep using the standalone route helper or their own
 native workflow; a missing adapter is not a defective wiki.
 
+## File-first preparation
+
+For an ordinary implementation task, a captured file context is enough; do not
+manufacture a delegation/acceptance packet merely to obtain Wiki owners.
+First identify candidate paths through the native entry, then run:
+
+```sh
+python <skill>/scripts/workflow.py prepare --root <checkout> --query "user task" \
+  --files src/editor.ts src/reader.ts \
+  --native-argv '["python","scripts/native_task.py"]' \
+  --runtime-input scripts/native_task.py --allow-native-execution \
+  --output <new-private-context.json>
+python <skill>/scripts/workflow.py show --capture <context.json> --view impact --path src/editor.ts
+python <skill>/scripts/workflow.py show --capture <context.json> --view page --path feature.md
+python <skill>/scripts/workflow.py show --capture <context.json> --view history --path feature.md
+```
+
+Replace the example prefix with the explicitly reviewed native program; the
+helper appends `query --json --files <all paths>`. Include its reviewed runtime
+inputs. The helper does not infer executable argv from Wiki prose. Missing helper
+`routes.json` is a format/adoption result (exit2), not evidence that a native Wiki
+is broken and not a request to create a second manifest.
+
+The saved artifact is the existing native capture, plus captured reading views.
+It retains every file/owner, unregistered input and unexpanded candidate; a query
+miss does not discard file context. The default text is an index, not the full
+page text. When it cannot fit the display budget it says **not delivered**, gives
+counts and the artifact pointer, and exposes no partial index as complete.
+`show --format json` returns the complete selected record; `--section` selects an
+exact captured body heading when a page is long. Historical evidence has its own
+view, and older verification notes are not treated as current deployment.
+
+`prepare` reports existing changes among selected paths at capture time. This is
+not a reading receipt: preparation after edits cannot certify earlier reading,
+and existing changes may belong to somebody else. A later live view labels a
+changed selected source baseline historical. `--snapshot-only` reads saved text
+and source observations without Git, hashing current files or reopening pages.
+
+Optional `--observed-revision LABEL=REV` resolves a caller-supplied local Git ref
+and records it separately from authored state. It never probes production,
+promotes an ancestor to a verified capability, or rewrites a page. Current-state
+sections (`Current state` / `当前状态`) and explicit history sections are projected
+separately; remaining deployment qualifiers in the body are review candidates,
+not automatically corrected facts. Existing native finish/return contracts still
+own source acceptance and actual deployment evidence.
+
+For coordination, the same capture can subsequently feed `start`; no second
+router or task registry is introduced. Captures prepared this way still cannot
+prove a worker read or understood them. Optional hooks are neither installed nor
+activated by preparation.
+
 ## Optional lifecycle delivery
 
 The package builder's `--with-lifecycle-hooks` profile includes separate Codex and

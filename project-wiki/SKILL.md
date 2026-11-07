@@ -8,6 +8,27 @@ description: Build, audit, and maintain source-backed engineering wikis that rou
 Make the wiki cheaper to use than guessing filenames. Optimize **time to a correct,
 actionable location** for a task, and a correct system model for orientation, not page count, diagram count, or an impressive aggregate score.
 
+## File-first entry for an existing native Wiki
+
+Use the project's own query to identify candidate files. Once those paths are
+known, `workflow.py prepare` captures **every declared file's owners** in one call
+and prints a compact index, with unexpanded candidates first. No work packet,
+owner registry or hook installation is needed. The native program prefix and
+runtime inputs remain explicit and reviewed; execution still needs opt-in.
+See [the concrete command](references/collaboration-workflow.md#file-first-preparation).
+
+Read a selected file's complete impact record, then the relevant page sections
+with `show --capture … --view impact|page --path …`. `--view history` keeps older
+verification notes separate. A page lacking an explicit current-state section
+stays unknown; a listed note or caller-declared deployed revision is not a live
+capability certificate. Default displays never silently clip a scope: oversized
+views report not delivered and point to the saved artifact/section selection.
+
+Preparation records already changed selected paths; it does not certify that
+reading preceded those changes. A restricted reader uses `--snapshot-only` on the
+saved context, without Git or live-page reads. Use start/delegate/finish only when
+that coordination protocol is actually needed; existing project gates stay native.
+
 ## Choose the work
 
 - **Understand a project:** start with purpose, actors, core activities and responsibility
@@ -54,8 +75,9 @@ Begin from the native Wiki route and owning rules before making the implementati
 plan. Establish the current checkout, responsible owner and relevant original
 sections; use code to verify or resolve conflicts, not to silently replace the
 knowledge model. Honor the project's required Wiki-first/Wiki-last workflow.
-When reminders do not hold it, enforce Wiki-first with the optional
-[pre-edit gate](references/maintenance.md#pre-edit-gate-host-delivery-of-wiki-first).
+Use the file-first entry above for native projects: it reduces the cost of
+obtaining complete context before editing. Optional host gates remain a separate,
+explicitly chosen operation, with their documented tool-coverage limits.
 
 For maintenance, decide **where the knowledge belongs** before appending it.
 Use [Wiki evolution](references/wiki-evolution.md) to choose an existing section,
