@@ -2,15 +2,13 @@
 
 ## Current state
 
-- Main observed for this source review: fc310fe, identity 0.2.19. PR45 bf2d12b is a separate
-  documentation candidate. The older adoption matrix below is historical,
-  not a current statement that main is still on 0.2.17.
-- Independent context-reading source candidate: identity 0.2.20. Implemented
-  prepare, compact scope delivery, captured current/history views and actionable
-  native-format guidance. Source, fixture and three package profiles pass local checks; cross-platform
-  CI is separate. Verification scope is recorded in the [evaluation](../../evals/reports/context-reading-20261106.md).
-- No host installation, hook activation, consumer project mutation, independent
-  fresh-agent adoption or efficiency improvement is claimed.
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+| 0.2.20 | [PR head: passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42335123267); merge-head CI checked separately | [PR45](https://github.com/sairaisaika/projectWikiSkill/pull/45), [PR46](https://github.com/sairaisaika/projectWikiSkill/pull/46), merge cc2bfa0 | [three source-matching profiles](../../evals/reports/context-reading-20261106.md#source-verification-receipts) | [one Linux Claude skill-only copy, 21/21 bytes matched](../../evals/reports/context-reading-20261106.md#merged-source-and-bounded-installation) | not observed for the new copy | no post-update eligible sample observed | unmeasured |
+
+The installed payload is bound to cc2bfa0 (same tree as reviewed 5dbacfa).
+Installation and a coordinator snapshot smoke test are separate from delivery,
+real worker use and improved task outcomes. See the scoped evidence below.
 
 ## Historical evidence
 

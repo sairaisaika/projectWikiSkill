@@ -87,3 +87,26 @@ resolved long pathname. The assertion now compares the resolved expected Path,
 retaining the check that the reported base identifies the real selected root.
 No production path policy was changed. Final-head CI is re-run after this test
 portability repair; earlier Linux success is not substituted for that result.
+
+## Merged source and bounded installation
+
+PR45 merged as cf2f350; PR46 was retargeted to main and merged as cc2bfa0.
+The merge tree exactly matches the verified PR46 head 5dbacfa. Merge-head CI is
+tracked separately from the prior exact-head PR and push runs.
+
+At an observed quiet task boundary, one Linux Claude skill-only copy was updated
+from fc310fe to cc2bfa0 / identity 0.2.20. All twenty old tracked files matched
+before replacement; all twenty-one new tracked files matched after replacement.
+An atomic directory exchange left no missing-path interval; the old copy was
+retained outside skill discovery. No session restart, hook/settings change or
+consumer worktree mutation was performed. No automatic host updater was added.
+Host paths and tool-log receipts remain private.
+
+The installed helper's prepare help and snapshot-only reading passed. This is a
+coordinator smoke test, not real agent use. No subsequent eligible worker tool
+sample was observed in this window, so new-payload delivery, pre-edit adoption,
+end-of-task authored reconciliation and efficiency improvement remain unmeasured.
+Earlier task observations are pre-update baselines, never new-version results.
+The next observation must identify actual delivered content and compare file
+scope before edits, complete output expansion and authored Wiki return; count
+neither a Skill invocation alone nor a coordinator replay as improved adoption.
