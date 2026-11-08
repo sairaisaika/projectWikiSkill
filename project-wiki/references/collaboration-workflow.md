@@ -59,6 +59,11 @@ including inside an oversized section or Unicode line. Changed text or a mismatc
 view rejects the cursor rather than continuing into different evidence. Each
 part states its displayed range and whether more remains; a displayed prefix is
 never labeled the complete view. `--section` remains available as a direct route.
+To find its exact value without opening the page, add `--section-index` to a
+`--view page` or `--view history` read: it lists the saved headings for that view
+with one exact open command each. Headings inside fenced history snapshots are not
+listed as current sections; duplicate or empty headings are marked instead of given
+a command that would fail, and missing outline metadata is reported unknown.
 `--format json` deliberately exports the complete selected record without display
 pagination; legacy capture/raw-native and packet views retain their JSON default for existing clients,
 and support `--format text` for bounded agent reading.

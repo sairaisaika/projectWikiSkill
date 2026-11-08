@@ -508,3 +508,171 @@ class ReadingFlowTests(unittest.TestCase):
         self.assertLessEqual(len(cp.stdout),6000)
         self.assertNotIn(b'\r\n',cp.stdout)
         self.assertIn('--cursor',cp.stdout.decode('utf-8'))
+
+
+class SectionOutlineTests(unittest.TestCase):
+    """Saved heading discovery replaces guessed --section values and whole-page reads."""
+    setUp = fixture.ContextReadingTests.setUp
+    git = fixture.ContextReadingTests.git
+    prepare = fixture.ContextReadingTests.prepare
+
+    def saved(self, page=None, name='saved context.json', mutate=None):
+        if page is not None:
+            (self.root/'docs/wiki/feature.md').write_text(page,encoding='utf-8')
+        c=self.prepare()
+        if mutate:
+            mutate(c['prepared_reading']['pages']['feature.md'])
+            c['prepared_reading_sha256']=wf.report_hash(c['prepared_reading'])
+        out=Path(self.tmp.name)/name;wf.write_new(out,c)
+        return out
+
+    def run_main(self, args):
+        with patch.object(wf,'git',side_effect=AssertionError('snapshot must not call git')), \
+             patch.object(wf,'check_capture',side_effect=AssertionError('live read')), \
+             redirect_stdout(io.StringIO()) as out:
+            code=wf.main(args)
+        return code,out.getvalue()
+
+    @staticmethod
+    def argv(command):
+        import shlex,re
+        if sys.platform=='win32':
+            return [m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",command)]
+        return shlex.split(command)
+
+    @staticmethod
+    def section_of(argv):
+        for i,arg in enumerate(argv):
+            if arg=='--section':return argv[i+1]
+            if arg.startswith('--section='):return arg[len('--section='):]
+        return None
+
+    def open_lines(self, text):
+        return [self.argv(line.split('OPEN: ',1)[1]) for line in text.splitlines() if line.lstrip().startswith('OPEN: ')]
+
+    def test_page_section_index_lists_exact_open_commands_without_live_reads(self):
+        out=self.saved()
+        code,text=self.run_main(['show','--capture',str(out),'--view','page','--path','docs/wiki/feature.md','--section-index','--snapshot-only'])
+        self.assertEqual(code,0,text)
+        self.assertIn('COMPLETE VIEW',text)
+        self.assertIn('saved snapshot only',text)
+        self.assertNotIn('One writer serves the reader.',text)  # outline, not page body
+        opened=self.open_lines(text)
+        self.assertEqual([self.section_of(a) for a in opened],['Feature','Current state','Mechanism'])
+        self.assertIn('--view history --section-index',text)
+        for argv in opened:
+            self.assertIn('--snapshot-only',argv);self.assertNotIn('--section-index',argv)
+            self.assertEqual(argv[argv.index('--path')+1],'docs/wiki/feature.md')
+            code,body=self.run_main(argv[2:])
+            self.assertEqual(code,0,body);self.assertIn('SELECTED AUTHORED SECTION',body)
+        self.assertIn('One writer serves the reader.',self.run_main(opened[2][2:])[1])
+
+    def test_fenced_history_snapshot_headings_never_become_current_sections(self):
+        page=('# Feature\n\n## Current state\nnew state\n\n```markdown\n## Fake current\n```\n\n## Mechanism\nm\n\n'
+              '## History\n\n### State snapshot 2026-01-01\n\n````markdown\n## Current state\nold state\n## Mechanism\nold\n````\n')
+        out=self.saved(page)
+        code,text=self.run_main(['show','--capture',str(out),'--view','page','--path','feature.md','--section-index','--snapshot-only'])
+        self.assertEqual(code,0,text)
+        self.assertEqual([self.section_of(a) for a in self.open_lines(text)],['Feature','Current state','Mechanism'])
+        self.assertNotIn('Fake current',text);self.assertNotIn('State snapshot',text)
+        code,hist=self.run_main(['show','--capture',str(out),'--view','history','--path','feature.md','--section-index','--snapshot-only'])
+        self.assertEqual(code,0,hist)
+        self.assertEqual([self.section_of(a) for a in self.open_lines(hist)],['History','State snapshot 2026-01-01'])
+        self.assertNotIn('Current state',hist);self.assertNotIn('Mechanism',hist)
+        for argv in self.open_lines(hist):
+            self.assertEqual(argv[argv.index('--view')+1],'history')
+            code,body=self.run_main(argv[2:])
+            self.assertEqual(code,0,body);self.assertIn('HISTORICAL EVIDENCE',body)
+
+    def test_duplicate_and_untitled_headings_are_identified_without_failing_selectors(self):
+        page='# Feature\n\n## Notes\na\n\n## Notes\nb\n\n##\nuntitled\n\n## Unique\nu\n'
+        out=self.saved(page)
+        with self.assertRaises(ValueError):wf.reading_module().select_section(page,'Notes')
+        code,text=self.run_main(['show','--capture',str(out),'--view','page','--path','feature.md','--section-index','--snapshot-only'])
+        self.assertEqual(code,0,text)
+        self.assertEqual(text.count('AMBIGUOUS'),2)
+        self.assertIn('UNTITLED',text)
+        opened=self.open_lines(text)
+        self.assertEqual([self.section_of(a) for a in opened],['Feature','Unique'])
+        for argv in opened:self.assertEqual(self.run_main(argv[2:])[0],0)
+
+    def test_missing_or_empty_outline_metadata_stays_unknown_without_reconstruction(self):
+        missing=self.saved(name='missing.json',mutate=lambda p:p.pop('section_index'))
+        code,text=self.run_main(['show','--capture',str(missing),'--view','page','--path','feature.md','--section-index','--snapshot-only'])
+        self.assertEqual(code,0,text);self.assertIn('UNKNOWN',text);self.assertNotIn('OPEN:',text)
+        self.assertNotIn('Mechanism',text)
+        empty=self.saved(name='empty.json',mutate=lambda p:p.update(section_index=[]))
+        code,text=self.run_main(['show','--capture',str(empty),'--view','page','--path','feature.md','--section-index','--snapshot-only'])
+        self.assertEqual(code,0,text);self.assertIn('no headings recorded',text);self.assertNotIn('OPEN:',text)
+        code,data=self.run_main(['show','--capture',str(missing),'--view','page','--path','feature.md','--section-index','--snapshot-only','--format','json'])
+        self.assertEqual(code,0,data);self.assertEqual(json.loads(data)['section_outline']['status'],'unknown')
+
+    def test_large_unicode_outline_continues_exactly_and_quoted_titles_round_trip(self):
+        odd=["O'Brien \"quoted\" $HOME `tick`", '-leading dash', '路径 / 夜鹭 𐍈 ; & |']
+        titles=[f'节 {i} '+('夜鹭日历'*12) for i in range(120)]+odd
+        page='# Feature\n\n'+''.join(f'## {t}\nbody {i}\n\n' for i,t in enumerate(titles))
+        out=self.saved(page,name='saved 夜鹭 context.json')
+        args=['show','--capture',str(out),'--view','page','--path','docs/wiki/feature.md','--section-index','--snapshot-only']
+        chunks=[]
+        for _ in range(100):
+            code,text=self.run_main(args)
+            self.assertEqual(code,0,text)
+            self.assertLessEqual(len(text.encode('utf-8')),6000);self.assertLessEqual(len(text.splitlines()),60)
+            start=text.index('--- CONTENT ---\n')+len('--- CONTENT ---\n');end=text.rindex('\n--- END CONTENT ---')
+            chunks.append(text[start:end]);tail=text[end:]
+            if '\nNEXT: ' not in tail:break
+            args=self.argv(tail.split('\nNEXT: ',1)[1].strip())[2:]
+            for flag in ('--section-index','--snapshot-only'):self.assertIn(flag,args)
+            self.assertEqual(args[args.index('--view')+1],'page')
+            self.assertEqual(args[args.index('--path')+1],'docs/wiki/feature.md')
+            self.assertEqual(args[args.index('--capture')+1],str(out.resolve()))
+        else:self.fail('outline continuation never completed')
+        self.assertGreater(len(chunks),2)
+        whole=''.join(chunks)
+        openers=self.open_lines(whole)
+        self.assertEqual([self.section_of(a) for a in openers],['Feature',*titles])
+        for argv,expected in zip(openers[-3:],['body 120','body 121','body 122']):
+            code,body=self.run_main(argv[2:])
+            self.assertEqual(code,0,body);self.assertIn(expected,body)
+
+    def test_section_index_rejects_mixed_selection_and_other_views(self):
+        out=self.saved()
+        for extra in (['--view','page','--path','feature.md','--section','Mechanism'],['--view','summary'],['--view','impact','--path','src/editor.py']):
+            with self.subTest(extra=extra):
+                code,text=self.run_main(['show','--capture',str(out),*extra,'--section-index','--snapshot-only'])
+                self.assertEqual(code,1,text);self.assertIn('--section-index',text)
+        code,text=self.run_main(['show','--capture',str(out),'--view','page','--path','feature.md','--section','Nope','--snapshot-only'])
+        self.assertEqual(code,1);self.assertIn('--section-index',text)
+
+    def test_default_page_and_json_exports_are_unchanged_by_the_option(self):
+        out=self.saved()
+        base=['show','--capture',str(out),'--view','page','--path','feature.md','--snapshot-only']
+        _,page=self.run_main(base)
+        self.assertNotIn('OPEN:',page);self.assertIn('AUTHORED CURRENT STATE',page)
+        _,raw=self.run_main(base+['--format','json'])
+        self.assertIn('body_markdown',json.loads(raw))
+        _,outline=self.run_main(base+['--section-index','--format','json'])
+        data=json.loads(outline)
+        self.assertNotIn('body_markdown',data)
+        rows=data['section_outline']['sections']
+        self.assertEqual([r['title'] for r in rows],['Feature','Current state','Mechanism'])
+        for row in rows:
+            code,body=self.run_main(row['open_argv'][2:])
+            self.assertEqual(code,0,body)
+
+    def test_powershell_commands_double_every_single_quote_variant(self):
+        import types
+        read=wf.reading_module()
+        with patch.object(read,'os',types.SimpleNamespace(name='nt')):
+            command=read.shell_command(['py','Owner’s ‘x’ ‚‛ it\'s'])
+        self.assertEqual(command,"& 'py' 'Owner’’s ‘‘x’’ ‚‚‛‛ it''s'")
+
+    def test_packet_page_outline_opens_with_the_same_packet(self):
+        c=self.prepare()
+        packet=wf.start(c,'t-1','reader','read',[],['ok'],['read'],read_only=True)
+        out=Path(self.tmp.name)/'packet.json';wf.write_new(out,packet)
+        code,text=self.run_main(['show','--packet',str(out),'--view','page','--path','feature.md','--section-index','--snapshot-only'])
+        self.assertEqual(code,0,text)
+        opened=self.open_lines(text)
+        self.assertTrue(opened and all('--packet' in a for a in opened))
+        self.assertEqual(self.run_main(opened[-1][2:])[0],0)

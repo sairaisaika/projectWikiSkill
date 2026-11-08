@@ -1,6 +1,6 @@
 # Architecture
 
-> Reviewed: 2026-11-07; bounded reuse locator and task-view contract only; other sections retain their earlier review scope.
+> Reviewed: 2026-11-08; saved section outline in task-views only; other sections retain their earlier review scope.
 
 These are module contracts read from code. All scripts use only the standard library.
 The CLIs primarily print JSON; `wiki.py list`, non-JSON queries and the new
@@ -61,7 +61,8 @@ or capability verification. See [the command](../../project-wiki/references/coll
 status, within 6000 UTF-8 bytes and 60 lines. CLI stdout explicitly uses UTF-8/LF so Windows newline translation does not inflate the wire budget. A digest-bound cursor resumes the exact
 saved view; text changes or a different capture/view/path/section reject the cursor.
 The printed command preserves snapshot-only mode and explicit text format. Shell
-commands are quoted for POSIX or PowerShell on the running host. Scope is neither
+commands are quoted for POSIX or PowerShell on the running host; PowerShell quoting
+doubles ASCII and typographic single quotes, which it also treats as delimiters. Scope is neither
 silently clipped nor falsely called fully delivered; a cursor never certifies reading.
 New prepared captures carry the additive text_display=bounded-v1 marker and
 default to bounded text, including impact/feature/all. Older captures, raw native
@@ -131,6 +132,20 @@ keys only, rejects ambiguity, and performs no filesystem/Git lookup. State previ
 use the resolved canonical key before constructing the existing protected target.
 An unknown key in a populated capture is distinct from an older capture without
 saved page views; existing integrity and source-byte checks remain unchanged.
+
+`show --view page|history --path PAGE --section-index` (capture or packet) prints a
+saved heading outline instead of page text. `context_reading.section_outline` lists
+the page's saved `section_index` rows for that view (body headings for `page`, explicit
+history headings for `history`; fenced snapshot headings were never indexed) and
+checks each title against the same saved text `--section` reads via `saved_headings`.
+Only a unique titled heading gets an exact open argv (`--section=TITLE` when the title
+starts with `-`); duplicates are marked AMBIGUOUS and empty headings UNTITLED, with no
+selector. Missing or malformed metadata is reported UNKNOWN and is not rebuilt from
+live files. Text output uses the same bounded `text_page` continuation, whose NEXT
+keeps `--section-index`, view, path, capture and snapshot mode; `--format json`
+returns the outline with `open_argv` lists. It cannot be combined with `--section` or
+other views. The default page/history/JSON outputs are unchanged; the summary `Expand`
+line and a failed `--section` error point to the option. Listing is not reading.
 
 `workflow.py show` renders a saved capture or packet for a reader; new capture
 reading views are described above, with legacy packet views retained below.
