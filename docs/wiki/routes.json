@@ -704,7 +704,8 @@
           "Text show views accept --cursor from the same saved content/view/path/section; --format json remains a complete machine export.",
           "update-state --capture --path --state-file --output [--apply] replaces authored current state and rotates old state/verification notes.",
           "show --capture PATH --view locator [--snapshot-only]: saved scope counts and a summary-reading command; no repeated file/owner delivery",
-          "Capture page/history and update-state accept saved Wiki-relative keys or matching repository-relative Wiki paths; no alias outside captured keys is created."
+          "Capture page/history and update-state accept saved Wiki-relative keys or matching repository-relative Wiki paths; no alias outside captured keys is created.",
+          "show --capture PATH --view index aliases summary; bounded NEXT preserves index/snapshot mode, while packet index remains legacy-compatible"
         ],
         "outputs": [
           "New prepared capture text defaults are bounded to6000 UTF-8 bytes/60 lines, with exact NEXT command and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",

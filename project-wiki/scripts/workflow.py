@@ -877,7 +877,7 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
         except (OSError, ValueError, KeyError, subprocess.SubprocessError):
             freshness='historical projection; current inputs changed or unavailable'
     native=value['native_report']
-    if view in ('summary','locator'):
+    if view in ('summary','locator','index'):
         result=reading_module().summary(value)
         if view=='locator':result=reading_module().locator_summary(result)
     elif view in ('page','history'):
@@ -1091,7 +1091,7 @@ def main(argv=None) -> int:
             shown=(capture_view(value,view,args.path,snapshot_only=args.snapshot_only) if args.capture else
                    task_view(value,view,args.path,snapshot_only=args.snapshot_only))
             bounded_capture=args.capture and value.get('prepared_reading',{}).get('text_display')=='bounded-v1'
-            fmt=args.format or ('text' if bounded_capture or view in ('summary','locator','page','history') else 'json')
+            fmt=args.format or ('text' if bounded_capture or view in ('summary','locator','page','history') or (args.capture and view=='index') else 'json')
             if args.cursor and fmt!='text':raise ValueError('--cursor is for bounded text views, not JSON export')
             command=[sys.executable,str(Path(__file__).resolve()),'show','--capture' if args.capture else '--packet',str(source),'--view',view]
             if args.path:command+=['--path',args.path]
@@ -1100,7 +1100,7 @@ def main(argv=None) -> int:
             if fmt=='text':command+=['--format','text']
             if fmt=='json':print(json.dumps(shown,ensure_ascii=False,indent=2))
             elif view=='locator':print(reading_module().render_locator(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59,snapshot_only=args.snapshot_only))
-            elif view=='summary':print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59))
+            elif view=='summary' or (args.capture and view=='index'):print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59))
             elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section,cursor=args.cursor,command=command,budget=5999,line_budget=59))
             else:
                 text=json.dumps(shown,ensure_ascii=False,indent=2)+'\n'
