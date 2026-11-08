@@ -1063,6 +1063,7 @@ def main(argv=None) -> int:
     show.add_argument('--view', choices=('summary', 'locator', 'page', 'history', 'index', 'feature', 'impact', 'all'))
     show.add_argument('--format', choices=('text','json'))
     show.add_argument('--section', help='Exact captured body heading; avoids printing an oversized page')
+    show.add_argument('--section-index', action='store_true', help='With --view page|history: list saved headings and exact --section open commands, not page text')
     show.add_argument('--path', help='Exact feature path or impacted file from the index')
     show.add_argument('--cursor', help='Exact continuation token from the previous bounded text view')
     show.add_argument('--snapshot-only', action='store_true', help='Render saved records without Git/live-input checks; never establishes currentness or authorizes new work')
@@ -1086,6 +1087,8 @@ def main(argv=None) -> int:
     try:
         if args.command == 'show':
             view=args.view or ('summary' if args.capture else 'index')
+            if args.section_index and (view not in ('page','history') or args.section is not None):
+                raise ValueError('--section-index lists one saved page or history view; omit --section and use --view page|history --path PAGE')
             source=(args.capture or args.packet).resolve()
             value=read_json(source)
             shown=(capture_view(value,view,args.path,snapshot_only=args.snapshot_only) if args.capture else
@@ -1095,9 +1098,16 @@ def main(argv=None) -> int:
             if args.cursor and fmt!='text':raise ValueError('--cursor is for bounded text views, not JSON export')
             command=[sys.executable,str(Path(__file__).resolve()),'show','--capture' if args.capture else '--packet',str(source),'--view',view]
             if args.path:command+=['--path',args.path]
-            if args.section:command+=['--section',args.section]
+            if args.section:command+=reading_module().section_argv(args.section)
             if args.snapshot_only:command+=['--snapshot-only']
             if fmt=='text':command+=['--format','text']
+            if args.section_index:
+                outline=reading_module().section_outline(shown,view=='history',command)
+                if fmt=='json':print(json.dumps(outline,ensure_ascii=False,indent=2))
+                else:
+                    identity=json.dumps([str(source),view,args.path,'section-index'],ensure_ascii=False)
+                    print(reading_module().render_outline(outline,identity,command+['--section-index'],cursor=args.cursor,budget=5999,line_budget=59))
+                return 0
             if fmt=='json':print(json.dumps(shown,ensure_ascii=False,indent=2))
             elif view=='locator':print(reading_module().render_locator(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59,snapshot_only=args.snapshot_only))
             elif view=='summary' or (args.capture and view=='index'):print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59))
