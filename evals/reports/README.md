@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Saved section discovery, 2026-11-08](section-outline-20261108.md) | Bounded exact heading commands, cross-platform source checks, quiet Linux update and one guided real documentation task | Source worker skipped owning body reads; optional historical prefix partial; no code-task compliance or efficiency claim |
 | [Directly selected Wiki context, 2026-11-07](selected-wiki-context-20261107.md) | Actual missing selected-page observation, nine regression cases and real native-router before/after replay | Guided work and coordinator replay; candidate not installed, no efficiency or business-completion claim |
 | [Context reading, 2026-11-06](context-reading-20261106.md) | File-first preparation, complete scope delivery, current/history views, PR45 source review, 25 focused cases and bounded native replay | Local source/package checks; no host update, fresh-agent adoption or efficiency claim |
 | [Supplied hook observations, C179](supplied-hook-observations-c179-20261025.md) | Bounded doctor parser, adversarial controls, normal source/main CI, one official Windows update and actual installed CLI use; a fresh per-cwd listing retains reported enabled/trusted state | Unsigned snapshot, lexical path association only; no currentness attestation, agent trust mutation, new automatic hook execution/delivery, independent agent adoption or business acceptance |
