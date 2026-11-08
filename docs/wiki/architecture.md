@@ -120,6 +120,11 @@ updater, new registry or task gate is introduced. Regression and adoption eviden
 
 ## task-views
 
+For `--capture`, explicit `--view index` aliases the compact `summary` projection.
+Its bounded text continuation keeps the requested `index` view and snapshot mode;
+explicit JSON contains the same complete scope as summary. The legacy `--packet`
+index shape/default format and lifecycle delivery remain unchanged.
+
 Capture page/history and current-state input paths accept an exact saved Wiki key
 or that page’s repository-relative Wiki path. `captured_page_key` resolves stored
 keys only, rejects ambiguity, and performs no filesystem/Git lookup. State previews
