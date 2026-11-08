@@ -16,7 +16,7 @@ scopes, not the current installation state of every reader.
 
 ## Unreleased
 
-Source candidate (local tests only, no release or installation): `show --view page|history --path PAGE --section-index` lists a saved page's headings with exact `--section` open commands, without opening the page. Fenced history-snapshot headings stay out of the current outline; duplicate/empty headings are marked instead of given failing selectors; missing outline metadata stays unknown. Bounded continuation and default outputs are unchanged.
+Source candidate (local tests only, no release or installation): `show --view page|history --path PAGE --section-index` lists a saved page's headings with exact `--section` open commands, without opening the page. Fenced history-snapshot headings stay out of the current outline; duplicate/empty headings are marked instead of given failing selectors; missing outline metadata stays unknown. Bounded continuation and default outputs are unchanged. PowerShell commands now also double typographic single quotes in paths/headings (unit-tested by simulating the Windows quoting path; not run on Windows).
 
 ## 0.2.28
 

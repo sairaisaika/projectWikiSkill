@@ -61,7 +61,8 @@ or capability verification. See [the command](../../project-wiki/references/coll
 status, within 6000 UTF-8 bytes and 60 lines. CLI stdout explicitly uses UTF-8/LF so Windows newline translation does not inflate the wire budget. A digest-bound cursor resumes the exact
 saved view; text changes or a different capture/view/path/section reject the cursor.
 The printed command preserves snapshot-only mode and explicit text format. Shell
-commands are quoted for POSIX or PowerShell on the running host. Scope is neither
+commands are quoted for POSIX or PowerShell on the running host; PowerShell quoting
+doubles ASCII and typographic single quotes, which it also treats as delimiters. Scope is neither
 silently clipped nor falsely called fully delivered; a cursor never certifies reading.
 New prepared captures carry the additive text_display=bounded-v1 marker and
 default to bounded text, including impact/feature/all. Older captures, raw native

@@ -280,7 +280,8 @@ def read_command(artifact, view, path=None, section=None):
 
 def shell_command(argv):
     if os.name == 'nt':
-        return '& ' + ' '.join("'" + a.replace("'", "''") + "'" for a in argv)
+        # PowerShell also ends verbatim strings at typographic single quotes.
+        return '& ' + ' '.join("'" + re.sub("(['‘’‚‛])", r'\1\1', a) + "'" for a in argv)
     return shlex.join(argv)
 
 
