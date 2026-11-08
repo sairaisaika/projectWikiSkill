@@ -91,3 +91,5 @@ pending device/rollout acceptance remain separate; no payload or hook change.
 - [Reused-context locator (2026-11-07)](reuse-locator-20261107.md): real duplicate-index observation, compact reuse and complete-context recovery.
 
 - [Captured page paths (2026-11-07)](captured-page-path-20261107.md): actual wrong-basis error, exact saved-key resolution and guarded state targets.
+
+- [Capture index alias](capture-index-alias-20261107.md): real advertised-option mismatch, bounded alias regression and source/host/use boundaries.

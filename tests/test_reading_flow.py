@@ -36,6 +36,44 @@ class ReadingFlowTests(unittest.TestCase):
         self.assertEqual(''.join(chunks), text)
         return chunks
 
+    def test_capture_index_alias_keeps_saved_scope_and_snapshot_boundary(self):
+        c=self.prepare()
+        with patch.object(wf,'git',side_effect=AssertionError('snapshot must not call git')):
+            expected=self.view(c,'summary',snapshot_only=True)
+            self.assertEqual(self.view(c,'index',snapshot_only=True),expected)
+
+    def test_capture_index_cli_continues_every_owner_without_changing_view(self):
+        import shlex
+        c=self.prepare()
+        c['native_report']['impact'][0]['pages'] += [
+            {'path':f'owner-{i}-'+('规则'*30)+'.md','title':'规则','symbols':[]}
+            for i in range(80)]
+        c['native_report_canonical_sha256']=wf.report_hash(c['native_report'])
+        out=Path(self.tmp.name)/'saved context.json';wf.write_new(out,c)
+        args=[sys.executable,str(wf.__file__),'show','--capture',str(out),'--view','index','--snapshot-only']
+        chunks=[]
+        for _ in range(30):
+            cp=subprocess.run(args,capture_output=True,text=True,encoding='utf-8')
+            self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
+            self.assertLessEqual(len(cp.stdout.encode('utf-8')),6000)
+            self.assertLessEqual(len(cp.stdout.splitlines()),60)
+            start=cp.stdout.index('--- CONTENT ---\n')+len('--- CONTENT ---\n')
+            end=cp.stdout.rindex('\n--- END CONTENT ---')
+            chunks.append(cp.stdout[start:end])
+            tail=cp.stdout[end:]
+            if '\nNEXT: ' not in tail:break
+            command=tail.split('\nNEXT: ',1)[1].strip()
+            if sys.platform=='win32':
+                import re
+                args=[m.replace("''", "'") for m in re.findall(r"'((?:''|[^'])*)'",command)]
+            else:args=shlex.split(command)
+            self.assertEqual(args[args.index('--view')+1],'index')
+            self.assertIn('--snapshot-only',args)
+        else:self.fail('index continuation never completed')
+        self.assertGreater(len(chunks),1)
+        expected=wf.reading_module().summary_text(self.view(c,'summary',snapshot_only=True),str(out.resolve()))
+        self.assertEqual(''.join(chunks),expected)
+
     def test_giant_unicode_line_and_section_reconstruct_without_loss(self):
         chunks=self.collect('## 巨型节\n'+'𐍈夜鹭日历'*2200+'\nTAIL\n')
         self.assertGreater(len(chunks),2)
