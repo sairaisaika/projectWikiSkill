@@ -14,6 +14,10 @@ The version entries from 0.2.19 down to 0.2.6 were moved from README.md on 2026-
 became these version entries. The following notes describe their own revisions and host
 scopes, not the current installation state of every reader.
 
+## 0.2.29
+
+`show --view page|history --path PAGE --section-index` lists a saved page's headings with exact `--section` open commands, without opening the page. Fenced history-snapshot headings stay out of the current outline; duplicate/empty headings are marked instead of given failing selectors; missing outline metadata stays unknown. Bounded continuation and default outputs are unchanged. PowerShell commands now also double typographic single quotes in paths/headings (Linux unit coverage plus one actual Windows PowerShell argument round-trip).
+
 ## 0.2.28
 
 Capture `show --view index` now opens the bounded summary instead of rejecting an option advertised by the CLI. All owner records remain reachable through exact continuations; legacy packet indexes are unchanged. [Reproduction and boundaries](evals/reports/capture-index-alias-20261107.md).

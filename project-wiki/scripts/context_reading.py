@@ -125,7 +125,7 @@ def summary_text(view: dict, artifact: str) -> str:
         lines.append('CALLER-DECLARED REVISIONS (not live verification): '+', '.join(label+'='+row['resolved_sha'] for label,row in view['observed_revisions'].items()))
     lines.extend(['Source: '+view['source_revision'],'Freshness: '+view.get('freshness','capture-time data'),
                   'Complete artifact: '+artifact,
-                  'Expand: show --capture <artifact> --view impact --path <file>; --view page|history --path <page>',view['reading_state']])
+                  'Expand: show --capture <artifact> --view impact --path <file>; --view page|history --path <page> [--section-index lists saved headings with exact open commands]',view['reading_state']])
     text='\n'.join(lines)+'\n'
     return text
 
@@ -162,18 +162,89 @@ def render_locator(view: dict, artifact: str, budget: int=6000, *, cursor=None, 
                      budget=budget,cursor=cursor,line_budget=line_budget)['text']
 
 
-def select_section(markdown: str, title: str) -> str:
+def saved_headings(markdown: str):
+    """Headings exactly as --section sees them in one saved projection text."""
     lines=markdown.splitlines(keepends=True);headings=[];fence=None
     for i,line in enumerate(lines):
         marker,fence=fence_transition(line,fence)
         if marker:continue
         m=None if fence else parse_heading(line)
         if m:headings.append((i,*m))
+    return lines,headings
+
+
+def select_section(markdown: str, title: str) -> str:
+    lines,headings=saved_headings(markdown)
     hits=[(i,level) for i,level,name in headings if name==title]
-    if len(hits)!=1:raise ValueError('Select one exact unique heading from section_index')
+    if len(hits)!=1:raise ValueError('Select one exact unique heading; list saved headings and open commands with --section-index')
     start,level=hits[0]
     end=next((i for i,depth,_ in headings if i>start and depth<=level),len(lines))
     return ''.join(lines[start:end])
+
+
+def section_argv(title: str) -> list[str]:
+    # argparse would read a leading-dash value as an option; the joined form is exact.
+    return ['--section='+title] if title.startswith('-') else ['--section',title]
+
+
+def section_outline(view: dict, history: bool, open_base: list[str]) -> dict:
+    """Saved heading outline for one page projection; never a live reconstruction.
+
+    Listing comes from saved section_index metadata. Selectability is checked
+    against the same saved body/history text --section reads, so only unique
+    titled headings get an open command.
+    """
+    rows=view.get('section_index');source=view.get('history_markdown' if history else 'body_markdown')
+    result={'path':view.get('path'),'view':'history' if history else 'page','freshness':view.get('freshness'),
+            'limits':'Saved authored headings only; listing or opening a section is not a reading acknowledgement or verification.'}
+    if (not isinstance(rows,list) or not isinstance(source,str)
+            or any(not isinstance(r,dict) or not isinstance(r.get('title'),str) or type(r.get('history')) is not bool for r in rows)):
+        result['section_outline']={'status':'unknown','sections':[],
+                                   'meaning':'Saved capture has no usable section metadata; nothing was reconstructed from live files.'}
+        return result
+    chosen=[r for r in rows if r['history']==history]
+    _,parsed=saved_headings(source)
+    counts={}
+    for _,_,title in parsed:counts[title]=counts.get(title,0)+1
+    aligned=[title for _,_,title in parsed]==[r['title'] for r in chosen]
+    sections=[]
+    for number,row in enumerate(chosen):
+        title=row['title'];matches=counts.get(title,0)
+        status=('untitled' if not title else 'selectable' if matches==1 else 'ambiguous' if matches>1 else 'not in saved text')
+        entry={'title':title,'level':parsed[number][1] if aligned else None,
+               'line':row.get('line') if type(row.get('line')) is int else None,
+               'status':status,'matches':matches}
+        if status=='selectable':entry['open_argv']=[*open_base,*section_argv(title)]
+        sections.append(entry)
+    result['section_outline']={'status':'recorded' if chosen else 'empty','sections':sections,
+                               'other_headings':len(rows)-len(chosen)}
+    return result
+
+
+def render_outline(outline: dict, identity: str, command: list[str], *, budget: int=6000, cursor=None, line_budget: int=60) -> str:
+    data=outline['section_outline'];history=outline['view']=='history'
+    label='HISTORICAL' if history else 'AUTHORED'
+    lines=[f"SAVED {label} SECTION OUTLINE — {outline['path']} (headings only; not read, not verified)",
+           'Freshness: '+str(outline['freshness'])]
+    if data['status']=='unknown':
+        lines.append('Section outline: UNKNOWN — '+data['meaning'])
+    else:
+        rows=data['sections']
+        other=('current/body' if history else 'history')
+        lines.append(f"Headings: {len(rows)}; openable={sum(r['status']=='selectable' for r in rows)}; "
+                     f"{other} headings listed separately={data['other_headings']}"
+                     +('' if history else ' (--view history --section-index)'))
+        if not rows:lines.append('Saved metadata: no headings recorded in this '+('history' if history else 'body')+' text.')
+        for number,row in enumerate(rows,1):
+            mark='#'*row['level'] if row['level'] else '#?'
+            where=f"L{row['line']} " if row['line'] else ''
+            lines.append(f"[{number}] {where}{mark} {row['title']}")
+            if row['status']=='selectable':lines.append('    OPEN: '+shell_command(row['open_argv']))
+            elif row['status']=='ambiguous':lines.append(f"    AMBIGUOUS: {row['matches']} identical headings; --section cannot select one; read the whole view with its cursor")
+            elif row['status']=='untitled':lines.append('    UNTITLED: --section cannot select an empty heading')
+            else:lines.append('    NOT OPENABLE: heading absent from saved selectable text')
+    lines.append(outline['limits'])
+    return text_page('\n'.join(lines)+'\n',identity,command,budget=budget,cursor=cursor,line_budget=line_budget)['text']
 
 
 def render_page(view: dict, artifact: str, history: bool=False, section: str | None=None, budget: int=6000, *, cursor=None, command=None, line_budget=60) -> str:
@@ -209,7 +280,8 @@ def read_command(artifact, view, path=None, section=None):
 
 def shell_command(argv):
     if os.name == 'nt':
-        return '& ' + ' '.join("'" + a.replace("'", "''") + "'" for a in argv)
+        # PowerShell also ends verbatim strings at typographic single quotes.
+        return '& ' + ' '.join("'" + re.sub("(['‘’‚‛])", r'\1\1', a) + "'" for a in argv)
     return shlex.join(argv)
 
 
