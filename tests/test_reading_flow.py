@@ -660,6 +660,13 @@ class SectionOutlineTests(unittest.TestCase):
             code,body=self.run_main(row['open_argv'][2:])
             self.assertEqual(code,0,body)
 
+    def test_powershell_commands_double_every_single_quote_variant(self):
+        import types
+        read=wf.reading_module()
+        with patch.object(read,'os',types.SimpleNamespace(name='nt')):
+            command=read.shell_command(['py','Owner’s ‘x’ ‚‛ it\'s'])
+        self.assertEqual(command,"& 'py' 'Owner’’s ‘‘x’’ ‚‚‛‛ it''s'")
+
     def test_packet_page_outline_opens_with_the_same_packet(self):
         c=self.prepare()
         packet=wf.start(c,'t-1','reader','read',[],['ok'],['read'],read_only=True)
