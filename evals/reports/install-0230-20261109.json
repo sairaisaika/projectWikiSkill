@@ -1,0 +1,14 @@
+{
+  "at": "2026-11-09T12:04:51.447543+00:00",
+  "version": "0.2.30",
+  "source": "aeb65685775f1fb96ef422be469f389791c8ffba",
+  "matchedPayloadFiles": 21,
+  "oldPayloadFiles": 21,
+  "atomicExchange": true,
+  "activeHelpersBefore": [],
+  "settingsChanged": false,
+  "originalSessionsRestarted": false,
+  "automaticUpdater": false,
+  "agentAdoption": "not yet observed",
+  "oldBackup": "project-wiki-0.2.29-20261109T120451Z outside skill discovery"
+}

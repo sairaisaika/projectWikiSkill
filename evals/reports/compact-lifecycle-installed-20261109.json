@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "scope": "Fresh guided read-only task, selected historical code/catalog snapshot; no efficacy comparison",
+  "installedVersion": "0.2.30",
+  "installedSourceCommit": "aeb65685775f1fb96ef422be469f389791c8ffba",
+  "installedPayloadFilesMatched": 21,
+  "settingsScope": "task-local SessionStart only, no global settings change",
+  "hookRecordIndex": 9,
+  "firstModelToolRecordIndex": 15,
+  "sessionId": "8f1af7fa-ee81-4072-ac78-82af01a6ee6e",
+  "indexBytes": 6049,
+  "budgetBytes": 6144,
+  "ownerEdges": 6,
+  "snapshotSource": "22eac6d9eca6446438c473f50053be0894482032",
+  "savedSourceComparison": "matched",
+  "currentInputsChecked": false,
+  "readerToolResults": [
+    {
+      "index": 17,
+      "lines": 53,
+      "chars": 3363,
+      "completeMarker": true,
+      "partialMarker": false,
+      "nextMarkers": 0,
+      "filters": true,
+      "scopeAndReturnPresent": true,
+      "baselinePresent": true
+    },
+    {
+      "index": 20,
+      "lines": 59,
+      "chars": 7435,
+      "completeMarker": false,
+      "partialMarker": true,
+      "nextMarkers": 1,
+      "filters": true,
+      "scopeAndReturnPresent": false,
+      "baselinePresent": false
+    },
+    {
+      "index": 25,
+      "lines": 34,
+      "chars": 1975,
+      "completeMarker": true,
+      "partialMarker": true,
+      "nextMarkers": 1,
+      "filters": true,
+      "scopeAndReturnPresent": false,
+      "baselinePresent": false
+    },
+    {
+      "index": 27,
+      "lines": 45,
+      "chars": 3253,
+      "completeMarker": true,
+      "partialMarker": false,
+      "nextMarkers": 0,
+      "filters": false,
+      "scopeAndReturnPresent": false,
+      "baselinePresent": false
+    }
+  ],
+  "mainRunTurnBudgetStop": 19,
+  "finalReportResumeTurns": 1,
+  "summaryComplete": true,
+  "completeSections": [
+    "4.8 作者草稿私有资产",
+    "11.9 存储与账号边界",
+    "11.9 端点"
+  ],
+  "outlineContinuationsFollowed": 0,
+  "headAndGrepFiltersStillUsed": true,
+  "trackedDiffAfter": "",
+  "streamSha256": "b18713b0db197e0c6588ad5723800b8abb3c55d32d030133c05bff8c76183b72",
+  "summaryStreamSha256": "0f2eb97c253c48840475d2f94fadb0b834b7f4306f4d1c1a33427cb5e5c7ca7e",
+  "limits": [
+    "Worker was explicitly guided to read summary and relevant sections; natural adoption is unproved.",
+    "Saved index delivery precedes tools; all owner page bodies and runtime currentness are not established.",
+    "Two outlines stayed explicitly partial and source reads used selected ranges; no claim all output filtering or repetitive search is eliminated.",
+    "No measured token/time saving, paired handoff experiment, current production acceptance or complete security audit.",
+    "Original run hit its caller turn budget, not service quota; a separate one-turn final report completed."
+  ]
+}
