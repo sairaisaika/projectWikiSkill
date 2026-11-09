@@ -8,7 +8,21 @@
 
 ## Current state
 
-Candidate0.2.30 on `fix/compact-lifecycle-context-20261109`: independent Opus review found two real command defects after first local tests: deferred summary fields were missing from text output, and review-template wrongly received a show-only format flag. Both have actual CLI red/green regressions and are fixed; local391 tests pass (one platform skip). Three package profiles/source checks are being refreshed for the final head; CI/adoption pending. The earlier task-local real host delivered6 owner edges at6092/6144 bytes before tools, but made zero bounded-reader calls, so it did not exercise those commands. Final corrected source replay is6078 bytes, not another host run. Global installed0.2.29 remains unchanged. [Evaluation](../../evals/reports/compact-lifecycle-index-20261109.md), [scoped receipt](../../evals/reports/compact-lifecycle-host-20261109.json).
+0.2.30 adopted through [PR56](https://github.com/sairaisaika/projectWikiSkill/pull/56), mergeaeb6568 with the same tree as testedbef1348. [PR matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42613337167) and [main matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42614029818) pass Ubuntu/Windows × Python3.10/3.13; local391 collected/390 executed/one platform skip, fixture and maintainer Wiki checks pass. Three package profiles match source/support/input/identity. Linux installed copy atomically exchanged at12:04:51Z,21/21 payload files matchaeb6568;0.2.29 backup remains outside discovery, no active helper, global settings change or original-session restart. This static copy has no automatic updater. [Install receipt](../../evals/reports/install-0230-20261109.json).
+
+Fresh guided Opus received the installed6049/6144-byte complete6-edge index before tools, read the actual bounded summary including deferred scope/return/baseline fields, and opened three relevant complete sections before source inspection. It still used head/grep filters and left two outlines explicitly partial; no claim of all owner pages read or natural adoption. Its19-turn budget stop was followed by one final-report turn. The earlier6092-byte source-host proof never exercised these commands; actual CLI red/green fixes and corrected6078-byte source replay remain separate. [Installed task receipt](../../evals/reports/compact-lifecycle-installed-20261109.json), [evaluation](../../evals/reports/compact-lifecycle-index-20261109.md). No global managed-plugin registration, full security audit, paired handoff trial or efficiency gain is inferred.
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+|0.2.30|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42613337167), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42614029818); local391 collected/390 executed/one platform skip|PR56 aeb6568, tree equals testedbef1348|plain/legacy/portable packages match source/support/input/identity|Linux atomic exchange12:04:51Z;21/21 payload files matchaeb6568; old0.2.29 retained outside discovery; no global settings/session restart|fresh guided task-local SessionStart before tools, complete6-edge index6049/6144 bytes|actual complete summary and3 scoped owner sections; head/grep and2 partial outlines remain; [receipt](../../evals/reports/compact-lifecycle-installed-20261109.json)|not inferred|
+
+Dated-heading handling is bounded to the common reader/state transform: it does not infer the latest true deployment from dates. See [dated-state evidence](../../evals/reports/dated-state-20261107.md).
+
+No automatic updater was added; global settings/original sessions and other hosts remain unchanged. One controlled same-scope repeat reduced stdout2829→840 bytes, with complete context recoverable; no token/fee claim. Guided tasks and source/host/use are separate. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [captured paths](../../evals/reports/captured-page-path-20261107.md).
+
+## Historical evidence
+
+### Earlier version adoption records (superseded by0.2.30)
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
@@ -18,11 +32,11 @@ Candidate0.2.30 on `fix/compact-lifecycle-context-20261109`: independent Opus re
 |0.2.26|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42400300691), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42401197822);365 collected /364 executed /1 local platform skip|PR52 main2eb2c48, payload equals tested940e3ae|source checks pass|Linux atomic directory exchange18:38:12Z,21/21 files match; no active helper; old0.2.25 retained|existing session instructions not forced to refresh|installed helper replays original bad path successfully; original release S2 task used native wiki-task/head before installation and reached model limit, so no natural0.2.26 adoption claim|not inferred|
 |0.2.25|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42395696217), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42396074414);361 collected /360 executed /1 local platform skip|PR51, main12f2992 tree matches tested65fe838|source/package unit checks pass; no new hook configuration|Linux manual copy21/21 matches12f2992, quiet boundary17:24:13Z, old copy retained|fresh Skill payload delivery observed17:30:44Z|CI audit prepared file contexts and used NEXT before Wiki application; one wrong-basis page call needed retry; nightly script owner still unregistered and retained as a gap|bounded observations, not general efficiency or product acceptance|
 
-Dated-heading handling is bounded to the common reader/state transform: it does not infer the latest true deployment from dates. See [dated-state evidence](../../evals/reports/dated-state-20261107.md).
+### 0.2.30 pre-adoption checkpoint
 
-No automatic updater was added; settings/original sessions and other hosts remain unchanged. One controlled same-scope repeat reduced stdout2829→840 bytes, with complete context recoverable; no token/fee claim. Guided tasks and source/host/use are separate. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [captured paths](../../evals/reports/captured-page-path-20261107.md).
-
-## Historical evidence
+```markdown
+Candidate0.2.30 on `fix/compact-lifecycle-context-20261109`: independent Opus review found two real command defects after first local tests: deferred summary fields were missing from text output, and review-template wrongly received a show-only format flag. Both have actual CLI red/green regressions and are fixed; local391 tests pass (one platform skip). Three package profiles/source checks are being refreshed for the final head; CI/adoption pending. The earlier task-local real host delivered6 owner edges at6092/6144 bytes before tools, but made zero bounded-reader calls, so it did not exercise those commands. Final corrected source replay is6078 bytes, not another host run. Global installed0.2.29 remains unchanged. [Evaluation](../../evals/reports/compact-lifecycle-index-20261109.md), [scoped receipt](../../evals/reports/compact-lifecycle-host-20261109.json).
+```
 
 ### 0.2.28 adoption snapshot before fresh worker review
 
