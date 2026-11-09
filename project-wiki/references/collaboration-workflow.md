@@ -594,3 +594,5 @@ acceptance. Combine this bounded observation with actual host/tool/read/runtime
 evidence when reporting the six layers; do not collapse them into one green badge.
 
 The compact hook reader supplies a host-local `program` argv (interpreter and sibling workflow), then a `prefix` and view suffixes. `<same-packet>` means the explicitly selected `PROJECT_WIKI_PACKET`. Reader commands request bounded text and retain exact NEXT; public JSON snapshots are unchanged. Capture-time source facts stay inline; duplicate source-limit prose is named under `not_delivered` for the saved all view.
+
+Native per-file extension fields cannot shadow the delivered `owners` or selected scope; colliding names remain under `native_fields`. This keeps provider metadata without turning it into routing authority.

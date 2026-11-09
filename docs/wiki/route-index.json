@@ -969,8 +969,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "SessionStart delivery renders the snapshot index view",
           "symbol": "deliver",
-          "line": 116,
-          "sha256": "105f3170b1bce074d0e343e6e5ce9e676a8535b65d9c8b6e4253370e38aca973"
+          "line": 124,
+          "sha256": "1f637675da2f5ba78ba37616c5a61b8f5d21bc760ea3b23586911ec67ddfcf6d"
         },
         {
           "id": "capture-view",
@@ -1580,7 +1580,7 @@
       ],
       "boundary": "Tests run the script and packaged runpy entry offline; host trust and execution appear only in dated reports.",
       "unknowns": [
-        "Linux Claude SessionStart delivery has not been observed."
+        "Task-local Linux Claude SessionStart delivery observed; managed-plugin discovery/registration and general adoption remain unverified."
       ],
       "evidence": {
         "implementation": "implemented",
@@ -1621,8 +1621,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "Workspace check and snapshot index rendering within 6 KiB",
           "symbol": "deliver",
-          "line": 116,
-          "sha256": "105f3170b1bce074d0e343e6e5ce9e676a8535b65d9c8b6e4253370e38aca973"
+          "line": 124,
+          "sha256": "1f637675da2f5ba78ba37616c5a61b8f5d21bc760ea3b23586911ec67ddfcf6d"
         },
         {
           "id": "main",
@@ -1630,8 +1630,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "Quiet when unset; visible fixed systemMessage on error; once the module has loaded, main exits 0",
           "symbol": "main",
-          "line": 152,
-          "sha256": "105f3170b1bce074d0e343e6e5ce9e676a8535b65d9c8b6e4253370e38aca973"
+          "line": 160,
+          "sha256": "1f637675da2f5ba78ba37616c5a61b8f5d21bc760ea3b23586911ec67ddfcf6d"
         },
         {
           "id": "package",
