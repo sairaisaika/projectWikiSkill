@@ -969,8 +969,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "SessionStart delivery renders the snapshot index view",
           "symbol": "deliver",
-          "line": 27,
-          "sha256": "6041ab00d3ad83a764ad8adde4cdd1f7590c72e593aec8aae34c65c8a4225e4c"
+          "line": 124,
+          "sha256": "1cfefa683884eee2c7711d7b0eb3385573ad3ae29ebea732442756d0a9975edd"
         },
         {
           "id": "capture-view",
@@ -988,7 +988,7 @@
           "symbol": "page_projection",
           "reason": "Separate authored state, verification notes and explicit history without deployment inference",
           "line": 39,
-          "sha256": "e7c4f7008b2aa7f53a98f35ef573f3c94eb21a7b2ea4d04175b7ad2dc173247f"
+          "sha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9"
         },
         {
           "id": "compact",
@@ -996,8 +996,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "render_summary",
           "reason": "Complete saved scope index displayed through bounded byte/line continuations",
-          "line": 133,
-          "sha256": "e7c4f7008b2aa7f53a98f35ef573f3c94eb21a7b2ea4d04175b7ad2dc173247f"
+          "line": 136,
+          "sha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9"
         },
         {
           "id": "page-collection",
@@ -1006,7 +1006,7 @@
           "symbol": "collect_pages",
           "reason": "Deduplicates native owner/query pages and explicitly selected Wiki pages without inventing owner edges",
           "line": 76,
-          "sha256": "e7c4f7008b2aa7f53a98f35ef573f3c94eb21a7b2ea4d04175b7ad2dc173247f"
+          "sha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9"
         },
         {
           "id": "direct-page-selection",
@@ -1023,8 +1023,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "text_page",
           "reason": "Exact bounded text continuation across large Unicode lines and sections",
-          "line": 288,
-          "sha256": "e7c4f7008b2aa7f53a98f35ef573f3c94eb21a7b2ea4d04175b7ad2dc173247f"
+          "line": 291,
+          "sha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9"
         },
         {
           "id": "state-preview",
@@ -1050,8 +1050,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "replace_current",
           "reason": "Retain previous current sections and verification notes verbatim in history",
-          "line": 357,
-          "sha256": "e7c4f7008b2aa7f53a98f35ef573f3c94eb21a7b2ea4d04175b7ad2dc173247f"
+          "line": 360,
+          "sha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9"
         },
         {
           "id": "context-locator",
@@ -1059,8 +1059,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "locator_summary",
           "reason": "Scope/missing-input counts without repeating complete owner records",
-          "line": 139,
-          "sha256": "e7c4f7008b2aa7f53a98f35ef573f3c94eb21a7b2ea4d04175b7ad2dc173247f"
+          "line": 142,
+          "sha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9"
         },
         {
           "id": "locator-display",
@@ -1068,8 +1068,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "render_locator",
           "reason": "Bounded locator and exact full-summary command, with snapshot-only freshness preserved",
-          "line": 149,
-          "sha256": "e7c4f7008b2aa7f53a98f35ef573f3c94eb21a7b2ea4d04175b7ad2dc173247f"
+          "line": 152,
+          "sha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9"
         },
         {
           "id": "captured-page-path",
@@ -1086,8 +1086,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "section_outline",
           "reason": "Saved per-view heading outline with exact open argv only for unique titled sections; missing metadata stays unknown",
-          "line": 190,
-          "sha256": "e7c4f7008b2aa7f53a98f35ef573f3c94eb21a7b2ea4d04175b7ad2dc173247f"
+          "line": 193,
+          "sha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9"
         }
       ]
     },
@@ -1580,7 +1580,7 @@
       ],
       "boundary": "Tests run the script and packaged runpy entry offline; host trust and execution appear only in dated reports.",
       "unknowns": [
-        "Linux Claude SessionStart delivery has not been observed."
+        "Task-local Linux Claude SessionStart delivery observed; managed-plugin discovery/registration and general adoption remain unverified."
       ],
       "evidence": {
         "implementation": "implemented",
@@ -1621,8 +1621,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "Workspace check and snapshot index rendering within 6 KiB",
           "symbol": "deliver",
-          "line": 27,
-          "sha256": "6041ab00d3ad83a764ad8adde4cdd1f7590c72e593aec8aae34c65c8a4225e4c"
+          "line": 124,
+          "sha256": "1cfefa683884eee2c7711d7b0eb3385573ad3ae29ebea732442756d0a9975edd"
         },
         {
           "id": "main",
@@ -1630,8 +1630,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "Quiet when unset; visible fixed systemMessage on error; once the module has loaded, main exits 0",
           "symbol": "main",
-          "line": 61,
-          "sha256": "6041ab00d3ad83a764ad8adde4cdd1f7590c72e593aec8aae34c65c8a4225e4c"
+          "line": 160,
+          "sha256": "1cfefa683884eee2c7711d7b0eb3385573ad3ae29ebea732442756d0a9975edd"
         },
         {
           "id": "package",

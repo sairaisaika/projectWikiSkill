@@ -123,6 +123,9 @@ def summary_text(view: dict, artifact: str) -> str:
     lines.extend(f"  {p['path']}: current={'declared' if p['current_state_declared'] else 'unknown'}; history={'present' if p.get('history_present', p['historical_notes'] > 0) else 'none'}; older notes={p['historical_notes']}; qualifiers to review={p['qualifiers_needing_review']}" for p in view['pages'])
     if view['observed_revisions']:
         lines.append('CALLER-DECLARED REVISIONS (not live verification): '+', '.join(label+'='+row['resolved_sha'] for label,row in view['observed_revisions'].items()))
+    for key in ('task_scope', 'read_only_baseline'):
+        if key in view:
+            lines.append(key + ' (saved task data):\n' + json.dumps(view[key], ensure_ascii=False, indent=2))
     lines.extend(['Source: '+view['source_revision'],'Freshness: '+view.get('freshness','capture-time data'),
                   'Complete artifact: '+artifact,
                   'Expand: show --capture <artifact> --view impact --path <file>; --view page|history --path <page> [--section-index lists saved headings with exact open commands]',view['reading_state']])

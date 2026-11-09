@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 import subprocess
 import shutil
+import shlex
+import re
 import sys
 import unittest
 from unittest.mock import patch
@@ -38,12 +40,228 @@ class LifecycleTests(unittest.TestCase):
         view = json.loads(text.split('\n', 1)[1])
         self.assertEqual(view['task_id'], self.packet['task_id'])
         self.assertEqual(view['allowed_files'], self.packet['allowed_files'])
-        self.assertEqual(view['native_index']['omitted_candidates'], self.packet['context']['native_report']['omitted'])
-        self.assertEqual(view['view_observation']['mode'], 'snapshot_only')
-        self.assertFalse(view['view_observation']['current_check_attempted'])
+        pages = view['native_index']['pages']
+        self.assertEqual([{'path': pages[i][0], 'title': pages[i][1]} for i in view['native_index']['omitted_candidates']],
+                         self.packet['context']['native_report']['omitted'])
+        self.assertEqual(view['reading']['mode'], 'snapshot_only')
+        self.assertFalse(view['reading']['current_check_attempted'])
+        self.assertIs(view['reading']['current_inputs_checked'], False)
+        self.assertIn('current inputs not checked', view['freshness'])
         self.assertEqual(view['wiki_root'], self.packet['context']['wiki_root'])
         self.assertEqual(view['path_bases']['wiki_pages'], 'root / wiki_root')
-        self.assertIn('snapshot-only', view['expansion']['all'])
+        self.assertIn('snapshot-only', view['reader']['prefix'])
+
+    def delivered(self, packet):
+        self.path.write_text(json.dumps(packet, ensure_ascii=False), encoding='utf-8')
+        return json.loads(adapter.deliver(self.event, str(self.path))['hookSpecificOutput']['additionalContext'].split('\n', 1)[1])
+
+    def edges(self, index):
+        pages = index['pages']
+        return {row['file']: [pages[i] for i in row['owners']] for row in index['files']}
+
+    def test_compact_index_keeps_every_file_owner_edge_once_and_all_saved_records(self):
+        native = self.packet['context']['native_report']
+        shared = {'path': '共享/存储.md', 'title': '存储桶 «shared» owner', 'symbols': ['bucket']}
+        native['cards'] = [{'path': '共享/存储.md', 'title': '存储桶 «shared» owner', 'sections': []}]
+        native['omitted'] = [{'path': 'later.md', 'title': 'unexpanded'}, {'path': 'notitle.md'}]
+        first, second = native['impact'][0]['file'], 'unregistered/new.ts'
+        native['impact'] = [
+            {'file': first, 'pages': [shared, {'path': 'a.md', 'title': 'A', 'symbols': ['x']}], 'unregistered': False,
+             'invariants': ['INV_1'], 'futureField': {'kept': True}},
+            {'file': second, 'pages': [shared], 'unregistered': True}]
+        self.packet['context']['files'] = [first, 'selected/without-record.ts']
+        full = adapter.workflow.task_view(self.packet, 'index', snapshot_only=True)
+        view = self.delivered(self.packet)
+        index = view['native_index']
+        # Every edge, including a page shared by both files, is preserved; the shared label is stored once.
+        self.assertEqual(self.edges(index), {first: [['共享/存储.md', '存储桶 «shared» owner'], ['a.md', 'A']],
+                                             second: [['共享/存储.md', '存储桶 «shared» owner']]})
+        self.assertEqual(sum(page == ['共享/存储.md', '存储桶 «shared» owner'] for page in index['pages']), 1)
+        self.assertEqual([len(row['owners']) for row in index['files']], [row['satellite_count'] for row in full['native_index']['files']])
+        self.assertEqual([index['pages'][i] for i in index['features']], [['共享/存储.md', '存储桶 «shared» owner']])
+        self.assertEqual([index['pages'][i] for i in index['omitted_candidates']], [['later.md', 'unexpanded'], ['notitle.md', None]])
+        rows = {row['file']: row for row in index['files']}
+        self.assertIs(rows[second]['unregistered'], True)
+        self.assertIs(rows[second]['selected'], False)
+        self.assertNotIn('selected', rows[first])
+        self.assertEqual(rows[first]['invariants'], ['INV_1'])
+        self.assertEqual(rows[first]['futureField'], {'kept': True})
+        self.assertEqual(index['selected_without_record'], ['selected/without-record.ts'])
+        self.assertEqual(index['limits'], full['native_index']['limits'])
+        self.assertEqual(index['placementIssues'], full['native_index']['placementIssues'])
+        # Packet-saved records and source observations stay verbatim.
+        for key in ['task_id', 'owner', 'root', 'wiki_root', 'path_bases', 'access', 'base_sha', 'peers', 'freshness',
+                    'outcome', 'allowed_files', 'capabilities', 'acceptance', 'limits', 'native_source_comparison']:
+            self.assertEqual(view[key], full[key], key)
+        self.assertEqual(view['artifact_preservation'], {k: v for k, v in full['artifact_preservation'].items()
+                                                         if k not in ('limits', 'local_path_validation')})
+        for key in ['feature', 'impact', 'all']:
+            self.assertEqual(f"show --packet <same-packet> --snapshot-only {view['reader'][key]}", full['expansion'][key])
+        self.assertEqual(view['reader']['review_preparation'], full['review_preparation']['command'])
+
+    def lookup(self, record, dotted):
+        for key in dotted.split('.'):
+            record = record[key]
+        return record
+
+    def test_operational_instructions_are_named_not_delivered_and_resolve_in_existing_views(self):
+        contract = {'schemaVersion': 1, 'status': 'declared', 'authority': ['scripts/contract.ts'],
+                    'finish': {'argv': ['bash', 'finish.sh'], 'meaning': 'run after edits'},
+                    'acknowledgement': {'marker': 'Checked:', 'example': 'Checked: 页（理由）'},
+                    'pushGate': {'argv': ['gate']}, 'reader': {'argv': ['build']}, 'limits': 'zero exit is insufficient',
+                    'futureOp': {'x': 1},
+                    'context': {'status': 'observed', 'capturedAt': '2026-01-01T00:00:00Z', 'wikiRoot': '/w/docs/wiki',
+                                'sources': {'web': {'root': '/w', 'revision': 'a' * 40, 'modified': 0},
+                                            'mobile': {'root': '/m', 'revision': 'b' * 40, 'untracked': 1}},
+                                'execution': {'runtime': 'node', 'version': 'v1'}, 'limits': '来源观察'}}
+        hashed = json.loads(json.dumps(self.packet['context']['native_report']))
+        self.packet['context']['native_report']['workflow'] = contract
+        self.packet['access'], self.packet['allowed_files'] = 'read_only', []
+        self.packet['read_only_baseline'] = {'status': 'no_differences_observed', 'difference_count': 0,
+                                             'completion_certificate': False, 'meaning': 'm', 'limits': 'l'}
+        before = json.loads(json.dumps(self.packet))
+        index = adapter.workflow.task_view(self.packet, 'index', snapshot_only=True)
+        compact = adapter.compact_index(index, self.packet)
+        self.assertEqual(self.packet, before)  # neither the packet nor the public view is mutated
+        self.assertEqual(index, adapter.workflow.task_view(before, 'index', snapshot_only=True))
+        view = self.delivered(self.packet)
+        self.assertEqual(view, {**json.loads(json.dumps(compact)), 'index_delivered': True})
+        # Source/runtime observations, capture time/status and identity stay inline.
+        self.assertEqual(view['native_workflow'], {**{k: contract[k] for k in ('schemaVersion', 'status', 'authority')},
+                                                      'context': {k: v for k, v in contract['context'].items() if k != 'limits'}})
+        self.assertEqual((view['access'], view['allowed_files']), ('read_only', []))
+        self.assertEqual(view['read_only_baseline'], {'status': 'no_differences_observed', 'difference_count': 0,
+                                                      'completion_certificate': False})
+        self.assertIs(view['reading']['current_inputs_checked'], False)
+        self.assertIn('not checked', view['freshness'])
+        deferred = view['not_delivered']
+        self.assertEqual(deferred['status'], 'NOT DELIVERED')
+        self.assertEqual(sorted(deferred['all']), sorted(['native_workflow.' + k for k in ('finish', 'acknowledgement', 'pushGate', 'reader', 'limits', 'futureOp')]
+                                                         + ['native_workflow.context.limits', 'artifact_preservation.limits', 'review_preparation.meaning']))
+        self.assertEqual(deferred['summary'], ['task_scope.return_requirements', 'read_only_baseline.meaning', 'read_only_baseline.limits'])
+        flat = json.dumps(view, ensure_ascii=False)
+        for name in ['finish.sh', 'Checked:', 'zero exit']:
+            self.assertNotIn(name, flat)
+        # Every deferred name resolves to the original saved value in the named existing snapshot view.
+        for reader, names in [('all', deferred['all']), ('summary', deferred['summary'])]:
+            # The summary reader re-verifies the saved native report hash; its
+            # deferred fields live outside that report.
+            source = before if reader == 'all' else {**before, 'context': {**before['context'], 'native_report': hashed}}
+            shown = adapter.workflow.task_view(source, reader, snapshot_only=True)
+            for name in names:
+                head, key = name.split('.', 1)
+                original = self.lookup({'native_workflow': contract, 'task_scope': {'return_requirements': before['return_requirements']},
+                                        'read_only_baseline': before['read_only_baseline'],
+                                        'artifact_preservation': index['artifact_preservation'],
+                                        'review_preparation': index['review_preparation']}[head], key)
+                self.assertEqual(self.lookup(shown, name), original, name)
+
+    def test_large_operational_contract_alone_does_not_block_routing_delivery(self):
+        self.packet['context']['native_report']['workflow'] = {
+            'status': 'declared', 'finish': {'meaning': 'x' * (adapter.MAX_CONTEXT * 2)},
+            'context': {'status': 'observed', 'sources': {'web': {'root': '/w', 'revision': 'c' * 40}}}}
+        view = self.delivered(self.packet)
+        self.assertEqual(view['native_workflow']['context']['sources']['web']['revision'], 'c' * 40)
+        self.assertIn('native_workflow.finish', view['not_delivered']['all'])
+        self.assertTrue(self.edges(view['native_index']))
+
+    def test_large_provenance_prose_defers_but_observations_and_bounded_reader_are_delivered(self):
+        context = {'status': 'observed', 'sources': {'web': {'root': '/w', 'revision': 'e' * 40}},
+                   'execution': {'runtime': 'node', 'version': 'v22'}, 'limits': 'provenance ' * 2000}
+        self.packet['context']['native_report']['workflow'] = {'status': 'declared', 'context': context}
+        view = self.delivered(self.packet)
+        self.assertIs(view['index_delivered'], True)
+        self.assertEqual(view['native_workflow']['context'], {k: v for k, v in context.items() if k != 'limits'})
+        self.assertIn('native_workflow.context.limits', view['not_delivered']['all'])
+        self.assertIn('--format text', view['reader']['prefix'])
+        self.assertNotIn('--format', view['reader']['review_preparation'])
+        self.assertEqual(view['reader']['program'], [sys.executable, str(Path(adapter.workflow.__file__).resolve())])
+
+    def test_delivered_summary_command_prints_deferred_records_through_real_cli(self):
+        self.packet['access'], self.packet['allowed_files'] = 'read_only', []
+        self.packet['return_requirements'] = ['return-material-marker-' + 'long ' * 1700]
+        self.packet['read_only_baseline'] = {'status': 'observed', 'meaning': 'readonly-meaning-marker',
+                                              'limits': 'readonly-limits-marker'}
+        view = self.delivered(self.packet)
+        self.assertIs(view['index_delivered'], True)
+        args = view['reader']['program'] + shlex.split(view['reader']['prefix']) + ['--view', 'summary']
+        args = [str(self.path) if x == '<same-packet>' else x for x in args]
+        output, continuations = [], 0
+        while True:
+            cp = subprocess.run(args, capture_output=True, text=True, encoding='utf-8')
+            self.assertEqual(cp.returncode, 0, cp.stderr)
+            output.append(cp.stdout)
+            nexts = [line[6:] for line in cp.stdout.splitlines() if line.startswith('NEXT: ')]
+            if not nexts:
+                break
+            continuations += 1
+            self.assertLess(continuations, 20)
+            if os.name == 'nt':
+                self.assertTrue(nexts[0].startswith('& '))
+                args = [m.group(1).replace("''", "'") for m in re.finditer(r"'((?:[^']|'')*)'", nexts[0])]
+            else:
+                args = shlex.split(nexts[0])
+        joined = ''.join(output)
+        self.assertIn('return-material-marker-', joined)
+        self.assertIn('readonly-meaning-marker', joined)
+        self.assertIn('readonly-limits-marker', joined)
+        self.assertGreater(continuations, 0)
+
+    def test_delivered_review_template_command_runs_original_parser_and_writes_unreviewed_only(self):
+        view = self.delivered(self.packet)
+        capture, target = self.home / 'final-capture.json', self.home / 'review.json'
+        capture.write_text(json.dumps(self.packet['context']), encoding='utf-8')
+        replacements = {'<same-packet>': self.path, '<current-final-capture>': capture, '<new-review.json>': target}
+        args = view['reader']['program'] + [str(replacements.get(x, x)) for x in shlex.split(view['reader']['review_preparation'])]
+        cp = subprocess.run(args, capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(cp.returncode, 0, cp.stderr)
+        result = json.loads(target.read_text(encoding='utf-8'))
+        self.assertEqual(result['kind'], 'wiki-review-template')
+        self.assertTrue(all(row['status'] == 'unreviewed' for row in result['pages'].values()))
+
+    def test_oversized_source_observations_still_opt_out(self):
+        self.packet['context']['native_report']['workflow'] = {
+            'status': 'declared', 'context': {'sources': {'web': {'root': '/' + '观' * adapter.MAX_CONTEXT}}}}
+        data = self.delivered(self.packet)
+        self.assertIs(data['index_delivered'], False)
+        self.assertNotIn('native_workflow', data)
+
+    def test_native_metadata_cannot_shadow_owner_edges_or_selected_scope(self):
+        native = self.packet['context']['native_report']
+        path = native['impact'][0]['file']
+        native['impact'][0].update({'owners': ['native-value'], 'selected': False, 'native_fields': {'nested': [1]}})
+        before = json.loads(json.dumps(self.packet))
+        view = self.delivered(self.packet)
+        row = next(r for r in view['native_index']['files'] if r['file'] == path)
+        self.assertTrue(all(isinstance(i, int) for i in row['owners']))
+        self.assertNotIn('selected', row)
+        self.assertEqual(row['native_fields'], {'owners': ['native-value'], 'selected': False, 'native_fields': {'nested': [1]}})
+        self.assertEqual(self.packet, before)
+
+    def test_same_path_with_different_saved_titles_is_not_merged(self):
+        native = self.packet['context']['native_report']
+        native['impact'][0]['pages'] = [{'path': 'p.md', 'title': 'one'}, {'path': 'p.md', 'title': 'two'}, {'path': 'p.md'}]
+        index = self.delivered(self.packet)['native_index']
+        self.assertEqual(self.edges(index)[native['impact'][0]['file']], [['p.md', 'one'], ['p.md', 'two'], ['p.md', None]])
+
+    def test_many_owners_overflow_opts_out_without_listing_selected_paths(self):
+        native = self.packet['context']['native_report']
+        native['impact'][0]['pages'] = [{'path': f'页/{n}.md', 'title': '标题' * 10} for n in range(200)]
+        data = self.delivered(self.packet)
+        self.assertIs(data['index_delivered'], False)
+        self.assertGreater(data['index_bytes'], data['budget_bytes'])
+        self.assertEqual(data['budget_bytes'], adapter.MAX_CONTEXT)
+        self.assertEqual(set(data), {'packet_selection', 'index_delivered', 'reason', 'index_bytes', 'budget_bytes', 'current_inputs_checked'})
+
+    def test_malformed_native_rows_fail_visibly_without_contents(self):
+        env = {**os.environ, 'PROJECT_WIKI_PACKET': str(self.path)}
+        for bad in [['sensitive-row'], [{'file': 'f', 'pages': ['sensitive-page']}], [{'file': 'f'}], [{'file': 'f', 'pages': [{'title': 'sensitive-page'}]}]]:
+            self.packet['context']['native_report']['impact'] = bad
+            self.path.write_text(json.dumps(self.packet), encoding='utf-8')
+            cp = subprocess.run([sys.executable, str(ENTRY)], input=json.dumps(self.event), text=True, capture_output=True, env=env)
+            self.assertEqual(cp.returncode, 0)
+            self.assertIn('not delivered', json.loads(cp.stdout)['systemMessage'])
+            self.assertNotIn('sensitive', cp.stdout + cp.stderr)
 
     def test_no_selection_and_other_events_are_quiet(self):
         with patch.object(adapter.workflow, 'read_json', side_effect=AssertionError('must not read')):
