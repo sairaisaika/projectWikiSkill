@@ -6,6 +6,7 @@ no Git, native router, page commands, model calls, writes or dispatch checks.
 """
 from __future__ import annotations
 
+import copy
 import importlib.util
 import json
 import os
@@ -22,6 +23,8 @@ _spec.loader.exec_module(workflow)
 MAX_EVENT = 64 * 1024
 MAX_CONTEXT = 6 * 1024
 START_SOURCES = {'startup', 'resume', 'clear', 'compact', 'fork'}
+# Native return-contract keys kept inline: identity and capture-time source/runtime observations.
+KEEP_NATIVE_WORKFLOW = ('schemaVersion', 'status', 'authority', 'meaning', 'context')
 
 
 def compact_index(view: dict, packet: dict) -> dict:
@@ -30,10 +33,16 @@ def compact_index(view: dict, packet: dict) -> dict:
     Every wiki page named by a feature, omitted candidate or source-file owner
     is listed once in `pages` as [path, title]; rows refer to it by position.
     The three reader commands share one prefix. Snapshot-mode statements the
-    reader repeats in four places become one `reading` record; packet-saved
-    records (baseline, artifacts, native workflow and its source observations)
-    stay verbatim. Unknown per-file metadata is kept beside the owners.
+    reader repeats in four places become one `reading` record. Unknown
+    per-file metadata is kept beside the owners.
+
+    Operational instructions (native finish/push/acknowledgement/reader
+    commands, return requirements) and repeated limit prose are not inlined;
+    each is named in `not_delivered` with the existing snapshot view and key
+    that hold it. Routing, access, path bases, freshness and native source
+    observations always stay inline.
     """
+    view = copy.deepcopy(view)  # nested records alias the caller's packet
     native = packet['context']['native_report']
     pages, slots = [], {}
 
@@ -80,6 +89,25 @@ def compact_index(view: dict, packet: dict) -> dict:
                        **{key: expansion[key].removeprefix(prefix).strip() for key in ('feature', 'impact', 'all')},
                        'review_preparation': review['command'],
                        'review_meaning': review['meaning'], 'reading_state': expansion['reading_state']}
+    # Saved key path in the named snapshot view -> not inlined here.
+    deferred = {'all': [], 'summary': []}
+
+    def defer(record, key: str, reader: str, name: str):
+        if isinstance(record, dict) and key in record:
+            record.pop(key)
+            deferred[reader].append(name)
+
+    contract = shown.get('native_workflow')
+    for key in [k for k in contract if k not in KEEP_NATIVE_WORKFLOW] if isinstance(contract, dict) else []:
+        defer(contract, key, 'all', 'native_workflow.' + key)
+    defer(shown, 'return_requirements', 'summary', 'task_scope.return_requirements')
+    for key in ('meaning', 'limits'):
+        defer(shown.get('read_only_baseline'), key, 'summary', 'read_only_baseline.' + key)
+    defer(shown['artifact_preservation'], 'limits', 'all', 'artifact_preservation.limits')
+    defer(shown['reader'], 'review_meaning', 'all', 'review_preparation.meaning')
+    if any(deferred.values()):
+        shown['not_delivered'] = {'status': 'NOT DELIVERED', 'expand': 'reader.prefix --view <key>',
+                                  **{view_name: names for view_name, names in deferred.items() if names}}
     return shown
 
 

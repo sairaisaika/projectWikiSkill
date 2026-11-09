@@ -187,7 +187,11 @@ candidate and source-file owner page appears once in a `pages` registry and rows
 to it by position, so every selected-file-to-owner-page edge is present (the plain
 view only counts satellites). Unregistered rows, selected files without a native
 record, unknown per-file metadata, path bases, saved source observations and the
-unchecked-freshness statement are kept; the reader commands share one prefix.
+unchecked-freshness statement are kept, as are access scope and the native contract's
+capture-time source/runtime observations; the reader commands share one prefix.
+Operational instructions (native finish/push/acknowledgement/reader commands, return
+requirements) and repeated limit prose are listed under `not_delivered` by key path in
+the existing `--view all` or `--view summary` reader rather than inlined.
 An index above the 6 KiB ASCII context budget is explicitly **not delivered**, with a
 pointer to the explicit `PROJECT_WIKI_PACKET` selection and standalone snapshot reader; it is not silently
 truncated into a purported complete impact inventory. The short wrapper is added

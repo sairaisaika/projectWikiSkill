@@ -89,14 +89,85 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(index['placementIssues'], full['native_index']['placementIssues'])
         # Packet-saved records and source observations stay verbatim.
         for key in ['task_id', 'owner', 'root', 'wiki_root', 'path_bases', 'access', 'base_sha', 'peers', 'freshness',
-                    'outcome', 'allowed_files', 'capabilities', 'acceptance', 'return_requirements', 'limits',
-                    'native_workflow', 'native_source_comparison']:
+                    'outcome', 'allowed_files', 'capabilities', 'acceptance', 'limits', 'native_source_comparison']:
             self.assertEqual(view[key], full[key], key)
-        self.assertEqual({**view['artifact_preservation'], 'local_path_validation': full['artifact_preservation']['local_path_validation']},
-                         full['artifact_preservation'])
+        self.assertEqual(view['artifact_preservation'], {k: v for k, v in full['artifact_preservation'].items()
+                                                         if k not in ('limits', 'local_path_validation')})
         for key in ['feature', 'impact', 'all']:
             self.assertEqual(f"show --packet <same-packet> --snapshot-only {view['reader'][key]}", full['expansion'][key])
         self.assertEqual(view['reader']['review_preparation'], full['review_preparation']['command'])
+
+    def lookup(self, record, dotted):
+        for key in dotted.split('.'):
+            record = record[key]
+        return record
+
+    def test_operational_instructions_are_named_not_delivered_and_resolve_in_existing_views(self):
+        contract = {'schemaVersion': 1, 'status': 'declared', 'authority': ['scripts/contract.ts'],
+                    'finish': {'argv': ['bash', 'finish.sh'], 'meaning': 'run after edits'},
+                    'acknowledgement': {'marker': 'Checked:', 'example': 'Checked: 页（理由）'},
+                    'pushGate': {'argv': ['gate']}, 'reader': {'argv': ['build']}, 'limits': 'zero exit is insufficient',
+                    'futureOp': {'x': 1},
+                    'context': {'status': 'observed', 'capturedAt': '2026-01-01T00:00:00Z', 'wikiRoot': '/w/docs/wiki',
+                                'sources': {'web': {'root': '/w', 'revision': 'a' * 40, 'modified': 0},
+                                            'mobile': {'root': '/m', 'revision': 'b' * 40, 'untracked': 1}},
+                                'execution': {'runtime': 'node', 'version': 'v1'}, 'limits': '来源观察'}}
+        hashed = json.loads(json.dumps(self.packet['context']['native_report']))
+        self.packet['context']['native_report']['workflow'] = contract
+        self.packet['access'], self.packet['allowed_files'] = 'read_only', []
+        self.packet['read_only_baseline'] = {'status': 'no_differences_observed', 'difference_count': 0,
+                                             'completion_certificate': False, 'meaning': 'm', 'limits': 'l'}
+        before = json.loads(json.dumps(self.packet))
+        index = adapter.workflow.task_view(self.packet, 'index', snapshot_only=True)
+        compact = adapter.compact_index(index, self.packet)
+        self.assertEqual(self.packet, before)  # neither the packet nor the public view is mutated
+        self.assertEqual(index, adapter.workflow.task_view(before, 'index', snapshot_only=True))
+        view = self.delivered(self.packet)
+        self.assertEqual(view, json.loads(json.dumps(compact)))
+        # Source/runtime observations, capture time/status and identity stay inline.
+        self.assertEqual(view['native_workflow'], {k: contract[k] for k in ('schemaVersion', 'status', 'authority', 'context')})
+        self.assertEqual((view['access'], view['allowed_files']), ('read_only', []))
+        self.assertEqual(view['read_only_baseline'], {'status': 'no_differences_observed', 'difference_count': 0,
+                                                      'completion_certificate': False})
+        self.assertIs(view['reading']['current_inputs_checked'], False)
+        self.assertIn('not checked', view['freshness'])
+        deferred = view['not_delivered']
+        self.assertEqual(deferred['status'], 'NOT DELIVERED')
+        self.assertEqual(sorted(deferred['all']), sorted(['native_workflow.' + k for k in ('finish', 'acknowledgement', 'pushGate', 'reader', 'limits', 'futureOp')]
+                                                         + ['artifact_preservation.limits', 'review_preparation.meaning']))
+        self.assertEqual(deferred['summary'], ['task_scope.return_requirements', 'read_only_baseline.meaning', 'read_only_baseline.limits'])
+        flat = json.dumps(view, ensure_ascii=False)
+        for name in ['finish.sh', 'Checked:', 'zero exit']:
+            self.assertNotIn(name, flat)
+        # Every deferred name resolves to the original saved value in the named existing snapshot view.
+        for reader, names in [('all', deferred['all']), ('summary', deferred['summary'])]:
+            # The summary reader re-verifies the saved native report hash; its
+            # deferred fields live outside that report.
+            source = before if reader == 'all' else {**before, 'context': {**before['context'], 'native_report': hashed}}
+            shown = adapter.workflow.task_view(source, reader, snapshot_only=True)
+            for name in names:
+                head, key = name.split('.', 1)
+                original = {'native_workflow': contract, 'task_scope': {'return_requirements': before['return_requirements']},
+                            'read_only_baseline': before['read_only_baseline'],
+                            'artifact_preservation': index['artifact_preservation'],
+                            'review_preparation': index['review_preparation']}[head][key]
+                self.assertEqual(self.lookup(shown, name), original, name)
+
+    def test_large_operational_contract_alone_does_not_block_routing_delivery(self):
+        self.packet['context']['native_report']['workflow'] = {
+            'status': 'declared', 'finish': {'meaning': 'x' * (adapter.MAX_CONTEXT * 2)},
+            'context': {'status': 'observed', 'sources': {'web': {'root': '/w', 'revision': 'c' * 40}}}}
+        view = self.delivered(self.packet)
+        self.assertEqual(view['native_workflow']['context']['sources']['web']['revision'], 'c' * 40)
+        self.assertIn('native_workflow.finish', view['not_delivered']['all'])
+        self.assertTrue(self.edges(view['native_index']))
+
+    def test_oversized_source_observations_still_opt_out(self):
+        self.packet['context']['native_report']['workflow'] = {
+            'status': 'declared', 'context': {'sources': {'web': {'root': '/' + '观' * adapter.MAX_CONTEXT}}}}
+        data = self.delivered(self.packet)
+        self.assertIs(data['index_delivered'], False)
+        self.assertNotIn('native_workflow', data)
 
     def test_same_path_with_different_saved_titles_is_not_merged(self):
         native = self.packet['context']['native_report']
