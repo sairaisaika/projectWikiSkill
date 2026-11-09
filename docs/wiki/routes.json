@@ -1216,7 +1216,7 @@
       ],
       "boundary": "Tests run the script and packaged runpy entry offline; host trust and execution appear only in dated reports.",
       "unknowns": [
-        "Linux Claude SessionStart delivery has not been observed."
+        "Task-local Linux Claude SessionStart delivery observed; managed-plugin discovery/registration and general adoption remain unverified."
       ],
       "evidence": {
         "implementation": "implemented",

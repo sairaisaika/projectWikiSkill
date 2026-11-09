@@ -182,6 +182,18 @@ class LifecycleTests(unittest.TestCase):
         self.assertIs(data['index_delivered'], False)
         self.assertNotIn('native_workflow', data)
 
+    def test_native_metadata_cannot_shadow_owner_edges_or_selected_scope(self):
+        native = self.packet['context']['native_report']
+        path = native['impact'][0]['file']
+        native['impact'][0].update({'owners': ['native-value'], 'selected': False, 'native_fields': {'nested': [1]}})
+        before = json.loads(json.dumps(self.packet))
+        view = self.delivered(self.packet)
+        row = next(r for r in view['native_index']['files'] if r['file'] == path)
+        self.assertTrue(all(isinstance(i, int) for i in row['owners']))
+        self.assertNotIn('selected', row)
+        self.assertEqual(row['native_fields'], {'owners': ['native-value'], 'selected': False, 'native_fields': {'nested': [1]}})
+        self.assertEqual(self.packet, before)
+
     def test_same_path_with_different_saved_titles_is_not_merged(self):
         native = self.packet['context']['native_report']
         native['impact'][0]['pages'] = [{'path': 'p.md', 'title': 'one'}, {'path': 'p.md', 'title': 'two'}, {'path': 'p.md'}]
@@ -199,7 +211,7 @@ class LifecycleTests(unittest.TestCase):
 
     def test_malformed_native_rows_fail_visibly_without_contents(self):
         env = {**os.environ, 'PROJECT_WIKI_PACKET': str(self.path)}
-        for bad in [['sensitive-row'], [{'file': 'f', 'pages': ['sensitive-page']}], [{'file': 'f'}]]:
+        for bad in [['sensitive-row'], [{'file': 'f', 'pages': ['sensitive-page']}], [{'file': 'f'}], [{'file': 'f', 'pages': [{'title': 'sensitive-page'}]}]]:
             self.packet['context']['native_report']['impact'] = bad
             self.path.write_text(json.dumps(self.packet), encoding='utf-8')
             cp = subprocess.run([sys.executable, str(ENTRY)], input=json.dumps(self.event), text=True, capture_output=True, env=env)

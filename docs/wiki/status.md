@@ -8,7 +8,7 @@
 
 ## Current state
 
-Candidate0.2.30 on `fix/compact-lifecycle-context-20261109`: compact complete file-owner index plus capture-time source/runtime observations; operational instructions/duplicate limits are explicitly deferred to saved views. Original two-file packet5625 bytes, aligned-source packet6092 bytes, both below the unchanged6144-byte budget; this is direct adapter replay only. Bounded text-reader commands now include the host interpreter/sibling path. Source validation, CI and actual task-local Claude execution remain separate; no main adoption or global installation. Reproduction: [compact lifecycle index](../../evals/reports/compact-lifecycle-index-20261109.md).
+Candidate0.2.30 on `fix/compact-lifecycle-context-20261109`: local source/host/package review complete; independent branch CI and adoption pending. Root source1cda0f0 emitted all6 file-owner edges at6092/6144 bytes into a real Linux Claude SessionStart before the first model tool. Its13-turn readonly Storage review used direct source/catalog reads, zero bounded-reader calls; delivered routing does not establish all owner-page bodies read. The later namespace guard emits the same real-packet payload. Local389 tests passed (one platform skip); plain and optional-hook packages pass source/support/input/identity checks. Global Linux installation remains0.2.29; managed-plugin registration and efficiency are not inferred. [Evaluation](../../evals/reports/compact-lifecycle-index-20261109.md), [scoped host receipt](../../evals/reports/compact-lifecycle-host-20261109.json).
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|

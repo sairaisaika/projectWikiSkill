@@ -43,10 +43,12 @@ def compact_index(view: dict, packet: dict) -> dict:
     observations always stay inline.
     """
     view = copy.deepcopy(view)  # nested records alias the caller's packet
-    native = packet['context']['native_report']
+    native = copy.deepcopy(packet['context']['native_report'])
     pages, slots = [], {}
 
     def ref(row: dict) -> int:
+        if not isinstance(row.get('path'), str) or not row['path']:
+            raise ValueError('owner page path is unavailable')
         # Same path with a different saved title stays a distinct entry.
         key = json.dumps([row.get('path'), row.get('title')], ensure_ascii=True)
         if key not in slots:
@@ -60,7 +62,13 @@ def compact_index(view: dict, packet: dict) -> dict:
     files = []
     for row in native['impact']:
         item = {'file': row['file'], 'owners': [ref(page) for page in row['pages']]}
-        item.update((key, value) for key, value in row.items() if key not in ('file', 'pages'))
+        for key, value in row.items():
+            if key in ('file', 'pages'):
+                continue
+            if key in ('owners', 'selected', 'native_fields'):
+                item.setdefault('native_fields', {})[key] = value
+            else:
+                item[key] = value
         if isinstance(selected, list) and row['file'] not in selected:
             item['selected'] = False
         files.append(item)
