@@ -8,17 +8,7 @@
 
 ## Current state
 
-0.2.30 adopted through [PR56](https://github.com/sairaisaika/projectWikiSkill/pull/56), mergeaeb6568 with the same tree as testedbef1348. [PR matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42613337167) and [main matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42614029818) pass Ubuntu/Windows × Python3.10/3.13; local391 collected/390 executed/one platform skip, fixture and maintainer Wiki checks pass. Three package profiles match source/support/input/identity. Linux installed copy atomically exchanged at12:04:51Z,21/21 payload files matchaeb6568;0.2.29 backup remains outside discovery, no active helper, global settings change or original-session restart. This static copy has no automatic updater. [Install receipt](../../evals/reports/install-0230-20261109.json).
-
-Fresh guided Opus received the installed6049/6144-byte complete6-edge index before tools, read the actual bounded summary including deferred scope/return/baseline fields, and opened three relevant complete sections before source inspection. It still used head/grep filters and left two outlines explicitly partial; no claim of all owner pages read or natural adoption. Its19-turn budget stop was followed by one final-report turn. The earlier6092-byte source-host proof never exercised these commands; actual CLI red/green fixes and corrected6078-byte source replay remain separate. [Installed task receipt](../../evals/reports/compact-lifecycle-installed-20261109.json), [evaluation](../../evals/reports/compact-lifecycle-index-20261109.md). No global managed-plugin registration, full security audit, paired handoff trial or efficiency gain is inferred.
-
-| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
-|---|---|---|---|---|---|---|---|
-|0.2.30|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42613337167), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42614029818); local391 collected/390 executed/one platform skip|PR56 aeb6568, tree equals testedbef1348|plain/legacy/portable packages match source/support/input/identity|Linux atomic exchange12:04:51Z;21/21 payload files matchaeb6568; old0.2.29 retained outside discovery; no global settings/session restart|fresh guided task-local SessionStart before tools, complete6-edge index6049/6144 bytes|actual complete summary and3 scoped owner sections; head/grep and2 partial outlines remain; [receipt](../../evals/reports/compact-lifecycle-installed-20261109.json)|not inferred|
-
-Dated-heading handling is bounded to the common reader/state transform: it does not infer the latest true deployment from dates. See [dated-state evidence](../../evals/reports/dated-state-20261107.md).
-
-No automatic updater was added; global settings/original sessions and other hosts remain unchanged. One controlled same-scope repeat reduced stdout2829→840 bytes, with complete context recoverable; no token/fee claim. Guided tasks and source/host/use are separate. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [captured paths](../../evals/reports/captured-page-path-20261107.md).
+0.2.31 candidate on isolated fix/large-session-context-20261109: routing-first overflow keeps complete owner edges, explicitly defers other saved records, and gives a real bounded reader when routing cannot fit. Worker and Root independent397 unittest/12 fixtures/maintainer index checks pass; Root plain/legacy/portable package closure and exact21-edge/21-deferred-key source replay pass. CI remains pending. Linux still installed0.2.30; no update or host-use claim yet. [Evidence](../../evals/reports/large-routing-delivery-20261109.md). Static installed skills have no automatic updater.
 
 ## Historical evidence
 
@@ -273,3 +263,17 @@ updated. No background updater was added. Actual post-reset use must be recorded
 separately in the [reading-flow report](../../evals/reports/reading-flow-20261107.md).
 
 ```
+
+### 0.2.30 status before0.2.31 candidate
+
+0.2.30 adopted through [PR56](https://github.com/sairaisaika/projectWikiSkill/pull/56), mergeaeb6568 with the same tree as testedbef1348. [PR matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42613337167) and [main matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42614029818) pass Ubuntu/Windows × Python3.10/3.13; local391 collected/390 executed/one platform skip, fixture and maintainer Wiki checks pass. Three package profiles match source/support/input/identity. Linux installed copy atomically exchanged at12:04:51Z,21/21 payload files matchaeb6568;0.2.29 backup remains outside discovery, no active helper, global settings change or original-session restart. This static copy has no automatic updater. [Install receipt](../../evals/reports/install-0230-20261109.json).
+
+Fresh guided Opus received the installed6049/6144-byte complete6-edge index before tools, read the actual bounded summary including deferred scope/return/baseline fields, and opened three relevant complete sections before source inspection. It still used head/grep filters and left two outlines explicitly partial; no claim of all owner pages read or natural adoption. Its19-turn budget stop was followed by one final-report turn. The earlier6092-byte source-host proof never exercised these commands; actual CLI red/green fixes and corrected6078-byte source replay remain separate. [Installed task receipt](../../evals/reports/compact-lifecycle-installed-20261109.json), [evaluation](../../evals/reports/compact-lifecycle-index-20261109.md). No global managed-plugin registration, full security audit, paired handoff trial or efficiency gain is inferred.
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+|0.2.30|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42613337167), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42614029818); local391 collected/390 executed/one platform skip|PR56 aeb6568, tree equals testedbef1348|plain/legacy/portable packages match source/support/input/identity|Linux atomic exchange12:04:51Z;21/21 payload files matchaeb6568; old0.2.29 retained outside discovery; no global settings/session restart|fresh guided task-local SessionStart before tools, complete6-edge index6049/6144 bytes|actual complete summary and3 scoped owner sections; head/grep and2 partial outlines remain; [receipt](../../evals/reports/compact-lifecycle-installed-20261109.json)|not inferred|
+
+Dated-heading handling is bounded to the common reader/state transform: it does not infer the latest true deployment from dates. See [dated-state evidence](../../evals/reports/dated-state-20261107.md).
+
+No automatic updater was added; global settings/original sessions and other hosts remain unchanged. One controlled same-scope repeat reduced stdout2829→840 bytes, with complete context recoverable; no token/fee claim. Guided tasks and source/host/use are separate. Evidence: [reuse locator](../../evals/reports/reuse-locator-20261107.md), [captured paths](../../evals/reports/captured-page-path-20261107.md).

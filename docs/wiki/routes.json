@@ -1114,7 +1114,7 @@
           "id": "deliver",
           "role": "implementation",
           "path": "project-wiki/scripts/lifecycle.py",
-          "reason": "Workspace check and snapshot index rendering within 6 KiB",
+          "reason": "Workspace check and snapshot index, routing-only or reader-only rendering within 6 KiB",
           "symbol": "deliver"
         },
         {
@@ -1144,7 +1144,7 @@
           "SessionStart event JSON on stdin (at most 64 KiB) with source and absolute cwd"
         ],
         "outputs": [
-          "hookSpecificOutput.additionalContext labelled UNTRUSTED TASK DATA, or index_delivered false over 6 KiB"
+          "hookSpecificOutput.additionalContext labelled UNTRUSTED TASK DATA: the compact index, or over 6 KiB complete routing (routing_delivered true) with named deferred keys, or no inventory plus an exact reader argv"
         ],
         "errors": [
           "Fixed systemMessage without packet contents, path or raw error"
@@ -1158,7 +1158,7 @@
             "A failure loading the sibling workflow.py at import (module level, outside main) propagates as a traceback with a nonzero exit; no other class identified in review"
           ],
           "unsupported": [
-            "Truncating the index",
+            "Truncating the index or listing part of the file-to-owner routing",
             "Running Git, the native router or any project command"
           ]
         }
@@ -1169,6 +1169,16 @@
           "statement": "Once the module has loaded, main always exits 0 and reports delivery failure without packet contents.",
           "source_ids": [
             "main"
+          ],
+          "tests": [
+            "tests/test_lifecycle.py"
+          ]
+        },
+        {
+          "id": "complete-or-no-routing",
+          "statement": "Over the 6 KiB budget the hook delivers every saved file-to-owner edge with named deferred keys, or lists no file and gives an exact reader argv; it never lists part of the routing.",
+          "source_ids": [
+            "deliver"
           ],
           "tests": [
             "tests/test_lifecycle.py"

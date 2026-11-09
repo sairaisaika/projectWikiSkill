@@ -192,8 +192,15 @@ capture-time source/runtime observations; the reader commands share one prefix.
 Operational instructions (native finish/push/acknowledgement/reader commands, return
 requirements) and repeated limit prose are listed under `not_delivered` by key path in
 the existing `--view all` or `--view summary` reader rather than inlined.
-An index above the 6 KiB ASCII context budget is explicitly **not delivered**, with a
-pointer to the explicit `PROJECT_WIKI_PACKET` selection and standalone snapshot reader; it is not silently
+An index above the 6 KiB context budget (UTF-8 bytes of the delivered JSON) is explicitly
+**not delivered** (`index_delivered: false`). The hook then delivers the complete routing
+(`routing_delivered: true`): every file-to-owner edge, page identity, unknown per-file
+metadata and placement issue, plus identity, access, path bases and snapshot uncertainty.
+Every other saved record is named in `not_delivered.keys` by its key path in the existing
+`--view index` reader, with the exact `not_delivered.argv` to run after `reader.program`
+(replace `<same-packet>` with the `PROJECT_WIKI_PACKET` value and follow each `NEXT:` line).
+If even the routing does not fit, no file or owner is listed (`routing_delivered: false`);
+run `reader.program` plus `reader.index_argv`, then `reader.impact_argv` per file. Nothing is silently
 truncated into a purported complete impact inventory. The short wrapper is added
 after that check. Overflow never expands the selected path (Unicode paths cannot
 inflate the fallback). Codex's separate 8,000-token preview policy remains host-owned,
