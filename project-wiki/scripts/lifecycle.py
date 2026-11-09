@@ -94,7 +94,7 @@ def compact_index(view: dict, packet: dict) -> dict:
     shown['reader'] = {'program': [sys.executable, str(Path(workflow.__file__).resolve())],
                        'prefix': prefix + ' --format text',
                        **{key: expansion[key].removeprefix(prefix).strip() for key in ('feature', 'impact', 'all')},
-                       'review_preparation': review['command'] + ' --format text',
+                       'review_preparation': review['command'],
                        'review_meaning': review['meaning'], 'reading_state': expansion['reading_state']}
     # Saved key path in the named snapshot view -> not inlined here.
     deferred = {'all': [], 'summary': []}

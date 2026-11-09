@@ -35,5 +35,18 @@
     "Delivery before source tools is observed; all owner-page bodies read and comprehension are not established.",
     "Storage review and frozen12 pilot used different tasks, no paired A/B or token savings.",
     "Read-only task controls are CLI permissions, not an OS sandbox; unrelated pre-existing host startup hooks also ran."
-  ]
+  ],
+  "collisionGuardReplaySourceCommit": "4ab007b30a50827851df0f7cc287bdeeb7c9ff31",
+  "coordinatorFollowup": {
+    "scope": "source replay only, not another host run",
+    "indexBytes": 6078,
+    "fileOwnerEdges": 6,
+    "adapterSha256": "1cfefa683884eee2c7711d7b0eb3385573ad3ae29ebea732442756d0a9975edd",
+    "textReaderSha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9",
+    "reviewTemplateUnsupportedFormatRemoved": true,
+    "deferredSummaryRecordsExercisedThroughRealBoundedCli": true,
+    "focusedTests": 23,
+    "fullTests": 391,
+    "platformSkip": 1
+  }
 }
