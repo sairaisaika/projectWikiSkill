@@ -38,12 +38,90 @@ class LifecycleTests(unittest.TestCase):
         view = json.loads(text.split('\n', 1)[1])
         self.assertEqual(view['task_id'], self.packet['task_id'])
         self.assertEqual(view['allowed_files'], self.packet['allowed_files'])
-        self.assertEqual(view['native_index']['omitted_candidates'], self.packet['context']['native_report']['omitted'])
-        self.assertEqual(view['view_observation']['mode'], 'snapshot_only')
-        self.assertFalse(view['view_observation']['current_check_attempted'])
+        pages = view['native_index']['pages']
+        self.assertEqual([{'path': pages[i][0], 'title': pages[i][1]} for i in view['native_index']['omitted_candidates']],
+                         self.packet['context']['native_report']['omitted'])
+        self.assertEqual(view['reading']['mode'], 'snapshot_only')
+        self.assertFalse(view['reading']['current_check_attempted'])
+        self.assertIs(view['reading']['current_inputs_checked'], False)
+        self.assertIn('current inputs not checked', view['freshness'])
         self.assertEqual(view['wiki_root'], self.packet['context']['wiki_root'])
         self.assertEqual(view['path_bases']['wiki_pages'], 'root / wiki_root')
-        self.assertIn('snapshot-only', view['expansion']['all'])
+        self.assertIn('snapshot-only', view['reader']['prefix'])
+
+    def delivered(self, packet):
+        self.path.write_text(json.dumps(packet, ensure_ascii=False), encoding='utf-8')
+        return json.loads(adapter.deliver(self.event, str(self.path))['hookSpecificOutput']['additionalContext'].split('\n', 1)[1])
+
+    def edges(self, index):
+        pages = index['pages']
+        return {row['file']: [pages[i] for i in row['owners']] for row in index['files']}
+
+    def test_compact_index_keeps_every_file_owner_edge_once_and_all_saved_records(self):
+        native = self.packet['context']['native_report']
+        shared = {'path': '共享/存储.md', 'title': '存储桶 «shared» owner', 'symbols': ['bucket']}
+        native['cards'] = [{'path': '共享/存储.md', 'title': '存储桶 «shared» owner', 'sections': []}]
+        native['omitted'] = [{'path': 'later.md', 'title': 'unexpanded'}, {'path': 'notitle.md'}]
+        first, second = native['impact'][0]['file'], 'unregistered/new.ts'
+        native['impact'] = [
+            {'file': first, 'pages': [shared, {'path': 'a.md', 'title': 'A', 'symbols': ['x']}], 'unregistered': False,
+             'invariants': ['INV_1'], 'futureField': {'kept': True}},
+            {'file': second, 'pages': [shared], 'unregistered': True}]
+        self.packet['context']['files'] = [first, 'selected/without-record.ts']
+        full = adapter.workflow.task_view(self.packet, 'index', snapshot_only=True)
+        view = self.delivered(self.packet)
+        index = view['native_index']
+        # Every edge, including a page shared by both files, is preserved; the shared label is stored once.
+        self.assertEqual(self.edges(index), {first: [['共享/存储.md', '存储桶 «shared» owner'], ['a.md', 'A']],
+                                             second: [['共享/存储.md', '存储桶 «shared» owner']]})
+        self.assertEqual(sum(page == ['共享/存储.md', '存储桶 «shared» owner'] for page in index['pages']), 1)
+        self.assertEqual([len(row['owners']) for row in index['files']], [row['satellite_count'] for row in full['native_index']['files']])
+        self.assertEqual([index['pages'][i] for i in index['features']], [['共享/存储.md', '存储桶 «shared» owner']])
+        self.assertEqual([index['pages'][i] for i in index['omitted_candidates']], [['later.md', 'unexpanded'], ['notitle.md', None]])
+        rows = {row['file']: row for row in index['files']}
+        self.assertIs(rows[second]['unregistered'], True)
+        self.assertIs(rows[second]['selected'], False)
+        self.assertNotIn('selected', rows[first])
+        self.assertEqual(rows[first]['invariants'], ['INV_1'])
+        self.assertEqual(rows[first]['futureField'], {'kept': True})
+        self.assertEqual(index['selected_without_record'], ['selected/without-record.ts'])
+        self.assertEqual(index['limits'], full['native_index']['limits'])
+        self.assertEqual(index['placementIssues'], full['native_index']['placementIssues'])
+        # Packet-saved records and source observations stay verbatim.
+        for key in ['task_id', 'owner', 'root', 'wiki_root', 'path_bases', 'access', 'base_sha', 'peers', 'freshness',
+                    'outcome', 'allowed_files', 'capabilities', 'acceptance', 'return_requirements', 'limits',
+                    'native_workflow', 'native_source_comparison']:
+            self.assertEqual(view[key], full[key], key)
+        self.assertEqual({**view['artifact_preservation'], 'local_path_validation': full['artifact_preservation']['local_path_validation']},
+                         full['artifact_preservation'])
+        for key in ['feature', 'impact', 'all']:
+            self.assertEqual(f"show --packet <same-packet> --snapshot-only {view['reader'][key]}", full['expansion'][key])
+        self.assertEqual(view['reader']['review_preparation'], full['review_preparation']['command'])
+
+    def test_same_path_with_different_saved_titles_is_not_merged(self):
+        native = self.packet['context']['native_report']
+        native['impact'][0]['pages'] = [{'path': 'p.md', 'title': 'one'}, {'path': 'p.md', 'title': 'two'}, {'path': 'p.md'}]
+        index = self.delivered(self.packet)['native_index']
+        self.assertEqual(self.edges(index)[native['impact'][0]['file']], [['p.md', 'one'], ['p.md', 'two'], ['p.md', None]])
+
+    def test_many_owners_overflow_opts_out_without_listing_selected_paths(self):
+        native = self.packet['context']['native_report']
+        native['impact'][0]['pages'] = [{'path': f'页/{n}.md', 'title': '标题' * 10} for n in range(200)]
+        data = self.delivered(self.packet)
+        self.assertIs(data['index_delivered'], False)
+        self.assertGreater(data['index_bytes'], data['budget_bytes'])
+        self.assertEqual(data['budget_bytes'], adapter.MAX_CONTEXT)
+        self.assertEqual(set(data), {'packet_selection', 'index_delivered', 'reason', 'index_bytes', 'budget_bytes', 'current_inputs_checked'})
+
+    def test_malformed_native_rows_fail_visibly_without_contents(self):
+        env = {**os.environ, 'PROJECT_WIKI_PACKET': str(self.path)}
+        for bad in [['sensitive-row'], [{'file': 'f', 'pages': ['sensitive-page']}], [{'file': 'f'}]]:
+            self.packet['context']['native_report']['impact'] = bad
+            self.path.write_text(json.dumps(self.packet), encoding='utf-8')
+            cp = subprocess.run([sys.executable, str(ENTRY)], input=json.dumps(self.event), text=True, capture_output=True, env=env)
+            self.assertEqual(cp.returncode, 0)
+            self.assertIn('not delivered', json.loads(cp.stdout)['systemMessage'])
+            self.assertNotIn('sensitive', cp.stdout + cp.stderr)
 
     def test_no_selection_and_other_events_are_quiet(self):
         with patch.object(adapter.workflow, 'read_json', side_effect=AssertionError('must not read')):
