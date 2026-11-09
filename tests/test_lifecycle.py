@@ -95,7 +95,7 @@ class LifecycleTests(unittest.TestCase):
                                                          if k not in ('limits', 'local_path_validation')})
         for key in ['feature', 'impact', 'all']:
             self.assertEqual(f"show --packet <same-packet> --snapshot-only {view['reader'][key]}", full['expansion'][key])
-        self.assertEqual(view['reader']['review_preparation'], full['review_preparation']['command'])
+        self.assertEqual(view['reader']['review_preparation'], full['review_preparation']['command'] + ' --format text')
 
     def lookup(self, record, dotted):
         for key in dotted.split('.'):
@@ -123,9 +123,10 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(self.packet, before)  # neither the packet nor the public view is mutated
         self.assertEqual(index, adapter.workflow.task_view(before, 'index', snapshot_only=True))
         view = self.delivered(self.packet)
-        self.assertEqual(view, json.loads(json.dumps(compact)))
+        self.assertEqual(view, {**json.loads(json.dumps(compact)), 'index_delivered': True})
         # Source/runtime observations, capture time/status and identity stay inline.
-        self.assertEqual(view['native_workflow'], {k: contract[k] for k in ('schemaVersion', 'status', 'authority', 'context')})
+        self.assertEqual(view['native_workflow'], {**{k: contract[k] for k in ('schemaVersion', 'status', 'authority')},
+                                                      'context': {k: v for k, v in contract['context'].items() if k != 'limits'}})
         self.assertEqual((view['access'], view['allowed_files']), ('read_only', []))
         self.assertEqual(view['read_only_baseline'], {'status': 'no_differences_observed', 'difference_count': 0,
                                                       'completion_certificate': False})
@@ -134,7 +135,7 @@ class LifecycleTests(unittest.TestCase):
         deferred = view['not_delivered']
         self.assertEqual(deferred['status'], 'NOT DELIVERED')
         self.assertEqual(sorted(deferred['all']), sorted(['native_workflow.' + k for k in ('finish', 'acknowledgement', 'pushGate', 'reader', 'limits', 'futureOp')]
-                                                         + ['artifact_preservation.limits', 'review_preparation.meaning']))
+                                                         + ['native_workflow.context.limits', 'artifact_preservation.limits', 'review_preparation.meaning']))
         self.assertEqual(deferred['summary'], ['task_scope.return_requirements', 'read_only_baseline.meaning', 'read_only_baseline.limits'])
         flat = json.dumps(view, ensure_ascii=False)
         for name in ['finish.sh', 'Checked:', 'zero exit']:
@@ -147,10 +148,10 @@ class LifecycleTests(unittest.TestCase):
             shown = adapter.workflow.task_view(source, reader, snapshot_only=True)
             for name in names:
                 head, key = name.split('.', 1)
-                original = {'native_workflow': contract, 'task_scope': {'return_requirements': before['return_requirements']},
-                            'read_only_baseline': before['read_only_baseline'],
-                            'artifact_preservation': index['artifact_preservation'],
-                            'review_preparation': index['review_preparation']}[head][key]
+                original = self.lookup({'native_workflow': contract, 'task_scope': {'return_requirements': before['return_requirements']},
+                                        'read_only_baseline': before['read_only_baseline'],
+                                        'artifact_preservation': index['artifact_preservation'],
+                                        'review_preparation': index['review_preparation']}[head], key)
                 self.assertEqual(self.lookup(shown, name), original, name)
 
     def test_large_operational_contract_alone_does_not_block_routing_delivery(self):
@@ -161,6 +162,18 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(view['native_workflow']['context']['sources']['web']['revision'], 'c' * 40)
         self.assertIn('native_workflow.finish', view['not_delivered']['all'])
         self.assertTrue(self.edges(view['native_index']))
+
+    def test_large_provenance_prose_defers_but_observations_and_bounded_reader_are_delivered(self):
+        context = {'status': 'observed', 'sources': {'web': {'root': '/w', 'revision': 'e' * 40}},
+                   'execution': {'runtime': 'node', 'version': 'v22'}, 'limits': 'provenance ' * 2000}
+        self.packet['context']['native_report']['workflow'] = {'status': 'declared', 'context': context}
+        view = self.delivered(self.packet)
+        self.assertIs(view['index_delivered'], True)
+        self.assertEqual(view['native_workflow']['context'], {k: v for k, v in context.items() if k != 'limits'})
+        self.assertIn('native_workflow.context.limits', view['not_delivered']['all'])
+        self.assertIn('--format text', view['reader']['prefix'])
+        self.assertIn('--format text', view['reader']['review_preparation'])
+        self.assertEqual(view['reader']['program'], [sys.executable, str(Path(adapter.workflow.__file__).resolve())])
 
     def test_oversized_source_observations_still_opt_out(self):
         self.packet['context']['native_report']['workflow'] = {
