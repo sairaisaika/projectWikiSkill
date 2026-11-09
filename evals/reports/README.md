@@ -94,3 +94,5 @@ pending device/rollout acceptance remain separate; no payload or hook change.
 - [Captured page paths (2026-11-07)](captured-page-path-20261107.md): actual wrong-basis error, exact saved-key resolution and guarded state targets.
 
 - [Capture index alias](capture-index-alias-20261107.md): real advertised-option mismatch, bounded alias regression and source/host/use boundaries.
+
+- [Routing-first large SessionStart delivery](large-routing-delivery-20261109.md): actual calendar packet counterevidence, candidate source replay; installed/agent outcomes pending.

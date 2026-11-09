@@ -36,3 +36,12 @@ Checks: Run the source unittest suite, fixture checks and maintainer Wiki build/
 
 - 2026-11-06: Native context-reading candidate and bounded PR45 review; see docs/wiki/status.md#current-state and evals/reports/context-reading-20261106.md.
 - 2026-11-08: Saved section-outline source candidate (local tests only); see CHANGELOG.md and docs/wiki/status.md.
+
+
+## Active 2026-11-09: large real SessionStart context (candidate)
+
+Isolated fix/large-session-context-20261109 at9258456. A real four-file calendar review packet produced a complete compact index of9089 ASCII bytes /7418 UTF8 bytes, exceeding6144; lifecycle emitted index_delivered:false without a concrete reader and Claude guessed raw packet fields instead of following a reader. Coordinator owns calendar safety work separately. Proposed repair: preserve complete file-to-owner routing in a bounded routing-first delivery, explicitly defer other metadata to existing saved views, and always provide an exact executable snapshot reader even when the routing inventory itself cannot fit. Never drop an edge, silently clip an inventory, raise the budget, execute project commands in hooks, add a second registry or infer reading/adoption. Red/green synthetic and actual private packet replay, full matrix/package closure, owning Wiki return, then a fresh guided real review are exit criteria; no installed/global/original-session change yet.
+
+Implementation (uncommitted, 2026-11-09): lifecycle.py adds routing_index (complete routing, named deferred `--view index` keys plus exact argv) and reader_only (no inventory, exact index/impact argv); inner JSON UTF-8 within ASCII hook output; budget unchanged. Real private replay from source: index 7,418 B, routing 5,984 B, all 21 edges equal, delivered argv reassembles the index view in 5 pages (raw logs p/plugin-large-work/, not for commit). Checks: see CHANGELOG Unreleased and docs/wiki/hooks-and-gates.md#lifecycle-delivery. Pending: Root review/release, installed-host delivery and fresh guided real review.
+
+Root independent verification:397 unit tests (one platform skip),12 fixtures, check/evaluate/maintainer index, all3package closures and actual private packet source replay pass. Source repair complete, PR/main CI, quiet Linux install and fresh real review still pending. Private worker artifacts moved outside checkout before any staging.
