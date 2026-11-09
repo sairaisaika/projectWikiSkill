@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.31 candidate
+
+SessionStart overflow now delivers routing first: when the compact index exceeds the unchanged 6 KiB budget, the hook delivers every saved file-to-owner edge, page identity, unknown per-file metadata and placement issue (`index_delivered: false`, `routing_delivered: true`) and names every other saved record by key path with the exact `--view index` reader argv. If routing itself cannot fit, it lists no file and supplies `reader.program` plus index/impact argv that continue through the existing `NEXT:` cursor. Delivered JSON is UTF-8 (measured in UTF-8 bytes) inside ASCII hook output. A real four-file review packet replayed from source: 7,418-byte index, 5,984-byte routing with all 21 edges; host delivery and agent use not yet observed.
+
 ## 0.2.30 candidate
 
 Compact optional SessionStart routing delivery with all file-owner edges and source observations; explicitly deferred operational records and bounded host-local readers. Fixed6KiB budget, snapshot-only behavior and visible overflow remain. Global installation/adoption are separate.

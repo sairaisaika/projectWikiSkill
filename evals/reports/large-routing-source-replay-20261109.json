@@ -1,0 +1,20 @@
+{
+  "routing_bytes": 5984,
+  "additional_context_bytes": 6667,
+  "budget_bytes": 6144,
+  "routing_delivered": true,
+  "full_index_delivered": false,
+  "all_native_index_records_equal": true,
+  "file_owner_counts": [
+    3,
+    3,
+    13,
+    2
+  ],
+  "owner_edges": 21,
+  "deferred_keys": 21,
+  "reader_pages": 5,
+  "max_reader_output_bytes": 3175,
+  "recovered_full_index_equal": true,
+  "source_replay_only": true
+}

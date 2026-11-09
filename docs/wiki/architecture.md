@@ -176,7 +176,9 @@ reading views are described above, with legacy packet views retained below.
 
 Optional SessionStart adapter. With `PROJECT_WIKI_PACKET` set to an absolute packet path
 whose `root` contains the session `cwd`, it injects a compact projection of the
-`show --snapshot-only` index view with every file→owner-page edge (6 KiB budget). Once the module has loaded, it always exits 0; a missing or broken sibling
+`show --snapshot-only` index view with every file→owner-page edge (6 KiB budget). Over budget it delivers that
+complete routing with every other record named by key path in the `--view index` reader, or, when routing
+itself cannot fit, no inventory and an exact reader argv. Once the module has loaded, it always exits 0; a missing or broken sibling
 `workflow.py` fails at import with a traceback. Full contract: [hooks-and-gates.md#lifecycle-delivery](hooks-and-gates.md#lifecycle-delivery).
 
 ## edit_gate.py summary
