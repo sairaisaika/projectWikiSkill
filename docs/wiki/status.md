@@ -8,9 +8,19 @@
 
 ## Current state
 
-0.2.31 candidate on isolated fix/large-session-context-20261109: routing-first overflow keeps complete owner edges, explicitly defers other saved records, and gives a real bounded reader when routing cannot fit. Worker and Root independent397 unittest/12 fixtures/maintainer index checks pass; Root plain/legacy/portable package closure and exact21-edge/21-deferred-key source replay pass. CI remains pending. Linux still installed0.2.30; no update or host-use claim yet. [Evidence](../../evals/reports/large-routing-delivery-20261109.md). Static installed skills have no automatic updater.
+0.2.31 adopted through [PR57](https://github.com/sairaisaika/projectWikiSkill/pull/57), merge ccfbad8 from tested head442ca40. [PR matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42667619658) and [main CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42668882253) succeed on Ubuntu/Windows × Python3.10/3.13. Linux static skill copy quietly exchanged; one guided real read-only review received complete21-edge routing before tools. Tool delivery is repaired for that packet; the agent opened2 impact views, followed1 NEXT and read no Wiki page body, so complete method adoption is not shown. Root replay of its two head-60 calls shows full60-line output with NEXT on line59: head did not clip them, contrary to the reviewer's own statement. [Evaluation](../../evals/reports/large-routing-delivery-20261109.md), [sanitized receipt](../../evals/reports/large-routing-installed-20261109.json). Static installed skills have no automatic updater.
+
+| Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
+|---|---|---|---|---|---|---|---|
+|0.2.31|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42667619658), [main CI passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42668882253); local397 collected/396 executed/one platform skip,12 fixture tests|PR57 ccfbad8 from tested442ca40|plain/legacy/portable packages match source/support/input/identity|Linux atomic exchange2026-11-09T17:54:09Z;21/21 payload files match ccfbad8; backup outside discovery; no active helper, settings change, session restart or updater|guided real read-only review: SessionStart event9 before first tool event18; index_delivered false, routing_delivered true; routing5961/full6644 bytes vs6144 data budget; all21 owner edges (page registry22 incl. feature/omitted candidates)|2 impact views,1 exact NEXT,0 Wiki page bodies; later fragments unread; no confirmed blocker, no tests/live acceptance by reviewer|not inferred; no R7 cold-start or token/cost/time claim|
+
+A second guided maintainer Wiki-close task invoked the installed Skill before writes, queried the native owner route and moved the previous candidate paragraph into History. Root verified the five allowed documentation changes and the receipt/check results. The worker raw-cat of this34 KB page exceeded the host preview; it then used scoped reads. Repeated Current state strings below are fenced historical snapshots, not live headings; grep alone had misclassified them. Native query-only maintainer routing has no file capture, so this task used direct owning-page edits rather than update-state. This is bounded writing-use evidence, not natural adoption or an efficiency result.
 
 ## Historical evidence
+
+### 0.2.31 candidate before CI and installation
+
+0.2.31 candidate on isolated fix/large-session-context-20261109: routing-first overflow keeps complete owner edges, explicitly defers other saved records, and gives a real bounded reader when routing cannot fit. Worker and Root independent397 unittest/12 fixtures/maintainer index checks pass; Root plain/legacy/portable package closure and exact21-edge/21-deferred-key source replay pass. CI remains pending. Linux still installed0.2.30; no update or host-use claim yet. [Evidence](../../evals/reports/large-routing-delivery-20261109.md). Static installed skills have no automatic updater.
 
 ### Earlier version adoption records (superseded by0.2.30)
 

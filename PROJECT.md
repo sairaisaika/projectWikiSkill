@@ -7,7 +7,7 @@ history_count: 16
 Native knowledge: README, project-wiki/SKILL.md and project-wiki/references; evaluations in evals/reports. The skill's own maintainer wiki lives in docs/wiki (founder decision 2026-11-03; dogfooded by wiki.py check in CI); shipped method stays in SKILL.md/references; history in CHANGELOG.md; do not restate status outside docs/wiki/status.md; new History entries link docs/wiki/status.md instead of restating status or caveats.
 Architecture: dependency-free Python 3.10+ helper; workflow.py captures explicit native JSON routes, snapshots selected evidence and reconciles returns. plugin.json is version identity; packaging never installs or grants trust.
 Conventions: selected evidence refuses missing/aliased/non-file inputs, exposes no contents in capture; outputs write-new-only. Capture input order precedes saved sorted unique selection. Separate source tests, installed host and real adoption.
-Current task: Saved section discovery has source, package, installed-host and bounded guided-use receipts; broader pre-edit reading and efficiency remain unmeasured. Current evidence lives in docs/wiki/status.md.
+Current task: 0.2.31 routing-first large SessionStart delivery is merged, CI-green and installed on Linux; one guided real review received complete routing before tools but read no Wiki page body. A separate guided maintainer Wiki-close invoked the Skill, routed and read owning pages before scoped documentation edits. Complete consumer pre-edit reading, cold start and efficiency remain unmeasured. Current evidence lives in docs/wiki/status.md.
 Checks: Run the source unittest suite, fixture checks and maintainer Wiki build/check. Receipts and platform CI are recorded in docs/wiki/status.md.
 ## History
 - 2026-10-29: Source candidate0.2.18 adds private-safe selection ordinals; existing policy/JSON envelope and sorted saved selections retained. Focused17 and full239 tests passed (one Windows-only skip); independent review passed; next real iOS capture identified missing selection item2 and succeeded after original-image repair. Claude scoped evidence return and structural reconciliation passed; shared site/product acceptance and installation remain separate/pending. Plan and eval record red/green and documentation-link correction.
@@ -36,9 +36,10 @@ Checks: Run the source unittest suite, fixture checks and maintainer Wiki build/
 
 - 2026-11-06: Native context-reading candidate and bounded PR45 review; see docs/wiki/status.md#current-state and evals/reports/context-reading-20261106.md.
 - 2026-11-08: Saved section-outline source candidate (local tests only); see CHANGELOG.md and docs/wiki/status.md.
+- 2026-11-09: 0.2.31 PR57 merged, PR/main CI passed, quiet Linux install and one bounded guided real review recorded; see docs/wiki/status.md#current-state.
 
 
-## Active 2026-11-09: large real SessionStart context (candidate)
+## History: 2026-11-09 large real SessionStart context (candidate phase, superseded)
 
 Isolated fix/large-session-context-20261109 at9258456. A real four-file calendar review packet produced a complete compact index of9089 ASCII bytes /7418 UTF8 bytes, exceeding6144; lifecycle emitted index_delivered:false without a concrete reader and Claude guessed raw packet fields instead of following a reader. Coordinator owns calendar safety work separately. Proposed repair: preserve complete file-to-owner routing in a bounded routing-first delivery, explicitly defer other metadata to existing saved views, and always provide an exact executable snapshot reader even when the routing inventory itself cannot fit. Never drop an edge, silently clip an inventory, raise the budget, execute project commands in hooks, add a second registry or infer reading/adoption. Red/green synthetic and actual private packet replay, full matrix/package closure, owning Wiki return, then a fresh guided real review are exit criteria; no installed/global/original-session change yet.
 
