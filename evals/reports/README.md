@@ -95,4 +95,4 @@ pending device/rollout acceptance remain separate; no payload or hook change.
 
 - [Capture index alias](capture-index-alias-20261107.md): real advertised-option mismatch, bounded alias regression and source/host/use boundaries.
 
-- [Routing-first large SessionStart delivery](large-routing-delivery-20261109.md): actual calendar packet counterevidence, candidate source replay; installed/agent outcomes pending.
+- [Routing-first large SessionStart delivery](large-routing-delivery-20261109.md): actual calendar packet counterevidence, candidate source replay, then0.2.31 installed delivery of complete21-edge routing before tools; bounded agent use (no page bodies read). [Sanitized installed receipt](large-routing-installed-20261109.json).

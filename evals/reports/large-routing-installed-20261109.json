@@ -1,0 +1,113 @@
+{
+  "kind": "sanitized-installed-receipt",
+  "version": "0.2.31",
+  "source_merge": "ccfbad8f3d33c213e1912ffd873c64dfadfb2775",
+  "tested_pr_head": "442ca40ba82664f80417d014b5e72129e13de359",
+  "pull_request": 57,
+  "pr_matrix_run": 42667619658,
+  "pr_matrix": "Ubuntu/Windows x Python 3.10/3.13 successful",
+  "main_ci_run": 42668882253,
+  "main_ci_conclusion": "success",
+  "local_checks": {
+    "unittest_collected": 397,
+    "unittest_executed": 396,
+    "platform_skips": 1,
+    "fixture_tests": 12,
+    "package_profiles": [
+      "plain",
+      "legacy",
+      "portable"
+    ],
+    "package_source_support_input_identity_match": true
+  },
+  "installation": {
+    "at": "2026-11-09T17:54:09.896178+00:00",
+    "host": "Linux Claude static skill copy",
+    "version": "0.2.31",
+    "source": "ccfbad8f3d33c213e1912ffd873c64dfadfb2775",
+    "matchedPayloadFiles": 21,
+    "atomicExchange": true,
+    "activeHelpersBefore": [],
+    "settingsChanged": false,
+    "originalSessionsRestarted": false,
+    "automaticUpdater": false,
+    "previousBackupRetainedOutsideDiscovery": true
+  },
+  "observed_real_readonly_task": {
+    "class": "guided pilot-project candidate final review; no edit",
+    "hook_event_index": 9,
+    "first_tool_event_index": 18,
+    "index_delivered": false,
+    "routing_delivered": true,
+    "routing_bytes": 5961,
+    "full_additional_context_bytes": 6644,
+    "data_budget_bytes": 6144,
+    "owner_edges": 21,
+    "owners_per_file": [
+      3,
+      3,
+      13,
+      2
+    ],
+    "page_registry_entries": 22,
+    "registry_note": "The page registry includes feature and omitted-candidate entries; it is neither the owner-edge count nor a reading count.",
+    "impact_files_opened": 2,
+    "exact_next_followed": 1,
+    "wiki_page_bodies_opened": 0,
+    "agent_used_head_sed": true,
+    "head60_replay": {
+      "by": "Root replay of the two head-60 calls",
+      "views": [
+        "first file impact",
+        "second file impact"
+      ],
+      "output_lines_each": 60,
+      "next_line_each": 59,
+      "head_did_not_clip_either_fragment": true
+    },
+    "reviewer_truncation_statement": "The reviewer's own statement that head clipped the tool fragment is unsupported by the replay.",
+    "source_review_conclusion": "no confirmed blocker; reviewer ran no tests or live acceptance",
+    "remaining_adoption_gap": "The agent did not fetch later fragments or any Wiki page body. This is neither a transport truncation nor completed method adoption.",
+    "r7_or_efficiency_gain_proven": false
+  },
+  "not_claimed": [
+    "natural adoption",
+    "token, cost or time savings",
+    "cold-start (R7) success",
+    "business acceptance",
+    "managed-plugin registration or other hosts updated"
+  ],
+  "hygiene": "Raw host paths, the task packet, the consumer repository identity and original session logs are excluded.",
+  "observed_real_wiki_close": {
+    "class": "guided maintainer Wiki writing task in isolated checkout; separate from pilot source review",
+    "skill_tool_called_before_writes": true,
+    "skill_event_index": 13,
+    "native_owner_queries_before_writes": true,
+    "actual_write_scope": [
+      "docs/wiki/status.md",
+      "evals/reports/large-routing-delivery-20261109.md",
+      "evals/reports/large-routing-installed-20261109.json",
+      "evals/reports/README.md",
+      "PROJECT.md"
+    ],
+    "current_and_prior_candidate_separated": true,
+    "source_ci_and_installation_facts_from_coordinator_receipt_not_independently_verified_by_worker": true,
+    "native_wiki_check_exit": 0,
+    "skill_package_tests": 6,
+    "raw_cat_overflow": {
+      "bytes_approx": 33900,
+      "host_saved_complete_output": true,
+      "preview_bytes": 2048,
+      "worker_followed_scoped_reads": true
+    },
+    "owner_route_has_file_context_capture": false,
+    "update_state_not_used_for_native_query_only_route": true,
+    "root_correction": "The apparent repeated Current state headings in status.md are inside fenced historical snapshots, not competing live Markdown sections. No history rewrite or new gate is justified by grep alone.",
+    "remaining_limits": [
+      "Long raw whole-page cat still exceeds host display budget; this is not a bounded helper delivery regression.",
+      "Guided writing does not establish natural adoption or efficiency."
+    ],
+    "worker_result": "success",
+    "provider_rate_limit_observed": false
+  }
+}
