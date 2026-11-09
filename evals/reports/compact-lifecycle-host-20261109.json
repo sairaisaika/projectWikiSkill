@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "scope": "Task-local source adapter, not global managed-plugin installation or efficiency comparison",
+  "sourceCommit": "1cda0f0eb0b8b1668dc6651b2f273c4dfcc69fbb",
+  "sourceAdapterSha256": "105f3170b1bce074d0e343e6e5ce9e676a8535b65d9c8b6e4253370e38aca973",
+  "sessionId": "dcb81c77-36ad-4419-846c-6ee6f4ffc76e",
+  "hookRecordIndex": 6,
+  "firstModelToolRecordIndex": 18,
+  "hookExitCode": 0,
+  "indexDelivered": true,
+  "indexBytes": 6092,
+  "budgetBytes": 6144,
+  "fileOwnerEdges": 6,
+  "sourceComparison": {
+    "status": "matched",
+    "pointer": "/workflow/context/sources",
+    "checkouts": {
+      "root": {
+        "root": "/home/sairaisaika/mindbridge-claude-storage-review-20261109",
+        "head": "22eac6d9eca6446438c473f50053be0894482032"
+      },
+      "peer:mobile": {
+        "root": "/home/sairaisaika/mindbridge-mobile-cloud-drafts-20261108",
+        "head": "c086428410067bf6700d7fef2a3d00bafc7167f0"
+      }
+    },
+    "meaning": "Reported checkout identities match selected snapshots; physical reads, correct deployment pairing, agent use and semantic accuracy remain unverified."
+  },
+  "currentInputsChecked": false,
+  "turns": 13,
+  "boundedReaderToolCalls": 0,
+  "laterCollisionGuardSameActualPayload": true,
+  "streamSha256": "1800260ce2f7e6a97f7253fdf9df7c8ac683dac6dcb08de66c494d8abfaeec94",
+  "limits": [
+    "Delivery before source tools is observed; all owner-page bodies read and comprehension are not established.",
+    "Storage review and frozen12 pilot used different tasks, no paired A/B or token savings.",
+    "Read-only task controls are CLI permissions, not an OS sandbox; unrelated pre-existing host startup hooks also ran."
+  ],
+  "collisionGuardReplaySourceCommit": "4ab007b30a50827851df0f7cc287bdeeb7c9ff31",
+  "coordinatorFollowup": {
+    "scope": "source replay only, not another host run",
+    "indexBytes": 6078,
+    "fileOwnerEdges": 6,
+    "adapterSha256": "1cfefa683884eee2c7711d7b0eb3385573ad3ae29ebea732442756d0a9975edd",
+    "textReaderSha256": "1d0014aefaa2929f98f46619ac005863cb8c274d280b13eb75eff028d30849f9",
+    "reviewTemplateUnsupportedFormatRemoved": true,
+    "deferredSummaryRecordsExercisedThroughRealBoundedCli": true,
+    "focusedTests": 23,
+    "fullTests": 391,
+    "platformSkip": 1
+  }
+}
