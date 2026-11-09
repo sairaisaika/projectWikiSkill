@@ -8,7 +8,7 @@
 
 ## Current state
 
-Candidate on `fix/compact-lifecycle-context-20261109`: actual two-file lifecycle context was refused over6KiB. Compact projection with complete file→owner edges and named NOT DELIVERED operational instructions is implemented and source-tested; replaying the actual packet through the source adapter on synthetic stdin delivers 6,061 of 6,144 bytes. Review, CI and task-local host execution pending; no main adoption, package release, global installation or agent-use gain. Reproduction/plan: [compact lifecycle index](../../evals/reports/compact-lifecycle-index-20261109.md).
+Candidate0.2.30 on `fix/compact-lifecycle-context-20261109`: compact complete file-owner index plus capture-time source/runtime observations; operational instructions/duplicate limits are explicitly deferred to saved views. Original two-file packet5625 bytes, aligned-source packet6092 bytes, both below the unchanged6144-byte budget; this is direct adapter replay only. Bounded text-reader commands now include the host interpreter/sibling path. Source validation, CI and actual task-local Claude execution remain separate; no main adoption or global installation. Reproduction: [compact lifecycle index](../../evals/reports/compact-lifecycle-index-20261109.md).
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|

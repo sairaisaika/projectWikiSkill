@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.30 candidate
+
+Compact optional SessionStart routing delivery with all file-owner edges and source observations; explicitly deferred operational records and bounded host-local readers. Fixed6KiB budget, snapshot-only behavior and visible overflow remain. Global installation/adoption are separate.
+
+
 > Reviewed: 2026-11-03 against c062224
 
 Version history, newest first. Current per-version status (CI, main, package,

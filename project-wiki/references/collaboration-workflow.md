@@ -592,3 +592,5 @@ what the provided record reported. Exit0 certifies neither installed-current
 state nor hook execution, context delivery, actual use, semantics or business
 acceptance. Combine this bounded observation with actual host/tool/read/runtime
 evidence when reporting the six layers; do not collapse them into one green badge.
+
+The compact hook reader supplies a host-local `program` argv (interpreter and sibling workflow), then a `prefix` and view suffixes. `<same-packet>` means the explicitly selected `PROJECT_WIKI_PACKET`. Reader commands request bounded text and retain exact NEXT; public JSON snapshots are unchanged. Capture-time source facts stay inline; duplicate source-limit prose is named under `not_delivered` for the saved all view.
