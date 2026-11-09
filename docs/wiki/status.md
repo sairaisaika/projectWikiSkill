@@ -8,7 +8,7 @@
 
 ## Current state
 
-Candidate on `fix/compact-lifecycle-context-20261109`: actual two-file lifecycle context was refused over6KiB. Compact projection with complete file→owner edges is implemented and source-tested, but the actual packet is still not delivered (8,704 bytes; saved records alone 7,299 > 6,144), so the real failure is not fixed under the fixed budget; coordinator decision, review and host validation pending; no main adoption, package release, global installation or agent-use gain. Reproduction/plan: [compact lifecycle index](../../evals/reports/compact-lifecycle-index-20261109.md).
+Candidate on `fix/compact-lifecycle-context-20261109`: actual two-file lifecycle context was refused over6KiB. Compact projection with complete file→owner edges and named NOT DELIVERED operational instructions is implemented and source-tested; replaying the actual packet through the source adapter on synthetic stdin delivers 6,061 of 6,144 bytes. Review, CI and task-local host execution pending; no main adoption, package release, global installation or agent-use gain. Reproduction/plan: [compact lifecycle index](../../evals/reports/compact-lifecycle-index-20261109.md).
 
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
