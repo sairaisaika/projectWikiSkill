@@ -12,6 +12,8 @@ Separate conclusions: the tool-delivery defect from the 0.2.30 failure is repair
 
 A separate guided maintainer Wiki-close task then invoked Skill(project-wiki) before writes, queried this repository's native owner route, read the existing current state and updated five allowed documentation files. Root compared those changes with the coordinator receipts and confirmed candidate/history separation. The worker did not independently re-query CI or installation. Its raw whole-page cat produced a33.9 KB persisted host result with2 KB preview; scoped follow-up reads recovered the needed sections. The apparent repeated Current headings are inside fenced snapshots, so no competing live-state sections were established. Native query-only routing has no file capture; direct owning-page editing was used, not update-state. These are observed adoption limits, not a new context-delivery failure or an R7/efficiency success.
 
+The observed SessionStart delivery used the existing optional per-invocation hook settings; copying the Linux static Skill does not register that hook globally. A later real independent follow-up review was launched with only the packet environment variable and omitted those settings: it received no Wiki task context and opened source diff before Wiki. Root corrected the private task launcher to pass the existing hook settings. This is an observed coordinator dispatch omission, not a failure of the registered delivery path; natural default adoption remains unproven.
+
 ## History
 
 ### 0.2.31 candidate before CI and installation
