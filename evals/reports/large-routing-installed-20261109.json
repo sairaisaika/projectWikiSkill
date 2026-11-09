@@ -123,5 +123,50 @@
     "source_review_found_blocker": false,
     "method_adoption_accepted": false,
     "remediation": "private task launcher now passes existing one-off hook settings; no global/original-session change"
+  },
+  "observed_pilot_wiki_close": {
+    "class": "later guided real pilot-project Wiki writing task; separate from earlier maintainer task",
+    "hook_event_index": 9,
+    "first_tool_event_index": 17,
+    "index_delivered": false,
+    "routing_delivered": true,
+    "existing_pages_updated": 12,
+    "current_pages_using_preview_show_apply": 7,
+    "current_preview_paging": "one to three bounded pages per plan; two plans were revised and re-previewed before apply",
+    "plain_mechanism_pages_updated_in_place": 5,
+    "old_current_and_stamps_preserved_in_history": true,
+    "source_or_runtime_changes_by_worker": false,
+    "iteration_budget": "first invocation40 turns stopped at max-turns; same session continued29 turns to success",
+    "provider_rate_limit_observed": false,
+    "remaining_limits": [
+      "A whole-page scan of about74.7KB exceeded the host preview; narrower follow-up reads used.",
+      "Some bounded long lines were still piped through cut; full index paging does not establish all body text read.",
+      "One replacement assertion encountered a duplicate sentence in History; scoping the existing current section resolved it.",
+      "The worker reported extra blank lines after apply; cosmetics were normalized without changing state semantics.",
+      "Current replacement does not rewrite stale prose, graph annotations or debt summaries elsewhere; coordinator reconciled those existing sources."
+    ],
+    "r7_or_efficiency_gain_proven": false,
+    "host_or_installation_changes": false,
+    "index_fragments_requested_until_complete": 5,
+    "continuation_display_filtered": [
+      "file fields",
+      "satellite_count",
+      "unregistered metadata",
+      "JSON structural lines"
+    ],
+    "complete_unfiltered_index_read_established": false
+  },
+  "observed_later_readonly_audit": {
+    "class": "guided independent adoption-evidence audit, no product edit",
+    "hook_event_index": 9,
+    "index_delivered": false,
+    "routing_delivered": false,
+    "exact_reader_argv_present": true,
+    "mode": "large inventory reader-only fallback; not partial routing",
+    "worker_used_saved_reader": false,
+    "worker_followed_explicit_prompt_page_paths": true,
+    "host_output_truncated_once_then_narrowed": true,
+    "conclusion": "no confirmed adoption-claim blocker; Root separately verified nonblocking evidence observations",
+    "r7_or_method_adoption_proven": false
   }
 }
