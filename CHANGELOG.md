@@ -1,6 +1,16 @@
 # Changelog
 
-## 0.2.31 candidate
+## 0.2.31 observed-use update (2026-11-09)
+
+The later real pilot Wiki-close requested all five saved index fragments, filtered continuation metadata, and used
+preview/paged show-state/apply for seven Current sections across twelve existing
+pages. A separate independent audit exercised the reader-only fallback but used
+explicit task paths. Raw host overflow and partial body reading remain; these
+guided observations do not establish natural adoption or efficiency. Payload,
+version and installation are unchanged. [Measured scope](evals/reports/large-routing-delivery-20261109.md),
+[current per-version status](docs/wiki/status.md#current-state).
+
+### 0.2.31 candidate snapshot (before adoption)
 
 SessionStart overflow now delivers routing first: when the compact index exceeds the unchanged 6 KiB budget, the hook delivers every saved file-to-owner edge, page identity, unknown per-file metadata and placement issue (`index_delivered: false`, `routing_delivered: true`) and names every other saved record by key path with the exact `--view index` reader argv. If routing itself cannot fit, it lists no file and supplies `reader.program` plus index/impact argv that continue through the existing `NEXT:` cursor. Delivered JSON is UTF-8 (measured in UTF-8 bytes) inside ASCII hook output. A real four-file review packet replayed from source: 7,418-byte index, 5,984-byte routing with all 21 edges; host delivery and agent use not yet observed.
 
