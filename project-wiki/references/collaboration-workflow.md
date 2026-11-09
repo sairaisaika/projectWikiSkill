@@ -182,6 +182,12 @@ No selection is a quiet opt-out. The adapter never invokes Git/native routing,
 commands quoted in the packet, models or tools; it does not read a transcript,
 write an import cache, scan Wiki files or log raw hook input. Invalid selection
 or malformed input emits a delivery warning without blocking unrelated work.
+The delivered index is a compact projection of that view: each feature, omitted
+candidate and source-file owner page appears once in a `pages` registry and rows refer
+to it by position, so every selected-file-to-owner-page edge is present (the plain
+view only counts satellites). Unregistered rows, selected files without a native
+record, unknown per-file metadata, path bases, saved source observations and the
+unchecked-freshness statement are kept; the reader commands share one prefix.
 An index above the 6 KiB ASCII context budget is explicitly **not delivered**, with a
 pointer to the explicit `PROJECT_WIKI_PACKET` selection and standalone snapshot reader; it is not silently
 truncated into a purported complete impact inventory. The short wrapper is added

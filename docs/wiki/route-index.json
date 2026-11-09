@@ -969,8 +969,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "SessionStart delivery renders the snapshot index view",
           "symbol": "deliver",
-          "line": 27,
-          "sha256": "6041ab00d3ad83a764ad8adde4cdd1f7590c72e593aec8aae34c65c8a4225e4c"
+          "line": 86,
+          "sha256": "dd6dc3fe59620c4d8f3606b1b9bc466ae440d8f42eb9bd773326092c9447eef8"
         },
         {
           "id": "capture-view",
@@ -1621,8 +1621,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "Workspace check and snapshot index rendering within 6 KiB",
           "symbol": "deliver",
-          "line": 27,
-          "sha256": "6041ab00d3ad83a764ad8adde4cdd1f7590c72e593aec8aae34c65c8a4225e4c"
+          "line": 86,
+          "sha256": "dd6dc3fe59620c4d8f3606b1b9bc466ae440d8f42eb9bd773326092c9447eef8"
         },
         {
           "id": "main",
@@ -1630,8 +1630,8 @@
           "path": "project-wiki/scripts/lifecycle.py",
           "reason": "Quiet when unset; visible fixed systemMessage on error; once the module has loaded, main exits 0",
           "symbol": "main",
-          "line": 61,
-          "sha256": "6041ab00d3ad83a764ad8adde4cdd1f7590c72e593aec8aae34c65c8a4225e4c"
+          "line": 121,
+          "sha256": "dd6dc3fe59620c4d8f3606b1b9bc466ae440d8f42eb9bd773326092c9447eef8"
         },
         {
           "id": "package",
