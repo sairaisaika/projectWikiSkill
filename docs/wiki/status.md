@@ -16,6 +16,8 @@
 
 A second guided maintainer Wiki-close task invoked the installed Skill before writes, queried the native owner route and moved the previous candidate paragraph into History. Root verified the five allowed documentation changes and the receipt/check results. The worker raw-cat of this34 KB page exceeded the host preview; it then used scoped reads. Repeated Current state strings below are fenced historical snapshots, not live headings; grep alone had misclassified them. Native query-only maintainer routing has no file capture, so this task used direct owning-page edits rather than update-state. This is bounded writing-use evidence, not natural adoption or an efficiency result.
 
+The observed SessionStart delivery used the existing optional per-invocation hook settings; copying the Linux static Skill does not register that hook globally. A later real independent follow-up review was launched with only the packet environment variable and omitted those settings: it received no Wiki task context and opened source diff before Wiki. Root corrected the private task launcher to pass the existing hook settings. This is an observed coordinator dispatch omission, not a failure of the registered delivery path; natural default adoption remains unproven.
+
 ## Historical evidence
 
 ### 0.2.31 candidate before CI and installation

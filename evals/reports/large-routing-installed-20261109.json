@@ -68,7 +68,8 @@
     "reviewer_truncation_statement": "The reviewer's own statement that head clipped the tool fragment is unsupported by the replay.",
     "source_review_conclusion": "no confirmed blocker; reviewer ran no tests or live acceptance",
     "remaining_adoption_gap": "The agent did not fetch later fragments or any Wiki page body. This is neither a transport truncation nor completed method adoption.",
-    "r7_or_efficiency_gain_proven": false
+    "r7_or_efficiency_gain_proven": false,
+    "launch_mode": "existing optional per-invocation hook settings, no global registration"
   },
   "not_claimed": [
     "natural adoption",
@@ -109,5 +110,18 @@
     ],
     "worker_result": "success",
     "provider_rate_limit_observed": false
+  },
+  "observed_unconfigured_followup": {
+    "class": "real independent source follow-up review",
+    "packet_environment_set": true,
+    "optional_hook_settings_passed": false,
+    "task_context_delivered": false,
+    "source_diff_before_wiki": true,
+    "skill_or_native_wiki_router_called": false,
+    "coordinator_dispatch_omission": true,
+    "registered_helper_delivery_failure": false,
+    "source_review_found_blocker": false,
+    "method_adoption_accepted": false,
+    "remediation": "private task launcher now passes existing one-off hook settings; no global/original-session change"
   }
 }
