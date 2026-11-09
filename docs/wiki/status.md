@@ -8,6 +8,8 @@
 
 ## Current state
 
+Candidate on `fix/compact-lifecycle-context-20261109`: actual two-file lifecycle context was refused over6KiB. Compact projection implementation and source/host validation pending; no main adoption, package release, global installation or agent-use gain. Reproduction/plan: [compact lifecycle index](../../evals/reports/compact-lifecycle-index-20261109.md).
+
 | Version | Source CI | main adopted | package closure | installed hosts | context delivered | actual agent use | business acceptance |
 |---|---|---|---|---|---|---|---|
 |0.2.29|[PR matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42471252111), [main matrix passed](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42471667986);380 collected/379 executed/1 local platform skip|PR55 main2172640; payload equals testede8950af|skill-only package valid; source/support/input bytes and identity match; hooks absent|Linux atomic exchange2026-11-08T10:34:32Z;21/21 files match2172640; old0.2.28 outside discovery retained; no active helper observed|fresh guided maintenance task first read installed SKILL; original sessions not restarted|complete saved impact and outlines via NEXT, eight relevant sections before a narrow documentation edit;16 helper calls without host clipping markers; optional historical prefix explicitly partial; [scope and counterevidence](../../evals/reports/section-outline-20261108.md)|not inferred|

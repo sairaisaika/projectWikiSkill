@@ -1,0 +1,11 @@
+# Compact lifecycle index: real two-file context exceeds delivery budget
+
+Status lives in [maintainer status](../../docs/wiki/status.md). This report owns the reproduction and evaluation boundary, not another status ledger.
+
+A real readonly private-file policy review selected two source files through the native router, then created an existing readonly work packet. The installed0.2.29 SessionStart adapter returned index_delivered=false because its saved index exceeds the fixed6KiB ASCII budget. It did not truncate or execute Git. This is a delivery-size failure after valid preparation, distinct from the earlier worker that bypassed Skill and used native wiki-task/head.
+
+Goal: deliver a compact but COMPLETE file-to-all-owner index for ordinary scoped packets without increasing the budget, adding gates, dropping scope or requiring the model to repeat discovery. Reuse the existing snapshot reader and lifecycle file. Deduplicate repeated metadata/page labels/reader argv through a shared registry or similarly complete compact projection; preserve every source path/owner edge, unregistered/direct-selected/omitted warnings, path bases, source observations and explicit unchecked freshness. An irreducible oversized result must still opt out visibly. No raw context expansion, native/Git execution, task scheduling, implicit packet selection, global installation or pet-session changes.
+
+Checks: negative control on the actual saved packet, semantic preservation fixtures (including shared owners, missing metadata and Unicode), fixed-budget/overflow/workspace/quiet-opt-out invariants, focused then full existing suite, package/doctor and maintainer Wiki checks. Actual host execution is separate from invoking a script on synthetic stdin. The coordinator will test a fresh task-local Claude SessionStart hook only after source validation, using a private checkout and the original readonly storage review; no global plugin settings change.
+
+The real raw packet/catalog and hook response are held outside this repository; avoid publishing project names, home paths or raw task data. Source tests use sanitized fixtures. A fresh12-question single-model pilot used Wiki then native head/full-page output; this is counterevidence to natural bounded-reader adoption, not a controlled efficiency result. No token/time savings or completed six-pair trial claim.
