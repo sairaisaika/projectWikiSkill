@@ -5,6 +5,8 @@ import os
 from pathlib import Path
 import subprocess
 import shutil
+import shlex
+import re
 import sys
 import unittest
 from unittest.mock import patch
@@ -95,7 +97,7 @@ class LifecycleTests(unittest.TestCase):
                                                          if k not in ('limits', 'local_path_validation')})
         for key in ['feature', 'impact', 'all']:
             self.assertEqual(f"show --packet <same-packet> --snapshot-only {view['reader'][key]}", full['expansion'][key])
-        self.assertEqual(view['reader']['review_preparation'], full['review_preparation']['command'] + ' --format text')
+        self.assertEqual(view['reader']['review_preparation'], full['review_preparation']['command'])
 
     def lookup(self, record, dotted):
         for key in dotted.split('.'):
@@ -172,8 +174,50 @@ class LifecycleTests(unittest.TestCase):
         self.assertEqual(view['native_workflow']['context'], {k: v for k, v in context.items() if k != 'limits'})
         self.assertIn('native_workflow.context.limits', view['not_delivered']['all'])
         self.assertIn('--format text', view['reader']['prefix'])
-        self.assertIn('--format text', view['reader']['review_preparation'])
+        self.assertNotIn('--format', view['reader']['review_preparation'])
         self.assertEqual(view['reader']['program'], [sys.executable, str(Path(adapter.workflow.__file__).resolve())])
+
+    def test_delivered_summary_command_prints_deferred_records_through_real_cli(self):
+        self.packet['access'], self.packet['allowed_files'] = 'read_only', []
+        self.packet['return_requirements'] = ['return-material-marker-' + 'long ' * 1700]
+        self.packet['read_only_baseline'] = {'status': 'observed', 'meaning': 'readonly-meaning-marker',
+                                              'limits': 'readonly-limits-marker'}
+        view = self.delivered(self.packet)
+        self.assertIs(view['index_delivered'], True)
+        args = view['reader']['program'] + shlex.split(view['reader']['prefix']) + ['--view', 'summary']
+        args = [str(self.path) if x == '<same-packet>' else x for x in args]
+        output, continuations = [], 0
+        while True:
+            cp = subprocess.run(args, capture_output=True, text=True, encoding='utf-8')
+            self.assertEqual(cp.returncode, 0, cp.stderr)
+            output.append(cp.stdout)
+            nexts = [line[6:] for line in cp.stdout.splitlines() if line.startswith('NEXT: ')]
+            if not nexts:
+                break
+            continuations += 1
+            self.assertLess(continuations, 20)
+            if os.name == 'nt':
+                self.assertTrue(nexts[0].startswith('& '))
+                args = [m.group(1).replace("''", "'") for m in re.finditer(r"'((?:[^']|'')*)'", nexts[0])]
+            else:
+                args = shlex.split(nexts[0])
+        joined = ''.join(output)
+        self.assertIn('return-material-marker-', joined)
+        self.assertIn('readonly-meaning-marker', joined)
+        self.assertIn('readonly-limits-marker', joined)
+        self.assertGreater(continuations, 0)
+
+    def test_delivered_review_template_command_runs_original_parser_and_writes_unreviewed_only(self):
+        view = self.delivered(self.packet)
+        capture, target = self.home / 'final-capture.json', self.home / 'review.json'
+        capture.write_text(json.dumps(self.packet['context']), encoding='utf-8')
+        replacements = {'<same-packet>': self.path, '<current-final-capture>': capture, '<new-review.json>': target}
+        args = view['reader']['program'] + [str(replacements.get(x, x)) for x in shlex.split(view['reader']['review_preparation'])]
+        cp = subprocess.run(args, capture_output=True, text=True, encoding='utf-8')
+        self.assertEqual(cp.returncode, 0, cp.stderr)
+        result = json.loads(target.read_text(encoding='utf-8'))
+        self.assertEqual(result['kind'], 'wiki-review-template')
+        self.assertTrue(all(row['status'] == 'unreviewed' for row in result['pages'].values()))
 
     def test_oversized_source_observations_still_opt_out(self):
         self.packet['context']['native_report']['workflow'] = {
