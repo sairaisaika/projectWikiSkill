@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- CLI text parts (prepare, show, show-state, locator, section outline) are bounded to
+  4000 UTF-8 bytes / 40 stdout lines and print the exact continuation on line 2
+  (`NEXT PART:`) as well as at the end. A real continuation piped
+  `prepare --files` into `head -45` and got `DISPLAY 0:4792 OF 6098 — PARTIAL` with no
+  continuation or completion line. Programmatic defaults stay 6000/60; JSON stays complete.
+  A caller clipping to fewer lines can still lose the command.
+
 - `prepare` accepts a query without `--files`. Real guided tasks loaded the skill,
   ran the raw native query (the entry told them to) and cut its stdout with
   `head`/`tail -c`, then reran it with `--files`. The query-only request now runs the

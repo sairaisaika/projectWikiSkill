@@ -903,6 +903,13 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
     return result
 
 
+def cli_budget(prefix: str = '') -> dict:
+    """Budget for one printed text part: print adds a newline; a prefix shares the part."""
+    read = reading_module()
+    return {'budget': read.CLI_TEXT_BYTES - 1 - len(prefix.encode('utf-8')),
+            'line_budget': read.CLI_TEXT_LINES - 1 - prefix.count('\n')}
+
+
 def render_context_summary(view: dict, artifact: str, budget: int=6000, **kwargs) -> str:
     return reading_module().render_summary(view, artifact, budget, **kwargs)
 
@@ -1107,16 +1114,16 @@ def main(argv=None) -> int:
                 if fmt=='json':print(json.dumps(outline,ensure_ascii=False,indent=2))
                 else:
                     identity=json.dumps([str(source),view,args.path,'section-index'],ensure_ascii=False)
-                    print(reading_module().render_outline(outline,identity,command+['--section-index'],cursor=args.cursor,budget=5999,line_budget=59))
+                    print(reading_module().render_outline(outline,identity,command+['--section-index'],cursor=args.cursor,**cli_budget()))
                 return 0
             if fmt=='json':print(json.dumps(shown,ensure_ascii=False,indent=2))
-            elif view=='locator':print(reading_module().render_locator(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59,snapshot_only=args.snapshot_only))
-            elif view=='summary' or (args.capture and view=='index'):print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,budget=5999,line_budget=59))
-            elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section,cursor=args.cursor,command=command,budget=5999,line_budget=59))
+            elif view=='locator':print(reading_module().render_locator(shown,str(source),cursor=args.cursor,command=command,**cli_budget(),snapshot_only=args.snapshot_only))
+            elif view=='summary' or (args.capture and view=='index'):print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,**cli_budget()))
+            elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section,cursor=args.cursor,command=command,**cli_budget()))
             else:
                 text=json.dumps(shown,ensure_ascii=False,indent=2)+'\n'
                 identity=json.dumps([str(source),view,args.path,args.section],ensure_ascii=False)
-                print(reading_module().text_page(text,identity,command,cursor=args.cursor,budget=5999,line_budget=59)['text'])
+                print(reading_module().text_page(text,identity,command,cursor=args.cursor,**cli_budget())['text'])
             return 0
         if args.command == 'show-state':
             if args.cursor and args.format != 'text':
@@ -1130,7 +1137,7 @@ def main(argv=None) -> int:
                 command = [sys.executable,str(Path(__file__).resolve()),'show-state','--plan',str(source),
                            '--view',args.view,'--format','text']
                 identity = json.dumps([str(source),args.view,shown['page'],shown['expected_sha256'],shown['proposed_sha256']],ensure_ascii=False)
-                print(reading_module().text_page(text,identity,command,cursor=args.cursor,budget=5999,line_budget=59)['text'])
+                print(reading_module().text_page(text,identity,command,cursor=args.cursor,**cli_budget())['text'])
             return 0
         if args.command == 'apply-state':
             source = args.plan.resolve()
@@ -1160,8 +1167,7 @@ def main(argv=None) -> int:
             shown=capture_view(result,'locator' if reuse is not None else 'summary')
             renderer=reading_module().render_locator if reuse is not None else render_context_summary
             print(prefix+renderer(shown,str(args.output.resolve()),
-                                               budget=5999-len(prefix.encode('utf-8')),
-                                               line_budget=58 if prefix else 59))
+                                               **cli_budget(prefix)))
             return 0
         if args.command == 'update-state':
             if args.output.exists() or args.output.is_symlink():raise ValueError('Preview output already exists; choose a new path')

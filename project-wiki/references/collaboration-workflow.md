@@ -55,8 +55,9 @@ direct page selection separately; selecting a page does not declare ownership.
 A planned Wiki page absent from the snapshot is listed as unavailable and is not
 created or given an invented reading view. The default text is an index, not the full
 page text. For `--capture`, explicit `--view index` is an alias of `summary`;
-`--packet --view index` retains its legacy packet projection and JSON default. New prepared capture text views deliver bounded continuations (6000 UTF-8
-bytes and 60 lines); the printed `NEXT` command carries the same source, view,
+`--packet --view index` retains its legacy packet projection and JSON default. New prepared capture text views deliver bounded continuations (CLI: 4000 UTF-8
+bytes and 40 lines of stdout); the exact command is printed on line 2 as `NEXT PART:`
+and again at the end as `NEXT:`; it carries the same source, view,
 path, section and snapshot-only mode. It resumes at the exact next character,
 including inside an oversized section or Unicode line. Changed text or a mismatched
 view rejects the cursor rather than continuing into different evidence. Each
@@ -110,7 +111,7 @@ such as `> Verification: source reviewed` or `> 核验：源码已核`.
 
 The output artifact retains the exact original and proposed Markdown plus their
 hashes. The operation keeps its compact JSON receipt and adds `read_preview_argv`;
-it does not print the full page. `show-state` defaults to6000 UTF-8 bytes/60 lines,
+it does not print the full page. `show-state` defaults to 4000 UTF-8 bytes/40 lines,
 with exact content/view-bound NEXT commands. Reading a saved proposal after apply
 still reads captured bytes, not live source, and does not apply again. Explicit
 `--format json` exports the complete selected view. Older plans have no original

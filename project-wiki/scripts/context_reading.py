@@ -294,6 +294,12 @@ def shell_command(argv):
     return shlex.join(argv)
 
 
+# CLI text parts, measured on stdout including print's final newline. Function
+# defaults stay 6000/60 for explicit programmatic callers.
+CLI_TEXT_BYTES = 4000
+CLI_TEXT_LINES = 40
+
+
 def text_page(text: str, identity: str, command: list[str], *, budget: int=6000, cursor: str | None=None, line_budget: int=60) -> dict:
     """Bound every text view, including a single huge Unicode line, without loss.
 
@@ -321,6 +327,9 @@ def text_page(text: str, identity: str, command: list[str], *, budget: int=6000,
         if end < len(text):
             token = base64.urlsafe_b64encode(json.dumps({'digest':digest,'offset':end},separators=(',',':')).encode()).decode()
         header = f'DISPLAY {start}:{end} OF {len(text)} CHARACTERS — '+('PARTIAL; continue below' if token else 'COMPLETE VIEW')+'\n'
+        # The same exact command is repeated on line 2 so a caller that keeps only
+        # the first lines (head -N) still sees how to continue.
+        if token:header += 'NEXT PART: '+shell_command([*command, '--cursor', token])+'\n'
         footer = ('\nNEXT: '+shell_command([*command, '--cursor', token])+'\n' if token else '\nCOMPLETE VIEW; not a reading acknowledgement.\n')
         return header + '--- CONTENT ---\n' + text[start:end] + '\n--- END CONTENT ---' + footer, token
 
