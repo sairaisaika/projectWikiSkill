@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+- `prepare` accepts a query without `--files`. Real guided tasks loaded the skill,
+  ran the raw native query (the entry told them to) and cut its stdout with
+  `head`/`tail -c`, then reran it with `--files`. The query-only request now runs the
+  reviewed native command once through the existing capture checks, saves cards and
+  omissions, prints them in bounded parts with an exact continuation, reuses an
+  identical current request without native execution and keeps stale artifacts.
+  Its index says file owners are unknown, not none. Selected feature cards are
+  listed in every capture summary. Not observed in a real task yet.
+
 ## 0.2.31 observed-use update (2026-11-09)
 
 The later real pilot Wiki-close requested all five saved index fragments, filtered continuation metadata, and used

@@ -24,7 +24,11 @@ summaries). Rationale and dated evidence live in
 `workflow.py prepare` reuses the native `capture` validation and stores a
 `prepared_reading` projection plus integrity digest. There is no new gate or
 manifest: every requested file keeps all native owners and all omissions remain
-explicit. `prepare` needs a nonempty file list and the original execution opt-in.
+explicit. `prepare` needs the original execution opt-in. Without files it saves the
+native query (`query --json --files` with no paths, `impact: []`) so matched cards
+and omissions are read through the bounded summary; its index prints that file owners
+are unknown, not none. A later file-scoped request is a different request (new output,
+one more native run); it is not merged into the query-only capture.
 It records tracked/untracked selected changes without attributing authorship or
 claiming pre-edit reading. New captures are transport-budget bounded. An identical prepare request may reuse its current existing output without native execution or rewriting; different/stale artifacts remain immutable. Other capture/packet outputs remain write-new-only.
 

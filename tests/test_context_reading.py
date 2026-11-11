@@ -164,9 +164,11 @@ class ContextReadingTests(unittest.TestCase):
         text=wf.render_context_summary(self.view(c),'context.json')
         self.assertIn('CALLER-DECLARED',text)
         self.assertIn('未部署',self.view(c,'page','feature.md')['latest_verification_note']['text'])
-    def test_prepare_refuses_empty_files_and_implicit_execution(self):
-        with self.assertRaisesRegex(ValueError,'--files'):wf.prepare(self.root,'editor',[],[sys.executable,'native.py'],['native.py'],allow_execution=True)
-        with self.assertRaisesRegex(ValueError,'opt-in'):wf.prepare(self.root,'editor',['src/editor.py'],[sys.executable,'native.py'],['native.py'])
+    def test_prepare_refuses_implicit_execution_with_or_without_files(self):
+        for files in ([],['src/editor.py']):
+            with self.subTest(files=files),patch.object(wf.subprocess,'run',side_effect=AssertionError('native ran')):
+                with self.assertRaisesRegex(ValueError,'opt-in'):wf.prepare(self.root,'editor',files,[sys.executable,'native.py'],['native.py'])
+                with self.assertRaisesRegex(ValueError,'runtime-input'):wf.prepare(self.root,'editor',files,[sys.executable,'native.py'],[],allow_execution=True)
     def test_capture_help_explains_prefix_and_automatic_arguments(self):
         cp=subprocess.run([sys.executable,str(ROOT/'project-wiki/scripts/workflow.py'),'capture','--help'],text=True,capture_output=True)
         self.assertEqual(cp.returncode,0);self.assertIn('prefix',cp.stdout);self.assertIn('--json',cp.stdout)
