@@ -19,7 +19,10 @@ native workflow; a missing adapter is not a defective wiki.
 
 For an ordinary implementation task, a captured file context is enough; do not
 manufacture a delegation/acceptance packet merely to obtain Wiki owners.
-First identify candidate paths through the native entry, then run:
+To find candidate paths, run the same command without `--files` (and with its
+own output path): the native query runs once, and its cards and omissions are saved
+and shown in bounded parts instead of a raw stdout that would need cutting. That
+capture lists no file owners and says so. Once paths are known, run:
 
 ```sh
 python <skill>/scripts/workflow.py prepare --root <checkout> --query "user task" \

@@ -783,9 +783,10 @@ def apply_state(plan: dict) -> None:
 
 def prepare(root: Path, query: str, files: list[str], program: list[str], runtime_inputs: list[str],
             *, observed_revisions: dict[str, str] | None = None, reuse: dict | None = None, **kwargs) -> dict:
-    """One explicit native capture; no task/owner/dispatch ceremony or new gate."""
-    if not files:
-        raise ValueError('prepare requires --files; find candidate paths with the native query first')
+    """One explicit native capture; no task/owner/dispatch ceremony or new gate.
+
+    Without files this saves the native query itself (cards and omissions) for
+    bounded reading; file owners stay unknown until a file-scoped request."""
     request = prepare_request(root, query, files, program, runtime_inputs, observed_revisions or {}, kwargs)
     if reuse is not None:
         if reuse.get('prepare_request') != request:

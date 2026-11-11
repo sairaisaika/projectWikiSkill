@@ -84,6 +84,7 @@ def summary(value: dict) -> dict:
     native=value['native_report'];reading=value.get('prepared_reading',{})
     return {'selected_wiki_pages':reading.get('selected_wiki_pages',[]),
             'unexpanded_candidates':native['omitted'],
+            'selected_cards':[{'path':row['path'],'title':row['title']} for row in native['cards']],
             'unregistered_files':[row['file'] for row in native['impact'] if row['unregistered']],
             'preparation':reading.get('preparation',{'reading_before_edits':'not established','status':'older capture; no preparation observation'}),
             'files':[{'file':row['file'],'pages':[page['path'] for page in row['pages']],
@@ -106,6 +107,10 @@ def summary_text(view: dict, artifact: str) -> str:
     lines=['UNEXPANDED CANDIDATES (not read):']
     lines.extend('  '+str(row.get('path','?'))+' — '+str(row.get('title','')) for row in view['unexpanded_candidates'])
     if not view['unexpanded_candidates']:lines.append('  none declared')
+    if 'selected_cards' in view:
+        lines.append('SELECTED FEATURE CARDS (query match, not read):')
+        lines.extend('  '+row['path']+' — '+row['title'] for row in view['selected_cards'])
+        if not view['selected_cards']:lines.append('  none matched')
     lines.append('UNREGISTERED FILES: '+(', '.join(view['unregistered_files']) or 'none'))
     changes=view['preparation'].get('selected_paths_with_changes',[])
     lines.append('EXISTING SELECTED CHANGES: '+(', '.join(changes) or 'none observed / see preparation record'))
@@ -116,6 +121,7 @@ def summary_text(view: dict, artifact: str) -> str:
     if bases['peers']:lines.append('PEER SOURCE BASES: '+', '.join(alias+'='+root for alias,root in bases['peers'].items()))
     lines.append('FILE → ALL DECLARED OWNER PAGES:')
     lines.extend('  '+row['file']+' → '+(', '.join(row['pages']) or 'UNREGISTERED') for row in view['files'])
+    if not view['files']:lines.append('  no files selected; file owners unknown, not none (prepare with --files for owners)')
     if view.get('selected_wiki_pages'):
         lines.append('DIRECTLY SELECTED WIKI PAGES (not owner declarations):')
         lines.extend('  '+row['file']+' → '+row['path']+' ['+row['status']+']' for row in view['selected_wiki_pages'])

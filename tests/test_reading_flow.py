@@ -380,6 +380,69 @@ class ReadingFlowTests(unittest.TestCase):
             self.assertEqual(continued.returncode,0,continued.stdout+continued.stderr)
             self.assertIn('DISPLAY',continued.stdout)
 
+    def follow_next(self, stdout):
+        """Follow printed NEXT commands to COMPLETE; return the reassembled content."""
+        import re, shlex
+        content=[]
+        for _ in range(60):
+            self.assertLessEqual(len(stdout.encode('utf-8')),6000);self.assertLessEqual(len(stdout.splitlines()),60)
+            content.append(stdout.split('--- CONTENT ---\n',1)[1].split('\n--- END CONTENT ---',1)[0] if '--- END CONTENT ---' in stdout else stdout.split('--- CONTENT ---\n',1)[1])
+            if '\nNEXT: ' not in stdout:return content
+            command=stdout.split('\nNEXT: ',1)[1].strip()
+            argv=[m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",command)] if sys.platform=='win32' else shlex.split(command)
+            cp=subprocess.run(argv,cwd=self.root,capture_output=True,text=True,encoding='utf-8')
+            self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr);stdout=cp.stdout
+        self.fail('continuation did not complete')
+
+    def test_query_only_prepare_replaces_the_raw_native_query_with_one_saved_bounded_run(self):
+        # Actual tasks ran the native query without files and cut its output with head;
+        # prepare refused the same query-only request, so the bounded path was unreachable.
+        many='''import json,sys
+q=sys.argv[1]; files=sys.argv[sys.argv.index('--files')+1:]
+print(json.dumps({'query':q,'cards':[{'path':'feature.md','title':'Editor'}],'impact':[],
+ 'omitted':[{'path':f'candidate-{i}.md','title':'候选'*20+str(i)} for i in range(300)],
+ 'placementIssues':[],'limits':'registered scope only'}))
+'''
+        (self.root/'many.py').write_text(many,encoding='utf-8');self.git('add','many.py');self.git('commit','-m','many')
+        out=self.root.parent/'query.json'
+        args=['prepare','--root',str(self.root),'--query','editor','--runtime-input','many.py','--native-argv',json.dumps([sys.executable,'many.py']),'--allow-native-execution','--output',str(out)]
+        real=subprocess.run;native=[]
+        def counting(argv,*a,**k):
+            if argv[:2]==[sys.executable,'many.py']:native.append(argv)
+            return real(argv,*a,**k)
+        with patch.object(wf.subprocess,'run',side_effect=counting),redirect_stdout(io.StringIO()) as first:
+            self.assertEqual(wf.main(args),0,first.getvalue())
+        self.assertEqual(native,[[sys.executable,'many.py','editor','--json','--files']])
+        parts=self.follow_next(first.getvalue())
+        text=''.join(parts)
+        self.assertGreater(len(parts),1)
+        self.assertEqual([f'candidate-{i}.md' for i in range(300)],[l.split()[0] for l in text.splitlines() if l.startswith('  candidate-')])
+        self.assertIn('  feature.md — Editor',text)
+        self.assertIn('no files selected; file owners unknown, not none',text)
+        self.assertNotIn('UNREGISTERED',text.split('FILE → ALL DECLARED OWNER PAGES:',1)[1].split('PAGE STATE',1)[0])
+        before=out.read_bytes()
+        with patch.object(wf.subprocess,'run',side_effect=counting),redirect_stdout(io.StringIO()) as again:
+            self.assertEqual(wf.main(args),0)
+        self.assertEqual(len(native),1);self.assertIn('REUSED',again.getvalue());self.assertEqual(out.read_bytes(),before)
+        page=self.root/'docs/wiki/feature.md';page.write_text(page.read_text(encoding='utf-8')+'\nchanged\n',encoding='utf-8')
+        with patch.object(wf.subprocess,'run',side_effect=counting),redirect_stdout(io.StringIO()) as stale:
+            self.assertEqual(wf.main(args),1)
+        self.assertEqual(len(native),1);self.assertRegex(stale.getvalue(),'stale|changed');self.assertEqual(out.read_bytes(),before)
+        with redirect_stdout(io.StringIO()) as hist:
+            self.assertEqual(wf.main(['show','--capture',str(out),'--view','summary','--format','json']),0)
+        self.assertEqual(json.loads(hist.getvalue())['freshness'],'historical projection; current inputs changed or unavailable')
+
+    def test_query_only_capture_is_a_distinct_request_and_file_scope_keeps_every_owner(self):
+        q=wf.prepare(self.root,'editor',[],[sys.executable,'native.py'],['native.py'],allow_execution=True)
+        self.assertEqual(q['files'],[]);self.assertEqual(q['native_report']['impact'],[])
+        v=self.view(q);self.assertEqual(v['files'],[]);self.assertEqual(v['selected_cards'],[{'path':'feature.md','title':'Editor'}])
+        self.assertIn('feature.md',{p['path'] for p in v['pages']})
+        with self.assertRaisesRegex(ValueError,'request.*new|new.*request'):
+            self.prepare(['src/editor.py'],reuse=q)
+        f=self.view(self.prepare(['src/editor.py','src/new_test.py']))
+        self.assertEqual({r['file']:r['pages'] for r in f['files']},
+                         {'src/editor.py':['feature.md','consumer.md'],'src/new_test.py':['feature.md','consumer.md']})
+
     def test_locator_keeps_missing_scope_counts_and_snapshot_only_boundary(self):
         c=self.prepare();read=wf.reading_module()
         v=copy.deepcopy(read.summary(c));v['unregistered_files']=['src/unknown.py'];v['preparation']['selected_paths_with_changes']=['src/editor.py']
