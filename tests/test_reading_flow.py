@@ -448,10 +448,10 @@ print(json.dumps({{'query':q,'cards':[{{'path':'feature.md','title':'Editor'}}],
         (self.root/'clip.py').write_text(native,encoding='utf-8');self.git('add','clip.py');self.git('commit','-m','clip')
         out=Path(self.tmp.name)/'clip context.json'
         def run(argv):
-            cp=subprocess.run(argv,cwd=self.root,capture_output=True,text=True,encoding='utf-8')
-            self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
-            self.assertLessEqual(len(cp.stdout.encode('utf-8')),4000);self.assertLessEqual(len(cp.stdout.splitlines()),40)
-            return cp.stdout
+            cp=subprocess.run(argv,cwd=self.root,capture_output=True)
+            self.assertEqual(cp.returncode,0,(cp.stdout+cp.stderr).decode('utf-8',errors='replace'))
+            self.assertLessEqual(len(cp.stdout),4000);self.assertLessEqual(len(cp.stdout.splitlines()),40)
+            return cp.stdout.decode('utf-8').replace('\r\n','\n')
         def parse(command):
             return [m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",command)] if sys.platform=='win32' else shlex.split(command)
         stdout=run([sys.executable,str(wf.__file__),'prepare','--root',str(self.root),'--query','editor','--files','src/editor.py','src/new_test.py',

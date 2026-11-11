@@ -2,6 +2,8 @@
 
 ## 0.2.32 candidate (2026-11-11)
 
+- CLI byte budgets reserve Windows text stdout CRLF expansion. A real Windows3.13 raw-byte probe observed4013 bytes despite3998 normalized bytes; the continuation regression now measures raw subprocess bytes instead of normalizing away line endings.
+
 - PR58's first platform run failed on a longer Python3.13 runner path: repeating
   the continuation consumed a700-byte programmatic caller's entire budget.
   CLI readers explicitly opt into the early duplicate; programmatic defaults
