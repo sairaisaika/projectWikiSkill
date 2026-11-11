@@ -7,6 +7,22 @@
 
 
 
+
+## Current state
+
+**0.2.32 adopted** through [PR58](https://github.com/sairaisaika/projectWikiSkill/pull/58), merge5f162420fb7b2ea6566178b9ec49c7590e6cfa50 from tested12265cd. [PR CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42940288106) and [main CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42941237716) succeed on Ubuntu/Windows × Python3.10/3.13. Root local402 collected/401 executed/one platform skip,12 fixture tests,24-task fixture evaluation, maintainer check and all three fresh package/source closures passed. First PR run42938956437 failed on a long Python3.13 runner path; the700-byte regression, Windows raw-byte probe and fixes remain in the historical checkpoint below.
+
+**Installed host**: Linux Claude's static global Skill was atomically exchanged at a helper-idle observation after main CI passed;21/21 payload files match5f16242, whose payload equals tested12265cd. Prior installation is retained outside Skill discovery. No hook/settings change, session restart or automatic updater was added. Existing session instructions are not force-refreshed.
+
+**Observed use**: a fresh scoped read-only W11 acceptance review loaded global project-wiki from the installed directory; its actual Skill body contained the new4000-byte/40-line entry. It then used saved query/file contexts and exact continuations. The review completed and identified a plausible same-name wrong-recipient test-fixture risk plus timeout/report-freshness gaps; the reviewed Web driver was repaired separately without changing product runtime. The reviewer correctly declined to infer a version from a missing installed VERSION/manifest; its observed workflow.py hash93d233ddb1d07508 matches Root’s21-file source receipt. Reading evidence: query and file summaries each used one exact continuation to COMPLETE, registered22.3 Current and scoped5.2 fragments preceded source reads; the section outline was only partially opened. No R7 cold-start, general adoption, whole-page comprehension or savings claim follows.
+
+**Limits kept visible**: earlier guided project-local previews completed bounded continuations, but one task attempted edits before file preparation and was blocked by an existing project hook; page fragments also used raw grep and combined shell output exceeded a single reader-part budget. One caller's own cut shortened a displayed continuation and required reading the saved line again. The reader bounds its own CLI view, preserves complete JSON/current-history evidence and exposes exact continuation; arbitrary downstream clipping, natural file-first behavior and overall token/time efficiency remain unproven. Business acceptance is separate.
+
+## Historical evidence
+
+### State snapshot 2026-11-11T01:56:46.803515+00:00
+
+```markdown
 ## Current state
 
 Source candidate **0.2.32**, isolated and not installed globally: query-only prepare captures the first native route, keeps every selected feature card and says file owners are unknown until paths are supplied. All CLI text views use4000 UTF-8 bytes/40 stdout lines including prefixes; partial views repeat the exact continuation on line2 and at the footer. JSON remains complete, saved request reuse and current/history source checks remain authoritative. Source commits38641c4/ac7bfba; [PR58](https://github.com/sairaisaika/projectWikiSkill/pull/58) is open. First platform run42938956437 failed on Python3.13: a longer runner path made duplicate continuation commands exceed an existing700-byte programmatic budget; three peer jobs were cancelled, not passed. The candidate repair makes the early duplicate an explicit CLI option while preserving the programmatic footer-only default. Deterministic long-path old-red/new-green and local402 checks pass; replacement platform CI is pending. A separate real Windows3.13 raw-stdout probe also found4013 bytes despite3998 normalized bytes; CLI budgets now reserve CRLF expansion, and the real CLI regression measures raw bytes. A deterministic old-budget replay gives4031/4000 and the fixed case passes; the first short-line control was not byte-bound and passed both versions, so it is not a negative proof.
@@ -17,7 +33,7 @@ A guided real calendar task loaded a unique project-local snapshot ac7bfba (the 
 
 Installed baseline remains0.2.31 from PR57/ccfbad8, with its Ubuntu/Windows × Python3.10/3.13 CI and prior guided observations retained below. Project-local preview copies do not update that installation, hooks or active sessions. Static skill copies still have no automatic updater. No R7 cold start, cost/time/token reduction or product acceptance is claimed.
 
-## Historical evidence
+```
 
 ### State snapshot 2026-11-11T01:24:43.923644+00:00
 
