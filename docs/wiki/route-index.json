@@ -433,8 +433,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "capture subcommand and its explicit argv/runtime-input options",
           "needle": "cap = subs.add_parser('capture')",
-          "line": 1033,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "line": 1040,
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "capture",
@@ -443,7 +443,7 @@
           "reason": "Opt-in native run, input hashing before/after, report validation",
           "symbol": "capture",
           "line": 281,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "validate",
@@ -452,7 +452,7 @@
           "reason": "Native report shape and exact impact-file coverage",
           "symbol": "validate_native",
           "line": 193,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "current",
@@ -461,7 +461,7 @@
           "reason": "Recheck that a saved capture is still current before use",
           "symbol": "check_capture",
           "line": 346,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "start",
@@ -470,7 +470,7 @@
           "reason": "start builds a work packet only from a current capture",
           "symbol": "start",
           "line": 376,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "return",
@@ -479,7 +479,7 @@
           "reason": "capture-return reuses capture over the actual diff",
           "symbol": "capture_return",
           "line": 465,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "prepare",
@@ -488,7 +488,7 @@
           "symbol": "prepare",
           "reason": "One native capture with file owners, saved page views and explicit existing-change observation",
           "line": 784,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "prepare-reuse",
@@ -497,7 +497,7 @@
           "symbol": "prepare_request",
           "reason": "Exact request identity for immutable current prepare reuse",
           "line": 693,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         }
       ]
     },
@@ -644,8 +644,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "start subcommand; delegate shares --task-id/--owner/--allow-file/--read-only",
           "needle": "sta = subs.add_parser('start')",
-          "line": 1041,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "line": 1048,
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "start",
@@ -654,7 +654,7 @@
           "reason": "Planned files must be covered by allowed_files; read-only grants none",
           "symbol": "start",
           "line": 376,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "delegate",
@@ -663,7 +663,7 @@
           "reason": "Child packet may only narrow allowed_files",
           "symbol": "delegate",
           "line": 407,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "baseline",
@@ -672,7 +672,7 @@
           "reason": "read_only_baseline observation for read-only tasks",
           "symbol": "readonly_baseline",
           "line": 534,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "finish",
@@ -681,7 +681,7 @@
           "reason": "finish reports actual files outside allowed_files as unplanned",
           "symbol": "finish",
           "line": 582,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         }
       ]
     },
@@ -851,7 +851,7 @@
           "show --capture|--packet PATH --view page|history --path PAGE --section-index [--snapshot-only] [--format json]: saved heading outline with exact --section open commands; not combinable with --section"
         ],
         "outputs": [
-          "New prepared capture text defaults are bounded to6000 UTF-8 bytes/60 lines, with exact NEXT command and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",
+          "New prepared capture CLI text is bounded to 4000 UTF-8 bytes/40 stdout lines (programmatic default 6000/60), with exact NEXT command on line 2 and at the end and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",
           "Explicit --format json exports the full unchanged view shape; update-state writes a private preview and optionally the unchanged selected Wiki Markdown page."
         ],
         "errors": [
@@ -951,8 +951,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "show --view/--path/--snapshot-only options",
           "needle": "show.add_argument('--snapshot-only'",
-          "line": 1070,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "line": 1077,
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "view",
@@ -960,8 +960,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Renders index/feature/impact/all; snapshot_only skips check_capture",
           "symbol": "task_view",
-          "line": 910,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "line": 917,
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "lifecycle",
@@ -979,7 +979,7 @@
           "symbol": "capture_view",
           "reason": "Fresh or snapshot-only views over a saved native context without a task packet",
           "line": 864,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "page-projection",
@@ -988,7 +988,7 @@
           "symbol": "page_projection",
           "reason": "Separate authored state, verification notes and explicit history without deployment inference",
           "line": 39,
-          "sha256": "cba46e055a10ecfb6d4956dd73c45cc98e62c9c858a981c9852c51ef2cf61da5"
+          "sha256": "86d8ebd4e08dfc232e91e929dac5ca731160eab9b991139f0f5e76d48ca5e17a"
         },
         {
           "id": "compact",
@@ -997,7 +997,7 @@
           "symbol": "render_summary",
           "reason": "Complete saved scope index displayed through bounded byte/line continuations",
           "line": 142,
-          "sha256": "cba46e055a10ecfb6d4956dd73c45cc98e62c9c858a981c9852c51ef2cf61da5"
+          "sha256": "86d8ebd4e08dfc232e91e929dac5ca731160eab9b991139f0f5e76d48ca5e17a"
         },
         {
           "id": "page-collection",
@@ -1006,7 +1006,7 @@
           "symbol": "collect_pages",
           "reason": "Deduplicates native owner/query pages and explicitly selected Wiki pages without inventing owner edges",
           "line": 76,
-          "sha256": "cba46e055a10ecfb6d4956dd73c45cc98e62c9c858a981c9852c51ef2cf61da5"
+          "sha256": "86d8ebd4e08dfc232e91e929dac5ca731160eab9b991139f0f5e76d48ca5e17a"
         },
         {
           "id": "direct-page-selection",
@@ -1015,7 +1015,7 @@
           "symbol": "prepare",
           "reason": "Records explicitly selected Wiki page status separately from source-owner registration",
           "line": 784,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "text-page",
@@ -1023,8 +1023,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "text_page",
           "reason": "Exact bounded text continuation across large Unicode lines and sections",
-          "line": 297,
-          "sha256": "cba46e055a10ecfb6d4956dd73c45cc98e62c9c858a981c9852c51ef2cf61da5"
+          "line": 303,
+          "sha256": "86d8ebd4e08dfc232e91e929dac5ca731160eab9b991139f0f5e76d48ca5e17a"
         },
         {
           "id": "state-preview",
@@ -1033,7 +1033,7 @@
           "symbol": "state_update",
           "reason": "Source-bound authored-state replacement preview",
           "line": 707,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "state-apply",
@@ -1042,7 +1042,7 @@
           "symbol": "apply_state",
           "reason": "Explicit atomic update of an unchanged selected Wiki page",
           "line": 753,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "state-rotation",
@@ -1050,8 +1050,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "replace_current",
           "reason": "Retain previous current sections and verification notes verbatim in history",
-          "line": 366,
-          "sha256": "cba46e055a10ecfb6d4956dd73c45cc98e62c9c858a981c9852c51ef2cf61da5"
+          "line": 375,
+          "sha256": "86d8ebd4e08dfc232e91e929dac5ca731160eab9b991139f0f5e76d48ca5e17a"
         },
         {
           "id": "context-locator",
@@ -1060,7 +1060,7 @@
           "symbol": "locator_summary",
           "reason": "Scope/missing-input counts without repeating complete owner records",
           "line": 148,
-          "sha256": "cba46e055a10ecfb6d4956dd73c45cc98e62c9c858a981c9852c51ef2cf61da5"
+          "sha256": "86d8ebd4e08dfc232e91e929dac5ca731160eab9b991139f0f5e76d48ca5e17a"
         },
         {
           "id": "locator-display",
@@ -1069,7 +1069,7 @@
           "symbol": "render_locator",
           "reason": "Bounded locator and exact full-summary command, with snapshot-only freshness preserved",
           "line": 158,
-          "sha256": "cba46e055a10ecfb6d4956dd73c45cc98e62c9c858a981c9852c51ef2cf61da5"
+          "sha256": "86d8ebd4e08dfc232e91e929dac5ca731160eab9b991139f0f5e76d48ca5e17a"
         },
         {
           "id": "captured-page-path",
@@ -1078,7 +1078,7 @@
           "symbol": "captured_page_key",
           "reason": "Resolve exact saved Wiki/repository spellings without filesystem reads; reject ambiguous selection",
           "line": 851,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "section-outline",
@@ -1087,7 +1087,7 @@
           "symbol": "section_outline",
           "reason": "Saved per-view heading outline with exact open argv only for unique titled sections; missing metadata stays unknown",
           "line": 199,
-          "sha256": "cba46e055a10ecfb6d4956dd73c45cc98e62c9c858a981c9852c51ef2cf61da5"
+          "sha256": "86d8ebd4e08dfc232e91e929dac5ca731160eab9b991139f0f5e76d48ca5e17a"
         }
       ]
     },
@@ -1221,8 +1221,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "capture-return subcommand; argv must equal the saved one",
           "needle": "rec = subs.add_parser('capture-return'",
-          "line": 1037,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "line": 1044,
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "recapture",
@@ -1231,7 +1231,7 @@
           "reason": "Rechecks saved inputs, collects actual files, reruns capture, rejects movement",
           "symbol": "capture_return",
           "line": 465,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "collector",
@@ -1240,7 +1240,7 @@
           "reason": "Single actual-diff predicate shared with finish",
           "symbol": "repository_changes",
           "line": 436,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "finish",
@@ -1249,7 +1249,7 @@
           "reason": "finish consumes the recapture as --after-capture",
           "symbol": "finish",
           "line": 582,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         }
       ]
     },
@@ -1405,8 +1405,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "finish subcommand (--packet --after-capture --review --output)",
           "needle": "end = subs.add_parser('finish')",
-          "line": 1053,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "line": 1060,
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "template-cli",
@@ -1414,8 +1414,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "review-template subcommand",
           "needle": "template = subs.add_parser('review-template'",
-          "line": 1057,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "line": 1064,
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "template",
@@ -1424,7 +1424,7 @@
           "reason": "Every satellite, capability and unregistered file starts unreviewed",
           "symbol": "review_template",
           "line": 550,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "finish",
@@ -1433,7 +1433,7 @@
           "reason": "Recomputes the actual diff and lists issues",
           "symbol": "finish",
           "line": 582,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         },
         {
           "id": "main",
@@ -1441,8 +1441,8 @@
           "path": "project-wiki/scripts/workflow.py",
           "reason": "Exits 1 when structural_reconciliation is false",
           "symbol": "main",
-          "line": 1027,
-          "sha256": "c6e479d91c0a7613816ee5882918741e150007a467458ffb3d46eeac0cc2eaa5"
+          "line": 1034,
+          "sha256": "ed9abc9323bef00a71fc53c24beb29c5695b77ff45f09eb66c37675949929ad1"
         }
       ]
     },

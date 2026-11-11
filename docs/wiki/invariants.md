@@ -82,6 +82,7 @@ removed, fix the row here in the same change. A test name that no longer greps i
 |---|---|---|
 | File context retains all owners despite query misses; omissions and unregistered files remain visible | workflow.prepare / context_reading.summary | tests/test_context_reading.py |
 | Preparation is not a prior-reading certificate; selected dirty paths are explicit | workflow.prepare | tests/test_context_reading.py |
+| CLI text parts stay within 4000 UTF-8 bytes/40 lines and keep the exact continuation in the first 45 lines; following printed commands reassembles all content without a second native run | context_reading.text_page / workflow.cli_budget | tests/test_reading_flow.py |
 | Query-only prepare runs native once, saves cards/omissions as bounded text with exact NEXT, reuses without native and refuses stale reuse; file owners print as unknown, not none | workflow.prepare / context_reading.summary_text | tests/test_reading_flow.py |
 | Snapshot page/history reading never invokes Git or reopens current pages | workflow.capture_view | tests/test_context_reading.py |
 | History is projected separately; authored state and declared refs never establish live capabilities | context_reading.page_projection | tests/test_context_reading.py |

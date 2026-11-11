@@ -432,6 +432,54 @@ print(json.dumps({'query':q,'cards':[{'path':'feature.md','title':'Editor'}],'im
             self.assertEqual(wf.main(['show','--capture',str(out),'--view','summary','--format','json']),0)
         self.assertEqual(json.loads(hist.getvalue())['freshness'],'historical projection; current inputs changed or unavailable')
 
+    def test_head45_clipped_cli_parts_still_expose_exact_continuation_without_loss(self):
+        # Real continuation: `prepare --files ... | head -45` returned
+        # "DISPLAY 0:4792 OF 6098 CHARACTERS — PARTIAL" with neither NEXT nor COMPLETE.
+        import re, shlex
+        runs=Path(self.tmp.name)/'native-runs.txt'
+        native=f'''import json,sys
+open({str(runs)!r},'a').write('run\\n')
+q=sys.argv[1]; files=sys.argv[sys.argv.index('--files')+1:]
+print(json.dumps({{'query':q,'cards':[{{'path':'feature.md','title':'Editor'}}],
+ 'impact':[{{'file':f,'pages':[{{'path':'feature.md','title':'Editor'}},{{'path':'consumer.md','title':'Reader'}}],'unregistered':False}} for f in files],
+ 'omitted':[{{'path':f'候选-{{i}}.md','title':'未展开规则'*12+str(i)}} for i in range(300)],
+ 'placementIssues':[],'limits':'registered scope only'}}))
+'''
+        (self.root/'clip.py').write_text(native,encoding='utf-8');self.git('add','clip.py');self.git('commit','-m','clip')
+        out=Path(self.tmp.name)/'clip context.json'
+        def run(argv):
+            cp=subprocess.run(argv,cwd=self.root,capture_output=True,text=True,encoding='utf-8')
+            self.assertEqual(cp.returncode,0,cp.stdout+cp.stderr)
+            self.assertLessEqual(len(cp.stdout.encode('utf-8')),4000);self.assertLessEqual(len(cp.stdout.splitlines()),40)
+            return cp.stdout
+        def parse(command):
+            return [m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",command)] if sys.platform=='win32' else shlex.split(command)
+        stdout=run([sys.executable,str(wf.__file__),'prepare','--root',str(self.root),'--query','editor','--files','src/editor.py','src/new_test.py',
+                    '--runtime-input','clip.py','--native-argv',json.dumps([sys.executable,'clip.py']),'--allow-native-execution','--output',str(out)])
+        content=[];views=set()
+        for _ in range(80):
+            clipped='\n'.join(stdout.splitlines()[:45])
+            status=re.search(r'^DISPLAY \d+:\d+ OF \d+ CHARACTERS — (PARTIAL|COMPLETE)',clipped,re.M)
+            self.assertIsNotNone(status,clipped)
+            body=stdout.split('--- CONTENT ---\n',1)[1].rsplit('\n--- END CONTENT ---',1)[0]
+            content.append(body)
+            if status.group(1)=='COMPLETE':break
+            command=re.search(r'^NEXT PART: (.+)$',clipped,re.M)
+            self.assertIsNotNone(command,'continuation lost under head -45')
+            self.assertEqual(command.group(1),stdout.split('\nNEXT: ',1)[1].strip())
+            argv=parse(command.group(1));views.add(argv[argv.index('--view')+1])
+            stdout=run(argv)
+        else:self.fail('continuation did not complete')
+        self.assertGreater(len(content),2);self.assertEqual(views,{'summary'})
+        expected=wf.reading_module().summary_text(self.view(wf.read_json(out),'summary'),str(out.resolve()))
+        self.assertEqual(''.join(content),expected)
+        names=[l.split()[0] for l in expected.splitlines() if l.startswith('  候选-')]
+        self.assertEqual(names,[f'候选-{i}.md' for i in range(300)])
+        self.assertIn('  src/new_test.py → feature.md, consumer.md',expected)
+        for view in (['--view','page','--path','feature.md'],['--view','impact','--path','src/editor.py'],['--view','locator','--snapshot-only']):
+            run([sys.executable,str(wf.__file__),'show','--capture',str(out),*view])
+        self.assertEqual(runs.read_text(),'run\n')
+
     def test_query_only_capture_is_a_distinct_request_and_file_scope_keeps_every_owner(self):
         q=wf.prepare(self.root,'editor',[],[sys.executable,'native.py'],['native.py'],allow_execution=True)
         self.assertEqual(q['files'],[]);self.assertEqual(q['native_report']['impact'],[])
@@ -508,7 +556,7 @@ print(json.dumps({'query':q,'cards':[{'path':'feature.md','title':'Editor'}],'im
     def test_repository_relative_cli_continuation_preserves_snapshot_only(self):
         import shlex,os,re
         page=self.root/'docs/wiki/feature.md'
-        page.write_text('# Feature\n\n## Mechanism\n'+'夜鹭'*1500+'\n',encoding='utf-8')
+        page.write_text('# Feature\n\n## Mechanism\n'+'夜鹭'*900+'\n',encoding='utf-8')
         c=self.prepare();out=Path(self.tmp.name)/'capture space.json';wf.write_new(out,c)
         args=['show','--capture',str(out),'--view','page','--path','docs/wiki/feature.md','--section','Mechanism','--snapshot-only']
         with patch.object(wf,'check_capture',side_effect=AssertionError('live read')),redirect_stdout(io.StringIO()) as first:

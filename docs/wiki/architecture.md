@@ -53,7 +53,7 @@ there and cannot become the latest top-level verification note. Product headings
 preserved for explicit reading; snapshots do not reopen live pages or invoke Git.
 
 `show --capture` defaults to the summary; impact/feature show one complete native
-record, page shows saved authored body, history shows older material. Long text views are continued within 6000 UTF-8 bytes and 60 lines; the exact NEXT command is bound to saved text and preserves view/path/section/format/snapshot mode. Large sections and Unicode single lines remain reachable. Explicit JSON export remains complete. New views also accept a work
+record, page shows saved authored body, history shows older material. Long CLI text views are continued within 4000 UTF-8 bytes and 40 stdout lines; the exact NEXT command is bound to saved text and preserves view/path/section/format/snapshot mode. Large sections and Unicode single lines remain reachable. Explicit JSON export remains complete. New views also accept a work
 packet through its existing saved context. Legacy captures without prepared
 pages have no invented page view. Live selected-source drift is historical data,
 not current context. Caller-declared revision observations are not production
@@ -62,7 +62,12 @@ or capability verification. See [the command](../../project-wiki/references/coll
 ## Bounded continuation, reuse and authored-state updates
 
 `context_reading.text_page` emits an explicit character range and COMPLETE/PARTIAL
-status, within 6000 UTF-8 bytes and 60 lines. CLI stdout explicitly uses UTF-8/LF so Windows newline translation does not inflate the wire budget. A digest-bound cursor resumes the exact
+status, within 6000 UTF-8 bytes and 60 lines by default for programmatic callers. Every CLI
+text part (prepare, show, show-state, locator, section outline) uses `workflow.cli_budget`:
+`context_reading.CLI_TEXT_BYTES` 4000 / `CLI_TEXT_LINES` 40 measured on stdout, including
+print's newline and the prepare REUSED prefix. A partial part repeats its exact continuation on
+line 2 (`NEXT PART:`) and at the end (`NEXT:`), so a caller keeping only the first lines
+(observed: `| head -45`) still sees it; a caller clipping to one line can still lose it. CLI stdout explicitly uses UTF-8/LF so Windows newline translation does not inflate the wire budget. A digest-bound cursor resumes the exact
 saved view; text changes or a different capture/view/path/section reject the cursor.
 The printed command preserves snapshot-only mode and explicit text format. Shell
 commands are quoted for POSIX or PowerShell on the running host; PowerShell quoting

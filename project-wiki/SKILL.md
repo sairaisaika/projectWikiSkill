@@ -28,8 +28,8 @@ Wiki path; both resolve only to the same saved page. `--view history` keeps olde
 verification notes separate. A page lacking an explicit current-state section
 stays unknown; a listed note or caller-declared deployed revision is not a live
 capability certificate. New prepared captures default to bounded text: oversized
-text views deliver at most 6000 UTF-8 bytes / 60 lines and an exact continuation
-command bound to that saved view. Sections remain optional, including for a
+CLI text parts are at most 4000 UTF-8 bytes / 40 lines, and the exact continuation
+command bound to that saved view is printed on line 2 (`NEXT PART:`) and at the end. Sections remain optional, including for a
 single oversized section. JSON export remains explicit and complete. Repeating
 prepare with the same output reuses an identical current request without native
 execution and returns a short locator instead of repeating the index; its exact
