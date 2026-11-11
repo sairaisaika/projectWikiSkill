@@ -10,9 +10,13 @@ actionable location** for a task, and a correct system model for orientation, no
 
 ## File-first entry for an existing native Wiki
 
-Use the project's own query to identify candidate files. Once those paths are
-known, `workflow.py prepare` captures **every declared file's owners** in one call
-and prints a compact index, with unexpanded candidates first. No work packet,
+Run the project's own query through `workflow.py prepare` without `--files`: the
+same reviewed native command runs once and its matched cards and unexpanded
+candidates are saved and printed as bounded text with an exact continuation, so
+the query output is not cut. File owners stay unknown in that capture. Once
+candidate paths are known, `prepare --files` (new output) captures **every
+declared file's owners** in one call and prints a compact index, with unexpanded
+candidates first. No work packet,
 owner registry or hook installation is needed. The native program prefix and
 runtime inputs remain explicit and reviewed; execution still needs opt-in.
 See [the concrete command](references/collaboration-workflow.md#file-first-preparation).
@@ -24,8 +28,8 @@ Wiki path; both resolve only to the same saved page. `--view history` keeps olde
 verification notes separate. A page lacking an explicit current-state section
 stays unknown; a listed note or caller-declared deployed revision is not a live
 capability certificate. New prepared captures default to bounded text: oversized
-text views deliver at most 6000 UTF-8 bytes / 60 lines and an exact continuation
-command bound to that saved view. Sections remain optional, including for a
+CLI text parts are at most 4000 UTF-8 bytes / 40 lines, and the exact continuation
+command bound to that saved view is printed on line 2 (`NEXT PART:`) and at the end. Sections remain optional, including for a
 single oversized section. JSON export remains explicit and complete. Repeating
 prepare with the same output reuses an identical current request without native
 execution and returns a short locator instead of repeating the index; its exact

@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.2.32 candidate (2026-11-11)
+
+- CLI byte budgets reserve Windows text stdout CRLF expansion. A real Windows3.13 raw-byte probe observed4013 bytes despite3998 normalized bytes; the continuation regression now measures raw subprocess bytes instead of normalizing away line endings.
+
+- PR58's first platform run failed on a longer Python3.13 runner path: repeating
+  the continuation consumed a700-byte programmatic caller's entire budget.
+  CLI readers explicitly opt into the early duplicate; programmatic defaults
+  retain their original footer-only output and small-budget behavior. The
+  deterministic long-path control is old-red/new-green, with no relaxed budget
+  or removed continuation assertions. The failed run remains part of the evidence.
+
+- CLI text parts (prepare, show, show-state, locator, section outline) are bounded to
+  4000 UTF-8 bytes / 40 stdout lines and print the exact continuation on line 2
+  (`NEXT PART:`) as well as at the end. A real continuation piped
+  `prepare --files` into `head -45` and got `DISPLAY 0:4792 OF 6098 — PARTIAL` with no
+  continuation or completion line. Programmatic defaults stay 6000/60; JSON stays complete.
+  A caller clipping to fewer lines can still lose the command.
+
+- `prepare` accepts a query without `--files`. Real guided tasks loaded the skill,
+  ran the raw native query (the entry told them to) and cut its stdout with
+  `head`/`tail -c`, then reran it with `--files`. The query-only request now runs the
+  reviewed native command once through the existing capture checks, saves cards and
+  omissions, prints them in bounded parts with an exact continuation, reuses an
+  identical current request without native execution and keeps stale artifacts.
+  Its index says file owners are unknown, not none. Selected feature cards are
+  listed in every capture summary. A guided real task used query prepare and a file prepare plus one complete continuation; two earlier attempted edits were hook-rejected, so natural file-first use remains unproven. Global installation stays0.2.31.
+
 ## 0.2.31 observed-use update (2026-11-09)
 
 The later real pilot Wiki-close requested all five saved index fragments, filtered continuation metadata, and used
