@@ -146,6 +146,38 @@ class ContextReadingTests(unittest.TestCase):
         self.assertIn('PARTIAL',text);self.assertIn('--cursor',text)
         self.assertIn('saved-context.json',text)
         self.assertLessEqual(len(text.encode('utf-8')),700)
+    def test_explicit_small_programmatic_budget_keeps_footer_with_long_runner_paths(self):
+        reader=wf.reading_module()
+        command=['/opt/hostedtoolcache/Python/3.13.9/x64/bin/python',
+                 '/home/runner/work/projectWikiSkill/projectWikiSkill/project-wiki/scripts/workflow.py',
+                 'show','--capture','saved-context.json','--view','summary']
+        source='Known owner and rule. '*150
+        parts=[];cursor=None
+        for _ in range(100):
+            part=reader.text_page(source,'small-programmatic',command,budget=700,cursor=cursor)
+            self.assertLessEqual(len(part['text'].encode('utf-8')),700)
+            self.assertNotIn('NEXT PART:',part['text'])
+            parts.append(part['content'])
+            cursor=part['next_cursor']
+            if not cursor:break
+            self.assertIn('NEXT:',part['text'])
+            self.assertIn('--cursor',part['text'])
+        else:self.fail('small programmatic continuation did not finish')
+        self.assertEqual(''.join(parts),source)
+
+    def test_cli_byte_budget_includes_windows_text_stdout_newlines(self):
+        import io
+        v=self.view(self.prepare())
+        v['files']=[{'file':'src/'+('owner-segment/'*12)+f'item{i}.py','pages':['feature.md'],'unregistered':False} for i in range(1000)]
+        with patch.object(wf.os,'linesep','\r\n'):
+            rendered=wf.render_context_summary(v,'saved-context.json',**wf.cli_budget())
+        raw=io.BytesIO()
+        stream=io.TextIOWrapper(raw,encoding='utf-8',newline='\r\n')
+        print(rendered,file=stream);stream.flush()
+        self.assertLessEqual(len(raw.getvalue()),4000)
+        self.assertIn(b'NEXT PART:',raw.getvalue())
+        self.assertIn(b'\r\n',raw.getvalue())
+
     def test_unregistered_input_is_visible_in_complete_index(self):
         native=(self.root/'native.py').read_text()
         native=native.replace("'pages':[{'path'", "'pages':[] if f=='src/unknown.py' else [{'path'",1)
@@ -164,9 +196,11 @@ class ContextReadingTests(unittest.TestCase):
         text=wf.render_context_summary(self.view(c),'context.json')
         self.assertIn('CALLER-DECLARED',text)
         self.assertIn('未部署',self.view(c,'page','feature.md')['latest_verification_note']['text'])
-    def test_prepare_refuses_empty_files_and_implicit_execution(self):
-        with self.assertRaisesRegex(ValueError,'--files'):wf.prepare(self.root,'editor',[],[sys.executable,'native.py'],['native.py'],allow_execution=True)
-        with self.assertRaisesRegex(ValueError,'opt-in'):wf.prepare(self.root,'editor',['src/editor.py'],[sys.executable,'native.py'],['native.py'])
+    def test_prepare_refuses_implicit_execution_with_or_without_files(self):
+        for files in ([],['src/editor.py']):
+            with self.subTest(files=files),patch.object(wf.subprocess,'run',side_effect=AssertionError('native ran')):
+                with self.assertRaisesRegex(ValueError,'opt-in'):wf.prepare(self.root,'editor',files,[sys.executable,'native.py'],['native.py'])
+                with self.assertRaisesRegex(ValueError,'runtime-input'):wf.prepare(self.root,'editor',files,[sys.executable,'native.py'],[],allow_execution=True)
     def test_capture_help_explains_prefix_and_automatic_arguments(self):
         cp=subprocess.run([sys.executable,str(ROOT/'project-wiki/scripts/workflow.py'),'capture','--help'],text=True,capture_output=True)
         self.assertEqual(cp.returncode,0);self.assertIn('prefix',cp.stdout);self.assertIn('--json',cp.stdout)

@@ -319,7 +319,7 @@
         "inputs": [
           "--root, --query, --native-argv JSON, --runtime-input (repeatable), --files groups (accumulate)",
           "optional --wiki-root, --peer ALIAS=CHECKOUT, --native-source-context, --preserve-artifact",
-          "prepare additionally requires nonempty --files; optional --observed-revision LABEL=REV is caller data, not live verification",
+          "prepare accepts no --files (query-only capture: cards/omissions, file owners unknown); optional --observed-revision LABEL=REV is caller data, not live verification",
           "Existing prepare output may be reused only for an identical current declared request; native execution and capture-time rewriting are skipped on a valid hit."
         ],
         "outputs": [
@@ -718,7 +718,7 @@
           "show --capture|--packet PATH --view page|history --path PAGE --section-index [--snapshot-only] [--format json]: saved heading outline with exact --section open commands; not combinable with --section"
         ],
         "outputs": [
-          "New prepared capture text defaults are bounded to6000 UTF-8 bytes/60 lines, with exact NEXT command and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",
+          "New prepared capture CLI text is bounded to 4000 UTF-8 bytes/40 stdout lines (programmatic default 6000/60), with exact NEXT command on line 2 and at the end and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",
           "Explicit --format json exports the full unchanged view shape; update-state writes a private preview and optionally the unchanged selected Wiki Markdown page."
         ],
         "errors": [

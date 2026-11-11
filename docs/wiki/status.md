@@ -6,6 +6,22 @@
 
 
 
+
+## Current state
+
+Source candidate **0.2.32**, isolated and not installed globally: query-only prepare captures the first native route, keeps every selected feature card and says file owners are unknown until paths are supplied. All CLI text views use4000 UTF-8 bytes/40 stdout lines including prefixes; partial views repeat the exact continuation on line2 and at the footer. JSON remains complete, saved request reuse and current/history source checks remain authoritative. Source commits38641c4/ac7bfba; [PR58](https://github.com/sairaisaika/projectWikiSkill/pull/58) is open. First platform run42938956437 failed on Python3.13: a longer runner path made duplicate continuation commands exceed an existing700-byte programmatic budget; three peer jobs were cancelled, not passed. The candidate repair makes the early duplicate an explicit CLI option while preserving the programmatic footer-only default. Deterministic long-path old-red/new-green and local402 checks pass; replacement platform CI is pending. A separate real Windows3.13 raw-stdout probe also found4013 bytes despite3998 normalized bytes; CLI budgets now reserve CRLF expansion, and the real CLI regression measures raw bytes. A deterministic old-budget replay gives4031/4000 and the fixed case passes; the first short-line control was not byte-bound and passed both versions, so it is not a negative proof.
+
+Root independent local acceptance:402 collected,401 executed,one platform skip;12 fixture tests, fixture check/evaluation(24 tasks), maintainer route check pass. The regression follows actual printed CLI commands through300 Unicode candidates and all owner edges with one native execution. These are source/transport checks, not a token-saving result.
+
+A guided real calendar task loaded a unique project-local snapshot ac7bfba (the personal same-name Skill would otherwise win). Query prepare returned COMPLETE; file prepare returned PARTIAL with NEXT PART; one exact continuation returned COMPLETE. Root verified the recorded calls/results. Two attempted edits came BEFORE file preparation and were rejected by the existing project hook; successful mutations came after it. Thus pre-edit successful-write ordering was protected, but natural file-context-first behavior is NOT established. The continuation was combined with raw grep into a27.6KB/61-line tool result; no truncation marker is present in that saved result, but this is no general bound on arbitrary shell output, reading completeness or efficiency. Related page fragments were read through raw scoped grep, not full saved-page views.
+
+Installed baseline remains0.2.31 from PR57/ccfbad8, with its Ubuntu/Windows × Python3.10/3.13 CI and prior guided observations retained below. Project-local preview copies do not update that installation, hooks or active sessions. Static skill copies still have no automatic updater. No R7 cold start, cost/time/token reduction or product acceptance is claimed.
+
+## Historical evidence
+
+### State snapshot 2026-11-11T01:24:43.923644+00:00
+
+```markdown
 ## Current state
 
 0.2.31 adopted through [PR57](https://github.com/sairaisaika/projectWikiSkill/pull/57), merge ccfbad8 from tested head442ca40. [PR matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42667619658) and [main CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42668882253) succeed on Ubuntu/Windows × Python3.10/3.13. Linux static skill copy quietly exchanged; one guided real read-only review received complete21-edge routing before tools. Tool delivery is repaired for that packet; the agent opened2 impact views, followed1 NEXT and read no Wiki page body, so complete method adoption is not shown. Root replay of its two head-60 calls shows full60-line output with NEXT on line59: head did not clip them, contrary to the reviewer's own statement. [Evaluation](../../evals/reports/large-routing-delivery-20261109.md), [sanitized receipt](../../evals/reports/large-routing-installed-20261109.json). Static installed skills have no automatic updater.
@@ -20,7 +36,7 @@ The observed SessionStart delivery used the existing optional per-invocation hoo
 
 The later guided pilot Wiki-close requested five index fragments to COMPLETE but filtered continuation metadata, so full unfiltered index reading is not established. It used preview/paged show-state/apply for seven Current sections across twelve allowed existing pages. History was preserved. Whole-page host overflow, long-line cuts and stale prose outside Current still required scoped recovery/reconciliation; a separate reader-only fallback audit used explicit task paths rather than the saved reader. These are distinct outcome/use observations, not natural adoption or efficiency. The [same evaluation and sanitized receipt](../../evals/reports/large-routing-delivery-20261109.md) retain the exact limits; payload, installed version and global settings are unchanged.
 
-## Historical evidence
+```
 
 ### 0.2.31 candidate before CI and installation
 
