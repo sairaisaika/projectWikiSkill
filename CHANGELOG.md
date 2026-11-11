@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.2.32 candidate (2026-11-11)
 
 - CLI text parts (prepare, show, show-state, locator, section outline) are bounded to
   4000 UTF-8 bytes / 40 stdout lines and print the exact continuation on line 2
@@ -16,7 +16,7 @@
   omissions, prints them in bounded parts with an exact continuation, reuses an
   identical current request without native execution and keeps stale artifacts.
   Its index says file owners are unknown, not none. Selected feature cards are
-  listed in every capture summary. Not observed in a real task yet.
+  listed in every capture summary. A guided real task used query prepare and a file prepare plus one complete continuation; two earlier attempted edits were hook-rejected, so natural file-first use remains unproven. Global installation stays0.2.31.
 
 ## 0.2.31 observed-use update (2026-11-09)
 
