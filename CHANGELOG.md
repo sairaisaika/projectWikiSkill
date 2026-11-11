@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.32 candidate (2026-11-11)
+## 0.2.32 (2026-11-11)
 
 - CLI byte budgets reserve Windows text stdout CRLF expansion. A real Windows3.13 raw-byte probe observed4013 bytes despite3998 normalized bytes; the continuation regression now measures raw subprocess bytes instead of normalizing away line endings.
 
@@ -25,7 +25,7 @@
   omissions, prints them in bounded parts with an exact continuation, reuses an
   identical current request without native execution and keeps stale artifacts.
   Its index says file owners are unknown, not none. Selected feature cards are
-  listed in every capture summary. A guided real task used query prepare and a file prepare plus one complete continuation; two earlier attempted edits were hook-rejected, so natural file-first use remains unproven. Global installation stays0.2.31.
+  listed in every capture summary. A guided real task used query prepare and a file prepare plus one complete continuation; two earlier attempted edits were hook-rejected, so natural file-first use remains unproven. Linux global installation later advanced to0.2.32 after PR/main matrix CI; existing sessions are not force-refreshed.
 
 ## 0.2.31 observed-use update (2026-11-09)
 
