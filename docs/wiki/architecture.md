@@ -53,7 +53,7 @@ there and cannot become the latest top-level verification note. Product headings
 preserved for explicit reading; snapshots do not reopen live pages or invoke Git.
 
 `show --capture` defaults to the summary; impact/feature show one complete native
-record, page shows saved authored body, history shows older material. Long CLI text views are continued within 4000 UTF-8 bytes and 40 stdout lines; the exact NEXT command is bound to saved text and preserves view/path/section/format/snapshot mode. Large sections and Unicode single lines remain reachable. CLI renderers opt into early_continuation; programmatic defaults retain footer-only continuation and explicit small-byte-budget compatibility, including long CI runner paths. Explicit JSON export remains complete. New views also accept a work
+record, page shows saved authored body, history shows older material. Long CLI text views are continued within 4000 UTF-8 bytes and 40 stdout lines; the exact NEXT command is bound to saved text and preserves view/path/section/format/snapshot mode. Large sections and Unicode single lines remain reachable. CLI budgets include Windows text stdout newline expansion and regressions measure raw bytes; CLI renderers opt into early_continuation; programmatic defaults retain footer-only continuation and explicit small-byte-budget compatibility, including long CI runner paths. Explicit JSON export remains complete. New views also accept a work
 packet through its existing saved context. Legacy captures without prepared
 pages have no invented page view. Live selected-source drift is historical data,
 not current context. Caller-declared revision observations are not production

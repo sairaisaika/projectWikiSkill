@@ -165,6 +165,19 @@ class ContextReadingTests(unittest.TestCase):
         else:self.fail('small programmatic continuation did not finish')
         self.assertEqual(''.join(parts),source)
 
+    def test_cli_byte_budget_includes_windows_text_stdout_newlines(self):
+        import io
+        v=self.view(self.prepare())
+        v['files']=[{'file':'src/'+('owner-segment/'*12)+f'item{i}.py','pages':['feature.md'],'unregistered':False} for i in range(1000)]
+        with patch.object(wf.os,'linesep','\r\n'):
+            rendered=wf.render_context_summary(v,'saved-context.json',**wf.cli_budget())
+        raw=io.BytesIO()
+        stream=io.TextIOWrapper(raw,encoding='utf-8',newline='\r\n')
+        print(rendered,file=stream);stream.flush()
+        self.assertLessEqual(len(raw.getvalue()),4000)
+        self.assertIn(b'NEXT PART:',raw.getvalue())
+        self.assertIn(b'\r\n',raw.getvalue())
+
     def test_unregistered_input_is_visible_in_complete_index(self):
         native=(self.root/'native.py').read_text()
         native=native.replace("'pages':[{'path'", "'pages':[] if f=='src/unknown.py' else [{'path'",1)

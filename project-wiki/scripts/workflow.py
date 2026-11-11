@@ -906,7 +906,9 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
 def cli_budget(prefix: str = '') -> dict:
     """Budget for one printed text part: print adds a newline; a prefix shares the part."""
     read = reading_module()
-    return {'budget': read.CLI_TEXT_BYTES - 1 - len(prefix.encode('utf-8')),
+    # Text-mode stdout expands each LF on Windows; reserve for the maximum printed lines.
+    newline_reserve = (len(os.linesep.encode('utf-8')) - 1) * read.CLI_TEXT_LINES
+    return {'budget': read.CLI_TEXT_BYTES - 1 - len(prefix.encode('utf-8')) - newline_reserve,
             'line_budget': read.CLI_TEXT_LINES - 1 - prefix.count('\n'),
             'early_continuation': True}
 
