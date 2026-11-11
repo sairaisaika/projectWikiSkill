@@ -2,6 +2,13 @@
 
 ## 0.2.32 candidate (2026-11-11)
 
+- PR58's first platform run failed on a longer Python3.13 runner path: repeating
+  the continuation consumed a700-byte programmatic caller's entire budget.
+  CLI readers explicitly opt into the early duplicate; programmatic defaults
+  retain their original footer-only output and small-budget behavior. The
+  deterministic long-path control is old-red/new-green, with no relaxed budget
+  or removed continuation assertions. The failed run remains part of the evidence.
+
 - CLI text parts (prepare, show, show-state, locator, section outline) are bounded to
   4000 UTF-8 bytes / 40 stdout lines and print the exact continuation on line 2
   (`NEXT PART:`) as well as at the end. A real continuation piped

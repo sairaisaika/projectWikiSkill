@@ -146,6 +146,25 @@ class ContextReadingTests(unittest.TestCase):
         self.assertIn('PARTIAL',text);self.assertIn('--cursor',text)
         self.assertIn('saved-context.json',text)
         self.assertLessEqual(len(text.encode('utf-8')),700)
+    def test_explicit_small_programmatic_budget_keeps_footer_with_long_runner_paths(self):
+        reader=wf.reading_module()
+        command=['/opt/hostedtoolcache/Python/3.13.9/x64/bin/python',
+                 '/home/runner/work/projectWikiSkill/projectWikiSkill/project-wiki/scripts/workflow.py',
+                 'show','--capture','saved-context.json','--view','summary']
+        source='Known owner and rule. '*150
+        parts=[];cursor=None
+        for _ in range(100):
+            part=reader.text_page(source,'small-programmatic',command,budget=700,cursor=cursor)
+            self.assertLessEqual(len(part['text'].encode('utf-8')),700)
+            self.assertNotIn('NEXT PART:',part['text'])
+            parts.append(part['content'])
+            cursor=part['next_cursor']
+            if not cursor:break
+            self.assertIn('NEXT:',part['text'])
+            self.assertIn('--cursor',part['text'])
+        else:self.fail('small programmatic continuation did not finish')
+        self.assertEqual(''.join(parts),source)
+
     def test_unregistered_input_is_visible_in_complete_index(self):
         native=(self.root/'native.py').read_text()
         native=native.replace("'pages':[{'path'", "'pages':[] if f=='src/unknown.py' else [{'path'",1)

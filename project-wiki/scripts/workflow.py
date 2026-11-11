@@ -907,7 +907,8 @@ def cli_budget(prefix: str = '') -> dict:
     """Budget for one printed text part: print adds a newline; a prefix shares the part."""
     read = reading_module()
     return {'budget': read.CLI_TEXT_BYTES - 1 - len(prefix.encode('utf-8')),
-            'line_budget': read.CLI_TEXT_LINES - 1 - prefix.count('\n')}
+            'line_budget': read.CLI_TEXT_LINES - 1 - prefix.count('\n'),
+            'early_continuation': True}
 
 
 def render_context_summary(view: dict, artifact: str, budget: int=6000, **kwargs) -> str:

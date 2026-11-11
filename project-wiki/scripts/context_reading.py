@@ -139,10 +139,10 @@ def summary_text(view: dict, artifact: str) -> str:
     return text
 
 
-def render_summary(view: dict, artifact: str, budget: int=6000, *, cursor=None, command=None, line_budget=60) -> str:
+def render_summary(view: dict, artifact: str, budget: int=6000, *, cursor=None, command=None, line_budget=60, early_continuation=False) -> str:
     command = command or read_command(artifact, 'summary')
     return text_page(summary_text(view, artifact), 'summary:' + artifact, command,
-                     budget=budget, cursor=cursor, line_budget=line_budget)['text']
+                     budget=budget, cursor=cursor, line_budget=line_budget, early_continuation=early_continuation)['text']
 
 
 def locator_summary(view: dict) -> dict:
@@ -155,7 +155,7 @@ def locator_summary(view: dict) -> dict:
             'limits':'Details remain in the saved capture; not redelivered or acknowledged as read.'}
 
 
-def render_locator(view: dict, artifact: str, budget: int=6000, *, cursor=None, command=None, line_budget=60, snapshot_only=False) -> str:
+def render_locator(view: dict, artifact: str, budget: int=6000, *, cursor=None, command=None, line_budget=60, snapshot_only=False, early_continuation=False) -> str:
     full=read_command(artifact,'summary')
     continuation=list(command or read_command(artifact,'locator'))
     if snapshot_only:
@@ -168,7 +168,7 @@ def render_locator(view: dict, artifact: str, budget: int=6000, *, cursor=None, 
           +view['limits']+'\n'
           +'Read full context: '+shell_command(full)+'\n')
     return text_page(text, 'locator:'+artifact, continuation,
-                     budget=budget,cursor=cursor,line_budget=line_budget)['text']
+                     budget=budget,cursor=cursor,line_budget=line_budget, early_continuation=early_continuation)['text']
 
 
 def saved_headings(markdown: str):
@@ -230,7 +230,7 @@ def section_outline(view: dict, history: bool, open_base: list[str]) -> dict:
     return result
 
 
-def render_outline(outline: dict, identity: str, command: list[str], *, budget: int=6000, cursor=None, line_budget: int=60) -> str:
+def render_outline(outline: dict, identity: str, command: list[str], *, budget: int=6000, cursor=None, line_budget: int=60, early_continuation: bool=False) -> str:
     data=outline['section_outline'];history=outline['view']=='history'
     label='HISTORICAL' if history else 'AUTHORED'
     lines=[f"SAVED {label} SECTION OUTLINE — {outline['path']} (headings only; not read, not verified)",
@@ -253,10 +253,10 @@ def render_outline(outline: dict, identity: str, command: list[str], *, budget: 
             elif row['status']=='untitled':lines.append('    UNTITLED: --section cannot select an empty heading')
             else:lines.append('    NOT OPENABLE: heading absent from saved selectable text')
     lines.append(outline['limits'])
-    return text_page('\n'.join(lines)+'\n',identity,command,budget=budget,cursor=cursor,line_budget=line_budget)['text']
+    return text_page('\n'.join(lines)+'\n',identity,command,budget=budget,cursor=cursor,line_budget=line_budget, early_continuation=early_continuation)['text']
 
 
-def render_page(view: dict, artifact: str, history: bool=False, section: str | None=None, budget: int=6000, *, cursor=None, command=None, line_budget=60) -> str:
+def render_page(view: dict, artifact: str, history: bool=False, section: str | None=None, budget: int=6000, *, cursor=None, command=None, line_budget=60, early_continuation=False) -> str:
     if history:
         text='HISTORICAL EVIDENCE (not current state)\n'+(select_section(view['history_markdown'],section) if section else view['history_markdown'])+'\n'+ '\n'.join(n['text'] for n in view['historical_verification_notes'])
     else:
@@ -276,7 +276,7 @@ def render_page(view: dict, artifact: str, history: bool=False, section: str | N
     text += '\nHistorical material is separate: --view history. Freshness: '+view['freshness']+'\n'
     command = command or read_command(artifact, 'history' if history else 'page', view.get('path'), section)
     identity = json.dumps([artifact, 'history' if history else 'page', view.get('path'), section], ensure_ascii=False)
-    return text_page(text, identity, command, budget=budget, cursor=cursor, line_budget=line_budget)['text']
+    return text_page(text, identity, command, budget=budget, cursor=cursor, line_budget=line_budget, early_continuation=early_continuation)['text']
 
 
 def read_command(artifact, view, path=None, section=None):
@@ -300,7 +300,7 @@ CLI_TEXT_BYTES = 4000
 CLI_TEXT_LINES = 40
 
 
-def text_page(text: str, identity: str, command: list[str], *, budget: int=6000, cursor: str | None=None, line_budget: int=60) -> dict:
+def text_page(text: str, identity: str, command: list[str], *, budget: int=6000, cursor: str | None=None, line_budget: int=60, early_continuation: bool=False) -> dict:
     """Bound every text view, including a single huge Unicode line, without loss.
 
     Cursors select text, never certify reading. Their digest rejects accidental
@@ -329,7 +329,7 @@ def text_page(text: str, identity: str, command: list[str], *, budget: int=6000,
         header = f'DISPLAY {start}:{end} OF {len(text)} CHARACTERS — '+('PARTIAL; continue below' if token else 'COMPLETE VIEW')+'\n'
         # The same exact command is repeated on line 2 so a caller that keeps only
         # the first lines (head -N) still sees how to continue.
-        if token:header += 'NEXT PART: '+shell_command([*command, '--cursor', token])+'\n'
+        if token and early_continuation:header += 'NEXT PART: '+shell_command([*command, '--cursor', token])+'\n'
         footer = ('\nNEXT: '+shell_command([*command, '--cursor', token])+'\n' if token else '\nCOMPLETE VIEW; not a reading acknowledgement.\n')
         return header + '--- CONTENT ---\n' + text[start:end] + '\n--- END CONTENT ---' + footer, token
 
