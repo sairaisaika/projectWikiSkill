@@ -1,0 +1,64 @@
+{
+  "kind": "installed034 and one real acceptance-plan task; not business acceptance",
+  "source": "49a51fcaeed611fba6d4917d59b005aa3ecedc32",
+  "mainCi": {
+    "run": 43375666106,
+    "conclusion": "success"
+  },
+  "installation": {
+    "at": "2026-11-13T06:07:36.770404+00:00",
+    "source": "49a51fcaeed611fba6d4917d59b005aa3ecedc32",
+    "mainCi": {
+      "conclusion": "success",
+      "headSha": "49a51fcaeed611fba6d4917d59b005aa3ecedc32",
+      "status": "completed"
+    },
+    "version": "0.2.34",
+    "method": "atomic renameat2 RENAME_EXCHANGE",
+    "quietHelperObservations": [
+      [],
+      []
+    ],
+    "trackedPayloadFiles": 21,
+    "hooksSettingsChanged": false,
+    "sessionRestarted": false,
+    "automaticUpdaterAdded": false,
+    "finishedAt": "2026-11-13T06:07:36.905520+00:00",
+    "mismatch": [],
+    "priorOutsideDiscovery": true
+  },
+  "actualUse": {
+    "session": "78431a05-7e2d-4e94-9e39-8c46c286671b",
+    "result": "completed read-only QA23 device acceptance plan",
+    "events": [
+      {
+        "streamLine": 40,
+        "prepare": true,
+        "show": false,
+        "withFiles": true,
+        "sectionIndex": false,
+        "sectionSelect": false,
+        "cursor": false,
+        "impact": false
+      },
+      {
+        "streamLine": 46,
+        "prepare": false,
+        "show": true,
+        "withFiles": false,
+        "sectionIndex": false,
+        "sectionSelect": false,
+        "cursor": true,
+        "impact": true
+      }
+    ],
+    "reportedReading": "one file-first preparation; full two-part summary and one impact; page body was live grep, not page/outline; other owners/candidates unread",
+    "sourceNavigationGap": "retarget/settle edit seam missing from24.4 exact symbols; Root adds existing source citations",
+    "versionDiscoverability": "standalone static payload has no embedded version marker; worker did not independently confirm0.2.34",
+    "limits": [
+      "no evidence new outline was naturally used in this task",
+      "no R7/time/token or general improvement claim",
+      "no API/device execution or new APK acceptance"
+    ]
+  }
+}

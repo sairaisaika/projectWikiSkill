@@ -10,6 +10,24 @@
 
 
 
+
+## Current state
+
+**0.2.34 adopted** through PR62, tested e0da9a4 and merge49a51fcaeed611fba6d4917d59b005aa3ecedc32. All PR/platform and exact main CI43375666106 succeed. Focused65/full405collected404executed1platformskip, fixture12/check/evaluation, fresh maintainer check, skill-creator validation and all3 package/source-closure doctors pass.
+
+The text section outline puts its saved heading/status inventory before repeated exact open commands. [Same-capture replay](../../evals/reports/section-outline-first-20261113.json) shows the actual G5 heading in the first viewport, with unchanged normalized JSON/capture hashes and five full parts in both versions. It proves ordering, not reduced total output.
+
+**Installation**: at06:07:36Z, Linux Claude static Skill was atomically exchanged after two observations with zero active global helpers.21/21 payload files match merge49a51f; prior0.2.33 remains outside discovery. Hooks/settings unchanged, no session restart or automatic updater. This remains a static copy; future GitHub commits do not update it automatically.
+
+**Real use**: a fresh Opus QA23 acceptance-plan task performs one file-first preparation, follows the summary continuation and reads one impact view. It still greps the live24.4 page instead of using page/outline; therefore natural use of the new outline and reduced duplicate retrieval remain unproven. It identifies missing retarget/settle locator symbols, which Root repairs in the existing project page. [Installed/use evidence](../../evals/reports/section-outline-adoption-20261113.json) keeps source installation separate from reader behaviour. The standalone payload has no embedded version/provenance marker, so the reader could not independently verify its installed version; coordinator hash evidence establishes this installation.
+
+R7 cold-start, full semantic reading, general independent adoption and cost savings remain open. The task only designed the next device acceptance; it did not run an API/device journey or accept a new APK. Earlier observations are retained in History.
+
+## Historical evidence
+
+### State snapshot 2026-11-13T06:22:03.795492+00:00
+
+```markdown
 ## Current state
 
 **0.2.34 source candidate** on fix/compact-section-outline-20261113: saved section outlines list their compact heading/status inventory before repeated absolute open commands. Exact commands stay reachable in the same bounded continuation. JSON, unique-title selectors, unknown/ambiguous metadata, byte/line limits and current/history separation are unchanged.
@@ -18,7 +36,7 @@ A long-capture-path regression fails against0.2.33 and passes the candidate. Foc
 
 0.2.33 remains the installed Linux Claude static payload. Its merge/main CI and bounded real review are recorded in [the installed/use receipt](../../evals/reports/owner-first-adoption-20261113.json); the documentation return merged through PR61 with main CI43372293736 success. No automatic updater or session restart was added. The new source has not been installed; fixture12/check/evaluation, fresh maintainer check, skill-creator validation and all3 package/source-closure doctors pass; platform/main CI and a fresh-use check remain separate exit evidence. Prior adoption/current statements are retained in History.
 
-## Historical evidence
+```
 
 ### State snapshot 2026-11-13T05:46:52.600388+00:00
 
