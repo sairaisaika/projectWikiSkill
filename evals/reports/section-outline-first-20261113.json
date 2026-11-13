@@ -1,0 +1,23 @@
+{
+  "scope": "same frozen capture renderer replay; not independent adoption or general savings",
+  "captureSha256": "994a944e78d1bceb494dd84075c9ea96510f0d02407111be0202dadc31fd4db7",
+  "runs": {
+    "033": {
+      "parts": 5,
+      "firstBytes": 3998,
+      "firstViewportG5": false,
+      "firstBodyRead": false,
+      "completeContainsG5": true,
+      "normalizedOutlineSha256": "ab5f3ea432b8950e3d6612952132827cb25acfd6733819c3998ff74663dd619e"
+    },
+    "034candidate": {
+      "parts": 5,
+      "firstBytes": 2833,
+      "firstViewportG5": true,
+      "firstBodyRead": false,
+      "completeContainsG5": true,
+      "normalizedOutlineSha256": "ab5f3ea432b8950e3d6612952132827cb25acfd6733819c3998ff74663dd619e"
+    }
+  },
+  "captureUnchanged": true
+}

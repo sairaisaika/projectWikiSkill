@@ -9,6 +9,20 @@
 
 
 
+
+## Current state
+
+**0.2.34 source candidate** on fix/compact-section-outline-20261113: saved section outlines list their compact heading/status inventory before repeated absolute open commands. Exact commands stay reachable in the same bounded continuation. JSON, unique-title selectors, unknown/ambiguous metadata, byte/line limits and current/history separation are unchanged.
+
+A long-capture-path regression fails against0.2.33 and passes the candidate. Focused65 tests pass; full405 collected/404 executed/one platform skip. [Same frozen capture replay](../../evals/reports/section-outline-first-20261113.json) makes the actual G5 heading visible in the first viewport; both versions still need five parts for the complete outline. Normalized outline data hashes and capture bytes match. This proves ordering, not reduced total output or independent Agent adoption.
+
+0.2.33 remains the installed Linux Claude static payload. Its merge/main CI and bounded real review are recorded in [the installed/use receipt](../../evals/reports/owner-first-adoption-20261113.json); the documentation return merged through PR61 with main CI43372293736 success. No automatic updater or session restart was added. The new source has not been installed; fixture12/check/evaluation, fresh maintainer check, skill-creator validation and all3 package/source-closure doctors pass; platform/main CI and a fresh-use check remain separate exit evidence. Prior adoption/current statements are retained in History.
+
+## Historical evidence
+
+### State snapshot 2026-11-13T05:46:52.600388+00:00
+
+```markdown
 ## Current state
 
 **0.2.33 adopted** through [PR60](https://github.com/sairaisaika/projectWikiSkill/pull/60), tested source73dfb2c68833984417af9599a93ef2b5855135a6 and merge30fdf2c53cea7b7bd51c5ac653adda918e5d924e. All PR/push checks and [exact main CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/43368475279) pass. Local404 collected/403 executed/one platform skip,64 focused cases,12 fixture tests/check/evaluation, maintainer check, skill-creator validation and default/legacy/portable package/source-closure doctors pass.
@@ -21,7 +35,7 @@ Known-file text starts with the requested files/owners; query-only text starts w
 
 **Remaining friction**: that review reads only the first part of the large5.3 page, then greps the live file;18.2 body is unread. Owner delivery improves, but long-page consumption and duplicate lookups remain open. No full cold-start R7, general independent adoption, semantic completeness, token/time saving or business-completion claim is made. Previous current-state observations are preserved in History.
 
-## Historical evidence
+```
 
 ### State snapshot 2026-11-13T05:17:13.385814+00:00
 

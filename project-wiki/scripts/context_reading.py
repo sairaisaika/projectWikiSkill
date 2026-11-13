@@ -253,10 +253,15 @@ def render_outline(outline: dict, identity: str, command: list[str], *, budget: 
             mark='#'*row['level'] if row['level'] else '#?'
             where=f"L{row['line']} " if row['line'] else ''
             lines.append(f"[{number}] {where}{mark} {row['title']}")
-            if row['status']=='selectable':lines.append('    OPEN: '+shell_command(row['open_argv']))
-            elif row['status']=='ambiguous':lines.append(f"    AMBIGUOUS: {row['matches']} identical headings; --section cannot select one; read the whole view with its cursor")
+            if row['status']=='ambiguous':lines.append(f"    AMBIGUOUS: {row['matches']} identical headings; --section cannot select one; read the whole view with its cursor")
             elif row['status']=='untitled':lines.append('    UNTITLED: --section cannot select an empty heading')
-            else:lines.append('    NOT OPENABLE: heading absent from saved selectable text')
+            elif row['status']!='selectable':lines.append('    NOT OPENABLE: heading absent from saved selectable text')
+        # Repeated absolute capture/CLI paths must not bury the compact heading inventory.
+        # Preserve every exact open command in the same bounded continuation after it.
+        if any(row['status']=='selectable' for row in rows):
+            lines.append('EXACT OPEN COMMANDS (for the inventory above; continuation may be needed):')
+            for row in rows:
+                if row['status']=='selectable':lines.append('    OPEN: '+shell_command(row['open_argv']))
     lines.append(outline['limits'])
     return text_page('\n'.join(lines)+'\n',identity,command,budget=budget,cursor=cursor,line_budget=line_budget, early_continuation=early_continuation)['text']
 
