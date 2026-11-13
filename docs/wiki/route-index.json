@@ -988,7 +988,7 @@
           "symbol": "page_projection",
           "reason": "Separate authored state, verification notes and explicit history without deployment inference",
           "line": 39,
-          "sha256": "da3bd72e07251b74276ac708b28f5d9f523479a1afb9997843041792d0320ded"
+          "sha256": "3f3cf39b882dbb5c86024f1e9cc83e580cf51a6542558940fffca6177ccfd822"
         },
         {
           "id": "compact",
@@ -997,7 +997,7 @@
           "symbol": "render_summary",
           "reason": "Complete saved scope index displayed through bounded byte/line continuations",
           "line": 147,
-          "sha256": "da3bd72e07251b74276ac708b28f5d9f523479a1afb9997843041792d0320ded"
+          "sha256": "3f3cf39b882dbb5c86024f1e9cc83e580cf51a6542558940fffca6177ccfd822"
         },
         {
           "id": "page-collection",
@@ -1006,7 +1006,7 @@
           "symbol": "collect_pages",
           "reason": "Deduplicates native owner/query pages and explicitly selected Wiki pages without inventing owner edges",
           "line": 76,
-          "sha256": "da3bd72e07251b74276ac708b28f5d9f523479a1afb9997843041792d0320ded"
+          "sha256": "3f3cf39b882dbb5c86024f1e9cc83e580cf51a6542558940fffca6177ccfd822"
         },
         {
           "id": "direct-page-selection",
@@ -1023,8 +1023,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "text_page",
           "reason": "Exact bounded text continuation across large Unicode lines and sections",
-          "line": 308,
-          "sha256": "da3bd72e07251b74276ac708b28f5d9f523479a1afb9997843041792d0320ded"
+          "line": 313,
+          "sha256": "3f3cf39b882dbb5c86024f1e9cc83e580cf51a6542558940fffca6177ccfd822"
         },
         {
           "id": "state-preview",
@@ -1050,8 +1050,8 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "replace_current",
           "reason": "Retain previous current sections and verification notes verbatim in history",
-          "line": 380,
-          "sha256": "da3bd72e07251b74276ac708b28f5d9f523479a1afb9997843041792d0320ded"
+          "line": 385,
+          "sha256": "3f3cf39b882dbb5c86024f1e9cc83e580cf51a6542558940fffca6177ccfd822"
         },
         {
           "id": "context-locator",
@@ -1060,7 +1060,7 @@
           "symbol": "locator_summary",
           "reason": "Scope/missing-input counts without repeating complete owner records",
           "line": 153,
-          "sha256": "da3bd72e07251b74276ac708b28f5d9f523479a1afb9997843041792d0320ded"
+          "sha256": "3f3cf39b882dbb5c86024f1e9cc83e580cf51a6542558940fffca6177ccfd822"
         },
         {
           "id": "locator-display",
@@ -1069,7 +1069,7 @@
           "symbol": "render_locator",
           "reason": "Bounded locator and exact full-summary command, with snapshot-only freshness preserved",
           "line": 163,
-          "sha256": "da3bd72e07251b74276ac708b28f5d9f523479a1afb9997843041792d0320ded"
+          "sha256": "3f3cf39b882dbb5c86024f1e9cc83e580cf51a6542558940fffca6177ccfd822"
         },
         {
           "id": "captured-page-path",
@@ -1087,7 +1087,7 @@
           "symbol": "section_outline",
           "reason": "Saved per-view heading outline with exact open argv only for unique titled sections; missing metadata stays unknown",
           "line": 204,
-          "sha256": "da3bd72e07251b74276ac708b28f5d9f523479a1afb9997843041792d0320ded"
+          "sha256": "3f3cf39b882dbb5c86024f1e9cc83e580cf51a6542558940fffca6177ccfd822"
         }
       ]
     },

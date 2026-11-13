@@ -687,6 +687,20 @@ class SectionOutlineTests(unittest.TestCase):
     def open_lines(self, text):
         return [self.argv(line.split('OPEN: ',1)[1]) for line in text.splitlines() if line.lstrip().startswith('OPEN: ')]
 
+    def test_long_paths_do_not_hide_late_heading_inventory_behind_open_commands(self):
+        titles=[f'Mechanism {i}' for i in range(25)]
+        titles[11]='G5 old navigation operation binding'
+        page='# Feature\n\n'+''.join(f'## {t}\nbody {i}\n\n' for i,t in enumerate(titles))
+        out=self.saved(page,name='captured '+'long-path-'*14+'context.json')
+        code,text=self.run_main(['show','--capture',str(out),'--view','page','--path','feature.md','--section-index','--snapshot-only'])
+        self.assertEqual(code,0,text)
+        self.assertIn('G5 old navigation operation binding',text)
+        self.assertIn('Mechanism 24',text)
+        # Inventory is useful before any verbose command appendix; follow-up opens stay exact.
+        content=text.split('--- CONTENT ---\n',1)[1].split('\n--- END CONTENT ---',1)[0]
+        if 'OPEN: ' in content:self.assertLess(content.index('Mechanism 24'),content.index('OPEN: '))
+        self.assertNotIn('body 11',text)
+
     def test_page_section_index_lists_exact_open_commands_without_live_reads(self):
         out=self.saved()
         code,text=self.run_main(['show','--capture',str(out),'--view','page','--path','docs/wiki/feature.md','--section-index','--snapshot-only'])

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.34 — compact saved section inventory
+
+- Put saved heading/status rows before repeated absolute open commands in text section outlines. The exact commands remain in bounded continuation; JSON, selectors and current/history boundaries are unchanged.
+- Add a long-path first-viewport regression; platform/main adoption and installation remain separately verified.
+
 ## 0.2.33 (source candidate, 2026-11-13)
 
 - Known-file preparation renders the selected files and every declared owner before broad query candidates. Query-only reading starts with matched cards. Candidate counts remain early; the complete inventory and exact continuation remain unchanged.
