@@ -1,6 +1,6 @@
 # Architecture
 
-> Reviewed: 2026-11-08; saved section outline in task-views only; other sections retain their earlier review scope.
+> Reviewed: 2026-11-13; saved section outline text ordering in task-views only; other sections retain their earlier review scope.
 
 These are module contracts read from code. All scripts use only the standard library.
 The CLIs primarily print JSON; `wiki.py list`, non-JSON queries and the new
@@ -141,6 +141,8 @@ keys only, rejects ambiguity, and performs no filesystem/Git lookup. State previ
 use the resolved canonical key before constructing the existing protected target.
 An unknown key in a populated capture is distinct from an older capture without
 saved page views; existing integrity and source-byte checks remain unchanged.
+
+The text outline lists its complete heading/status inventory before the exact open-command appendix. Long capture/CLI paths no longer interrupt heading discovery. All commands remain in bounded continuation; JSON/open argv and current/history semantics are unchanged. The long-path first-viewport regression and continuation/quoting tests cover this ordering; actual installation/adoption is separate.
 
 `show --view page|history --path PAGE --section-index` (capture or packet) prints a
 saved heading outline instead of page text. `context_reading.section_outline` lists
