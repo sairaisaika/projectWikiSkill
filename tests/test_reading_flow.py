@@ -91,8 +91,32 @@ class ReadingFlowTests(unittest.TestCase):
         v['files']=[{'file':f'src/f{i}.py','pages':['feature.md','consumer.md'],'unregistered':False} for i in range(300)]
         read=wf.reading_module()
         text=read.summary_text(v,'saved.json')
-        self.assertLess(text.index('UNEXPANDED'),text.index('src/f299.py'))
         self.collect(text)
+    def test_known_file_owners_are_usable_in_first_bounded_view_despite_many_candidates(self):
+        v=self.view(self.prepare())
+        v['files']=[{'file':'services/mcp/src/tools/registry.ts','pages':['18-assistant-mcp/02-tools.md','05-consult-loop/03-reschedule.md'],'unregistered':False}]
+        v['unexpanded_candidates']=[{'path':f'candidate-{i}.md','title':'候选规则'*20} for i in range(200)]
+        before=copy.deepcopy(v)
+        read=wf.reading_module()
+        first=read.render_summary(v,'saved.json',budget=1400,line_budget=20)
+        self.assertLessEqual(len(first.encode('utf-8')),1400)
+        for value in ['services/mcp/src/tools/registry.ts','18-assistant-mcp/02-tools.md','05-consult-loop/03-reschedule.md']:
+            self.assertIn(value,first)
+        self.assertEqual(v,before)
+        self.collect(read.summary_text(v,'saved.json'))
+
+    def test_query_only_first_view_shows_matched_card_before_large_candidate_inventory(self):
+        v=self.view(self.prepare());v['files']=[]
+        v['selected_cards']=[{'path':'selected-feature.md','title':'Target feature'}]
+        v['unexpanded_candidates']=[{'path':f'candidate-{i}.md','title':'候选规则'*20} for i in range(200)]
+        before=copy.deepcopy(v)
+        read=wf.reading_module()
+        first=read.render_summary(v,'saved.json',budget=1400,line_budget=20)
+        self.assertIn('selected-feature.md',first)
+        self.assertLessEqual(len(first.encode('utf-8')),1400)
+        self.assertEqual(v,before)
+        self.collect(read.summary_text(v,'saved.json'))
+
     def test_cursor_rejects_changed_content_and_wrong_view(self):
         read=wf.reading_module();p=read.text_page('x'*4000,'first',['python','show'],budget=800)
         for text,identity in [('y'*4000,'first'),('x'*4000,'other')]:
@@ -419,7 +443,9 @@ print(json.dumps({'query':q,'cards':[{'path':'feature.md','title':'Editor'}],'im
         self.assertEqual([f'candidate-{i}.md' for i in range(300)],[l.split()[0] for l in text.splitlines() if l.startswith('  candidate-')])
         self.assertIn('  feature.md — Editor',text)
         self.assertIn('no files selected; file owners unknown, not none',text)
-        self.assertNotIn('UNREGISTERED',text.split('FILE → ALL DECLARED OWNER PAGES:',1)[1].split('PAGE STATE',1)[0])
+        saved_summary=self.view(wf.read_json(out),'summary',snapshot_only=True)
+        self.assertEqual(saved_summary['files'],[])
+        self.assertEqual(saved_summary['unregistered_files'],[])
         before=out.read_bytes()
         with patch.object(wf.subprocess,'run',side_effect=counting),redirect_stdout(io.StringIO()) as again:
             self.assertEqual(wf.main(args),0)

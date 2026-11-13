@@ -104,13 +104,18 @@ def summary(value: dict) -> dict:
 
 
 def summary_text(view: dict, artifact: str) -> str:
-    lines=['UNEXPANDED CANDIDATES (not read):']
-    lines.extend('  '+str(row.get('path','?'))+' — '+str(row.get('title','')) for row in view['unexpanded_candidates'])
-    if not view['unexpanded_candidates']:lines.append('  none declared')
+    files=['FILE → ALL DECLARED OWNER PAGES:']
+    files.extend('  '+row['file']+' → '+(', '.join(row['pages']) or 'UNREGISTERED') for row in view['files'])
+    if not view['files']:files.append('  no files selected; file owners unknown, not none (prepare with --files for owners)')
+    cards=[]
     if 'selected_cards' in view:
-        lines.append('SELECTED FEATURE CARDS (query match, not read):')
-        lines.extend('  '+row['path']+' — '+row['title'] for row in view['selected_cards'])
-        if not view['selected_cards']:lines.append('  none matched')
+        cards.append('SELECTED FEATURE CARDS (query match, not read):')
+        cards.extend('  '+row['path']+' — '+row['title'] for row in view['selected_cards'])
+        if not view['selected_cards']:cards.append('  none matched')
+    # Known-file context must survive the first bounded viewport, even for broad queries.
+    # Query-only exploration starts with its actual matches; the complete inventory still follows.
+    lines=[f"SCOPE: {len(view['files'])} files; {len(view['unexpanded_candidates'])} unexpanded candidates (not read)"]
+    lines.extend(files+cards if view['files'] else cards+files)
     lines.append('UNREGISTERED FILES: '+(', '.join(view['unregistered_files']) or 'none'))
     changes=view['preparation'].get('selected_paths_with_changes',[])
     lines.append('EXISTING SELECTED CHANGES: '+(', '.join(changes) or 'none observed / see preparation record'))
@@ -119,12 +124,12 @@ def summary_text(view: dict, artifact: str) -> str:
     bases=view['path_bases']
     lines.append('PATH BASES: source='+bases['source_root']+'; Wiki pages='+bases['source_root']+'/'+bases['wiki_root'])
     if bases['peers']:lines.append('PEER SOURCE BASES: '+', '.join(alias+'='+root for alias,root in bases['peers'].items()))
-    lines.append('FILE → ALL DECLARED OWNER PAGES:')
-    lines.extend('  '+row['file']+' → '+(', '.join(row['pages']) or 'UNREGISTERED') for row in view['files'])
-    if not view['files']:lines.append('  no files selected; file owners unknown, not none (prepare with --files for owners)')
     if view.get('selected_wiki_pages'):
         lines.append('DIRECTLY SELECTED WIKI PAGES (not owner declarations):')
         lines.extend('  '+row['file']+' → '+row['path']+' ['+row['status']+']' for row in view['selected_wiki_pages'])
+    lines.append('UNEXPANDED CANDIDATES (not read):')
+    lines.extend('  '+str(row.get('path','?'))+' — '+str(row.get('title','')) for row in view['unexpanded_candidates'])
+    if not view['unexpanded_candidates']:lines.append('  none declared')
     lines.append('PAGE STATE (authored, not live verification):')
     lines.extend(f"  {p['path']}: current={'declared' if p['current_state_declared'] else 'unknown'}; history={'present' if p.get('history_present', p['historical_notes'] > 0) else 'none'}; older notes={p['historical_notes']}; qualifiers to review={p['qualifiers_needing_review']}" for p in view['pages'])
     if view['observed_revisions']:
