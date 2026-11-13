@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Owner-first saved context, 2026-11-13](owner-first-20261113.json) | Same captured MCP task and unchanged summary data: owner visible in candidate first viewport; every part reconstructs completely | Coordinator replay, two parts in both; no independent adoption or token/time savings claim |
 | [Saved section discovery, 2026-11-08](section-outline-20261108.md) | Bounded exact heading commands, cross-platform source checks, quiet Linux update and one guided real documentation task | Source worker skipped owning body reads; optional historical prefix partial; no code-task compliance or efficiency claim |
 | [Directly selected Wiki context, 2026-11-07](selected-wiki-context-20261107.md) | Actual missing selected-page observation, nine regression cases and real native-router before/after replay | Guided work and coordinator replay; candidate not installed, no efficiency or business-completion claim |
 | [Context reading, 2026-11-06](context-reading-20261106.md) | File-first preparation, complete scope delivery, current/history views, PR45 source review, 25 focused cases and bounded native replay | Local source/package checks; no host update, fresh-agent adoption or efficiency claim |

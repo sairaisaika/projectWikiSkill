@@ -1,0 +1,31 @@
+{
+  "kind": "same saved consumer context replay, not independent adoption",
+  "sourceBase": "d6477252b8a4757d9dc7259e74ab1bb412fa3ca1",
+  "consumerSource": "a7b7af7d1fc47a1e11008e8b1dcd62335d4ed2d2",
+  "sample": "MCP registry task capture, owner inventory previously below broad candidates",
+  "replay": {
+    "installed032": {
+      "firstViewContainsRegistry": false,
+      "firstViewBytes": 4000,
+      "parts": 2,
+      "fullReconstructed": true,
+      "summaryDataHash": "79b03c876617be9fbe2fdc095df598d77ee84d0f5a0ae2e7faaf9464532d2173",
+      "captureHash": "e15c3ebd7fae493bf35e83092cdd8de3a15e93b3a2b127b7f0f4bbcaf29ac3d3"
+    },
+    "candidate033": {
+      "firstViewContainsRegistry": true,
+      "firstViewBytes": 3999,
+      "parts": 2,
+      "fullReconstructed": true,
+      "summaryDataHash": "79b03c876617be9fbe2fdc095df598d77ee84d0f5a0ae2e7faaf9464532d2173",
+      "captureHash": "e15c3ebd7fae493bf35e83092cdd8de3a15e93b3a2b127b7f0f4bbcaf29ac3d3"
+    }
+  },
+  "limits": [
+    "no capture content copied",
+    "no extra native query executed",
+    "no total parts reduction",
+    "no token/time savings claim",
+    "installed host still0.2.32"
+  ]
+}
