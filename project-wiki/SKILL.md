@@ -10,15 +10,14 @@ actionable location** for a task, and a correct system model for orientation, no
 
 ## File-first entry for an existing native Wiki
 
-Run the project's own query through `workflow.py prepare` without `--files`: the
-same reviewed native command runs once and its matched cards and unexpanded
-candidates are saved and printed as bounded text with an exact continuation, so
-the query output is not cut. File owners stay unknown in that capture. Once
-candidate paths are known, `prepare --files` (new output) captures **every
-declared file's owners** in one call and prints a compact index, with unexpanded
-candidates first. No work packet,
-owner registry or hook installation is needed. The native program prefix and
-runtime inputs remain explicit and reviewed; execution still needs opt-in.
+When candidate paths are known, run `workflow.py prepare --files` with the task
+query once. The first bounded response puts those files and their declared owners
+before the broad candidate inventory. A query-only response starts with its matched
+feature cards; file owners remain unknown until paths are supplied. If paths are
+unknown, query first, then prepare the known files into a new capture. Every owner
+and unexpanded candidate remains available through exact continuation, without a
+work packet, owner registry or hook installation. The native program prefix and
+runtime inputs stay explicit and reviewed; execution needs opt-in.
 See [the concrete command](references/collaboration-workflow.md#file-first-preparation).
 
 Read a selected file's complete impact record, then the relevant page sections
