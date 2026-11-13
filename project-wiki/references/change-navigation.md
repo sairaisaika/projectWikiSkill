@@ -30,9 +30,11 @@ explicit source dependencies, ordinary prose links and shared-file similarity.
 Do not recursively expand all common infrastructure and call that a causal impact
 graph. State when candidates are truncated; never silently truncate a file's
 registered satellite inventory or treat an absent inventory as no consumers.
-Print the count and names of omitted candidates first: readers and wrappers
-often cut long output by line count, and a list placed after the expanded cards
-is lost first. Planned-file expansion does not depend on the query matching:
+Put known files and their declared owners before broad query candidates; for
+query-only exploration put the actual matched cards first. Include the omitted
+count early, and keep every omitted name reachable through bounded continuation.
+A large candidate inventory must not consume the first viewport before the
+requested file context. Planned-file expansion does not depend on the query matching:
 when the query misses, still expand and record the files and report the miss as
 missing navigation, so no one hunts for a query that unlocks a gate.
 

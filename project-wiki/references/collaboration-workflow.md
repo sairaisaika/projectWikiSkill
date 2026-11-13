@@ -17,6 +17,8 @@ native workflow; a missing adapter is not a defective wiki.
 
 ## File-first preparation
 
+When paths are already known, use the query and `--files` in one preparation. Its first bounded view prioritizes file owners; query-only views prioritize matched cards. Candidate counts stay visible and their full inventory remains paged in the same capture. Reuse the unchanged capture instead of re-running an identical preparation.
+
 For an ordinary implementation task, a captured file context is enough; do not
 manufacture a delegation/acceptance packet merely to obtain Wiki owners.
 To find candidate paths, run the same command without `--files` (and with its

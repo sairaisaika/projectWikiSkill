@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.33 (source candidate, 2026-11-13)
+
+- Known-file preparation renders the selected files and every declared owner before broad query candidates. Query-only reading starts with matched cards. Candidate counts remain early; the complete inventory and exact continuation remain unchanged.
+- Two first-viewport regressions reproduce owner/card starvation under a large candidate list. Replaying a real saved MCP task uses the same capture and summary data: old first view hides the file owner, new first view includes it, with two complete parts in both. This does not show token savings or natural cross-agent adoption.
+
 ## 0.2.32 (2026-11-11)
 
 - CLI byte budgets reserve Windows text stdout CRLF expansion. A real Windows3.13 raw-byte probe observed4013 bytes despite3998 normalized bytes; the continuation regression now measures raw subprocess bytes instead of normalizing away line endings.
