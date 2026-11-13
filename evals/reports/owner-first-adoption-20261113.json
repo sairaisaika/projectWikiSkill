@@ -1,0 +1,59 @@
+{
+  "kind": "installed static payload and one known-path review, not general adoption",
+  "sourceMerge": "30fdf2c53cea7b7bd51c5ac653adda918e5d924e",
+  "mainCi": {
+    "run": 43368475279,
+    "conclusion": "success"
+  },
+  "installation": {
+    "at": "2026-11-13T05:03:31.538710+00:00",
+    "source": "30fdf2c53cea7b7bd51c5ac653adda918e5d924e",
+    "version": "0.2.33",
+    "previous": "0.2.32",
+    "quietHelperObservations": [
+      [],
+      []
+    ],
+    "method": "renameat2 RENAME_EXCHANGE; previous entire static directory retained outside discovery",
+    "trackedPayloadFiles": 21,
+    "hooksSettingsChanged": false,
+    "sessionRestarted": false,
+    "automaticUpdaterAdded": false,
+    "mismatch": []
+  },
+  "reuse": {
+    "exitCode": 0,
+    "captureHashAndMtimeUnchanged": true,
+    "reusedMessage": true
+  },
+  "reviewUse": {
+    "role": "known-path read-only source review",
+    "session": "557a3078-35ab-474e-9dd7-550a2b73af41",
+    "events": [
+      {
+        "line": 23,
+        "type": "prepare",
+        "withFiles": true,
+        "explicitNode": true
+      }
+    ],
+    "skillLoadObservations": [
+      {
+        "line": 14,
+        "kind": "SkillViaBash",
+        "boundedRead": true,
+        "usesCat": false
+      }
+    ],
+    "firstViewportHasRegistry": true,
+    "firstViewportHasTest": true,
+    "validation": "31 service cases and types passed; real SDK InMemoryTransport and fully stubbed app HTTP only",
+    "remaining": "page first part only then live grep;18.2 body unread, remaining duplication/consumption friction"
+  },
+  "limits": [
+    "no session restart implies no guarantee old instructions reloaded",
+    "no automatic updater",
+    "no full R7 or cost savings claim",
+    "not live MCP/backend acceptance"
+  ]
+}

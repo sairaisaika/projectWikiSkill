@@ -8,6 +8,24 @@
 
 
 
+
+## Current state
+
+**0.2.33 adopted** through [PR60](https://github.com/sairaisaika/projectWikiSkill/pull/60), tested source73dfb2c68833984417af9599a93ef2b5855135a6 and merge30fdf2c53cea7b7bd51c5ac653adda918e5d924e. All PR/push checks and [exact main CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/43368475279) pass. Local404 collected/403 executed/one platform skip,64 focused cases,12 fixture tests/check/evaluation, maintainer check, skill-creator validation and default/legacy/portable package/source-closure doctors pass.
+
+Known-file text starts with the requested files/owners; query-only text starts with matched cards. Candidate counts stay early and every record remains reachable through exact continuation. The [same-capture replay](../../evals/reports/owner-first-20261113.json) keeps identical capture/summary-data hashes and two full parts in both versions; the owner becomes visible in the first view. This does not demonstrate token savings.
+
+**Installed host**: Linux Claude global static Skill was atomically exchanged at05:03:31Z after two observations with zero active global helpers.21/21 payload files match merged30fdf2c; the entire prior0.2.32 directory is retained outside discovery. Hooks/settings were unchanged, no session was restarted and no automatic updater was added. This static copy does not follow future main commits automatically. Existing session instructions may remain cached; new helper calls use the new files.
+
+**Observed use**: unchanged preparation reuses the saved capture without native execution; capture hash/mtime stay identical. A fresh known-path, read-only MCP review uses one prepare with --files and sees both owners in its first viewport, then independently passes31 mocked/SDK service tests and types. [Bounded installed/use receipt](../../evals/reports/owner-first-adoption-20261113.json) distinguishes these observations from installation.
+
+**Remaining friction**: that review reads only the first part of the large5.3 page, then greps the live file;18.2 body is unread. Owner delivery improves, but long-page consumption and duplicate lookups remain open. No full cold-start R7, general independent adoption, semantic completeness, token/time saving or business-completion claim is made. Previous current-state observations are preserved in History.
+
+## Historical evidence
+
+### State snapshot 2026-11-13T05:17:13.385814+00:00
+
+```markdown
 ## Current state
 
 **0.2.33 source candidate** on `fix/owner-first-context-20261113`, based on d647725: known-file owner context precedes candidate inventory; query-only output starts with matched cards. The complete candidate inventory and bounded continuation remain. Focused64 tests pass; the two new first-viewport cases fail against the original renderer. [Real saved-context replay](../../evals/reports/owner-first-20261113.json) has identical capture/summary-data hashes and two complete parts in both versions, but the registry owner appears in the candidate first view. This is a coordinator replay, not independent adoption or token savings. Local full suite404 collected/403 executed/one platform skip,12 fixture tests, fixture check/evaluation and skill-creator validation passed. The maintainer check first correctly reported a stale generated snapshot; it is regenerated in this batch. Fresh default/legacy/portable packages and source-closure doctors all pass. Platform matrix CI/main adoption/installation remain pending at this checkpoint.
@@ -22,7 +40,7 @@ The Linux global static payload was freshly compared against adopted0.2.32:21/21
 
 **Limits kept visible**: earlier guided project-local previews completed bounded continuations, but one task attempted edits before file preparation and was blocked by an existing project hook; page fragments also used raw grep and combined shell output exceeded a single reader-part budget. One caller's own cut shortened a displayed continuation and required reading the saved line again. The reader bounds its own CLI view, preserves complete JSON/current-history evidence and exposes exact continuation; arbitrary downstream clipping, natural file-first behavior and overall token/time efficiency remain unproven. Business acceptance is separate.
 
-## Historical evidence
+```
 
 ### State snapshot 2026-11-11T01:56:46.803515+00:00
 
