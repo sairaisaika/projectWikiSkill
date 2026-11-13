@@ -100,3 +100,5 @@ pending device/rollout acceptance remain separate; no payload or hook change.
 - [Routing-first large SessionStart delivery](large-routing-delivery-20261109.md): real overflow, source/main matrix, quiet Linux update, routing before tools, later five-request/seven-state-page guided writing and separate reader-only audit. Continuation metadata filtering, raw host overflow and partial method use remain; no natural adoption, R7 or efficiency inference. [Sanitized receipt](large-routing-installed-20261109.json).
 
 - [Saved section inventory first-viewport replay, 2026-11-13](section-outline-first-20261113.json): same frozen capture, unchanged normalized outline/continuation; controlled replay, not adoption.
+
+- [0.2.34 static installation and real acceptance-plan use](section-outline-adoption-20261113.json): installation matches source; actual task still used live grep instead of the new outline.
