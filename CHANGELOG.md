@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.35 — narrow saved-packet text (source candidate)
+
+- Project complete feature/file context before the repeated task envelope, retaining access/currentness and captured peer identities. Exact existing readers expose the envelope and unchanged complete JSON. No new flags or gates.
+- [Same-capture replay](evals/reports/narrow-packet-text-20261116.md) reduces four real lookups from six/seven parts to three. Cross-platform CI, installation and natural adoption remain separate.
+
 ## 0.2.34 — compact saved section inventory
 
 - Put saved heading/status rows before repeated absolute open commands in text section outlines. The exact commands remain in bounded continuation; JSON, selectors and current/history boundaries are unchanged.

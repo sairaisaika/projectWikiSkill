@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Narrow saved-packet text, 2026-11-16](narrow-packet-text-20261116.md) | Complete selected records first, same-capture bytes/parts reduced, JSON unchanged and source checks | Guided replay; platform CI, installation and fresh real use remain separate |
 | [Owner-first installed/use return, 2026-11-13](owner-first-adoption-20261113.json) | Merged main CI, quiet static21-file exchange, unchanged-context reuse and one known-path review | Long body reading still duplicates a live grep; no general adoption or savings claim |
 | [Owner-first saved context, 2026-11-13](owner-first-20261113.json) | Same captured MCP task and unchanged summary data: owner visible in candidate first viewport; every part reconstructs completely | Coordinator replay, two parts in both; no independent adoption or token/time savings claim |
 | [Saved section discovery, 2026-11-08](section-outline-20261108.md) | Bounded exact heading commands, cross-platform source checks, quiet Linux update and one guided real documentation task | Source worker skipped owning body reads; optional historical prefix partial; no code-task compliance or efficiency claim |

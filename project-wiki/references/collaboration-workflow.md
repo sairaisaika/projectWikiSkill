@@ -6,7 +6,8 @@ report shape has `query`, `cards`, `impact`, `omitted`, `placementIssues`, `limi
 Cards and every file's satellite list are preserved, not reduced to top results.
 An optional `workflow` object belongs to the native router: it can expose its own
 finish command, commit acknowledgement format, authority paths and limitations.
-Every reading view and delegated packet retains it as `native_workflow`; an older
+Every reading view and delegated packet retains it as `native_workflow` (a packet
+feature/impact text lookup names it in `not_repeated` with its reader); an older
 router without it is explicitly undeclared. This is quoted project context, not
 an execution request. The plugin neither invents a generic commit footer nor runs
 the native gate. A valid `finish` reconciliation cannot replace the project's
@@ -72,7 +73,15 @@ listed as current sections; duplicate or empty headings are marked instead of gi
 a command that would fail, and missing outline metadata is reported unknown.
 `--format json` deliberately exports the complete selected record without display
 pagination; legacy capture/raw-native and packet views retain their JSON default for existing clients,
-and support `--format text` for bounded agent reading.
+and support `--format text` for bounded agent reading. In that text, a packet
+`--view feature|impact` is a lookup projection: the complete selected native record
+and its expansion, task id, access, freshness, path bases, each peer's captured
+root and head, and the edit scope (`selected_file_writable` is false in a read-only
+review, which may still read the file). The task envelope (outcome, acceptance, capabilities, allowed files, native
+workflow, evidence records) is named in `not_repeated` instead of repeated per
+lookup; `not_repeated.read` prints the exact commands for the bounded packet
+index text and for this view with `--format json`, which stays the complete
+unchanged export.
 
 Repeated `prepare` with the same existing `--output` reuses it only when the
 normalized request, helper identity, Wiki/runtime/peer inputs, selected source
