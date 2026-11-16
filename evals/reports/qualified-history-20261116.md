@@ -27,3 +27,7 @@ Thus the compact-source replay remains valid, but natural file-first use and ind
 ## Verification
 
 Final focused48 pass after the original five failures and the returned-candidate regressions. Root final413 collected/412 executed/1 existing skip, fixture12/check/evaluation, maintainer check and all three0.2.36 package/source doctors pass. A third scoped Opus review confirms the returned source regressions are resolved, with no further actionable issue in inspected scope. Exact platform/main CI remains separately pending; see version status. No global Skill installation or original feature-session change has occurred in this source change.
+
+## Post-merge observation
+
+The exact platform/main matrices and later Linux static installation are now verified separately in the [installed/use follow-up](installed-036-observation-20261116.md). The source-checkpoint pending statements above are historical; current version status remains in docs/wiki/status.md.

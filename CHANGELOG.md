@@ -1,9 +1,10 @@
 # Changelog
 
-## 0.2.36 — qualified history boundaries (source candidate)
+## 0.2.36 — qualified history boundaries
 
 - Keep a same-level labelled history continuation inside an already explicit archive, so it cannot return obsolete claims to current body. Preserve standalone product subtitles, fenced code, original state-snapshot ownership, source Markdown and older snapshots.
 - [Actual-source replay and guided-use limits](evals/reports/qualified-history-20261116.md) retain the first turn-limit failure, skipped file impacts and host output truncation separately from the parser fix.
+- Exact PR/main matrices, a quiet Linux static installation and partial fresh guided use are recorded in the [installed/use follow-up](evals/reports/installed-036-observation-20261116.md); there is still no automatic updater or independent adoption claim.
 
 ## 0.2.35 — narrow saved-packet text (source candidate)
 

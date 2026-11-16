@@ -26,3 +26,7 @@ Every selected native record reconstructs exactly, including satellites, missing
 Root full unit run:407 collected,406 executed,1 existing platform skip, success. Fixture tests12, fixture check/evaluation and maintainer Wiki check pass. All three package profiles/source doctors pass at0.2.35 (plain, legacy and portable optional hooks); the plain payload has26 files. No host configuration or hook trust changed. The old-source regression and intermediate failed deliveries are retained privately because their real task packets contain consumer-specific paths. A new four-job Ubuntu/Windows Python3.10/3.13 matrix remains to be observed.
 
 These are guided source tasks and coordinator replay, not R7 independent cold-start, natural adoption, token billing, time savings or business acceptance. Selected-page bodies can still be large. Outputs clipped outside the reader can still lose content. Installation and a fresh real-task observation are separate; the existing Linux installation remains a static copy of the prior version, without automatic updates. The original concurrent feature session and installed helper are unchanged.
+
+## Post-merge observation
+
+The four-job PR/main matrices passed; the compact change is included in the later0.2.36 static installation. The [fresh-use follow-up](installed-036-observation-20261116.md) records a task explicitly choosing JSON, which this text-only change intentionally leaves unchanged. The source-checkpoint uninstalled statements above are historical, not current status.
