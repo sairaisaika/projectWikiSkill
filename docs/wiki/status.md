@@ -13,6 +13,21 @@
 
 ## Current state
 
+**0.2.36 source and Linux static installation verified**: [PR64](https://github.com/sairaisaika/projectWikiSkill/pull/64), merge44162a52a6832712c7845843616402b64b306cf5; exact PR43938712631 and main43940304098 CI succeed in all four platform/Python jobs. Focused48/full413collected412executed1existing skip, fixture12/check/evaluation and all three package/source doctors passed. The contextual history reader/planner fix and its limits are in the [source report](../../evals/reports/qualified-history-20261116.md).
+
+**Installation**:21/21 tracked standalone payload hashes match that merge after a quiet atomic exchange; the previous copy remains outside discovery. Hooks/settings/session untouched. This is a manually refreshed static Skill, with no automatic updater.
+
+**Fresh guided use** invokes the installed workflow for query and file-specific preparation in one genuine engineering task. It still clips some raw reads, leaves summary/impact continuations unread, explicitly chooses JSON then jq, and misses some nearest Context files. File-first preparation is observed; complete pre-edit reading, natural adoption and reduced repeated retrieval are not. See [installation and use evidence](../../evals/reports/installed-036-observation-20261116.md).
+
+R7 independent cold-start, general semantic/handoff success and token/time savings remain open. Earlier baselines and pending statements are retained as history.
+
+## Historical evidence
+
+### State snapshot 2026-11-16 installed036 return
+
+```markdown
+## Current state
+
 **0.2.36 source candidate** on an isolated branch: qualified sibling continuations stay within their explicit archive. The first global matcher passed410 but was returned after Opus found shared write-planner regressions; the final contextual implementation passes48 focused tests, preserving product subtitles outside archives and original snapshot ownership; reader/planner generated-block boundaries agree. Root final413 collected/412 executed/1 existing skip, fixture12/check/evaluation, maintainer check and all three package/source doctors pass. Final scoped Opus source review reports no further actionable issue; exact platform/main CI and installation remain pending. [Actual-source replay and limits](../../evals/reports/qualified-history-20261116.md).
 
 **0.2.35 source verified**: PR63/sourceb393f62 and merge556a082d37ee3f22de298b0ab3849deee054fedd; exact main CI43932281261 and PR43930976271 succeed in all four Ubuntu/Windows Python3.10/3.13 jobs. Root full407 collected/406 executed/1 platform skip, fixture12/check/evaluation and all three package/source doctors pass. Still uninstalled; the guided follow-up found this new history defect and did not establish per-file adoption. [Compact lookup evidence](../../evals/reports/narrow-packet-text-20261116.md).
@@ -28,8 +43,7 @@ The text section outline puts its saved heading/status inventory before repeated
 **Real use**: a fresh Opus QA23 acceptance-plan task performs one file-first preparation, follows the summary continuation and reads one impact view. It still greps the live24.4 page instead of using page/outline; therefore natural use of the new outline and reduced duplicate retrieval remain unproven. It identifies missing retarget/settle locator symbols, which Root repairs in the existing project page. [Installed/use evidence](../../evals/reports/section-outline-adoption-20261113.json) keeps source installation separate from reader behaviour. The standalone payload has no embedded version/provenance marker, so the reader could not independently verify its installed version; coordinator hash evidence establishes this installation.
 
 R7 cold-start, full semantic reading, general independent adoption and cost savings remain open. The task only designed the next device acceptance; it did not run an API/device journey or accept a new APK. Earlier observations are retained in History.
-
-## Historical evidence
+```
 
 ### State snapshot 2026-11-13T06:22:03.795492+00:00
 
