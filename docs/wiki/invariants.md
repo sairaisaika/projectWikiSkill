@@ -1,6 +1,6 @@
 # Invariants
 
-> Reviewed: 2026-11-16, capture-record-text row added; older rows retain their scoped evidence.
+> Reviewed: 2026-11-16, capture-record-text and line-boundary page rows added; older rows retain their scoped evidence.
 
 This page is an **index** from each guarded behaviour to the code that enforces it and the
 tests that guard it. The tests are the source of truth: if a row and a test disagree, the test
@@ -83,6 +83,7 @@ removed, fix the row here in the same change. A test name that no longer greps i
 | File context retains all owners despite query misses; omissions and unregistered files remain visible | workflow.prepare / context_reading.summary | tests/test_context_reading.py |
 | Preparation is not a prior-reading certificate; selected dirty paths are explicit | workflow.prepare | tests/test_context_reading.py |
 | CLI text parts stay within 4000 UTF-8 bytes/40 lines and keep the exact continuation in the first 45 lines; following printed commands reassembles all content without a second native run | context_reading.text_page / workflow.cli_budget | tests/test_reading_flow.py |
+| A partial text part ends after its last complete nonempty line when one fits within the byte/line budgets; only one oversized line continues mid-line (character-safe) with the existing cursor; parts reassemble exactly | context_reading.text_page | tests/test_reading_flow.py::LineBoundaryPageTests |
 | Query-only prepare runs native once, saves cards/omissions as bounded text with exact NEXT, reuses without native and refuses stale reuse; file owners print as unknown, not none | workflow.prepare / context_reading.summary_text | tests/test_reading_flow.py |
 | Snapshot page/history reading never invokes Git or reopens current pages | workflow.capture_view | tests/test_context_reading.py |
 | History is projected separately; authored state and declared refs never establish live capabilities | context_reading.page_projection | tests/test_context_reading.py |

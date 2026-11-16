@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.38 — line-boundary text parts
+
+- Prefer complete content lines within the existing byte/line budgets, retaining exact cursor reconstruction and UTF-8-safe progress for one line that cannot fit.
+- [Old-source controls and bounded replay](evals/reports/line-boundary-pages-20261116.md) distinguish cosmetic line breaks, oversized records, caller clipping and guided reading.
+
 ## 0.2.37 — default capture file text
 
 - Compact complete default capture feature/impact text as well as packet lookups, retaining native satellites and provenance without inventing task permissions. JSON/capture bytes and bounded continuation remain unchanged.

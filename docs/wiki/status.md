@@ -13,13 +13,26 @@
 
 ## Current state
 
+**0.2.38 source candidate** adjusts the existing pager to prefer a complete content-line boundary when one fits. JSON, capture bytes, digests, displayed provenance and byte/line limits stay unchanged; oversized individual lines still need explicit partial continuation. Four new source controls reproduce eight failed subcases before the fix; local full420 (one existing platform skip),12fixtures and Wiki checks pass. Root independently repeats the420-unit run and all three package/source doctor layouts pass; exact platform/main CI and installation for this candidate remain pending. [Scope and evidence](../../evals/reports/line-boundary-pages-20261116.md).
+
+**0.2.37 source, platform CI and Linux static installation are verified**: [PR66](https://github.com/sairaisaika/projectWikiSkill/pull/66), mergeb545dc861146502a7ed5dff48aeddd8de30de4d8, exact PR43959207988 and main43960700400 all four jobs succeed. Root verifies21/21 installed payload hashes after quiet atomic exchange. This is a manual static refresh, with no automatic updater, hook/settings change or original-session restart.
+
+**Fresh use is partial and guided.** A genuine engineering task invokes installed37 query/file preparation, then reads one complete Web impact record and all11owners of a Native impact record in two bounded parts. Correct aliasing restores existing ownership; caller cut and a Wiki-page-as-source mistake are not helper defects. Earlier summary complaints do not establish an impact defect. The observed remaining mid-title break is the source candidate above; complete pre-edit reading, natural adoption, independent R7 and general time/token savings remain unproven. [Installed-use follow-up](../../evals/reports/capture-record-text-20261116.md#installed037-guided-follow-up).
+
+## Historical evidence
+
+### State snapshot 2026-11-16 before038
+
+```markdown
+## Current state
+
 **0.2.37 source candidate** fixes the default raw-capture feature/impact text path that0.2.35 left JSON-shaped. Complete native records, root/base/peers/path bases, freshness and exact reader commands remain, with no invented task permissions. Machine JSON, capture bytes, packet views and budgets are unchanged. Focused68/48/97, full416collected415executed1existing skip,12fixtures and Wiki checks pass. Root independently repeats the416-unit run and all three0.2.37 package/source doctors pass; real saved packet all/impact JSON is also byte-identical across the change. Platform/CI closure remains pending. [Replay and correction](../../evals/reports/capture-record-text-20261116.md).
 
 **Installed baseline remains0.2.36**: PR64/source and exact PR/main matrices,21/21 Linux static payload hashes and PR65 documentation/main CI are verified. The copy is manually refreshed; no automatic updater, hook/settings change or original-session restart was added.
 
 **Observed use is partial and guided.** The pilot reader used default text, which still emitted an indented JSON wrapper; it did not explicitly choose JSON. It also clipped raw reads, missed some continuations/Context and later used jq. The marked [installed/use correction](../../evals/reports/installed-036-observation-20261116.md) preserves those limitations. New candidate replay is not installed use, independent cold start, comprehension or general efficiency proof.
+```
 
-## Historical evidence
 
 ### State snapshot 2026-11-16 before037
 

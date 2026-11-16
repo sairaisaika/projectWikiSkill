@@ -412,6 +412,10 @@ def text_page(text: str, identity: str, command: list[str], *, budget: int=6000,
         middle = (low + high + 1)//2
         if fits(middle): low = middle
         else: high = middle - 1
+    # Prefer ending after the last complete nonempty line that fits; only one
+    # indivisible line longer than the budget continues mid-line.
+    line_end = text.rfind('\n', start, low) + 1
+    if line_end > start and text[start:line_end].strip() and fits(line_end): low = line_end
     result, token = render(low)
     if (low == start and start < len(text)) or not fits(low):
         raise ValueError('Display budget cannot fit a continuation command; use a shorter artifact path or larger budget')
