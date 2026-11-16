@@ -14,6 +14,12 @@ Four synthetic regressions (`LineBoundaryPageTests`, multibyte owner-like compac
 
 A synthetic 11-owner impact-like text (2920 characters) at the CLI 4000-byte/40-line budget: unchanged source splits 1753+1167 and part 1 ends mid-title; the candidate splits 1720+1200 and part 1 ends after a complete record. Both reassemble exactly. This is one synthetic replay, not the original record.
 
+## Platform fixture correction
+
+The first PR matrix at6c331c4 reported one Windows3.10 failure in the700-byte subcase; its other Windows job was cancelled by fail-fast, while both Ubuntu jobs passed. The synthetic owner line, including unnecessary role/satellite fields, could not fit with the longer PowerShell continuation envelope, so the test incorrectly demanded a complete line where the documented oversized-line fallback applied.
+
+The fixture now retains its multibyte page/title and the same budgets and assertions; oversized-line coverage remains separate. Root replays all four controls against old/new source under both POSIX and PowerShell command formatting: each old-source branch produces8failed subcases and each candidate branch passes all4tests. This exercises quoting branches locally, not a replacement for actual Windows CI. Source pager logic is unchanged by the fixture correction; the failed remote run is retained as evidence: [first PR matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/43966344896).
+
 ## Root same-capture replay
 
 Root independently replays one saved real Native impact record with11declared owners through the old and candidate scripts at the **same helper path**, with the same capture and 4000-byte/40-line CLI limits. Complete content is3859characters. Old parts contain2623+1236characters (4000+1621stdout bytes), with the first part ending mid-line; candidate parts contain2590+1269characters (3967+1654bytes), both ending on complete lines. Both still need two parts. Content reconstructs exactly, the4026-byte machine JSON is byte-identical, and the captured file hash is unchanged. The input remains private; only aggregate results are reported here.

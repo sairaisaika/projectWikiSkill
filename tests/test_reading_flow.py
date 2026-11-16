@@ -978,8 +978,8 @@ class LineBoundaryPageTests(unittest.TestCase):
     COMMAND = ['python','workflow.py','show','--capture','saved.json','--view','impact','--path','src/a.py']
 
     def records(self, count=11):
-        # Synthetic native-like compact owner records with multibyte titles.
-        return ''.join(json.dumps({'page':f'docs/wiki/模块-{i:02}.md','title':f'示例页面所有者标题第{i}号：同步、缓存与边界说明','role':'owner','satellites':[f'tests/test_{i}.py']},ensure_ascii=False,separators=(',',':'))+'\n' for i in range(count))
+        # Each multibyte owner line fits even with the PowerShell envelope at700bytes; oversized lines have a separate control.
+        return ''.join(json.dumps({'page':f'docs/wiki/模块-{i:02}.md','title':f'示例页面所有者标题第{i}号：同步、缓存与边界说明'},ensure_ascii=False,separators=(',',':'))+'\n' for i in range(count))
 
     def pages(self, text, budget, line_budget=60, cursor=None):
         read=wf.reading_module();parts=[]
