@@ -36,6 +36,18 @@ def parse_heading(line):
     return len(match[1]),title
 
 
+def history_heading(level: int, title: str, active_level: int | None) -> bool:
+    """Keep a qualified sibling inside an already explicit history container.
+
+    Standalone product headings keep the original exact-label rule. This reading
+    context does not expand the write planner's history-owner/validation labels.
+    """
+    if HISTORY.fullmatch(title):return True
+    if active_level is None or level != active_level:return False
+    parts=re.split(r'[:：]',title,maxsplit=1)
+    return len(parts)==2 and bool(HISTORY.fullmatch(parts[0].strip()))
+
+
 def page_projection(text: str) -> dict:
     body=[]; history=[]; notes=[]; state=[]; candidates=[]; headings=[]
     history_level=None; current_level=None; fence=None
@@ -47,9 +59,10 @@ def page_projection(text: str) -> dict:
         heading=None if fenced else parse_heading(line)
         if heading:
             level,title=heading
+            starts_history=history_heading(level,title,history_level)
             if history_level is not None and level<=history_level:history_level=None
             if current_level is not None and level<=current_level:current_level=None
-            if HISTORY.fullmatch(title):history_level=level
+            if starts_history:history_level=level
             elif CURRENT.fullmatch(title.strip()):current_level=level
             headings.append({'title':title,'line':number,'history':history_level is not None})
         if not fenced and (match:=VERIFY.match(line)):
@@ -366,11 +379,13 @@ def heading_rows(text):
     for i,line in enumerate(lines):
         marker,fence=fence_transition(line,fence)
         if marker or fence is not None:continue
+        if GENERATED_BEGIN.match(line):in_history=None
         m=parse_heading(line)
         if not m:continue
         depth,title=m
+        starts_history=history_heading(depth,title,in_history)
         if in_history is not None and depth<=in_history:in_history=None
-        if HISTORY.fullmatch(title):in_history=depth
+        if starts_history:in_history=depth
         rows.append((i,depth,title,in_history is not None))
     return lines,rows
 
