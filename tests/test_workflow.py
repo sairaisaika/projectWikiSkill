@@ -279,6 +279,109 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(wf.task_view(child, 'index')['native_workflow'], expected)
         self.assertFalse((self.root / 'never-run-native-finish').exists())
 
+    def read_text_parts(self, argv):
+        import re
+        parts, content, cursor = [], '', []
+        while True:
+            shown = subprocess.run(argv + cursor, capture_output=True, text=True, encoding='utf-8')
+            self.assertEqual(shown.returncode, 0, shown.stdout + shown.stderr)
+            self.assertLessEqual(len(shown.stdout.encode('utf-8')), 4000)
+            self.assertLessEqual(len(shown.stdout.splitlines()), 40)
+            parts.append(shown.stdout)
+            content += shown.stdout.split('--- CONTENT ---\n', 1)[1].rsplit('\n--- END CONTENT ---', 1)[0]
+            token = re.findall(r"--cursor'?\s+'?([A-Za-z0-9_=-]+)", shown.stdout)
+            if not token:return parts, content
+            cursor = ['--cursor', token[-1]]
+
+    def test_packet_narrow_text_is_a_compact_projection_and_json_stays_complete(self):
+        import shlex
+        native = self.root / 'native.py'
+        native.write_text(NATIVE.replace("'placementIssues':[]", "'workflow':{'authority':['scripts/gate-%d.ts'%i for i in range(60)],'finish':{'argv':['never-run-native-finish']}}, 'placementIssues':[]"), encoding='utf-8')
+        peer = self.home / 'peer-checkout'
+        peer.mkdir()
+        (peer / 'app.ts').write_text('peer\n', encoding='utf-8')
+        git(peer, 'init')
+        git(peer, 'config', 'user.name', 'Fixture')
+        git(peer, 'config', 'user.email', 'fixture@example.invalid')
+        git(peer, 'add', 'app.ts')
+        git(peer, 'commit', '-m', 'peer baseline')
+        edit = self.packet(self.capture(peers={'mobile': str(peer)}))
+        # A saved unavailable peer has no captured head; snapshot text keeps it unknown.
+        unknown = copy.deepcopy(edit)
+        unknown['context']['peers']['mobile'].update(available=False, head=None)
+        reviewer = wf.start(self.capture(), 'review-1', 'coordinator', 'Review only', [], ['source evidence'], ['title'], read_only=True)
+        script = ROOT / 'project-wiki/scripts/workflow.py'
+        folder = self.home / "it's a packet dir"
+        folder.mkdir()
+        cases = [(edit, 'impact', 'src/editor.py', 'impact'), (edit, 'feature', 'feature.md', 'cards'),
+                 (reviewer, 'impact', 'src/editor.py', 'impact'), (unknown, 'impact', 'src/editor.py', 'impact')]
+        for number, (value, view, selected, key) in enumerate(cases):
+            packet = (folder / f'task {number}.json')
+            packet.write_text(json.dumps(value), encoding='utf-8')
+            source = str(packet.resolve())
+            argv = [sys.executable, str(script.resolve()), 'show', '--packet', source, '--view', view, '--path', selected, '--snapshot-only']
+            full = wf.task_view(value, view, selected, snapshot_only=True)
+            exported = subprocess.run(argv + ['--format', 'json'], capture_output=True, text=True, encoding='utf-8')
+            self.assertEqual(exported.returncode, 0, exported.stdout + exported.stderr)
+            # --format json remains the complete machine contract, byte for byte.
+            self.assertEqual(exported.stdout, json.dumps(full, ensure_ascii=False, indent=2) + '\n')
+            parts, content = self.read_text_parts(argv + ['--format', 'text'])
+            shown = json.loads(content)
+            # The whole selected record, satellites and unregistered facts are kept.
+            self.assertEqual(shown['native_context'], full['native_context'])
+            self.assertEqual(shown['native_context'][key], value['context']['native_report'][key][:1] if key == 'cards' else value['context']['native_report'][key])
+            for name in ('task_id', 'access', 'freshness', 'expansion', 'path_bases', 'wiki_root', 'root', 'base_sha'):
+                self.assertEqual(shown[name], full[name])
+            self.assertFalse(shown['current_inputs_checked'])
+            saved_peers = value['context']['peers']
+            self.assertEqual(shown['peers'], {alias: {'root': row['root'], 'available': row['available'], 'head': row['head'] or 'unknown'}
+                                              for alias, row in saved_peers.items()})
+            if value is edit:
+                self.assertEqual(shown['peers']['mobile']['head'], git(peer, 'rev-parse', 'HEAD'))
+            if value is unknown:
+                self.assertEqual(shown['peers']['mobile'], {'root': saved_peers['mobile']['root'], 'available': False, 'head': 'unknown'})
+            self.assertEqual(shown['access_scope']['limits'], full['limits'])
+            self.assertIn('not a filesystem sandbox', shown['access_scope']['limits'])
+            self.assertEqual(shown['access_scope']['edit_scope_file_count'], len(value['allowed_files']))
+            self.assertNotIn('selected_file_allowed', shown['access_scope'])
+            if view == 'impact':
+                # Read-only review reads the file but never has it in edit scope.
+                self.assertIs(shown['access_scope']['selected_file_writable'], value['access'] == 'edit')
+            if value['access'] == 'read_only':
+                self.assertEqual(shown['access_scope']['edit_scope_file_count'], 0)
+                self.assertEqual(shown['read_only_baseline']['status'], full['read_only_baseline']['status'])
+                self.assertFalse(shown['read_only_baseline']['completion_certificate'])
+            # The envelope is named once with existing readers, not repeated.
+            for name in ('native_workflow', 'allowed_files', 'acceptance', 'capabilities', 'outcome', 'return_requirements',
+                         'artifact_preservation', 'native_source_comparison', 'review_preparation'):
+                self.assertNotIn(name, shown)
+                self.assertIn(name, shown['not_repeated']['keys'])
+            base = [sys.executable, str(script.resolve()), 'show', '--packet', source]
+            pointers = {'envelope': base + ['--view', 'index', '--snapshot-only', '--format', 'text'],
+                        'complete_view': base + ['--view', view, '--path', selected, '--snapshot-only', '--format', 'json']}
+            for name, expected in pointers.items():
+                # The existing host quoting contract, with the actual packet and path.
+                self.assertEqual(shown['not_repeated']['read'][name], wf.reading_module().shell_command(expected))
+            if os.name != 'nt':
+                index = subprocess.run(shlex.split(shown['not_repeated']['read']['envelope']), capture_output=True, text=True, encoding='utf-8')
+                self.assertEqual(index.returncode, 0, index.stdout + index.stderr)
+                self.assertTrue(index.stdout.startswith('DISPLAY 0:'))
+                self.assertLessEqual(len(index.stdout.encode('utf-8')), 4000)
+                self.assertIn('"native_index"', index.stdout)
+                complete = subprocess.run(shlex.split(shown['not_repeated']['read']['complete_view']), capture_output=True, text=True, encoding='utf-8')
+                self.assertEqual(complete.stdout, exported.stdout)
+            self.assertNotIn('<same-', content)
+            self.assertNotIn('gate-0.ts', content)
+            self.assertLess(sum(len(p.encode('utf-8')) for p in parts), len(exported.stdout.encode('utf-8')))
+            self.assertIn('"native_context"', parts[0])
+            # A cursor from the earlier full-envelope text is still explicitly rejected.
+            old = wf.reading_module().text_page(json.dumps(full, ensure_ascii=False, indent=2) + '\n',
+                                               json.dumps([source, view, selected, None], ensure_ascii=False),
+                                               argv, **wf.cli_budget())['next_cursor']
+            stale = subprocess.run(argv + ['--format', 'text', '--cursor', old], capture_output=True, text=True, encoding='utf-8')
+            self.assertEqual(stale.returncode, 1)
+            self.assertIn('Invalid or changed cursor', stale.stdout)
+
     def test_absent_native_workflow_is_explicitly_undeclared_not_generic_completion(self):
         view = wf.task_view(self.packet(), 'index')
         self.assertEqual(view['native_workflow'], {'status': 'not_declared', 'meaning': 'The native router did not provide its return contract; inspect its own gates before dispatch.'})
@@ -714,6 +817,43 @@ class WorkflowTests(unittest.TestCase):
         self.assertEqual(result['actual_files'], expected)
         self.assertFalse(result['structural_reconciliation'])
         self.assertTrue(any('unplanned files: src/新 reader.py' in x for x in result['issues']))
+
+    def test_peer_alias_is_the_return_key_prefix_and_a_different_native_prefix_stays_unrouted(self):
+        # The native router names a peer's files by its own prefix. The helper's only
+        # explicit mapping is --peer ALIAS=CHECKOUT, whose alias is the key prefix.
+        (self.root / 'native.py').write_text(NATIVE.replace(
+            "'impact':[{'file':x,'pages':pages,'unregistered':False} for x in files]",
+            "'impact':[{'file':x,'pages':pages if x.startswith('native-app/') else [],'unregistered':not x.startswith('native-app/')} for x in files]"), encoding='utf-8')
+        git(self.root, 'commit', '-am', 'router with its own peer prefix')
+        peer = self.home / 'peer-checkout'
+        (peer / 'src').mkdir(parents=True)
+        (peer / 'src/screen.ts').write_text('old\n', encoding='utf-8')
+        git(peer, 'init')
+        git(peer, 'config', 'user.name', 'Fixture')
+        git(peer, 'config', 'user.email', 'fixture@example.invalid')
+        git(peer, 'add', 'src/screen.ts')
+        git(peer, 'commit', '-m', 'peer baseline')
+        planned = ['native-app/src/screen.ts']
+        for alias, routed in (('app', False), ('native-app', True)):
+            initial = self.capture(files=planned, peers={alias: str(peer)})
+            self.assertFalse(initial['native_report']['impact'][0]['unregistered'])
+            # A different alias leaves the native key resolved against the root: no baseline.
+            self.assertEqual(initial['planned_source_hashes'][planned[0]] is not None, routed)
+            packet = wf.start(initial, 'peer-' + alias, 'coordinator', 'Edit the peer screen',
+                              planned, ['inspect actual impacts'], ['title'])
+            (peer / 'src/screen.ts').write_text('new\n', encoding='utf-8')
+            after = self.return_capture(packet)
+            self.assertEqual(after['files'], [alias + '/src/screen.ts'])
+            row = after['native_report']['impact'][0]
+            self.assertEqual((row['unregistered'], len(row['pages'])), (not routed, 3 if routed else 0))
+            template = wf.review_template(packet, after)
+            self.assertEqual(list(template['unregistered']), [] if routed else ['app/src/screen.ts'])
+            if not routed:
+                # Not "no impact": the diff stays unplanned and unregistered until reviewed.
+                result = wf.finish(packet, after, template)
+                self.assertFalse(result['structural_reconciliation'])
+                self.assertTrue(any('unplanned files: app/src/screen.ts' in x for x in result['issues']))
+            git(peer, 'checkout', '--', 'src/screen.ts')
 
     def test_capture_return_clean_readonly_is_empty_not_the_planned_list(self):
         initial = self.capture()

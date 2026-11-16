@@ -13,6 +13,10 @@
 
 ## Current state
 
+**0.2.35 source candidate** on an isolated branch: complete selected-record text projection, original JSON/cursors/access boundaries retained. Root full407 collected/406 executed/1 existing skip, fixture12/check/evaluation and maintainer check pass. All three package profiles/source-closure doctors pass at0.2.35; exact platform CI remains pending. [Evidence and limits](../../evals/reports/narrow-packet-text-20261116.md). No installation or original feature-session replacement has occurred.
+
+### Installed and accepted baseline
+
 **0.2.34 adopted** through PR62, tested e0da9a4 and merge49a51fcaeed611fba6d4917d59b005aa3ecedc32. All PR/platform and exact main CI43375666106 succeed. Focused65/full405collected404executed1platformskip, fixture12/check/evaluation, fresh maintainer check, skill-creator validation and all3 package/source-closure doctors pass.
 
 The text section outline puts its saved heading/status inventory before repeated exact open commands. [Same-capture replay](../../evals/reports/section-outline-first-20261113.json) shows the actual G5 heading in the first viewport, with unchanged normalized JSON/capture hashes and five full parts in both versions. It proves ordering, not reduced total output.

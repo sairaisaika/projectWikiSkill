@@ -1020,6 +1020,42 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snaps
     return result
 
 
+# Text of one packet feature/impact lookup is a projection: the selected native
+# record whole, plus identity, access, currentness and path bases. The task envelope
+# is named, not repeated per lookup; index and --format json still hold all of it.
+NARROW_TEXT_KEEP = ('task_id', 'access', 'freshness', 'native_context', 'expansion', 'path_bases', 'wiki_root', 'root', 'base_sha')
+NARROW_READ_ONLY_KEEP = ('status', 'observed_at', 'difference_count', 'unavailable_peers', 'completion_certificate')
+
+
+def narrow_text_projection(shown: dict, packet: dict, view: str, path: str, command: list[str], snapshot_only: bool) -> dict:
+    """Text-only projection of task_view feature/impact; JSON export stays task_view.
+
+    command is main's exact show argv (program, show, --packet, resolved source).
+    """
+    result = {key: shown[key] for key in NARROW_TEXT_KEEP}
+    result['current_inputs_checked'] = shown['view_observation']['current_inputs_checked']
+    # Capture-time peer identity; a missing head stays unknown, never re-observed here.
+    result['peers'] = {alias: {'root': row.get('root'), 'available': row.get('available'),
+                               'head': row['head'] if isinstance(row.get('head'), str) and row['head'] else 'unknown'}
+                       for alias, row in shown['peers'].items()}
+    scope = {'edit_scope_file_count': len(packet['allowed_files']), 'limits': shown['limits']}
+    if view == 'impact':scope['selected_file_writable'] = shown['access'] == 'edit' and path in packet['allowed_files']
+    result['access_scope'] = scope
+    if 'read_only_baseline' in shown:
+        baseline = shown['read_only_baseline']
+        result['read_only_baseline'] = {key: baseline[key] for key in NARROW_READ_ONLY_KEEP if key in baseline}
+    mode = ['--snapshot-only'] if snapshot_only else []
+    quote = reading_module().shell_command
+    result['not_repeated'] = {
+        # Keys shown only partly here are named too; packet limits are access_scope.limits.
+        'keys': sorted(set(shown) - set(result) - {'limits'})
+                + (['read_only_baseline (other fields)'] if 'read_only_baseline' in shown else []),
+        'read': {'envelope': quote([*command, '--view', 'index', *mode, '--format', 'text']),
+                 'complete_view': quote([*command, '--view', view, '--path', path, *mode, '--format', 'json'])},
+        'meaning': 'Task envelope is not repeated in this text lookup; it remains in the packet and those views.'}
+    return result
+
+
 def capture_arguments(parser):
     parser.add_argument('--root', type=Path, required=True)
     parser.add_argument('--wiki-root', default='docs/wiki')
@@ -1124,6 +1160,7 @@ def main(argv=None) -> int:
             elif view=='summary' or (args.capture and view=='index'):print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,**cli_budget()))
             elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section,cursor=args.cursor,command=command,**cli_budget()))
             else:
+                if args.packet and view in ('feature','impact'):shown=narrow_text_projection(shown,value,view,args.path,command[:5],args.snapshot_only)
                 text=json.dumps(shown,ensure_ascii=False,indent=2)+'\n'
                 identity=json.dumps([str(source),view,args.path,args.section],ensure_ascii=False)
                 print(reading_module().text_page(text,identity,command,cursor=args.cursor,**cli_budget())['text'])
