@@ -86,6 +86,92 @@ class ContextReadingTests(unittest.TestCase):
         h=self.view(c,'history','feature.md')
         self.assertIn('An older not deployed',h['history_markdown'])
         self.assertIn('旧记录',h['historical_verification_notes'][0]['text'])
+    def test_colon_history_siblings_do_not_reenter_current_body(self):
+        reading=wf.reading_module()
+        for heading in ['History: incoming conflict fragments', 'History : archived snapshot',
+                        '历史：候选片段', '核验历史: original acceptance', 'History:']:
+            with self.subTest(heading=heading):
+                text=('# Feature\n## Current state\nCurrent mechanism.\n'
+                      '## History\nEarlier archive.\n## '+heading+'\n'
+                      'Old candidate is not implemented.\n### Nested original\nStill old.\n'
+                      '## Active mechanism\nNew current contract.\n')
+                shown=reading.page_projection(text)
+                self.assertIn('Current mechanism.',shown['body_markdown'])
+                self.assertIn('New current contract.',shown['body_markdown'])
+                self.assertNotIn('Old candidate',shown['body_markdown'])
+                self.assertNotIn('Still old.',shown['body_markdown'])
+                self.assertIn('Old candidate',shown['history_markdown'])
+                self.assertIn('Still old.',shown['history_markdown'])
+                self.assertTrue(next(h for h in shown['section_index'] if h['title']==heading)['history'])
+
+    def test_colon_history_does_not_hide_feature_titles_or_fenced_examples(self):
+        text=('# Feature\n## History API: browser navigation\nCurrent API contract.\n'
+              '## Historical data model\nCurrent storage contract.\n'
+              '## Design\n### Archive: legacy export format\nSupported endpoint.\n'
+              '### History: back-button support\nCurrent product feature.\n'
+              '```markdown\n## History: example only\nExample literal.\n```\n')
+        shown=wf.reading_module().page_projection(text)
+        self.assertEqual(shown['history_markdown'],'')
+        self.assertIn('Current API contract.',shown['body_markdown'])
+        self.assertIn('Current storage contract.',shown['body_markdown'])
+        self.assertIn('Supported endpoint.',shown['body_markdown'])
+        self.assertIn('Current product feature.',shown['body_markdown'])
+        self.assertIn('Example literal.',shown['body_markdown'])
+
+    def test_fresh_capture_separates_qualified_history_and_snapshot_retains_it(self):
+        (self.root/'docs/wiki/feature.md').write_text(
+            PAGE+'\n## History: incoming snapshot\nOlder candidate not implemented.\n',encoding='utf-8')
+        capture=self.prepare()
+        shown=self.view(capture,'page','feature.md',snapshot_only=True)
+        history=self.view(capture,'history','feature.md',snapshot_only=True)
+        self.assertNotIn('Older candidate',shown['body_markdown'])
+        self.assertIn('Older candidate',history['history_markdown'])
+        self.assertEqual((self.root/'docs/wiki/feature.md').read_text(encoding='utf-8'),
+                         PAGE+'\n## History: incoming snapshot\nOlder candidate not implemented.\n')
+
+    def test_state_snapshot_keeps_original_unqualified_history_owner(self):
+        text=('# Feature\n## Current state\nOld state.\n'
+              '## History\nOriginal archive.\n'
+              '## History: incoming fragments\nOther archived material.\n'
+              '## Active mechanism\nStill active.\n')
+        updated=wf.reading_module().replace_current(text,'New state.','2026-11-16')
+        self.assertLess(updated.index('## History\n'),updated.index('### State snapshot'))
+        self.assertLess(updated.index('### State snapshot'),updated.index('## History: incoming fragments'))
+        shown=wf.reading_module().page_projection(updated)
+        self.assertEqual(shown['authored_current_state'],'New state.')
+        self.assertIn('Old state.',shown['history_markdown'])
+        self.assertIn('Other archived material.',shown['history_markdown'])
+        self.assertIn('Still active.',shown['body_markdown'])
+
+    def test_qualified_product_subheadings_remain_valid_current_body(self):
+        for body in ['### Archive: supported export\nA current endpoint.',
+                     '### History: back-button support\nA current feature.']:
+            with self.subTest(body=body):
+                updated=wf.reading_module().replace_current(PAGE,body,'2026-11-16')
+                self.assertIn(body,updated)
+                shown=wf.reading_module().page_projection(updated)
+                self.assertIn(body,shown['body_markdown'])
+                # The existing authored-state projection omits nested heading lines.
+                self.assertEqual(shown['authored_current_state'],body.split('\n',1)[1])
+
+    def test_generated_boundary_resets_reader_and_planner_history_equally(self):
+        text=('# F\n## Current state\nCurrent.\n## History\nArchived.\n'
+              '<!-- gen:begin -->\nGenerated.\n<!-- gen:end -->\n'
+              '## History: incoming\n> Reviewed: 2020-01-01 old\n'
+              '### Current state\nStale nested.\n')
+        reading=wf.reading_module()
+        projection=reading.page_projection(text)
+        _,rows=reading.heading_rows(text)
+        body_row=next(h for h in projection['section_index'] if h['title']=='History: incoming')
+        plan_row=next(h for h in rows if h[2]=='History: incoming')
+        self.assertFalse(body_row['history'])
+        self.assertEqual(plan_row[3],body_row['history'])
+        updated=reading.replace_current(text,'New current.','2026-11-16')
+        final=reading.page_projection(updated)
+        self.assertEqual(final['authored_current_state'],'New current.')
+        self.assertIn('Stale nested.',final['history_markdown'])
+        self.assertIn('<!-- gen:begin -->\nGenerated.\n<!-- gen:end -->',updated)
+
     def test_absent_current_section_is_unknown_not_latest_stamp(self):
         (self.root/'docs/wiki/feature.md').write_text('# F\n> Reviewed: 2020-01-01 old not deployed\n',encoding='utf-8')
         p=self.view(self.prepare(),'page','feature.md')

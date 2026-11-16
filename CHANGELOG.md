@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.36 — qualified history boundaries (source candidate)
+
+- Keep a same-level labelled history continuation inside an already explicit archive, so it cannot return obsolete claims to current body. Preserve standalone product subtitles, fenced code, original state-snapshot ownership, source Markdown and older snapshots.
+- [Actual-source replay and guided-use limits](evals/reports/qualified-history-20261116.md) retain the first turn-limit failure, skipped file impacts and host output truncation separately from the parser fix.
+
 ## 0.2.35 — narrow saved-packet text (source candidate)
 
 - Project complete feature/file context before the repeated task envelope, retaining access/currentness and captured peer identities. Exact existing readers expose the envelope and unchanged complete JSON. No new flags or gates.

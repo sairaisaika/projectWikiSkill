@@ -13,7 +13,9 @@
 
 ## Current state
 
-**0.2.35 source candidate** on an isolated branch: complete selected-record text projection, original JSON/cursors/access boundaries retained. Root full407 collected/406 executed/1 existing skip, fixture12/check/evaluation and maintainer check pass. All three package profiles/source-closure doctors pass at0.2.35; exact platform CI remains pending. [Evidence and limits](../../evals/reports/narrow-packet-text-20261116.md). No installation or original feature-session replacement has occurred.
+**0.2.36 source candidate** on an isolated branch: qualified sibling continuations stay within their explicit archive. The first global matcher passed410 but was returned after Opus found shared write-planner regressions; the final contextual implementation passes48 focused tests, preserving product subtitles outside archives and original snapshot ownership; reader/planner generated-block boundaries agree. Root final413 collected/412 executed/1 existing skip, fixture12/check/evaluation, maintainer check and all three package/source doctors pass. Final scoped Opus source review reports no further actionable issue; exact platform/main CI and installation remain pending. [Actual-source replay and limits](../../evals/reports/qualified-history-20261116.md).
+
+**0.2.35 source verified**: PR63/sourceb393f62 and merge556a082d37ee3f22de298b0ab3849deee054fedd; exact main CI43932281261 and PR43930976271 succeed in all four Ubuntu/Windows Python3.10/3.13 jobs. Root full407 collected/406 executed/1 platform skip, fixture12/check/evaluation and all three package/source doctors pass. Still uninstalled; the guided follow-up found this new history defect and did not establish per-file adoption. [Compact lookup evidence](../../evals/reports/narrow-packet-text-20261116.md).
 
 ### Installed and accepted baseline
 

@@ -72,7 +72,7 @@ with one exact open command each. Headings inside fenced history snapshots are n
 listed as current sections; duplicate or empty headings are marked instead of given
 a command that would fail, and missing outline metadata is reported unknown.
 `--format json` deliberately exports the complete selected record without display
-pagination; legacy capture/raw-native and packet views retain their JSON default for existing clients,
+pagination; an already explicit history container also retains a same-level labelled continuation such as `History: archived snapshot` or a bare `History:`. This is contextual: standalone product subtitles and fenced examples keep their original meaning. The exact labels used for writing a page state snapshot are unchanged. A new preparation uses this boundary; an already saved projection is retained as evidence, not silently rewritten. Legacy capture/raw-native and packet views retain their JSON default for existing clients,
 and support `--format text` for bounded agent reading. In that text, a packet
 `--view feature|impact` is a lookup projection: the complete selected native record
 and its expansion, task id, access, freshness, path bases, each peer's captured

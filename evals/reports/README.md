@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Qualified history boundary, 2026-11-16](qualified-history-20261116.md) | Same-source old candidate text moves from current body to explicit history; fenced/product-name controls | Old snapshots retained; partial guided adoption and host aggregation truncation remain unproven |
 | [Narrow saved-packet text, 2026-11-16](narrow-packet-text-20261116.md) | Complete selected records first, same-capture bytes/parts reduced, JSON unchanged and source checks | Guided replay; platform CI, installation and fresh real use remain separate |
 | [Owner-first installed/use return, 2026-11-13](owner-first-adoption-20261113.json) | Merged main CI, quiet static21-file exchange, unchanged-context reuse and one known-path review | Long body reading still duplicates a live grep; no general adoption or savings claim |
 | [Owner-first saved context, 2026-11-13](owner-first-20261113.json) | Same captured MCP task and unchanged summary data: owner visible in candidate first viewport; every part reconstructs completely | Coordinator replay, two parts in both; no independent adoption or token/time savings claim |
