@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.37 — default capture file text
+
+- Compact complete default capture feature/impact text as well as packet lookups, retaining native satellites and provenance without inventing task permissions. JSON/capture bytes and bounded continuation remain unchanged.
+- [Old-source control and same-input replay](evals/reports/capture-record-text-20261116.md) correct the previous explicit-JSON attribution and separate output measurements from adoption.
+
 ## 0.2.36 — qualified history boundaries
 
 - Keep a same-level labelled history continuation inside an already explicit archive, so it cannot return obsolete claims to current body. Preserve standalone product subtitles, fenced code, original state-snapshot ownership, source Markdown and older snapshots.

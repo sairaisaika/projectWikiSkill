@@ -582,7 +582,8 @@
         "update-state",
         "现状更新",
         "输出分页",
-        "重复检索"
+        "重复检索",
+        "capture impact text"
       ],
       "sources": [
         {
@@ -696,6 +697,13 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "section_outline",
           "reason": "Saved per-view heading outline with exact open argv only for unique titled sections; missing metadata stays unknown"
+        },
+        {
+          "id": "capture-record-text",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "capture_record_text",
+          "reason": "Capture feature/impact text: whole selected record as exact compact JSON lines, base/peer heads, path bases, freshness, no task access"
         }
       ],
       "docs": [
@@ -719,7 +727,8 @@
         ],
         "outputs": [
           "New prepared capture CLI text is bounded to 4000 UTF-8 bytes/40 stdout lines (programmatic default 6000/60), with exact NEXT command on line 2 and at the end and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",
-          "Explicit --format json exports the full unchanged view shape; update-state writes a private preview and optionally the unchanged selected Wiki Markdown page."
+          "Explicit --format json exports the full unchanged view shape; update-state writes a private preview and optionally the unchanged selected Wiki Markdown page.",
+          "show --capture PATH --view feature|impact text (default for prepared captures, explicit --format text for older ones) prints one line-oriented record: every key and satellite as exact compact JSON, native/capture limits, root/Wiki root/base head, captured peer heads (missing head unknown), path bases, freshness, an explicit not-a-task-packet/no-permission boundary and exact summary/JSON reader commands; --format json is unchanged."
         ],
         "errors": [
           "{\"ok\": false, ...} and exit 1 for an invalid packet, access scope or unknown --path",

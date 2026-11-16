@@ -29,4 +29,4 @@ These are guided source tasks and coordinator replay, not R7 independent cold-st
 
 ## Post-merge observation
 
-The four-job PR/main matrices passed; the compact change is included in the later0.2.36 static installation. The [fresh-use follow-up](installed-036-observation-20261116.md) records a task explicitly choosing JSON, which this text-only change intentionally leaves unchanged. The source-checkpoint uninstalled statements above are historical, not current status.
+The four-job PR/main matrices passed; the compact change is included in the later0.2.36 static installation. The [fresh-use follow-up](installed-036-observation-20261116.md) records a raw capture impact lookup in the default text format, clipped with `head -45`. This packet-only change did not cover that path: raw capture feature/impact text still printed an indented JSON-shaped wrapper. An earlier version of this paragraph wrongly said the task explicitly chose JSON. The source-checkpoint uninstalled statements above are historical, not current status.

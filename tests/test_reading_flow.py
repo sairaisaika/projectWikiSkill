@@ -3,6 +3,7 @@ import base64
 import copy
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -284,8 +285,11 @@ class ReadingFlowTests(unittest.TestCase):
             else:args=shlex.split(next_command)
             self.assertIn('--snapshot-only',args)
         else:self.fail('CLI cursor never completed')
-        expected=json.dumps(self.view(c,'impact','src/editor.py',snapshot_only=True),ensure_ascii=False,indent=2)+'\n'
+        # Capture impact text is the line record projection; JSON export stays capture_view.
+        shown=self.view(c,'impact','src/editor.py',snapshot_only=True)
+        expected=wf.capture_record_text(shown,c,'impact','src/editor.py',[sys.executable,str(Path(wf.__file__).resolve()),'show','--capture',str(out.resolve())],True)
         self.assertEqual(''.join(chunks),expected)
+        self.assertIn('  [1] '+json.dumps(c['native_report']['impact'][0]['pages'][0],ensure_ascii=False,separators=(',',':')),expected)
     def test_cli_state_preview_then_apply_and_second_noop(self):
         out=Path(self.tmp.name)/'context.json';wf.write_new(out,self.prepare())
         state=Path(self.tmp.name)/'state.md';state.write_text('Same-version mechanism. Live unknown.\n', encoding="utf-8")
@@ -646,6 +650,140 @@ print(json.dumps({{'query':q,'cards':[{{'path':'feature.md','title':'Editor'}}],
         self.assertNotIn(b'\r\n',cp.stdout)
         self.assertIn('--cursor',cp.stdout.decode('utf-8'))
 
+
+RICH_NATIVE = """import json,sys
+q=sys.argv[1]; files=sys.argv[sys.argv.index('--files')+1:]
+big=%r
+print(json.dumps({'query':q,
+ 'cards':[{'path':'feature.md','title':'Editor ✓','sections':[{'title':'機能: 書く','anchor':'#a'},{'title':'Reader','anchor':'#b'}],'verified':None,'规则 键':{'nested':[1,'二']}}],
+ 'impact':[{'file':f,'pages':[{'path':'feature.md','title':'Editor','symbols':['名前=1','a: b',big]},{'path':'consumer.md','title':'Reader \\u2713'}],
+            'unregistered':False,'invariants':['只写一次'],'规则 键':'x'} for f in files],
+ 'omitted':[{'path':'unexpanded.md','title':'Not yet read'}],'placementIssues':[],'limits':'registered scope only'}))
+"""
+
+
+class CaptureRecordTextTests(unittest.TestCase):
+    """Raw capture feature/impact text: whole selected record, no task-packet wrapper."""
+    setUp = fixture.ContextReadingTests.setUp
+    git = fixture.ContextReadingTests.git
+
+    def rich_capture(self, big='', folder='capture dir'):
+        (self.root/'rich.py').write_text(RICH_NATIVE % big,encoding='utf-8')
+        self.git('add','rich.py');self.git('commit','-m','rich')
+        peer=Path(self.tmp.name)/'peer checkout';peer.mkdir()
+        (peer/'app.ts').write_text('peer\n',encoding='utf-8')
+        for args in (['init'],['config','user.name','Fixture'],['config','user.email','fixture@example.invalid'],['add','app.ts'],['commit','-m','peer']):
+            subprocess.check_output(['git','-C',str(peer),*args],stderr=subprocess.PIPE)
+        c=wf.prepare(self.root,'editor',['src/editor.py'],[sys.executable,'rich.py'],['rich.py'],allow_execution=True,peers={'mobile':str(peer)})
+        out=Path(self.tmp.name)/folder/"it's saved context.json";out.parent.mkdir(parents=True,exist_ok=True)
+        wf.write_new(out,c)
+        return c,out.resolve(),peer
+
+    def read(self, argv):
+        import re, shlex
+        parts,content=[],[]
+        for _ in range(100):
+            cp=subprocess.run(argv,capture_output=True)
+            self.assertEqual(cp.returncode,0,(cp.stdout+cp.stderr).decode('utf-8','replace'))
+            self.assertLessEqual(len(cp.stdout),4000);self.assertLessEqual(len(cp.stdout.splitlines()),40)
+            out=cp.stdout.decode('utf-8');parts.append(out)
+            content.append(out.split('--- CONTENT ---\n',1)[1].rsplit('\n--- END CONTENT ---',1)[0])
+            tail=out.rsplit('\n--- END CONTENT ---',1)[1]
+            if '\nNEXT: ' not in tail:return parts,''.join(content)
+            command=tail.split('\nNEXT: ',1)[1].strip()
+            # head -45 keeps the same exact continuation on line 2.
+            self.assertEqual(out.splitlines()[1],'NEXT PART: '+command)
+            argv=[m.replace("''","'") for m in re.findall(r"'((?:''|[^'])*)'",command)] if sys.platform=='win32' else shlex.split(command)
+            self.assertIn('--snapshot-only',argv)
+        self.fail('continuation did not complete')
+
+    def records(self, content, key):
+        import re
+        records=[];items=None
+        lines=content.splitlines()
+        start=next((n for n,line in enumerate(lines) if line.startswith(f'NATIVE {key.upper()} RECORD 1 of ')),None)
+        if start is None:self.fail('no line-oriented native record section: '+content[:120])
+        for line in lines[start:]:
+            if line.startswith('Native limits: '):return records
+            if line.startswith(f'NATIVE {key.upper()} RECORD '):records.append({});continue
+            if line.startswith('  ['):items.append(json.loads(line.split('] ',1)[1]));continue
+            if line.startswith('"'):name,end=json.JSONDecoder().raw_decode(line);rest=line[end+2:]
+            else:name,rest=line.split(': ',1)
+            if re.fullmatch(r'\d+ items',rest):items=records[-1][name]=[]
+            else:records[-1][name]=json.loads(rest)
+        self.fail('record section is not closed')
+
+    def test_capture_feature_and_impact_default_text_keeps_whole_record_without_task_permissions(self):
+        import shlex
+        c,out,peer=self.rich_capture()
+        before=out.read_bytes()
+        script=str(Path(wf.__file__).resolve())
+        head=self.git('rev-parse','HEAD');peer_head=subprocess.check_output(['git','-C',str(peer),'rev-parse','HEAD']).decode().strip()
+        for view,path,key in (('impact','src/editor.py','impact'),('feature','feature.md','cards')):
+            with self.subTest(view=view):
+                base=[sys.executable,script,'show','--capture',str(out),'--view',view,'--path',path,'--snapshot-only']
+                parts,content=self.read(base)
+                # Old source printed an indented JSON wrapper for this default text view.
+                self.assertFalse(content.startswith('{'),content[:200])
+                self.assertTrue(content.startswith(f'CAPTURED NATIVE {view.upper()} RECORD — {path}\n'))
+                expected=[row for row in c['native_report'][key] if row['file' if key=='impact' else 'path']==path]
+                self.assertEqual(self.records(content,key),expected)
+                self.assertIn('Native limits: "registered scope only"',content)
+                self.assertIn('Capture limits: '+json.dumps(c['limits'],ensure_ascii=False,separators=(',',':')),content)
+                self.assertIn('Freshness: saved snapshot only; current inputs not checked; current inputs checked: false',content)
+                self.assertIn(f'Root: {c["root"]}; Wiki root: docs/wiki; base head: {head}',content)
+                self.assertIn(f'  mobile: root={peer.resolve()}; available=true; head={peer_head}',content)
+                for value in wf.PATH_BASES.values():self.assertIn(value,content)
+                # A raw capture is not a task packet: no invented access or writability.
+                self.assertIn('not a task packet',content);self.assertIn('marks no file writable',content)
+                for word in ('allowed_files','selected_file_writable','edit_scope_file_count','"access"','task_id','writable=true','read_only'):
+                    self.assertNotIn(word,content)
+                readers=[line.split(': ',1)[1] for line in content.splitlines() if line.startswith(('Selected native record only; other records','Complete JSON export'))]
+                self.assertEqual(len(readers),2)
+                quote=wf.reading_module().shell_command
+                self.assertEqual(readers[0],quote([sys.executable,script,'show','--capture',str(out),'--view','summary','--snapshot-only']))
+                self.assertEqual(readers[1],quote(base+['--format','json']))
+                # --format json is the unchanged capture_view machine export.
+                exported=subprocess.run(base+['--format','json'],capture_output=True)
+                self.assertEqual(exported.stdout.decode('utf-8'),json.dumps(wf.capture_view(c,view,path,snapshot_only=True),ensure_ascii=False,indent=2)+'\n')
+                if os.name!='nt':
+                    self.assertEqual(subprocess.run(shlex.split(readers[1]),capture_output=True).stdout,exported.stdout)
+                    summary=subprocess.run(shlex.split(readers[0]),capture_output=True)
+                    self.assertEqual(summary.returncode,0);self.assertIn(b'FILE \xe2\x86\x92 ALL DECLARED OWNER PAGES',summary.stdout)
+        # A saved unavailable peer keeps an unknown head; nothing is re-observed.
+        c['peers']['mobile'].update(available=False,head=None)
+        text=wf.capture_record_text(wf.capture_view(c,'impact','src/editor.py',snapshot_only=True),c,'impact','src/editor.py',['p','show','--capture','x'],True)
+        self.assertIn(f'  mobile: root={peer.resolve()}; available=false; head=unknown',text)
+        self.assertEqual(c['native_report_canonical_sha256'],wf.report_hash(c['native_report']))
+        self.assertEqual(out.read_bytes(),before)
+
+    def test_capture_record_text_continues_long_unicode_and_long_paths_exactly(self):
+        big='符号'*3000+' ✓'
+        _,out,_=self.rich_capture(big,folder='长路径 '*12+'capture')
+        before=out.read_bytes()
+        script=str(Path(wf.__file__).resolve())
+        for view,path,key in (('impact','src/editor.py','impact'),('feature','feature.md','cards')):
+            with self.subTest(view=view):
+                base=[sys.executable,script,'show','--capture',str(out),'--view',view,'--path',path,'--snapshot-only']
+                shown=wf.capture_view(wf.read_json(out),view,path,snapshot_only=True)
+                parts,content=self.read(base)
+                self.assertEqual(self.records(content,key),shown['native_context'][key])
+                self.assertEqual(content,wf.capture_record_text(shown,wf.read_json(out),view,path,base[:5],True))
+                if view=='impact':self.assertGreater(len(parts),3)
+                self.assertEqual(len(parts),len(self.read(base+['--format','text'])[0]))
+        # Reading never rewrites the saved capture.
+        self.assertEqual(out.read_bytes(),before)
+
+    def test_packet_text_and_other_capture_views_keep_their_rendering(self):
+        c,out,_=self.rich_capture()
+        script=str(Path(wf.__file__).resolve())
+        # Explicit text for all keeps the JSON-shaped continuation; only feature/impact change.
+        parts,content=self.read([sys.executable,script,'show','--capture',str(out),'--view','all','--snapshot-only'])
+        self.assertEqual(content,json.dumps(wf.capture_view(c,'all',snapshot_only=True),ensure_ascii=False,indent=2)+'\n')
+        packet=wf.start(c,'task','owner','edit',['src/editor.py'],['source evidence'],['title'])
+        saved=Path(self.tmp.name)/'packet.json';saved.write_text(json.dumps(packet),encoding='utf-8')
+        _,text=self.read([sys.executable,script,'show','--packet',str(saved.resolve()),'--view','impact','--path','src/editor.py','--snapshot-only','--format','text'])
+        self.assertTrue(json.loads(text)['access_scope']['selected_file_writable'])
 
 class SectionOutlineTests(unittest.TestCase):
     """Saved heading discovery replaces guessed --section values and whole-page reads."""

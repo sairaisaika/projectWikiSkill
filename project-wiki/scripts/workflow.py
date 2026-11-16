@@ -917,6 +917,20 @@ def render_context_summary(view: dict, artifact: str, budget: int=6000, **kwargs
     return reading_module().render_summary(view, artifact, budget, **kwargs)
 
 
+PATH_BASES = {
+    'wiki_pages': 'root / wiki_root',
+    'source_files': 'root, or peers[alias].root after a declared alias/ prefix',
+    'limits': 'Saved bases only; no existence or currentness claim. A missing wiki_root is unknown, not a default. Keep original native keys for --path.',
+}
+
+
+def captured_peer_heads(peers: dict) -> dict:
+    # Capture-time peer identity; a missing head stays unknown, never re-observed here.
+    return {alias: {'root': row.get('root'), 'available': row.get('available'),
+                    'head': row['head'] if isinstance(row.get('head'), str) and row['head'] else 'unknown'}
+            for alias, row in peers.items()}
+
+
 def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snapshot_only: bool = False) -> dict:
     """Expose full native records or an explicit index; never silently clip them."""
     if packet.get('kind') != 'wiki-work-packet':
@@ -943,11 +957,7 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snaps
             freshness = 'stale or unavailable; this is a historical projection, recapture before new work'
     result = {'task_id': packet['task_id'], 'owner': packet['owner'], 'root': packet['root'],
             'wiki_root': packet['context'].get('wiki_root'),
-            'path_bases': {
-                'wiki_pages': 'root / wiki_root',
-                'source_files': 'root, or peers[alias].root after a declared alias/ prefix',
-                'limits': 'Saved bases only; no existence or currentness claim. A missing wiki_root is unknown, not a default. Keep original native keys for --path.',
-            },
+            'path_bases': dict(PATH_BASES),
             'access': packet.get('access', 'edit'),
             'base_sha': packet['base_sha'], 'peers': packet['context'].get('peers', {}),
             'freshness': freshness, 'outcome': packet['outcome'],
@@ -1034,10 +1044,7 @@ def narrow_text_projection(shown: dict, packet: dict, view: str, path: str, comm
     """
     result = {key: shown[key] for key in NARROW_TEXT_KEEP}
     result['current_inputs_checked'] = shown['view_observation']['current_inputs_checked']
-    # Capture-time peer identity; a missing head stays unknown, never re-observed here.
-    result['peers'] = {alias: {'root': row.get('root'), 'available': row.get('available'),
-                               'head': row['head'] if isinstance(row.get('head'), str) and row['head'] else 'unknown'}
-                       for alias, row in shown['peers'].items()}
+    result['peers'] = captured_peer_heads(shown['peers'])
     scope = {'edit_scope_file_count': len(packet['allowed_files']), 'limits': shown['limits']}
     if view == 'impact':scope['selected_file_writable'] = shown['access'] == 'edit' and path in packet['allowed_files']
     result['access_scope'] = scope
@@ -1054,6 +1061,19 @@ def narrow_text_projection(shown: dict, packet: dict, view: str, path: str, comm
                  'complete_view': quote([*command, '--view', view, '--path', path, *mode, '--format', 'json'])},
         'meaning': 'Task envelope is not repeated in this text lookup; it remains in the packet and those views.'}
     return result
+
+
+def capture_record_text(shown: dict, capture: dict, view: str, path: str, command: list[str], snapshot_only: bool) -> str:
+    """Line text of capture_view feature/impact; JSON export stays capture_view.
+
+    command is main's exact show argv (program, show, --capture, resolved source).
+    """
+    mode = ['--snapshot-only'] if snapshot_only else []
+    quote = reading_module().shell_command
+    readers = {'index': quote([*command, '--view', 'summary', *mode]),
+               'complete_view': quote([*command, '--view', view, '--path', path, *mode, '--format', 'json'])}
+    return reading_module().capture_record_text(shown, capture, view, path, captured_peer_heads(capture.get('peers', {})),
+                                                PATH_BASES, readers)
 
 
 def capture_arguments(parser):
@@ -1160,8 +1180,10 @@ def main(argv=None) -> int:
             elif view=='summary' or (args.capture and view=='index'):print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,**cli_budget()))
             elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section,cursor=args.cursor,command=command,**cli_budget()))
             else:
-                if args.packet and view in ('feature','impact'):shown=narrow_text_projection(shown,value,view,args.path,command[:5],args.snapshot_only)
-                text=json.dumps(shown,ensure_ascii=False,indent=2)+'\n'
+                if args.capture and view in ('feature','impact'):text=capture_record_text(shown,value,view,args.path,command[:5],args.snapshot_only)
+                else:
+                    if args.packet and view in ('feature','impact'):shown=narrow_text_projection(shown,value,view,args.path,command[:5],args.snapshot_only)
+                    text=json.dumps(shown,ensure_ascii=False,indent=2)+'\n'
                 identity=json.dumps([str(source),view,args.path,args.section],ensure_ascii=False)
                 print(reading_module().text_page(text,identity,command,cursor=args.cursor,**cli_budget())['text'])
             return 0

@@ -157,6 +157,51 @@ def summary_text(view: dict, artifact: str) -> str:
     return text
 
 
+def json_compact(value) -> str:
+    return json.dumps(value, ensure_ascii=False, separators=(',', ':'))
+
+
+def record_lines(record: dict) -> list[str]:
+    """Every key of one native record, in saved order, as exact compact JSON.
+
+    A list of objects gets one line per item so satellites are neither nested
+    under deep indentation nor reduced to matching anchors.
+    """
+    lines=[]
+    for key,value in record.items():
+        name=key if re.fullmatch(r'[A-Za-z_][\w-]*',key) else json_compact(key)
+        if isinstance(value,list) and value and all(isinstance(item,dict) for item in value):
+            lines.append(f'{name}: {len(value)} items')
+            lines.extend(f'  [{number}] '+json_compact(item) for number,item in enumerate(value,1))
+        else:lines.append(name+': '+json_compact(value))
+    return lines
+
+
+def capture_record_text(view: dict, capture: dict, kind: str, path: str, peers: dict, path_bases: dict, readers: dict) -> str:
+    """Text of one raw capture feature/impact lookup; JSON export stays capture_view.
+
+    A raw capture has no task packet, so no task access is shown or implied.
+    """
+    key='cards' if kind=='feature' else 'impact'
+    rows=view['native_context'][key]
+    head=capture.get('base',{}).get('head') if isinstance(capture.get('base'),dict) else None
+    lines=[f'CAPTURED NATIVE {kind.upper()} RECORD — {path}',
+           'Raw native-wiki-capture, not a task packet: no task, owner, access mode, edit scope or capability is recorded; this view grants no permission and marks no file writable.',
+           'Freshness: '+view['freshness']+'; current inputs checked: '+json_compact(view['current_inputs_checked']),
+           'Root: '+str(capture.get('root'))+'; Wiki root: '+str(capture.get('wiki_root') or 'unknown')+'; base head: '+(head if isinstance(head,str) and head else 'unknown'),
+           'Captured peers (capture-time, not re-observed): '+('none' if not peers else str(len(peers)))]
+    lines.extend(f'  {alias}: root={row["root"]}; available={json_compact(row["available"])}; head={row["head"]}' for alias,row in peers.items())
+    lines.append('Path bases: Wiki pages = '+path_bases['wiki_pages']+'; source files = '+path_bases['source_files']+'. '+path_bases['limits'])
+    for number,row in enumerate(rows,1):
+        lines.append(f'NATIVE {key.upper()} RECORD {number} of {len(rows)} (every key and satellite; values are exact compact JSON):')
+        lines.extend(record_lines(row))
+    lines.append('Native limits: '+json_compact(view['native_context']['limits']))
+    lines.append('Capture limits: '+json_compact(capture.get('limits')))
+    lines.append('Selected native record only; other records: '+readers['index'])
+    lines.append('Complete JSON export of this view: '+readers['complete_view'])
+    return '\n'.join(lines)+'\n'
+
+
 def render_summary(view: dict, artifact: str, budget: int=6000, *, cursor=None, command=None, line_budget=60, early_continuation=False) -> str:
     command = command or read_command(artifact, 'summary')
     return text_page(summary_text(view, artifact), 'summary:' + artifact, command,
