@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Default capture record text](capture-record-text-20261116.md) | Old-source controls and exact same-record continuation/JSON replay | Source candidate; installed use and general adoption separate |
 | [Linux static0.2.36 installation and guided use, 2026-11-16](installed-036-observation-20261116.md) | Exact platform/main CI;21/21 installed payload hashes; fresh genuine guided invocation | Static copy/no auto-update; partial Context and continuation reading; no independent adoption or cost claim |
 | [Qualified history boundary, 2026-11-16](qualified-history-20261116.md) | Same-source old candidate text moves from current body to explicit history; fenced/product-name controls | Old snapshots retained; partial guided adoption and host aggregation truncation remain unproven |
 | [Narrow saved-packet text, 2026-11-16](narrow-packet-text-20261116.md) | Complete selected records first, same-capture bytes/parts reduced, JSON unchanged and source checks | Guided replay; platform CI, installation and fresh real use remain separate |

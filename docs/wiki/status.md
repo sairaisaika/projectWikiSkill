@@ -13,15 +13,27 @@
 
 ## Current state
 
+**0.2.37 source candidate** fixes the default raw-capture feature/impact text path that0.2.35 left JSON-shaped. Complete native records, root/base/peers/path bases, freshness and exact reader commands remain, with no invented task permissions. Machine JSON, capture bytes, packet views and budgets are unchanged. Focused68/48/97, full416collected415executed1existing skip,12fixtures and Wiki checks pass. Root independently repeats the416-unit run and all three0.2.37 package/source doctors pass; real saved packet all/impact JSON is also byte-identical across the change. Platform/CI closure remains pending. [Replay and correction](../../evals/reports/capture-record-text-20261116.md).
+
+**Installed baseline remains0.2.36**: PR64/source and exact PR/main matrices,21/21 Linux static payload hashes and PR65 documentation/main CI are verified. The copy is manually refreshed; no automatic updater, hook/settings change or original-session restart was added.
+
+**Observed use is partial and guided.** The pilot reader used default text, which still emitted an indented JSON wrapper; it did not explicitly choose JSON. It also clipped raw reads, missed some continuations/Context and later used jq. The marked [installed/use correction](../../evals/reports/installed-036-observation-20261116.md) preserves those limitations. New candidate replay is not installed use, independent cold start, comprehension or general efficiency proof.
+
+## Historical evidence
+
+### State snapshot 2026-11-16 before037
+
+```markdown
+## Current state
+
 **0.2.36 source and Linux static installation verified**: [PR64](https://github.com/sairaisaika/projectWikiSkill/pull/64), merge44162a52a6832712c7845843616402b64b306cf5; exact PR43938712631 and main43940304098 CI succeed in all four platform/Python jobs. Focused48/full413collected412executed1existing skip, fixture12/check/evaluation and all three package/source doctors passed. The contextual history reader/planner fix and its limits are in the [source report](../../evals/reports/qualified-history-20261116.md).
 
 **Installation**:21/21 tracked standalone payload hashes match that merge after a quiet atomic exchange; the previous copy remains outside discovery. Hooks/settings/session untouched. This is a manually refreshed static Skill, with no automatic updater.
 
-**Fresh guided use** invokes the installed workflow for query and file-specific preparation in one genuine engineering task. It still clips some raw reads, leaves summary/impact continuations unread, explicitly chooses JSON then jq, and misses some nearest Context files. File-first preparation is observed; complete pre-edit reading, natural adoption and reduced repeated retrieval are not. See [installation and use evidence](../../evals/reports/installed-036-observation-20261116.md).
+**Fresh guided use** invokes the installed workflow for query and file-specific preparation in one genuine engineering task. It still clips some raw reads, leaves summary/impact continuations unread, reads a default-text raw capture impact view (no `--format` option) through `head -45` and then uses jq, because that default text was still an indented JSON-shaped wrapper (corrected from an earlier "explicitly chooses JSON" inference), and misses some nearest Context files. File-first preparation is observed; complete pre-edit reading, natural adoption and reduced repeated retrieval are not. See [installation and use evidence](../../evals/reports/installed-036-observation-20261116.md).
 
 R7 independent cold-start, general semantic/handoff success and token/time savings remain open. Earlier baselines and pending statements are retained as history.
-
-## Historical evidence
+```
 
 ### State snapshot 2026-11-16 installed036 return
 

@@ -1,6 +1,6 @@
 # Invariants
 
-> Reviewed: 2026-11-08, section-outline row added; older rows retain their scoped evidence.
+> Reviewed: 2026-11-16, capture-record-text row added; older rows retain their scoped evidence.
 
 This page is an **index** from each guarded behaviour to the code that enforces it and the
 tests that guard it. The tests are the source of truth: if a row and a test disagree, the test
@@ -87,4 +87,5 @@ removed, fix the row here in the same change. A test name that no longer greps i
 | Snapshot page/history reading never invokes Git or reopens current pages | workflow.capture_view | tests/test_context_reading.py |
 | History is projected separately; authored state and declared refs never establish live capabilities | context_reading.page_projection | tests/test_context_reading.py |
 | Display overflow is explicitly undelivered, not a truncated completeness claim | context_reading.render_summary / render_page | tests/test_context_reading.py |
+| Capture feature/impact text keeps every selected record key and satellite as exact compact JSON lines, with base/peer heads, path bases and freshness, invents no task access or writability, and leaves JSON export and capture bytes unchanged | context_reading.capture_record_text / record_lines; workflow.capture_record_text | tests/test_reading_flow.py::CaptureRecordTextTests |
 | A section outline lists saved headings per view, opens only unique titled sections, marks duplicates/untitled, and keeps missing metadata unknown without live reads | context_reading.section_outline / render_outline; workflow.main `--section-index` | tests/test_reading_flow.py::SectionOutlineTests |

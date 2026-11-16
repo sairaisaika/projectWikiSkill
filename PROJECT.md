@@ -48,3 +48,5 @@ Implementation (uncommitted, 2026-11-09): lifecycle.py adds routing_index (compl
 Root independent verification:397 unit tests (one platform skip),12 fixtures, check/evaluate/maintainer index, all3package closures and actual private packet source replay pass. Source repair complete, PR/main CI, quiet Linux install and fresh real review still pending. Private worker artifacts moved outside checkout before any staging.
 
 - 2026-11-16: Installed0.2.36 and a fresh guided real-use observation returned to [version status](docs/wiki/status.md#current-state); complete reading and independent adoption remain unproven.
+
+- 2026-11-16: Default capture file text and the explicit-JSON attribution correction are returned to [version status](docs/wiki/status.md#current-state); source/package/install/use remain separate.
