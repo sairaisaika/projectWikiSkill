@@ -595,8 +595,14 @@ print(json.dumps({{'query':q,'cards':[{{'path':'feature.md','title':'Editor'}}],
         argv=([m.replace("''","'")for m in re.findall(r"'((?:''|[^'])*)'",command)] if sys.platform=='win32' else shlex.split(command))
         self.assertIn('--snapshot-only',argv)
         self.assertEqual(argv[argv.index('--path')+1],'docs/wiki/feature.md')
-        result=subprocess.run(argv,cwd=Path(self.tmp.name),env={**os.environ,'PATH':''},capture_output=True,text=True,encoding='utf-8')
-        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        # The first part ends on a complete line, so the oversized line may need several parts.
+        for _ in range(10):
+            result=subprocess.run(argv,cwd=Path(self.tmp.name),env={**os.environ,'PATH':''},capture_output=True,text=True,encoding='utf-8')
+            self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+            if 'COMPLETE VIEW' in result.stdout:break
+            command=result.stdout.split('\nNEXT: ',1)[1].strip()
+            argv=([m.replace("''","'")for m in re.findall(r"'((?:''|[^'])*)'",command)] if sys.platform=='win32' else shlex.split(command))
+            self.assertIn('--snapshot-only',argv)
         self.assertIn('COMPLETE VIEW',result.stdout)
         self.assertIn('saved snapshot only',result.stdout)
 
@@ -965,3 +971,63 @@ class SectionOutlineTests(unittest.TestCase):
         opened=self.open_lines(text)
         self.assertTrue(opened and all('--packet' in a for a in opened))
         self.assertEqual(self.run_main(opened[-1][2:])[0],0)
+
+
+class LineBoundaryPageTests(unittest.TestCase):
+    """A partial text part ends after a complete line whenever one fits."""
+    COMMAND = ['python','workflow.py','show','--capture','saved.json','--view','impact','--path','src/a.py']
+
+    def records(self, count=11):
+        # Synthetic native-like compact owner records with multibyte titles.
+        return ''.join(json.dumps({'page':f'docs/wiki/模块-{i:02}.md','title':f'示例页面所有者标题第{i}号：同步、缓存与边界说明','role':'owner','satellites':[f'tests/test_{i}.py']},ensure_ascii=False,separators=(',',':'))+'\n' for i in range(count))
+
+    def pages(self, text, budget, line_budget=60, cursor=None):
+        read=wf.reading_module();parts=[]
+        for _ in range(500):
+            p=read.text_page(text,'impact:src/a.py',self.COMMAND,budget=budget,line_budget=line_budget,cursor=cursor,early_continuation=True)
+            self.assertLessEqual(len(p['text'].encode('utf-8')),budget)
+            self.assertLessEqual(len(p['text'].splitlines()),line_budget)
+            self.assertEqual(p['start'],sum(len(x['content']) for x in parts))
+            parts.append(p)
+            if p['next_cursor'] is None:break
+            self.assertGreater(p['end'],p['start'])
+            cursor=p['next_cursor']
+        else:self.fail('pagination failed to make progress')
+        self.assertEqual(''.join(x['content'] for x in parts),text)
+        return parts
+
+    def test_multiline_unicode_records_never_split_a_fitting_line(self):
+        text=self.records(24)
+        for budget,line_budget in [(700,60),(900,60),(1200,60),(2000,60),(4000,12),(4000,8)]:
+            with self.subTest(budget=budget,line_budget=line_budget):
+                parts=self.pages(text,budget,line_budget)
+                self.assertGreater(len(parts),1)
+                for p in parts[:-1]:
+                    self.assertTrue(p['content'].endswith('\n'),p['content'][-40:])
+
+    def test_one_oversized_line_still_advances_with_utf8_safe_partial_parts(self):
+        long='{"title":"'+'超长标题'*900+'"}'
+        text='{"page":"前一行"}\n'+long+'\n{"page":"后一行"}\n'
+        parts=self.pages(text,800)
+        self.assertEqual(parts[0]['content'],'{"page":"前一行"}\n')
+        self.assertGreater(len(parts),3)
+        inner=[p for p in parts if '\n' not in p['content']]
+        self.assertTrue(inner,'the indivisible line needs explicit partial continuation')
+        for p in parts:p['text'].encode('utf-8')
+
+    def test_only_blank_lines_before_a_long_line_do_not_stall(self):
+        text='\n\n'+'字'*3000
+        parts=self.pages(text,700)
+        self.assertNotEqual(parts[0]['content'],'\n\n')
+
+    def test_section_and_complete_views_keep_their_command_and_status(self):
+        cmd=['python','workflow.py','show','--capture','saved.json','--view','page','--path','feature.md','--section','同步']
+        read=wf.reading_module();text=self.records()
+        p=read.text_page(text,'section:同步',cmd,budget=900,early_continuation=True)
+        self.assertTrue(p['content'].endswith('\n'))
+        self.assertEqual(p['text'].splitlines()[1],'NEXT PART: '+read.shell_command([*cmd,'--cursor',p['next_cursor']]))
+        q=read.text_page(text,'section:同步',cmd,budget=900,cursor=p['next_cursor'])
+        self.assertEqual(q['start'],p['end'])
+        for empty in ['', 'short\n']:
+            r=read.text_page(empty,'id',cmd)
+            self.assertIsNone(r['next_cursor']);self.assertIn('COMPLETE VIEW',r['text'])

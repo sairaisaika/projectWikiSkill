@@ -1,6 +1,6 @@
 # Architecture
 
-> Reviewed: 2026-11-16; narrow packet text, capture record text and qualified history boundaries in task-views only; other sections retain their earlier review scope.
+> Reviewed: 2026-11-16; narrow packet text, capture record text, qualified history boundaries and text_page line-boundary parts in task-views/bounded continuation only; other sections retain their earlier review scope.
 
 These are module contracts read from code. All scripts use only the standard library.
 The CLIs primarily print JSON; `wiki.py list`, non-JSON queries and the new
@@ -69,6 +69,12 @@ print's newline and the prepare REUSED prefix. A partial part repeats its exact 
 line 2 (`NEXT PART:`) and at the end (`NEXT:`), so a caller keeping only the first lines
 (observed: `| head -45`) still sees it; a caller clipping to one line can still lose it. CLI stdout explicitly uses UTF-8/LF so Windows newline translation does not inflate the wire budget. A digest-bound cursor resumes the exact
 saved view; text changes or a different capture/view/path/section reject the cursor.
+A partial part first takes the largest prefix within both budgets, then ends after the last
+`\n` in that prefix when the prefix holds at least one complete nonempty line and the shorter
+part still fits; the cut is recorded as the cursor offset, so concatenated parts and
+offsets stay exact. This applies to every text view (it is the one pager, not a capture-only
+seam). A single line that cannot fit with the required display metadata still continues mid-line at a character
+boundary; whole records are not atomic, and a line budget can cost one line per part.
 The printed command preserves snapshot-only mode and explicit text format. Shell
 commands are quoted for POSIX or PowerShell on the running host; PowerShell quoting
 doubles ASCII and typographic single quotes, which it also treats as delimiters. Scope is neither

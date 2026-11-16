@@ -17,3 +17,12 @@ For one unchanged saved pilot record with12 satellites, equal-length reader path
 Candidate focused reading68/context48/workflow97 and full416 collected/415 executed/1 existing platform skip pass;12 fixtures and fixture/maintainer checks pass. Root independently repeats all416 tests (one existing platform skip), checks all three0.2.37 package/source closures with no issues, and verifies real saved packet all/impact JSON exports byte-identical too. Platform/CI/installation results remain separately maintained in version status.
 
 The corrected default reduces measured output for this record. It does not prove readers follow continuations, stop shell clipping, read every applicable Context, understand contracts or naturally adopt the tool. Independent cold-start/handoff and token/time savings remain unverified. The installed Linux payload remains0.2.36 until a separate quiet refresh; this repository still supplies no automatic updater.
+
+
+## Installed037 guided follow-up
+
+PR66 and its exact main matrix succeeded on Ubuntu/Windows Python3.10/3.13; all21 canonical standalone payload hashes match mergeb545dc861146502a7ed5dff48aeddd8de30de4d8 after a quiet Linux atomic exchange. The backup stays outside discovery; no host hooks/settings/session restart or automatic updater was added. Three package/source doctor layouts passed before merging, whose canonical payload is identical to the merge.
+
+A fresh genuine engineering task uses query and planned-file preparation. A guided correction uses the existing matching peer alias and source prefix: all three selected Native files have declared owners, contrary to an earlier Wiki-page-as-source inference. The default-text Web impact record is complete in one part; a Native record retains all11owners in two parts, read separately. The exact source heads remain frozen, JSON/capture data unchanged. Some other impacts, Context and candidates remain unread.
+
+The reader first attributed its own cut display to the helper; raw-command inspection retracts that complaint. Its initial observations used summary, whereas the actual default impact path was exercised only in the follow-up. The remaining real mid-title boundary is retained in the [pager report](line-boundary-pages-20261116.md). This is guided real use with explicit tasks, files and Skill, not a natural cold-start, complete comprehension certificate or efficiency result. The first task was interrupted outside the reader because a local scanner lacked total bounds; continuation success is not first-pass delivery or account-quota evidence.
