@@ -1164,7 +1164,12 @@ class CurrentViewTests(unittest.TestCase):
         else:self.fail('current continuation never completed')
         self.assertGreater(len(chunks),3)
         whole=''.join(chunks)
-        self.assertIn(lines+big+'\nTAIL 尾\n',whole);self.assertNotIn('AFTER',whole)
+        # Windows writes a CRLF snapshot; compare its exact saved bytes, never normalize output to LF.
+        saved_body=json.loads(out.read_text(encoding='utf-8'))['prepared_reading']['pages']['feature.md']['body_markdown']
+        expected=saved_body[saved_body.index('## 当前状态'):saved_body.index('## Mechanism')]
+        actual=whole.split('SECTION TEXT (exact saved Markdown):\n',1)[1].split('  READ saved headings:',1)[0]
+        self.assertEqual(actual,expected)
+        self.assertNotIn('AFTER',whole)
         cursor=first[first.index('--cursor')+1]
         page=['show','--capture',str(out),'--view','page','--path','feature.md','--snapshot-only','--cursor',cursor]
         code,text=self.run_main(page);self.assertEqual(code,1);self.assertIn('cursor',text)
