@@ -55,3 +55,13 @@ Root independently ran the full original unit suite:436 collected,435 executed a
 The initial PR Windows3.13 job failed the new long-section assertion; Linux passed and fail-fast canceled a companion job. Root reproduced on Windows3.13: the saved section contained93 CR characters, while the fixture expected only LF. The reader retained the original CRLF correctly. The test now compares the fully reassembled section exactly to the saved body span, without normalizing the product output or weakening byte preservation. This is a fixture portability correction, not a pager-data-loss fix. The failed platform attempt remains evidence; replacement exact-head CI is separate.
 
 The subsequent local Windows16-control run reached another POSIX-only fixture assumption in reverse cursor parsing. It now reuses the existing platform-aware argv reader rather than splitting an unquoted flag. This correction also changes no product code. Both local platform reruns and the replacement CI are evaluated separately.
+
+## Installation follow-up
+
+PR69 merged at78f7741daf88e03433cb542738b4ce7f84668ea7 after the corrected PR head9f7d219 passed both platform matrices. Exact merge-main44049860690 also passed all four jobs. The initial Windows failures are retained above. Root compared the clean merged payload, observed no running Claude process, verified the previous baseline, atomically exchanged the standalone directory, and read back all21 payload hashes. The0.2.38 backup stays outside host discovery. This is a manual refresh, not an automatic updater, hook/settings change, session restart or claim about adoption.
+
+## Fresh guided real-task review
+
+A new installed039 session after the provider window reset reviewed an actual pilot acceptance driver without runtime writes. Its catalog contained the Wiki Skill and Skill tool. It manually read the Skill, then used native Wiki query plus head and file-owner output, card excerpts and code. It did not use the new current reader; some owner bodies remained unread and raw source/tool output was clipped. The first29-turn capped attempt had no terminal artifact; a two-turn continuation wrote the source review. Useful source-backed findings are separate from Wiki adoption. No complete pre-edit reading, natural adoption, reduced retrieval, six-pair result or efficiency gain is inferred.
+
+The coordinator also observed a separate explicit-peer omission in a cross-repository capture: owner routing existed, but the planned source hashes were unknown. A corrected return capture contained both hashes and the declared peer; that late correction does not retroactively establish a before-edit baseline. This is caller evidence selection, not evidence that the current-section reader changed source ownership.
