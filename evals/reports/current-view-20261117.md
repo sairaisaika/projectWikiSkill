@@ -53,3 +53,5 @@ Root independently ran the full original unit suite:436 collected,435 executed a
 ## First platform CI failure and Windows reproduction
 
 The initial PR Windows3.13 job failed the new long-section assertion; Linux passed and fail-fast canceled a companion job. Root reproduced on Windows3.13: the saved section contained93 CR characters, while the fixture expected only LF. The reader retained the original CRLF correctly. The test now compares the fully reassembled section exactly to the saved body span, without normalizing the product output or weakening byte preservation. This is a fixture portability correction, not a pager-data-loss fix. The failed platform attempt remains evidence; replacement exact-head CI is separate.
+
+The subsequent local Windows16-control run reached another POSIX-only fixture assumption in reverse cursor parsing. It now reuses the existing platform-aware argv reader rather than splitting an unquoted flag. This correction also changes no product code. Both local platform reruns and the replacement CI are evaluated separately.

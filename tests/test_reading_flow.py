@@ -1174,7 +1174,8 @@ class CurrentViewTests(unittest.TestCase):
         page=['show','--capture',str(out),'--view','page','--path','feature.md','--snapshot-only','--cursor',cursor]
         code,text=self.run_main(page);self.assertEqual(code,1);self.assertIn('cursor',text)
         _,page_text=self.run_main(page[:-2])
-        page_cursor=page_text.split('\nNEXT: ',1)[1].split('--cursor ',1)[1].split()[0].strip("'")
+        page_argv=self.argv(page_text.split('\nNEXT: ',1)[1].strip())
+        page_cursor=page_argv[page_argv.index('--cursor')+1]
         code,text=self.run_main(args[:args.index('--cursor')]+['--cursor',page_cursor])
         self.assertEqual(code,1);self.assertIn('cursor',text)
 
