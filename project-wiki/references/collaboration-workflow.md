@@ -36,6 +36,7 @@ python <skill>/scripts/workflow.py prepare --root <checkout> --query "user task"
 python <skill>/scripts/workflow.py show --capture <context.json> --view impact --path src/editor.ts
 python <skill>/scripts/workflow.py show --capture <context.json> --view page --path feature.md
 python <skill>/scripts/workflow.py show --capture <context.json> --view history --path feature.md
+python <skill>/scripts/workflow.py show --capture <context.json> --view current --path feature.md
 ```
 
 Replace the example prefix with the explicitly reviewed native program; the
@@ -156,7 +157,15 @@ and records it separately from authored state. It never probes production,
 promotes an ancestor to a verified capability, or rewrites a page. Current-state
 sections (`Current state` / `当前状态`) and explicit history sections are projected
 separately; remaining deployment qualifiers in the body are review candidates,
-not automatically corrected facts. Existing native finish/return contracts still
+not automatically corrected facts. `--view current` (capture or packet) prints
+only the saved section under the one recognized nonhistorical current heading
+(`Current`, `Current state|status`, `当前状态`, `现状`, optionally dated), labelled as
+an authored, unverified claim with its heading, declared date and freshness.
+Headings inside fences, history or generated blocks are excluded and generated text
+ends the section. No match, several matches or unusable saved metadata return an
+explicit unknown/ambiguous result with outline/page/history commands, never a
+choice, merge, note-derived or live answer. It is not a whole-page read and
+cannot be combined with `--section` or `--section-index`. Existing native finish/return contracts still
 own source acceptance and actual deployment evidence.
 
 For coordination, the same capture can subsequently feed `start`; no second

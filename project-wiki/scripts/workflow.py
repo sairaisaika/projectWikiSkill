@@ -881,7 +881,7 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
     if view in ('summary','locator','index'):
         result=reading_module().summary(value)
         if view=='locator':result=reading_module().locator_summary(result)
-    elif view in ('page','history'):
+    elif view in ('page','history','current'):
         path=captured_page_key(value,path)
         pages=value.get('prepared_reading',{}).get('pages',{})
         if path not in pages:
@@ -892,6 +892,9 @@ def capture_view(value: dict, view: str = 'summary', path: str | None = None, *,
                 raise ValueError('No saved page views in this capture; use prepare before reading a page')
             raise ValueError('Requested Wiki page is not captured. Use a saved Wiki key or matching repository-relative path; list keys with show --view summary')
         result=dict(pages[path]); result['path']=path
+        if view=='current':
+            result['freshness']=freshness;result['current_inputs_checked']=current
+            result=reading_module().current_section(result)
     elif view in ('feature','impact'):
         key,field=('cards','path') if view=='feature' else ('impact','file')
         rows=[row for row in native[key] if row[field]==path]
@@ -937,7 +940,7 @@ def task_view(packet: dict, view: str = 'all', path: str | None = None, *, snaps
         raise ValueError('Expected a wiki work packet')
     if packet.get('access', 'edit') not in ('edit', 'read_only') or (packet.get('access') == 'read_only' and packet['allowed_files']):
         raise ValueError('Invalid task access scope')
-    if view in ('summary', 'page', 'history'):
+    if view in ('summary', 'page', 'history', 'current'):
         shown = capture_view(packet['context'], view, path, snapshot_only=snapshot_only)
         shown['task_scope'] = {key:packet.get(key) for key in ('task_id','owner','access','allowed_files','return_requirements')}
         if packet.get('access') == 'read_only':shown['read_only_baseline'] = packet.get('read_only_baseline', {'status':'unavailable'})
@@ -1127,7 +1130,7 @@ def main(argv=None) -> int:
     selected = show.add_mutually_exclusive_group(required=True)
     selected.add_argument('--packet', type=Path)
     selected.add_argument('--capture', type=Path)
-    show.add_argument('--view', choices=('summary', 'locator', 'page', 'history', 'index', 'feature', 'impact', 'all'))
+    show.add_argument('--view', choices=('summary', 'locator', 'page', 'history', 'current', 'index', 'feature', 'impact', 'all'))
     show.add_argument('--format', choices=('text','json'))
     show.add_argument('--section', help='Exact captured body heading; avoids printing an oversized page')
     show.add_argument('--section-index', action='store_true', help='With --view page|history: list saved headings and exact --section open commands, not page text')
@@ -1154,6 +1157,8 @@ def main(argv=None) -> int:
     try:
         if args.command == 'show':
             view=args.view or ('summary' if args.capture else 'index')
+            if view=='current' and (args.section is not None or args.section_index or not args.path):
+                raise ValueError('--view current reads one saved page current section: give --path PAGE, without --section or --section-index')
             if args.section_index and (view not in ('page','history') or args.section is not None):
                 raise ValueError('--section-index lists one saved page or history view; omit --section and use --view page|history --path PAGE')
             source=(args.capture or args.packet).resolve()
@@ -1161,7 +1166,7 @@ def main(argv=None) -> int:
             shown=(capture_view(value,view,args.path,snapshot_only=args.snapshot_only) if args.capture else
                    task_view(value,view,args.path,snapshot_only=args.snapshot_only))
             bounded_capture=args.capture and value.get('prepared_reading',{}).get('text_display')=='bounded-v1'
-            fmt=args.format or ('text' if bounded_capture or view in ('summary','locator','page','history') or (args.capture and view=='index') else 'json')
+            fmt=args.format or ('text' if bounded_capture or view in ('summary','locator','page','history','current') or (args.capture and view=='index') else 'json')
             if args.cursor and fmt!='text':raise ValueError('--cursor is for bounded text views, not JSON export')
             command=[sys.executable,str(Path(__file__).resolve()),'show','--capture' if args.capture else '--packet',str(source),'--view',view]
             if args.path:command+=['--path',args.path]
@@ -1175,9 +1180,13 @@ def main(argv=None) -> int:
                     identity=json.dumps([str(source),view,args.path,'section-index'],ensure_ascii=False)
                     print(reading_module().render_outline(outline,identity,command+['--section-index'],cursor=args.cursor,**cli_budget()))
                 return 0
+            if view=='current':shown['readers']=reading_module().current_readers(command[:5],args.path,args.snapshot_only)
             if fmt=='json':print(json.dumps(shown,ensure_ascii=False,indent=2))
             elif view=='locator':print(reading_module().render_locator(shown,str(source),cursor=args.cursor,command=command,**cli_budget(),snapshot_only=args.snapshot_only))
             elif view=='summary' or (args.capture and view=='index'):print(render_context_summary(shown,str(source),cursor=args.cursor,command=command,**cli_budget()))
+            elif view=='current':
+                identity=json.dumps([str(source),'current',args.path],ensure_ascii=False)
+                print(reading_module().render_current(shown,identity,command,cursor=args.cursor,**cli_budget()))
             elif view in ('page','history'):print(reading_module().render_page(shown,str(source),view=='history',args.section,cursor=args.cursor,command=command,**cli_budget()))
             else:
                 if args.capture and view in ('feature','impact'):text=capture_record_text(shown,value,view,args.path,command[:5],args.snapshot_only)

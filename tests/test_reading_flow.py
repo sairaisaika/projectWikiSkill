@@ -1031,3 +1031,242 @@ class LineBoundaryPageTests(unittest.TestCase):
         for empty in ['', 'short\n']:
             r=read.text_page(empty,'id',cmd)
             self.assertIsNone(r['next_cursor']);self.assertIn('COMPLETE VIEW',r['text'])
+
+
+class CurrentViewTests(unittest.TestCase):
+    """`--view current` reads one saved authored current section without guessing its heading."""
+    setUp = fixture.ContextReadingTests.setUp
+    git = fixture.ContextReadingTests.git
+    prepare = fixture.ContextReadingTests.prepare
+    saved = SectionOutlineTests.saved
+    run_main = SectionOutlineTests.run_main
+    argv = staticmethod(SectionOutlineTests.argv)
+
+    NOTE = '> Reviewed: 2026-11-15 latest note claims deployed everywhere\n'
+
+    def page(self, label, extra=''):
+        return ('# Feature\n'+self.NOTE+'\n## Overview\nIntro text.\n\n## '+label+'\n'
+                'Authored state: 夜鹭 candidate only.\n\n### Detail\nNested detail stays.\n\n'
+                '## Mechanism\nMechanism body is not current.\n'+extra+
+                '\n## History\n### Current state\nOLD STATE from history.\n')
+
+    def current(self, out, *extra, packet=False):
+        return self.run_main(['show','--packet' if packet else '--capture',str(out),'--view','current','--path','feature.md',*extra,'--snapshot-only'])
+
+    def readers(self, text):
+        return [self.argv(line.split(': ',1)[1]) for line in text.splitlines() if line.startswith('  READ ')]
+
+    def test_recognized_labels_select_exactly_one_section(self):
+        for label,date in [('Current',None),('Current status',None),('Current state',None),('当前状态',None),('现状',None),
+                           ('Current state (2026-11-10)','2026-11-10'),('当前状态（2026-11-09）','2026-11-09')]:
+            with self.subTest(label=label):
+                out=self.saved(self.page(label),name=f'{abs(hash(label))}.json')
+                code,text=self.current(out)
+                self.assertEqual(code,0,text)
+                self.assertIn('Status: SELECTED',text)
+                self.assertIn('not independently verified',text)
+                self.assertIn('Declared heading: L7 ## '+label,text)
+                self.assertIn('Declared date: '+(date+' (as written; not certified)' if date else 'none in heading'),text)
+                self.assertIn('Authored state: 夜鹭 candidate only.',text)
+                self.assertIn('Nested detail stays.',text)
+                for absent in ('Mechanism body','OLD STATE','deployed everywhere','Intro text.'):self.assertNotIn(absent,text)
+                self.assertIn('saved snapshot only',text)
+                self.assertIn('COMPLETE VIEW',text)
+                code,raw=self.current(out,'--format','json')
+                data=json.loads(raw)
+                self.assertEqual((data['view'],data['status'],data['path']),('current','selected','feature.md'))
+                self.assertEqual(data['heading'],{'title':label,'level':2,'line':7,'declared_date':date})
+                body=json.loads(self.run_main(['show','--capture',str(out),'--view','page','--path','feature.md','--snapshot-only','--format','json'])[1])['body_markdown']
+                self.assertEqual(data['section_markdown'],wf.reading_module().select_section(body,label))
+
+    def test_history_or_fenced_current_headings_are_never_selected(self):
+        fenced='\n```markdown\n## Current state\nFenced example.\n```\n'
+        cases={'history-only':('# Feature\n'+self.NOTE+'\n## Mechanism\nm\n\n## History\n### Current state\nOLD STATE\n','unknown'),
+               'fenced-only':('# Feature\n'+self.NOTE+'\n## Mechanism\nm\n'+fenced,'unknown'),
+               'fenced-plus-real':(self.page('现状',fenced),'selected')}
+        for name,(page,status) in cases.items():
+            with self.subTest(name=name):
+                out=self.saved(page,name=name+'.json')
+                code,text=self.current(out)
+                self.assertEqual(code,0,text)
+                self.assertIn('Status: '+status.upper(),text)
+                self.assertNotIn('OLD STATE',text);self.assertNotIn('Fenced example.',text)
+                self.assertNotIn('deployed everywhere',text)
+                if status=='unknown':
+                    self.assertIn('Do not infer current state from the latest verification note, history or Git',text)
+                    views=[a[a.index('--view')+1] for a in self.readers(text)]
+                    self.assertEqual(views,['page','page','history'])
+                    self.assertIn('--section-index',self.readers(text)[0])
+                    for argv in self.readers(text):self.assertEqual(self.run_main(argv[2:])[0],0)
+
+    def test_several_current_headings_are_ambiguous_and_never_merged(self):
+        generated=('# F\n## Current state\nCurrent A.\n## History\nArchived.\n'
+                   '<!-- gen:begin -->\nGenerated.\n<!-- gen:end -->\n'
+                   '## History: incoming\n> Reviewed: 2020-01-01 old\n'
+                   '### Current state\nStale nested.\n')
+        for name,page in {'siblings':'# F\n## Current state\nCurrent A.\n\n## 当前状态\nCurrent B.\n',
+                          'nested':'# F\n## Current\nCurrent A.\n### Current status\nCurrent B.\n',
+                          'generated-reset':generated}.items():
+            with self.subTest(name=name):
+                out=self.saved(page,name=name+'.json')
+                code,text=self.current(out)
+                self.assertEqual(code,0,text)
+                self.assertIn('Status: AMBIGUOUS',text)
+                self.assertIn('none was chosen or merged',text)
+                self.assertNotIn('Current A.',text);self.assertNotIn('Current B.',text);self.assertNotIn('Stale nested.',text)
+                data=json.loads(self.current(out,'--format','json')[1])
+                self.assertEqual(data['status'],'ambiguous');self.assertIsNone(data['section_markdown'])
+                self.assertEqual(len(data['candidates']),2)
+
+    def test_missing_or_mismatched_saved_metadata_stays_unknown(self):
+        for name,mutate in {'missing':lambda p:p.pop('section_index'),
+                            'mismatch':lambda p:p.update(section_index=[{'title':'Current state','line':1,'history':False}]),
+                            'malformed':lambda p:p.update(section_index=[{'title':3,'history':False}])}.items():
+            with self.subTest(name=name):
+                out=self.saved(name=name+'.json',mutate=mutate)
+                code,text=self.current(out)
+                self.assertEqual(code,0,text)
+                self.assertIn('Status: UNKNOWN',text);self.assertIn('nothing was reconstructed',text)
+                self.assertNotIn('runtime acceptance unknown',text)  # saved current body is not opened
+                self.assertEqual(json.loads(self.current(out,'--format','json')[1])['status'],'unknown')
+        c=wf.capture(self.root,'editor',['src/editor.py'],[sys.executable,'native.py'],['native.py'],allow_execution=True)
+        legacy=Path(self.tmp.name)/'legacy.json';wf.write_new(legacy,c)
+        code,text=self.current(legacy)
+        self.assertEqual(code,1);self.assertIn('use prepare',text)
+
+    def test_stale_capture_keeps_saved_text_and_reports_freshness(self):
+        out=self.saved()
+        (self.root/'docs/wiki/feature.md').write_text(fixture.PAGE.replace('runtime acceptance unknown','LIVE EDIT'),encoding='utf-8')
+        with redirect_stdout(io.StringIO()) as buf:code=wf.main(['show','--capture',str(out),'--view','current','--path','feature.md'])
+        text=buf.getvalue()
+        self.assertEqual(code,0,text)
+        self.assertIn('historical projection',text)
+        self.assertIn('runtime acceptance unknown',text);self.assertNotIn('LIVE EDIT',text)
+
+    def test_long_unicode_section_continues_exactly_and_cursor_is_view_bound(self):
+        big='𐍈夜鹭日历'*1500
+        lines=''.join(f'- 第{i}项 状态 {i}\n' for i in range(90))
+        out=self.saved('# Feature\n## Overview\nx\n## 当前状态\n'+lines+big+'\nTAIL 尾\n## Mechanism\nAFTER\n',name='长 current.json')
+        args=['show','--capture',str(out),'--view','current','--path','feature.md','--snapshot-only']
+        chunks=[];first=None
+        for _ in range(100):
+            code,text=self.run_main(args)
+            self.assertEqual(code,0,text)
+            self.assertLessEqual(len(text.encode('utf-8')),4000);self.assertLessEqual(len(text.splitlines()),40)
+            start=text.index('--- CONTENT ---\n')+len('--- CONTENT ---\n');end=text.rindex('\n--- END CONTENT ---')
+            chunks.append(text[start:end]);tail=text[end:]
+            if '\nNEXT: ' not in tail:break
+            self.assertTrue(text.splitlines()[1].startswith('NEXT PART: '))
+            args=self.argv(tail.split('\nNEXT: ',1)[1].strip())[2:]
+            first=first or args
+            self.assertEqual(args[args.index('--view')+1],'current');self.assertIn('--snapshot-only',args)
+            self.assertEqual(args[args.index('--path')+1],'feature.md')
+        else:self.fail('current continuation never completed')
+        self.assertGreater(len(chunks),3)
+        whole=''.join(chunks)
+        self.assertIn(lines+big+'\nTAIL 尾\n',whole);self.assertNotIn('AFTER',whole)
+        cursor=first[first.index('--cursor')+1]
+        page=['show','--capture',str(out),'--view','page','--path','feature.md','--snapshot-only','--cursor',cursor]
+        code,text=self.run_main(page);self.assertEqual(code,1);self.assertIn('cursor',text)
+        _,page_text=self.run_main(page[:-2])
+        page_cursor=page_text.split('\nNEXT: ',1)[1].split('--cursor ',1)[1].split()[0].strip("'")
+        code,text=self.run_main(args[:args.index('--cursor')]+['--cursor',page_cursor])
+        self.assertEqual(code,1);self.assertIn('cursor',text)
+
+    def test_conflicting_or_incomplete_options_are_rejected(self):
+        out=self.saved()
+        for extra in (['--path','feature.md','--section','Current state'],['--path','feature.md','--section-index'],[]):
+            with self.subTest(extra=extra):
+                code,text=self.run_main(['show','--capture',str(out),'--view','current',*extra,'--snapshot-only'])
+                self.assertEqual(code,1,text);self.assertIn('--view current',text)
+        code,text=self.current(out,'--format','json','--cursor','x')
+        self.assertEqual(code,1)
+
+    def test_packet_uses_the_same_selection_and_readers(self):
+        out=self.saved()
+        c=json.loads(out.read_text(encoding='utf-8'))
+        packet=wf.start(c,'t-1','reader','read',[],['ok'],['read'],read_only=True)
+        pout=Path(self.tmp.name)/'packet.json';wf.write_new(pout,packet)
+        code,text=self.current(pout,packet=True)
+        self.assertEqual(code,0,text)
+        self.assertIn('Status: SELECTED',text);self.assertIn('runtime acceptance unknown',text)
+        self.assertIn('Task: t-1; access=read_only',text)
+        cap=json.loads(self.current(out,'--format','json')[1]);pkt=json.loads(self.current(pout,'--format','json',packet=True)[1])
+        self.assertEqual(cap['section_markdown'],pkt['section_markdown']);self.assertEqual(cap['heading'],pkt['heading'])
+        self.assertTrue(all('--packet' in a for a in self.readers(text)))
+
+    def test_existing_views_are_unchanged_and_summary_names_the_option_once(self):
+        out=self.saved()
+        base=['show','--capture',str(out),'--view','page','--path','feature.md','--snapshot-only']
+        _,page=self.run_main(base)
+        self.assertIn('AUTHORED CURRENT STATE',page);self.assertNotIn('SAVED AUTHORED CURRENT SECTION',page)
+        data=json.loads(self.run_main(base+['--format','json'])[1])
+        self.assertEqual(sorted(data),sorted(['authored_current_state','currentness','latest_verification_note','historical_verification_notes',
+                                              'body_markdown','history_markdown','section_index','qualifier_review_candidates','limits',
+                                              'path','freshness','current_inputs_checked']))
+        _,summary=self.run_main(['show','--capture',str(out),'--snapshot-only'])
+        self.assertIn('--view current --path <page>',summary)
+        self.assertEqual(summary.count(str(out.resolve())),summary.count('Complete artifact: '))
+        _,raw=self.run_main(['show','--capture',str(out),'--snapshot-only','--format','json'])
+        self.assertNotIn('current_section',raw)
+
+
+class CurrentGeneratedBoundaryTests(unittest.TestCase):
+    """Generated blocks are not authored current claims; saved text only, no live reads."""
+
+    def current(self, text):
+        read=wf.reading_module()
+        return read.current_section(read.page_projection(text))
+
+    def test_current_heading_only_inside_generated_block_is_unknown(self):
+        for text in ('# F\n<!-- gen:begin -->\n## Current state\nGenerated not author statement\n<!-- gen:end -->\n',
+                     '# F\n<!-- BEGIN -->\n## 当前状态\nGenerated not author statement\n<!-- END -->\n',
+                     '# F\n<!-- gen:begin -->\n## Current state\nGenerated not author statement\n'):  # unclosed: stays unknown
+            with self.subTest(text=text):
+                shown=self.current(text)
+                self.assertEqual(shown['status'],'unknown')
+                self.assertIsNone(shown['section_markdown'])
+                self.assertIn('generated',shown['meaning'])
+
+    def test_authored_section_ends_before_a_following_generated_block(self):
+        shown=self.current('# F\n## Current state\nAuthored claim.\n<!-- gen:begin -->\n- generated row\n<!-- gen:end -->\n')
+        self.assertEqual(shown['status'],'selected')
+        self.assertEqual(shown['section_markdown'],'## Current state\nAuthored claim.\n')
+
+    def test_authored_current_stays_selectable_beside_same_title_generated_heading(self):
+        shown=self.current('# F\n## Current state\nAuthored.\n## Mechanism\nm\n'
+                           '<!-- gen:begin -->\n## Current state\nGen.\n<!-- gen:end -->\n')
+        self.assertEqual(shown['status'],'selected')
+        self.assertEqual(shown['heading']['line'],2)
+        self.assertEqual(shown['section_markdown'],'## Current state\nAuthored.\n')
+
+    def test_fenced_marker_examples_remain_literal_current_text(self):
+        text='# F\n## Current state\nAuthored.\n```html\n<!-- gen:begin -->\n## Current state\n```\nAfter fence.\n## Next\nn\n'
+        shown=self.current(text)
+        self.assertEqual(shown['status'],'selected')
+        self.assertEqual(shown['section_markdown'],'## Current state\nAuthored.\n```html\n<!-- gen:begin -->\n## Current state\n```\nAfter fence.\n')
+
+    def test_page_projection_is_unchanged_by_generated_current_reading(self):
+        text='# F\n<!-- gen:begin -->\n## Current state\nGenerated not author statement\n<!-- gen:end -->\n'
+        projection=wf.reading_module().page_projection(text)
+        self.assertEqual(projection['authored_current_state'],'Generated not author statement\n<!-- gen:end -->')
+        self.assertEqual(projection['body_markdown'],text)
+
+    def test_nested_generated_close_cannot_expose_outer_current(self):
+        text = ('# F\n<!-- outer:begin -->\n<!-- inner:begin -->\n## Mechanism\ninner\n'
+                '<!-- inner:end -->\n## Current state\nSTILL GENERATED OUTER\n<!-- outer:end -->\n')
+        shown=self.current(text)
+        self.assertEqual(shown['status'],'unknown')
+        self.assertIsNone(shown['section_markdown'])
+        # Real authored content after the matching outer close remains usable.
+        shown=self.current(text+'## Current state\nACTUAL AUTHOR\n')
+        self.assertEqual(shown['status'],'selected')
+        self.assertEqual(shown['section_markdown'],'## Current state\nACTUAL AUTHOR\n')
+
+    def test_unmatched_generated_close_keeps_claims_unknown(self):
+        for closer in ('other:end','end'):
+            with self.subTest(closer=closer):
+                shown=self.current('# F\n<!-- outer:begin -->\n<!-- '+closer+' -->\n'
+                                   '## Current state\nSTILL GENERATED OUTER\n')
+                self.assertEqual(shown['status'],'unknown')
+                self.assertIsNone(shown['section_markdown'])

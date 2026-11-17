@@ -50,3 +50,5 @@ Root independent verification:397 unit tests (one platform skip),12 fixtures, ch
 - 2026-11-16: Installed0.2.36 and a fresh guided real-use observation returned to [version status](docs/wiki/status.md#current-state); complete reading and independent adoption remain unproven.
 
 - 2026-11-16: Default capture file text and the explicit-JSON attribution correction are returned to [version status](docs/wiki/status.md#current-state); source/package/install/use remain separate.
+
+- 2026-11-17: Saved current-section view source candidate returned to [version status](docs/wiki/status.md#current-state); no release or installation.

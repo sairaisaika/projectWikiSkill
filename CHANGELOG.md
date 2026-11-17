@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.39 — saved authored current section — saved current-section view (source candidate)
+
+- `show --view current --path PAGE` reads the one saved authored nonhistorical current section, whatever its recognized label, or reports unknown/ambiguous with outline/page/history readers. Generated, fenced and history headings are excluded; existing views, JSON and capture shape are unchanged apart from one summary Expand hint.
+- [Old-source controls and limits](evals/reports/current-view-20261117.md); no release, package or installation.
+
 ## 0.2.38 — line-boundary text parts
 
 - Prefer complete content lines within the existing byte/line budgets, retaining exact cursor reconstruction and UTF-8-safe progress for one line that cannot fit.

@@ -1,6 +1,6 @@
 # Architecture
 
-> Reviewed: 2026-11-16; narrow packet text, capture record text, qualified history boundaries and text_page line-boundary parts in task-views/bounded continuation only; other sections retain their earlier review scope.
+> Reviewed: 2026-11-17; saved current-section view in task-views only. 2026-11-16: narrow packet text, capture record text, qualified history boundaries and text_page line-boundary parts in task-views/bounded continuation only; other sections retain their earlier review scope.
 
 These are module contracts read from code. All scripts use only the standard library.
 The CLIs primarily print JSON; `wiki.py list`, non-JSON queries and the new
@@ -163,6 +163,32 @@ keeps `--section-index`, view, path, capture and snapshot mode; `--format json`
 returns the outline with `open_argv` lists. It cannot be combined with `--section` or
 other views. The default page/history/JSON outputs are unchanged; the summary `Expand`
 line and a failed `--section` error point to the option. Listing is not reading.
+
+`show --capture|--packet PATH --view current --path PAGE [--snapshot-only] [--format json]`
+reads only the saved authored current section, without guessing its heading.
+`context_reading.current_section` (shared by capture and packet through `capture_view`)
+takes the page's saved non-history `section_index` rows whose title matches the existing
+`CURRENT` labels (`Current`, `Current state|status`, `当前`, `当前状态`, `现状`, optionally
+dated), cross-checks them against the same saved `body_markdown` headings `--section`
+reads, and returns `selected` only for exactly one authored heading. Generated markers are balanced by their saved marker name (including nested blocks); a mismatched close never exposes generated text as authored. This affects only this new read view. A heading inside an
+unfenced generated block (`<!-- name:begin -->`/`<!-- BEGIN -->` through its `end` marker, or
+to the end of the body when unclosed) is not authored and is not a candidate. The selected
+text runs from the heading to the next heading at the same or a higher level or, as in the
+state planner, the first unfenced generated opener; fenced marker examples stay literal
+text. A generated block's internal comment matching an `end` marker would close it early;
+this is a saved-text convention, not a generator parser. The result carries path, declared heading/level/line, any declared date (not
+certified), freshness and an authored-not-verified label. Zero matches, metadata missing
+or not aligned with the saved body, or only generated current headings (counted in
+`generated_current_headings`) → `unknown`; several authored (siblings, nested, or one after
+a generated-block reset) → `ambiguous` with the candidate list and no text. Neither is
+reconstructed from live files, from the latest verification note or from history, and
+duplicates are never merged or picked. Both include exact outline/page/history reader
+commands. Text uses the existing `text_page` pager and CLI budget with its own
+`[source, 'current', path]` cursor identity; it is not a whole-page read and records no
+acknowledgement. `--section` and `--section-index` are rejected with this view. Default
+views, page/history text and cursors, JSON exports and capture bytes are unchanged; the
+summary `Expand` line names the generic option once. Older captures without saved page
+views keep the existing explicit error.
 
 `workflow.py show` renders a saved capture or packet for a reader; new capture
 reading views are described above, with legacy packet views retained below.

@@ -18,6 +18,7 @@ CURRENT = re.compile(r'^(?P<label>current(?: state| status)?|当前(?:状态|现
 QUALIFIER = re.compile(r'未合入|未部署|未上线|待部署|源码候选|not (?:yet )?(?:merged|deployed|released)|branch.only',re.I)
 VERIFY = re.compile(r'^>\s*(?:核验|Reviewed|Verification)\s*[:：]\s*(.*)',re.I)
 GENERATED_BEGIN = re.compile(r'^\s{0,3}<!--\s*(?:[\w.-]+:begin(?=\W|$)|begin(?=\W|$))',re.I)
+GENERATED_END = re.compile(r'^\s{0,3}<!--\s*(?:[\w.-]+:end(?=\W|$)|end(?=\W|$))',re.I)
 
 
 def fence_transition(line: str, fence: str | None) -> tuple[bool, str | None]:
@@ -152,7 +153,7 @@ def summary_text(view: dict, artifact: str) -> str:
             lines.append(key + ' (saved task data):\n' + json.dumps(view[key], ensure_ascii=False, indent=2))
     lines.extend(['Source: '+view['source_revision'],'Freshness: '+view.get('freshness','capture-time data'),
                   'Complete artifact: '+artifact,
-                  'Expand: show --capture <artifact> --view impact --path <file>; --view page|history --path <page> [--section-index lists saved headings with exact open commands]',view['reading_state']])
+                  'Expand: show --capture <artifact> --view impact --path <file>; --view page|history --path <page> [--section-index lists saved headings with exact open commands]; --view current --path <page> reads only its one saved authored current section',view['reading_state']])
     text='\n'.join(lines)+'\n'
     return text
 
@@ -322,6 +323,100 @@ def render_outline(outline: dict, identity: str, command: list[str], *, budget: 
                 if row['status']=='selectable':lines.append('    OPEN: '+shell_command(row['open_argv']))
     lines.append(outline['limits'])
     return text_page('\n'.join(lines)+'\n',identity,command,budget=budget,cursor=cursor,line_budget=line_budget, early_continuation=early_continuation)['text']
+
+
+def current_section(view: dict) -> dict:
+    """The one saved nonhistorical CURRENT section, or an explicit unknown/ambiguous result.
+
+    Uses saved section_index rows cross-checked against the saved body that --section
+    reads. Never falls back to verification notes, history, Git or live files, and
+    never merges or picks among several recognized headings.
+    """
+    rows=view.get('section_index');body=view.get('body_markdown')
+    result={'path':view.get('path'),'view':'current','status':'unknown','meaning':None,
+            'heading':None,'candidates':[],'section_markdown':None,
+            'currentness':'authored claim; not independently verified; not deployment or runtime truth',
+            'excluded':'Other body sections, the latest listed verification note and history are not included; this is not a whole-page read.',
+            'freshness':view.get('freshness'),'current_inputs_checked':view.get('current_inputs_checked')}
+    if (not isinstance(rows,list) or not isinstance(body,str)
+            or any(not isinstance(r,dict) or not isinstance(r.get('title'),str) or type(r.get('history')) is not bool for r in rows)):
+        result['meaning']='Saved capture has no usable section metadata; nothing was reconstructed from live files.'
+        return result
+    chosen=[r for r in rows if not r['history']]
+    _,parsed=saved_headings(body)
+    if [title for _,_,title in parsed]!=[r['title'] for r in chosen]:
+        result['meaning']='Saved section metadata does not match the saved body; nothing was reconstructed from live files.'
+        return result
+    lines=body.splitlines(keepends=True)
+    # Generated blocks are not authored claims. Like the state planner, an unfenced
+    # opener ends an authored current section; an unclosed opener stays generated.
+    generated=set();fence=None;blocks=[]
+    for i,line in enumerate(lines):
+        marker,fence=fence_transition(line,fence)
+        if marker or fence is not None:
+            if blocks:generated.add(i)
+            continue
+        opener=GENERATED_BEGIN.match(line);closer=GENERATED_END.match(line)
+        if opener:blocks.append(opener.group().split('<!--',1)[1].strip().casefold().removesuffix('begin'))
+        if blocks:generated.add(i)
+        if blocks and closer:
+            key=closer.group().split('<!--',1)[1].strip().casefold().removesuffix('end')
+            if key==blocks[-1]:blocks.pop()
+    hits=[];spans=[];skipped=0
+    for n,r in enumerate(chosen):
+        if not (match:=CURRENT.fullmatch(r['title'])):continue
+        start,level=parsed[n][0],parsed[n][1]
+        if start in generated:
+            skipped+=1;continue
+        end=next((i for i,depth,_ in parsed if i>start and depth<=level),len(lines))
+        end=next((i for i in range(start+1,end) if i in generated),end)
+        hits.append({'title':r['title'],'level':level,'line':r.get('line') if type(r.get('line')) is int else None,
+                     'declared_date':match['date']})
+        spans.append((start,end))
+    result['candidates']=hits
+    if skipped:result['generated_current_headings']=skipped
+    if not hits:
+        result['meaning']=('No recognized nonhistorical current heading outside generated blocks in the saved body.' if skipped
+                           else 'No recognized nonhistorical current heading in the saved body.')
+    elif len(hits)>1:
+        result['status']='ambiguous'
+        result['meaning']=f'{len(hits)} recognized nonhistorical current headings; none was chosen or merged.'
+    else:
+        result.update(status='selected',heading=hits[0],
+                      meaning='Exactly one recognized nonhistorical current heading in the saved body.',
+                      section_markdown=''.join(lines[spans[0][0]:spans[0][1]]))
+    return result
+
+
+def current_readers(base: list[str], path: str, snapshot_only: bool) -> dict:
+    tail=['--snapshot-only'] if snapshot_only else []
+    return {'outline':[*base,'--view','page','--path',path,*tail,'--section-index'],
+            'page':[*base,'--view','page','--path',path,*tail],
+            'history':[*base,'--view','history','--path',path,*tail]}
+
+
+def render_current(current: dict, identity: str, command: list[str], *, budget: int=6000, cursor=None, line_budget: int=60, early_continuation: bool=False) -> str:
+    lines=[f"SAVED AUTHORED CURRENT SECTION — {current['path']} ({current['currentness']})",
+           'Status: '+current['status'].upper()+' — '+current['meaning']]
+    if current['status']=='selected':
+        row=current['heading']
+        lines.append('Declared heading: '+(f"L{row['line']} " if row['line'] else '')+'#'*row['level']+' '+row['title'])
+        lines.append('Declared date: '+(row['declared_date']+' (as written; not certified)' if row['declared_date'] else 'none in heading'))
+    elif current['status']=='ambiguous':
+        lines.extend('  '+(f"L{row['line']} " if row['line'] else '')+'#'*row['level']+' '+row['title'] for row in current['candidates'])
+    if current['status']!='selected':
+        lines.append('Do not infer current state from the latest verification note, history or Git; read the outline or whole page below.')
+    lines.append('Freshness: '+str(current['freshness']))
+    if isinstance(current.get('task_scope'),dict):
+        lines.append(f"Task: {current['task_scope'].get('task_id')}; access={current['task_scope'].get('access')} (saved task data; --format json)")
+    lines.append(current['excluded'])
+    text='\n'.join(lines)+'\n'
+    if current['status']=='selected':
+        text+='SECTION TEXT (exact saved Markdown):\n'+current['section_markdown']+('' if current['section_markdown'].endswith('\n') else '\n')
+    readers=current.get('readers',{})
+    labels={'outline':'saved headings','page':'whole saved page','history':'history'}
+    text+=''.join(f"  READ {labels[key]}: {shell_command(argv)}\n" for key,argv in readers.items())
+    return text_page(text,identity,command,budget=budget,cursor=cursor,line_budget=line_budget,early_continuation=early_continuation)['text']
 
 
 def render_page(view: dict, artifact: str, history: bool=False, section: str | None=None, budget: int=6000, *, cursor=None, command=None, line_budget=60, early_continuation=False) -> str:
