@@ -29,3 +29,11 @@ This is one controlled real-input replay, not a new native capture or natural ad
 ## Limits
 
 A single line that cannot fit with the required display metadata still continues mid-line at a character boundary, so records are not atomic. When the line budget binds, a part may carry one line fewer than before. Parts may be slightly more numerous for some texts. Whether readers follow continuations, read every part or understand records is not measured; no adoption, token or time saving is claimed. Installation and platform CI are separate.
+
+## Installation and guided-use follow-up
+
+After the corrected fixture, exact PR and merged-main matrices both pass in all four platform/Python jobs; links and source identity live in [version status](../../docs/wiki/status.md). The earlier failed Windows matrix remains above. No pager-source change was needed for that fixture correction.
+
+Root verifies a quiet Linux static refresh against the merged canonical payload:21of21 tracked file hashes match, and the prior copy remains outside Skill discovery. Hooks, settings and the original development session are unchanged. This installation is manual; it does not add automatic updates.
+
+A fresh genuine engineering task invokes installed38 preparation for known source files, reads the complete two-part summary and a two-part section outline before implementation. Relevant local Context and owner-page bodies are still only partially read, and some are read by bounded raw commands rather than the captured page reader. This is guided partial use, not complete pre-edit context coverage or independent R7. Root also still exceeds host output budgets when combining unrelated raw reads; that is a caller orchestration failure and does not establish a lost NEXT or dropped capture content. No general efficiency or semantic-adoption result is claimed.
