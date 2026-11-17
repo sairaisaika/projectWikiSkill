@@ -583,7 +583,10 @@
         "现状更新",
         "输出分页",
         "重复检索",
-        "capture impact text"
+        "capture impact text",
+        "--view current",
+        "current section",
+        "当前状态 读取"
       ],
       "sources": [
         {
@@ -704,6 +707,13 @@
           "path": "project-wiki/scripts/context_reading.py",
           "symbol": "capture_record_text",
           "reason": "Capture feature/impact text: whole selected record as exact compact JSON lines, base/peer heads, path bases, freshness, no task access"
+        },
+        {
+          "id": "current-section",
+          "role": "implementation",
+          "path": "project-wiki/scripts/context_reading.py",
+          "symbol": "current_section",
+          "reason": "Exactly one saved authored nonhistorical CURRENT section outside generated blocks, else explicit unknown/ambiguous; no live reconstruction"
         }
       ],
       "docs": [
@@ -723,7 +733,8 @@
           "show --capture PATH --view locator [--snapshot-only]: saved scope counts and a summary-reading command; no repeated file/owner delivery",
           "Capture page/history and update-state accept saved Wiki-relative keys or matching repository-relative Wiki paths; no alias outside captured keys is created.",
           "show --capture PATH --view index aliases summary; bounded NEXT preserves index/snapshot mode, while packet index remains legacy-compatible",
-          "show --capture|--packet PATH --view page|history --path PAGE --section-index [--snapshot-only] [--format json]: saved heading outline with exact --section open commands; not combinable with --section"
+          "show --capture|--packet PATH --view page|history --path PAGE --section-index [--snapshot-only] [--format json]: saved heading outline with exact --section open commands; not combinable with --section",
+          "show --capture|--packet PATH --view current --path PAGE [--snapshot-only] [--format json]: one saved authored current section or explicit unknown/ambiguous with outline/page/history readers; not combinable with --section/--section-index"
         ],
         "outputs": [
           "New prepared capture CLI text is bounded to 4000 UTF-8 bytes/40 stdout lines (programmatic default 6000/60), with exact NEXT command on line 2 and at the end and partial/complete status; older capture/raw-native/packet JSON defaults are retained.",

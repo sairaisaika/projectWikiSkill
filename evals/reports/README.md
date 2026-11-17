@@ -107,3 +107,5 @@ pending device/rollout acceptance remain separate; no payload or hook change.
 - [Saved section inventory first-viewport replay, 2026-11-13](section-outline-first-20261113.json): same frozen capture, unchanged normalized outline/continuation; controlled replay, not adoption.
 
 - [0.2.34 static installation and real acceptance-plan use](section-outline-adoption-20261113.json): installation matches source; actual task still used live grep instead of the new outline.
+
+- [Saved current-section view, 2026-11-17](current-view-20261117.md): old-source red/new-source green controls for one authored current section; source candidate only, no installation or adoption.
