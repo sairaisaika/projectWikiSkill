@@ -1738,6 +1738,13 @@
           "path": "hooks/claude.json",
           "reason": "Claude PreToolUse Edit|Write|MultiEdit registration",
           "needle": "'edit_gate.py'"
+        },
+        {
+          "id": "page-freshness",
+          "role": "implementation",
+          "path": "project-wiki/scripts/edit_gate.py",
+          "symbol": "page_hashes_ok",
+          "reason": "Opt-in bounded selected Wiki page byte comparison"
         }
       ],
       "docs": [
@@ -1802,6 +1809,16 @@
           "tests": [
             "tests/test_edit_gate.py"
           ]
+        },
+        {
+          "id": "selected-page-freshness",
+          "statement": "When require_page_hashes is enabled, changed/deleted selected Wiki pages invalidate a time-fresh stamp; matching bytes do not prove reading or completeness.",
+          "source_ids": [
+            "page-freshness"
+          ],
+          "tests": [
+            "tests/test_edit_gate.py"
+          ]
         }
       ],
       "impact": [
@@ -1841,8 +1858,8 @@
           "path": "project-wiki/scripts/edit_gate.py",
           "reason": "Opt-in config keys and types at .project-wiki/edit-gate.json",
           "symbol": "read_config",
-          "line": 78,
-          "sha256": "7c5fec166247887274d05b0e20f8793be28e3ebfec60fdbb53343a547c69b760"
+          "line": 83,
+          "sha256": "0602eed9a2251aa772f32040295c105734930de198ce550766e9e9ad4ffc6465"
         },
         {
           "id": "judge",
@@ -1850,8 +1867,8 @@
           "path": "project-wiki/scripts/edit_gate.py",
           "reason": "Locked-path check, (a) context stamp and (b) design-first predicates",
           "symbol": "judge",
-          "line": 190,
-          "sha256": "7c5fec166247887274d05b0e20f8793be28e3ebfec60fdbb53343a547c69b760"
+          "line": 237,
+          "sha256": "0602eed9a2251aa772f32040295c105734930de198ce550766e9e9ad4ffc6465"
         },
         {
           "id": "main",
@@ -1859,8 +1876,8 @@
           "path": "project-wiki/scripts/edit_gate.py",
           "reason": "Own defects pass as \"gate unavailable\"; exit 2 only from judge",
           "symbol": "main",
-          "line": 222,
-          "sha256": "7c5fec166247887274d05b0e20f8793be28e3ebfec60fdbb53343a547c69b760"
+          "line": 269,
+          "sha256": "0602eed9a2251aa772f32040295c105734930de198ce550766e9e9ad4ffc6465"
         },
         {
           "id": "hook",
@@ -1870,6 +1887,15 @@
           "needle": "'edit_gate.py'",
           "line": 16,
           "sha256": "13d11b35821da0f68b90f3958eca40b33614e40a7b672899b5cba32d42ca0575"
+        },
+        {
+          "id": "page-freshness",
+          "role": "implementation",
+          "path": "project-wiki/scripts/edit_gate.py",
+          "symbol": "page_hashes_ok",
+          "reason": "Opt-in bounded selected Wiki page byte comparison",
+          "line": 160,
+          "sha256": "0602eed9a2251aa772f32040295c105734930de198ce550766e9e9ad4ffc6465"
         }
       ]
     },
