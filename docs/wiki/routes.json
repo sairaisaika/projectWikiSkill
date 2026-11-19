@@ -104,6 +104,13 @@
           "path": ".github/workflows/check.yml",
           "reason": "CI runs check/evaluate on the fixture and check on this repo",
           "needle": "wiki.py check --root evals/fixture-project"
+        },
+        {
+          "id": "diagram-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "diagram_review",
+          "reason": "Bounded changed-file candidates through existing diagram source IDs"
         }
       ],
       "docs": [
@@ -194,7 +201,8 @@
         "tests/test_task_maps.py",
         "tests/test_engineering_depth.py",
         "tests/test_skill_package.py",
-        "tests/test_context_reading.py"
+        "tests/test_context_reading.py",
+        "tests/test_diagram_lifecycle.py"
       ],
       "checks": [
         {

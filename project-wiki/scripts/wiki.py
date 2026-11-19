@@ -176,20 +176,32 @@ def resolve_source(root, entry):
     return dict(entry, line=matches[0], sha256=hashlib.sha256(content.encode('utf-8')).hexdigest())
 
 
-def anchors(content):
+def markdown_scan(content):
     result = set(re.findall(r'<a\s+[^>]*id=["\']([^"\']+)["\']', content, re.I))
     used = {}
     fence = None
-    for line in content.splitlines():
+    headings, diagrams, pending_aliases = [], [], []
+    opening_line, mermaid = 0, False
+    lines = content.splitlines()
+    for index, line in enumerate(lines):
         opening = re.match(r'^\s{0,3}(`{3,}|~{3,})', line)
         if opening:
+            pending_aliases = []
             token = opening.group(1)
             if fence is None:
                 fence = token
+                opening_line = index
+                mermaid = line[opening.end():].strip().lower() == 'mermaid'
             elif token[0] == fence[0] and len(token) >= len(fence):
+                if mermaid and not line[opening.end():].strip() and any(part.strip() for part in lines[opening_line + 1:index]):
+                    diagrams.append((opening_line, index))
                 fence = None
             continue
         if fence is not None:
+            continue
+        alias = re.fullmatch(r'''\s*<a\s+id=["']([^"']+)["']\s*>\s*</a>\s*''', line, re.I)
+        if alias:
+            pending_aliases.append(alias.group(1))
             continue
         heading = re.match(r'^#{1,6}\s+(.+?)(?:\s+#+)?\s*$', line)
         if heading:
@@ -197,8 +209,39 @@ def anchors(content):
             slug = re.sub(r'[^\w\- ]', '', value).replace(' ', '-')
             count = used.get(slug, 0)
             used[slug] = count + 1
-            result.add(slug if count == 0 else f'{slug}-{count}')
-    return result
+            anchor = slug if count == 0 else f'{slug}-{count}'
+            result.add(anchor)
+            level = len(line) - len(line.lstrip('#'))
+            headings.extend((name, index, level) for name in [anchor, *pending_aliases])
+        if line.strip():
+            pending_aliases = []
+    return result, headings, diagrams
+
+
+def anchors(content):
+    return markdown_scan(content)[0]
+
+
+def verify_diagram_content(root, reference):
+    """Opt-in presence only: closed nonempty Mermaid in the exact ATX section."""
+    name, _, fragment = reference.partition('#')
+    path = local(root, name)
+    with path.open('rb') as stream:
+        raw = stream.read(1024 * 1024 + 1)
+    if len(raw) > 1024 * 1024:
+        raise Invalid('Required diagram page exceeds 1 MiB presence-check budget')
+    content = raw.decode('utf-8-sig')
+    _, headings, diagrams = markdown_scan(content)
+    start, end = -1, len(content.splitlines())
+    if fragment:
+        found = [(i, row) for i, row in enumerate(headings) if row[0] == fragment]
+        found = list({row[1]: (i, row) for i, row in found}.values())
+        if len(found) != 1:
+            raise Invalid('Required diagram needs an ATX heading anchor; HTML-only anchors require native review')
+        index, (_, start, level) = found[0]
+        end = next((line for _, line, depth in headings[index + 1:] if line > start and depth <= level), end)
+    if not any(start < first < last < end for first, last in diagrams):
+        raise Invalid('Required diagram missing closed nonempty Mermaid in selected section: ' + reference)
 
 
 def verify_ref(root, reference):
@@ -515,6 +558,17 @@ def resolve_route(root, row, version):
         verify_ref(root, diagram.get('path'))
         if 'source_ids' in diagram and (not strings(diagram['source_ids']) or not diagram['source_ids'] or any(ref not in ids for ref in diagram['source_ids'])):
             raise Invalid('Diagram source_ids must refer to located route sources')
+    requirement = row.get('diagram_requirement')
+    if requirement is not None:
+        if (not isinstance(requirement, dict) or
+                requirement.get('level') not in {'project', 'section', 'page'} or
+                type(requirement.get('required')) is not bool or not text(requirement.get('reason'))):
+            raise Invalid('diagram_requirement needs level project/section/page, required boolean and reason')
+        if requirement['required']:
+            if not row.get('diagrams'):
+                raise Invalid('Required diagram missing: add a canonical diagrams reference; acceptance pending')
+            for diagram in row['diagrams']:
+                verify_diagram_content(root, diagram['path'])
     depth = engineering_metrics(root, row, ids)
     return dict(row, locations=locations, **({'engineering_metrics': depth} if depth is not None else {}))
 
@@ -560,7 +614,7 @@ def audit(root, manifest):
                             'plan_coverage': {'numerator': 6, 'denominator': 6} if version == 2 and row.get('kind') == 'plan' else None,
                             'engineering': resolved.get('engineering_metrics'),
                             'gaps': [field for field in ('kind', 'interface', 'rules', 'impact', 'unknowns', 'evidence', 'reviewed_at') if field not in row]})
-        except (ValueError, OSError, SyntaxError, TypeError) as error:
+        except (ValueError, OSError, SyntaxError, TypeError, AttributeError, KeyError) as error:
             reports.append({'id': row['id'], 'valid': False, 'error': str(error), 'score': None})
     totals = [item['score']['total'] for item in reports if item['score'] is not None]
     floor = manifest.get('quality', {}).get('min_structural_score', 85)
@@ -591,6 +645,63 @@ def audit(root, manifest):
             'diagram_coverage': coverage,
             'task_maps': map_reports,
             'semantic_accuracy': 'not measured', 'independent_adoption': 'not measured'}
+
+
+def diagram_review(root, manifest, changed_files, offset=0, limit=20):
+    """Declared file-to-diagram candidates only; never infer whether a redraw is needed."""
+    if (len(changed_files) > 256 or not strings(changed_files) or
+            type(offset) is not int or offset < 0 or type(limit) is not int or not 1 <= limit <= 50):
+        raise Invalid('Diagram review accepts at most 256 paths, nonnegative offset and limit 1..50')
+    changed = set()
+    for name in changed_files:
+        if len(name) > 1024 or '..' in name.split('/'):
+            raise Invalid('Changed paths must be bounded repository-relative paths without traversal')
+        changed.add(local(root, name).relative_to(root).as_posix())
+    candidates, mapped, unavailable = [], set(), 0
+    for row in manifest['routes']:
+        raw_sources, diagrams = row.get('sources', []), row.get('diagrams', [])
+        if (not isinstance(raw_sources, list) or
+                any(not isinstance(item, dict) or not text(item.get('path')) or
+                    (item.get('id') is not None and not text(item['id'])) for item in raw_sources) or
+                not isinstance(diagrams, list) or
+                any(not isinstance(item, dict) or not text(item.get('path')) or
+                    not text(item.get('kind')) or item['kind'] not in DIAGRAM_KINDS or
+                    ('source_ids' in item and not strings(item['source_ids'])) for item in diagrams)):
+            unavailable += 1
+            continue
+        sources = {item.get('id'): item.get('path') for item in row.get('sources', [])}
+        route_hits = changed.intersection(sources.values())
+        for diagram in row.get('diagrams', []):
+            refs = diagram.get('source_ids')
+            paths = {sources.get(ref) for ref in refs} if refs else set(sources.values())
+            hits = changed.intersection(paths | {diagram['path'].partition('#')[0]})
+            if hits:
+                mapped.update(hits)
+                candidates.append({'route_id': row['id'], 'path': diagram['path'], 'kind': diagram['kind'],
+                                   'basis': 'source_ids or diagram page' if refs else 'route fallback; source_ids absent',
+                                   'disposition': 'pending'})
+        if route_hits and not row.get('diagrams'):
+            mapped.update(route_hits)
+            candidates.append({'route_id': row['id'], 'path': None, 'kind': None,
+                               'basis': 'changed route has no declared diagram; assess authoring need',
+                               'disposition': 'pending'})
+    candidates.sort(key=lambda item: (item['route_id'], item['path'] or '', item['kind'] or ''))
+    rows, size = [], 0
+    for item in candidates[offset:offset + limit]:
+        length = len(json.dumps(item, ensure_ascii=False).encode('utf-8'))
+        if length > 10000:
+            raise Invalid('One diagram review reference exceeds 10000 bytes; shorten the declared reference')
+        if size + length > 10000:
+            break
+        rows.append(item); size += length
+    end = offset + len(rows)
+    return {'scope': 'Declared references only; not semantic diff, coverage, rendering or review completion',
+            'changed_file_count': len(changed), 'unmapped_file_count': len(changed - mapped),
+            'candidate_count': len(candidates), 'unavailable_route_count': unavailable,
+            'offset': offset, 'limit': limit,
+            'next_offset': end if end < len(candidates) else None,
+            'truncated': end < len(candidates), 'candidates': rows,
+            'finish': 'Record updated, reviewed unchanged or pending with reason and diff revision in the native task return; no automatic rewrite'}
 
 
 def words(value):
@@ -810,6 +921,10 @@ def main(argv=None):
             sub.add_argument('question')
             sub.add_argument('--limit', type=int, choices=range(1, 6), default=2)
             sub.add_argument('--json', action='store_true')
+        if command == 'audit':
+            sub.add_argument('--changed-file', action='append', default=[])
+            sub.add_argument('--diagram-offset', type=int, default=0)
+            sub.add_argument('--diagram-limit', type=int, default=20)
         if command == 'evaluate':
             sub.add_argument('--tasks', type=Path, required=True)
         if command == 'task':
@@ -840,6 +955,8 @@ def main(argv=None):
             return 0 if report['passed'] else 1
         report = audit(root, manifest)
         if args.command == 'audit':
+            if args.changed_file:
+                report['diagram_review'] = diagram_review(root, manifest, args.changed_file, args.diagram_offset, args.diagram_limit)
             emit(report)
             return 0 if report['ready'] else 1
         if not report['ready']:

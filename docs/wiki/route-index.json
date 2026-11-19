@@ -60,6 +60,13 @@
           "path": ".github/workflows/check.yml",
           "reason": "CI runs check/evaluate on the fixture and check on this repo",
           "needle": "wiki.py check --root evals/fixture-project"
+        },
+        {
+          "id": "diagram-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "diagram_review",
+          "reason": "Bounded changed-file candidates through existing diagram source IDs"
         }
       ],
       "docs": [
@@ -150,7 +157,8 @@
         "tests/test_task_maps.py",
         "tests/test_engineering_depth.py",
         "tests/test_skill_package.py",
-        "tests/test_context_reading.py"
+        "tests/test_context_reading.py",
+        "tests/test_diagram_lifecycle.py"
       ],
       "checks": [
         {
@@ -195,8 +203,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "argparse subcommands query|task|list|audit|build|check|evaluate and exit codes",
           "symbol": "main",
-          "line": 803,
-          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
+          "line": 914,
+          "sha256": "15e837f7c2f06a0b8403b50712c8d6c32dd1ca6a657719f4032cecc5824a6e43"
         },
         {
           "id": "route",
@@ -204,8 +212,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Validates one schema 1/2 route record, its sources, docs, rules and evidence",
           "symbol": "resolve_route",
-          "line": 419,
-          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
+          "line": 462,
+          "sha256": "15e837f7c2f06a0b8403b50712c8d6c32dd1ca6a657719f4032cecc5824a6e43"
         },
         {
           "id": "locate",
@@ -214,7 +222,7 @@
           "reason": "Exactly one Python symbol or needle match per source; no first-match fallback",
           "symbol": "resolve_source",
           "line": 159,
-          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
+          "sha256": "15e837f7c2f06a0b8403b50712c8d6c32dd1ca6a657719f4032cecc5824a6e43"
         },
         {
           "id": "audit",
@@ -222,8 +230,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Per-route structural score against min_structural_score; readiness",
           "symbol": "audit",
-          "line": 545,
-          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
+          "line": 599,
+          "sha256": "15e837f7c2f06a0b8403b50712c8d6c32dd1ca6a657719f4032cecc5824a6e43"
         },
         {
           "id": "rank",
@@ -231,8 +239,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Alias/title/id matching that orders query hits",
           "symbol": "rank",
-          "line": 600,
-          "sha256": "48716e1add8d14e212d0c84f472118b1854600bd041b188433bdc50174a65f9f"
+          "line": 711,
+          "sha256": "15e837f7c2f06a0b8403b50712c8d6c32dd1ca6a657719f4032cecc5824a6e43"
         },
         {
           "id": "ci",
@@ -242,6 +250,15 @@
           "needle": "wiki.py check --root evals/fixture-project",
           "line": 21,
           "sha256": "9d659178bfe01c0ca3b7867cc92d4daeea7c5d47b01a1cc51ae69ec021b982b4"
+        },
+        {
+          "id": "diagram-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "diagram_review",
+          "reason": "Bounded changed-file candidates through existing diagram source IDs",
+          "line": 650,
+          "sha256": "15e837f7c2f06a0b8403b50712c8d6c32dd1ca6a657719f4032cecc5824a6e43"
         }
       ]
     },

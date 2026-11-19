@@ -1,6 +1,6 @@
 # Invariants
 
-> Reviewed: 2026-11-19, legacy large-stamp regression added. 2026-11-17, current-section view row added. 2026-11-16, capture-record-text and line-boundary page rows added; older rows retain their scoped evidence.
+> Reviewed: 2026-11-19, diagram lifecycle checks added. 2026-11-19, legacy large-stamp regression added. 2026-11-17, current-section view row added. 2026-11-16, capture-record-text and line-boundary page rows added; older rows retain their scoped evidence.
 
 This page is an **index** from each guarded behaviour to the code that enforces it and the
 tests that guard it. The tests are the source of truth: if a row and a test disagree, the test
@@ -94,3 +94,15 @@ removed, fix the row here in the same change. A test name that no longer greps i
 | Capture feature/impact text keeps every selected record key and satellite as exact compact JSON lines, with base/peer heads, path bases and freshness, invents no task access or writability, and leaves JSON export and capture bytes unchanged | context_reading.capture_record_text / record_lines; workflow.capture_record_text | tests/test_reading_flow.py::CaptureRecordTextTests |
 | A section outline lists saved headings per view, opens only unique titled sections, marks duplicates/untitled, and keeps missing metadata unknown without live reads | context_reading.section_outline / render_outline; workflow.main `--section-index` | tests/test_reading_flow.py::SectionOutlineTests |
 | `--view current` returns exactly one saved authored nonhistorical current section, never generated, fenced or history text; zero/several/missing metadata stay unknown/ambiguous without live reads, merging or note inference | context_reading.current_section / render_current; workflow.capture_view `current` | tests/test_reading_flow.py::CurrentViewTests, CurrentGeneratedBoundaryTests |
+
+
+## Diagram authoring and review
+
+`tests/test_diagram_lifecycle.py` covers declared required scope without a diagram,
+canonical cross-page references, explicit FAQ exemptions, legacy compatibility,
+broken anchors/source IDs, exact source mapping, copy-only versus behavior-change
+suggestions, deleted paths, unmapped paths and bounded deterministic continuation.
+The implementation is `wiki.py:resolve_route` and `wiki.py:diagram_review`.
+Required scopes check closed nonempty Mermaid in the selected ATX section; empty targets cannot borrow a diagram from another section. This is syntax-presence, not renderer or semantic validation. New unregistered pages,
+rendering, semantic completeness and prose finish dispositions are not enforced.
+Authoring rules live in [the shipped diagram framework](../../project-wiki/references/diagram-framework.md#author-at-project-section-and-page-scope).
