@@ -176,6 +176,12 @@ to score precision or run a navigation trial. Read [the maintenance guide](refer
 when adding CI, reviewing drift, planning changes, or handing off to another worker.
 Read only the reference needed for the current step.
 
+When creating a Wiki, section or page, decide its required diagram scope using
+[diagram authoring and review](references/diagram-framework.md#author-at-project-section-and-page-scope).
+New boundaries need canonical views; pure indexes and FAQs may link existing views
+with an exemption reason. Review source-diff suggestions and return updated,
+reviewed unchanged or pending, without automatic redraw or semantic gating.
+
 For project-level design coverage, use the [six-view diagram framework](references/diagram-framework.md):
 architecture, flow, sequence, data model, deployment and state machine. Review all
 six questions at project scope; document a reason when a view is inapplicable. Choose

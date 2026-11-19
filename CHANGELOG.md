@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Define project/section/page diagram authoring and native return dispositions; add opt-in route presence checks and bounded source-ID-based review suggestions to audit. Existing manifests remain compatible; no renderer, semantic enforcement or automatic redraw.
+
 - Keep legacy large-stamp target-membership checks unchanged when page hashing is absent or disabled; the new stamp byte budget applies only to explicit opt-in.
 
 - Optional edit-gate page hashes invalidate a time-fresh context stamp when a selected Wiki page changes or disappears. Selection and reads are bounded and Wiki-confined; legacy stamps and host support are unchanged. Offline negative controls and recovery pass; no automatic host triggering or efficiency gain is claimed.

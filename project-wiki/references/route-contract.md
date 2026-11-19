@@ -98,6 +98,12 @@ Adapt records to actual code; do not populate fields with guessed paths.
   [engineering depth](engineering-depth.md). They add checkable lifecycle, data,
   execution and decision detail without making hardware constraints universal.
 
+Optional route `diagram_requirement` declares `level` (project/section/page), a
+boolean `required` and a nonempty `reason`. Required routes must have valid existing
+`diagrams` references; explicit exemptions retain their reason. This is an opt-in
+presence check, not automatic discovery of new pages or semantic classification.
+See [diagram authoring and review](diagram-framework.md#author-at-project-section-and-page-scope).
+
 The optional root `diagram_policy` declares required view kinds and explicit
 not_applicable reasons. See the [six-view framework](diagram-framework.md). Coverage
 counts only diagrams on structurally valid routes; it is not render or semantic proof.
