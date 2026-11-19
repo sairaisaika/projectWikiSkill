@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Keep legacy large-stamp target-membership checks unchanged when page hashing is absent or disabled; the new stamp byte budget applies only to explicit opt-in.
+
+- Optional edit-gate page hashes invalidate a time-fresh context stamp when a selected Wiki page changes or disappears. Selection and reads are bounded and Wiki-confined; legacy stamps and host support are unchanged. Offline negative controls and recovery pass; no automatic host triggering or efficiency gain is claimed.
+
 ## 0.2.39 — saved authored current section — saved current-section view (source candidate)
 
 - `show --view current --path PAGE` reads the one saved authored nonhistorical current section, whatever its recognized label, or reports unknown/ambiguous with outline/page/history readers. Generated, fenced and history headings are excluded; existing views, JSON and capture shape are unchanged apart from one summary Expand hint.

@@ -1309,6 +1309,13 @@
           "path": "hooks/claude.json",
           "reason": "Claude PreToolUse Edit|Write|MultiEdit registration",
           "needle": "'edit_gate.py'"
+        },
+        {
+          "id": "page-freshness",
+          "role": "implementation",
+          "path": "project-wiki/scripts/edit_gate.py",
+          "symbol": "page_hashes_ok",
+          "reason": "Opt-in bounded selected Wiki page byte comparison"
         }
       ],
       "docs": [
@@ -1369,6 +1376,16 @@
           "source_ids": [
             "judge",
             "hook"
+          ],
+          "tests": [
+            "tests/test_edit_gate.py"
+          ]
+        },
+        {
+          "id": "selected-page-freshness",
+          "statement": "When require_page_hashes is enabled, changed/deleted selected Wiki pages invalidate a time-fresh stamp; matching bytes do not prove reading or completeness.",
+          "source_ids": [
+            "page-freshness"
           ],
           "tests": [
             "tests/test_edit_gate.py"

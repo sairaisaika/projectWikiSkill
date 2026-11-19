@@ -51,7 +51,7 @@ Without it, every edit passes silently. A key of the wrong type makes the gate u
 | `wiki_root` | str | **Required.** Directory scanned by predicate (b). |
 | `locked` | list[str] | Globs (`**`, `*`, `?`; `*` does not cross `/`) for the paths the gate judges. |
 | `map_file`, `map_row_format` | str | A path is also locked when `map_file` contains `map_row_format` with `{path}` filled. Default row: ``\| `{path}` \|``. |
-| `stamp` | object | `{path, max_age_hours}`; age defaults to 8 h, measured from file mtime. With no `stamp.path`, (a) passes. |
+| `stamp` | object | `{path, max_age_hours, require_page_hashes?}`; age defaults to 8 h, measured from file mtime. With no `stamp.path`, (a) passes. |
 | `stamp_command` | str | Fix text printed on an (a) failure; `{file}` and `{root}` are substituted. |
 | `design_first` | bool | Turns on predicate (b). |
 | `generated` | list[str] | Globs, relative to `wiki_root`, removed before (b) looks for handwritten changes. |
@@ -68,10 +68,23 @@ Without it, every edit passes silently. A key of the wrong type makes the gate u
 | Pass as "gate unavailable" | Malformed or over-budget (64 KiB) event or config, relative `file_path` without an absolute `cwd`, Git missing or timing out (5 s), or a caught runtime error. |
 
 Git runs read-only (`GIT_OPTIONAL_LOCKS=0`, inherited `GIT_DIR`/`GIT_WORK_TREE`/… dropped).
+With page freshness enabled, the gate reads at most 64 selected Markdown pages,
+1 MiB per page / 4 MiB total; the stamp itself is limited to 64 KiB.
 The gate never reads the edited content or writes a file. Both predicates are reported
-together, each with its own fix. Tests: 16 in `tests/test_edit_gate.py`
+together, each with its own fix. Tests: 22 in `tests/test_edit_gate.py`
 ([invariants.md#edit-gate-edit_gatepy](invariants.md#edit-gate-edit_gatepy)). Adoption: see
 [status.md](status.md).
+
+### Selected page freshness
+
+A consumer may opt into `stamp.require_page_hashes: true`. Its stamp writer captures
+`page_hashes`, a nonempty map of checkout-relative Markdown paths under `wiki_root`
+to raw-byte SHA-256 digests, after expanding the task's required pages. The gate
+compares only those selected pages before an edit; a changed/deleted page, missing
+map or malformed selection blocks predicate (a) even while the stamp mtime is fresh.
+Without opt-in, legacy stamp behavior remains unchanged. It proves bytes, not reading or
+semantic truth, and cannot discover omitted pages. The gate reads bounded selected
+Wiki files, never the edited source file, and never refreshes the stamp itself.
 
 ## after-gates
 

@@ -219,6 +219,24 @@ on stale committed snapshots instead of overwriting them and passing. Keep comma
 read-only except the documented index generation. The helper does not render Mermaid,
 verify domain truth, run commands listed in a manifest, or validate live systems.
 
+### Bind context stamps to selected Wiki pages
+
+For tasks whose rules can change during a session, opt into
+`stamp.require_page_hashes: true` in `.project-wiki/edit-gate.json`. Have the
+project's existing context/stamp writer include `page_hashes`, mapping each
+expanded required page's checkout-relative Markdown path to its raw-byte SHA-256.
+The edit gate then rejects a fresh-by-time stamp after a selected page changes or
+is deleted. Re-read and recapture; do not automatically refresh hashes to silence
+a denial. Legacy projects without this option keep their original age/path check.
+
+The selection must contain 1–64 Markdown pages confined to `wiki_root`, each at
+most 1 MiB and at most 4 MiB total. Over-budget/read failures are visible gate
+unavailability under the existing fail-open policy. Only those pages are read;
+no source scan, command execution or automatic stamp writes occur. A matching hash
+proves neither that the agent read the page, nor that the selection covers the
+feature, nor that the prose is correct. Keep the native impact expansion and
+semantic review; this option does not establish Codex PreToolUse support.
+
 ### Audit the execution surface before adding a rule
 
 A mechanism that exists is not a mechanism that runs. Before diagnosing any miss

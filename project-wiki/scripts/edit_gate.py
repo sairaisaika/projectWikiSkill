@@ -6,6 +6,7 @@ lets it through. A project opts in by placing `.project-wiki/edit-gate.json` at
 its checkout root; without it every edit passes. The gate reads that config, the
 stamp, the optional map and skip files, and runs read-only Git subcommands. It
 never executes project code, writes a file or reads the edited file's contents.
+An optional context check reads only bounded, explicitly selected Wiki pages.
 Any failure of the gate itself passes the edit and says "gate unavailable": the
 gate must not block a task because of its own defect.
 
@@ -23,6 +24,7 @@ touched; neither proves understanding or a correct design. Those stay with revie
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 from pathlib import Path, PurePosixPath
@@ -39,6 +41,9 @@ CONFIG_PATH = PurePosixPath('.project-wiki/edit-gate.json')
 TOOLS = {'Edit', 'Write', 'MultiEdit'}
 DEFAULT_STAMP_AGE_HOURS = 8.0
 GIT_TIMEOUT = 5
+MAX_HASH_PAGES = 64
+MAX_HASH_PAGE_BYTES = 1024 * 1024
+MAX_HASH_TOTAL_BYTES = 4 * 1024 * 1024
 REPO_ENV = {'GIT_DIR', 'GIT_WORK_TREE', 'GIT_INDEX_FILE', 'GIT_COMMON_DIR', 'GIT_OBJECT_DIRECTORY',
             'GIT_ALTERNATE_OBJECT_DIRECTORIES', 'GIT_NAMESPACE', 'GIT_CEILING_DIRECTORIES'}
 
@@ -134,12 +139,55 @@ def context_ok(config: dict, root: Path, rel: str) -> tuple[bool, str]:
     if age_hours >= max_age:
         return False, f'context: stamp {stamp_path} is {age_hours:.1f}h old (max {max_age:g}h). Fix: {fix}'
     try:
-        files = json.loads(path.read_text(encoding='utf-8')).get('files') or []
+        # Preserve legacy stamp membership checks unless page hashing is opted in.
+        if stamp.get('require_page_hashes') is True and path.stat().st_size > MAX_CONFIG:
+            raise Unavailable('stamp exceeds budget')
+        record = json.loads(path.read_text(encoding='utf-8'))
+        files = record.get('files') or []
     except (ValueError, AttributeError):
         return False, f'context: stamp {stamp_path} is not a JSON object with files[]. Fix: {fix}'
     if rel not in files:
         return False, f'context: stamp {stamp_path} does not list {rel}. Fix: {fix}'
+    require_hashes = stamp.get('require_page_hashes', False)
+    if type(require_hashes) is not bool:
+        raise Unavailable('stamp.require_page_hashes must be a boolean')
+    if require_hashes:
+        valid, note = page_hashes_ok(config, root, record)
+        if not valid:
+            return False, note + '. Fix: recapture and review the required Wiki pages; ' + fix
     return True, f'context: stamp {stamp_path} lists {rel}'
+
+
+def page_hashes_ok(config: dict, root: Path, record: dict) -> tuple[bool, str]:
+    """Optional selected-page byte freshness, not a reading or completeness proof."""
+    pages = record.get('page_hashes')
+    if not isinstance(pages, dict) or not pages or len(pages) > MAX_HASH_PAGES:
+        return False, 'context: page_hashes must select 1..64 Wiki pages'
+    wiki = root / config['wiki_root']
+    if not wiki.resolve().is_relative_to(root.resolve()):
+        raise Unavailable('wiki_root must stay in the checkout')
+    total = 0
+    for name, expected in pages.items():
+        if (not isinstance(name, str) or not isinstance(expected, str) or
+                not re.fullmatch(r'[0-9a-f]{64}', expected)):
+            return False, 'context: invalid page_hashes path/digest'
+        rel = PurePosixPath(name)
+        if (rel.is_absolute() or '..' in rel.parts or '\\' in name or
+                ':' in name or rel.suffix.lower() != '.md'):
+            return False, 'context: page_hashes requires relative Wiki Markdown paths'
+        page = root / Path(*rel.parts)
+        if not page.resolve().is_relative_to(wiki.resolve()):
+            return False, 'context: page_hashes path is outside wiki_root'
+        if not page.is_file():
+            return False, f'context: Wiki page missing: {name}'
+        with page.open('rb') as stream:
+            content = stream.read(MAX_HASH_PAGE_BYTES + 1)
+        total += len(content)
+        if len(content) > MAX_HASH_PAGE_BYTES or total > MAX_HASH_TOTAL_BYTES:
+            raise Unavailable('selected Wiki pages exceed byte budget')
+        if hashlib.sha256(content).hexdigest() != expected:
+            return False, f'context: Wiki page changed: {name}'
+    return True, 'context: selected Wiki page bytes match'
 
 
 def git_lines(root: Path, *args: str) -> list[str] | None:

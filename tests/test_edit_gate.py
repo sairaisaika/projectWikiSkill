@@ -1,4 +1,5 @@
 """The pre-edit gate blocks only configured locked paths and never blocks on its own defects."""
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -80,6 +81,79 @@ class EditGateTests(unittest.TestCase):
 
     def snapshot(self):
         return {p: p.read_bytes() for p in self.home.rglob('*') if p.is_file()}
+
+    def hashed_stamp(self, pages=None):
+        selected = pages if pages is not None else {'docs/wiki/01-feature.md': hashlib.sha256(
+            (self.repo / 'docs/wiki/01-feature.md').read_bytes()).hexdigest()}
+        self.write('.project-wiki/stamp.json', json.dumps({'files': ['src/app.py'], 'page_hashes': selected}))
+
+    def require_hashes(self):
+        self.configure(design_first=False, stamp={**self.config['stamp'], 'require_page_hashes': True})
+
+    def test_page_hashes_reject_fresh_stamp_after_wiki_correction(self):
+        self.require_hashes(); self.hashed_stamp()
+        self.assertEqual(self.run_gate(), (0, ''))
+        self.write('docs/wiki/01-feature.md', '# Corrected user operation\n')
+        code, err = self.run_gate()
+        self.assertEqual(code, 2); self.assertIn('Wiki page changed', err)
+        self.hashed_stamp(); self.assertEqual(self.run_gate(), (0, ''))
+
+    def test_page_hashes_require_map_and_detect_deleted_page(self):
+        self.require_hashes(); self.stamp('src/app.py')
+        self.assertEqual(self.run_gate()[0], 2)
+        self.hashed_stamp({}); self.assertEqual(self.run_gate()[0], 2)
+        self.hashed_stamp(); (self.repo / 'docs/wiki/01-feature.md').unlink()
+        code, err = self.run_gate(); self.assertEqual(code, 2)
+        self.assertIn('Wiki page missing', err)
+
+    def test_page_hashes_reject_invalid_selection_and_nonwiki_paths(self):
+        self.require_hashes()
+        for pages in [[], {'docs/wiki/01-feature.md': 'bad'}, {'README.md': 'a' * 64},
+                      {'../private.md': 'a' * 64}, {str(self.home / 'private.md'): 'a' * 64}]:
+            with self.subTest(pages=pages):
+                self.hashed_stamp(pages); self.assertEqual(self.run_gate()[0], 2)
+
+    def test_page_hashes_bound_page_count_and_bytes(self):
+        self.require_hashes()
+        self.hashed_stamp({'docs/wiki/p%d.md' % i: 'a' * 64 for i in range(65)})
+        self.assertEqual(self.run_gate()[0], 2)
+        self.write('docs/wiki/01-feature.md', 'x' * (1024 * 1024 + 1))
+        self.hashed_stamp()
+        code, err = self.run_gate()
+        self.assertEqual(code, 0); self.assertIn('gate unavailable', err)
+        self.assertIn('byte budget', err)
+
+    def test_page_hashes_legacy_optout_keeps_existing_contract(self):
+        self.configure(design_first=False)
+        self.hashed_stamp({'docs/wiki/01-feature.md': 'a' * 64})
+        self.assertEqual(self.run_gate(), (0, ''))
+
+    def test_large_legacy_stamp_preserves_target_membership_check(self):
+        files = [f'src/components/component_{i:05d}/implementation.py' for i in range(1600)]
+        for enabled in (None, False):
+            with self.subTest(require_page_hashes=enabled):
+                stamp_config = dict(self.config['stamp'])
+                if enabled is not None:
+                    stamp_config['require_page_hashes'] = enabled
+                self.configure(design_first=False, stamp=stamp_config)
+                self.stamp(*files)
+                self.assertGreater((self.repo / '.project-wiki/stamp.json').stat().st_size, 64 * 1024)
+                code, err = self.run_gate()
+                self.assertEqual(code, 2)
+                self.assertIn('does not list src/app.py', err)
+                self.stamp(*files, 'src/app.py')
+                self.assertEqual(self.run_gate(), (0, ''))
+
+    @unittest.skipUnless(hasattr(os, 'symlink'), 'symlink unavailable')
+    def test_page_hashes_refuse_symlink_escape_without_reading_target(self):
+        self.require_hashes()
+        outside = self.write('../private.md', 'PRIVATE-PAGE-NEVER-ECHOED')
+        link = self.repo / 'docs/wiki/link.md'
+        try: link.symlink_to(outside)
+        except OSError: self.skipTest('symlink creation not permitted')
+        self.hashed_stamp({'docs/wiki/link.md': 'a' * 64})
+        code, err = self.run_gate(); self.assertEqual(code, 2)
+        self.assertNotIn('PRIVATE-PAGE', err)
 
     def test_without_config_every_edit_passes_silently(self):
         self.assertEqual(self.run_gate(), (0, ''))
