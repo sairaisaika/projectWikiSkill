@@ -139,7 +139,8 @@ def context_ok(config: dict, root: Path, rel: str) -> tuple[bool, str]:
     if age_hours >= max_age:
         return False, f'context: stamp {stamp_path} is {age_hours:.1f}h old (max {max_age:g}h). Fix: {fix}'
     try:
-        if path.stat().st_size > MAX_CONFIG:
+        # Preserve legacy stamp membership checks unless page hashing is opted in.
+        if stamp.get('require_page_hashes') is True and path.stat().st_size > MAX_CONFIG:
             raise Unavailable('stamp exceeds budget')
         record = json.loads(path.read_text(encoding='utf-8'))
         files = record.get('files') or []

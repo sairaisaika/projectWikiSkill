@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Keep legacy large-stamp target-membership checks unchanged when page hashing is absent or disabled; the new stamp byte budget applies only to explicit opt-in.
+
 - Optional edit-gate page hashes invalidate a time-fresh context stamp when a selected Wiki page changes or disappears. Selection and reads are bounded and Wiki-confined; legacy stamps and host support are unchanged. Offline negative controls and recovery pass; no automatic host triggering or efficiency gain is claimed.
 
 ## 0.2.39 — saved authored current section — saved current-section view (source candidate)

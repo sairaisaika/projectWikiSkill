@@ -128,6 +128,22 @@ class EditGateTests(unittest.TestCase):
         self.hashed_stamp({'docs/wiki/01-feature.md': 'a' * 64})
         self.assertEqual(self.run_gate(), (0, ''))
 
+    def test_large_legacy_stamp_preserves_target_membership_check(self):
+        files = [f'src/components/component_{i:05d}/implementation.py' for i in range(1600)]
+        for enabled in (None, False):
+            with self.subTest(require_page_hashes=enabled):
+                stamp_config = dict(self.config['stamp'])
+                if enabled is not None:
+                    stamp_config['require_page_hashes'] = enabled
+                self.configure(design_first=False, stamp=stamp_config)
+                self.stamp(*files)
+                self.assertGreater((self.repo / '.project-wiki/stamp.json').stat().st_size, 64 * 1024)
+                code, err = self.run_gate()
+                self.assertEqual(code, 2)
+                self.assertIn('does not list src/app.py', err)
+                self.stamp(*files, 'src/app.py')
+                self.assertEqual(self.run_gate(), (0, ''))
+
     @unittest.skipUnless(hasattr(os, 'symlink'), 'symlink unavailable')
     def test_page_hashes_refuse_symlink_escape_without_reading_target(self):
         self.require_hashes()

@@ -1,6 +1,6 @@
 # Invariants
 
-> Reviewed: 2026-11-17, current-section view row added. 2026-11-16, capture-record-text and line-boundary page rows added; older rows retain their scoped evidence.
+> Reviewed: 2026-11-19, legacy large-stamp regression added. 2026-11-17, current-section view row added. 2026-11-16, capture-record-text and line-boundary page rows added; older rows retain their scoped evidence.
 
 This page is an **index** from each guarded behaviour to the code that enforces it and the
 tests that guard it. The tests are the source of truth: if a row and a test disagree, the test
@@ -58,6 +58,7 @@ use it; `test_inherited_git_dir_does_not_redirect_the_gate` and
 | Design-first predicate: with `design_first`, a locked edit needs a handwritten change under `wiki_root` since the merge-base, in a commit, an uncommitted edit or an untracked file. Generated views do not count. A reasoned skip file waives only this predicate. | `edit_gate.py:design_ok`, `judge`, `context_ok` | `tests/test_edit_gate.py::EditGateTests.test_stamp_without_wiki_change_blocks_and_points_at_the_page`<br>`tests/test_edit_gate.py::EditGateTests.test_generated_view_changes_alone_do_not_count_as_design`<br>`tests/test_edit_gate.py::EditGateTests.test_handwritten_page_change_passes_whether_uncommitted_untracked_or_committed_on_branch`<br>`tests/test_edit_gate.py::EditGateTests.test_both_missing_predicates_are_reported_together`<br>`tests/test_edit_gate.py::EditGateTests.test_design_first_off_needs_only_the_stamp`<br>`tests/test_edit_gate.py::EditGateTests.test_skip_file_with_reason_waives_design_only_and_echoes_it_but_empty_reason_blocks`<br>`tests/test_edit_gate.py::EditGateTests.test_skip_file_does_not_waive_the_context_stamp` | Gap: only an explicit `design_first: false` is tested. No test covers an omitted key, which `judge` treats as off. |
 
 Selected-page freshness opt-in is guarded by `test_page_hashes_reject_fresh_stamp_after_wiki_correction`, missing/deleted-page, selection-confinement, legacy-optout, symlink-escape and byte/count-budget tests in `tests/test_edit_gate.py`. It observes selected Wiki bytes, not semantic use.
+`test_large_legacy_stamp_preserves_target_membership_check` verifies that stamps above 64 KiB still reject an unlisted target and accept a listed target when page hashing is absent or false; the new stamp budget applies only to explicit opt-in.
 
 ## Wiki helper (`wiki.py`)
 
