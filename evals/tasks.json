@@ -173,6 +173,27 @@
       "expected_routes": [
         "storage-maintenance"
       ]
+    },
+    {
+      "id": "repository-hygiene",
+      "query": "repository hygiene",
+      "expected_routes": [
+        "repository-hygiene"
+      ]
+    },
+    {
+      "id": "staged-review",
+      "query": "staged diff",
+      "expected_routes": [
+        "repository-hygiene"
+      ]
+    },
+    {
+      "id": "tracking-boundary",
+      "query": "仓库卫生",
+      "expected_routes": [
+        "repository-hygiene"
+      ]
     }
   ],
   "task_map_cases": [

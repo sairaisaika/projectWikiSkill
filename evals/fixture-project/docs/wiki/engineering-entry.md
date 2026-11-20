@@ -27,6 +27,9 @@ For a compound interface change, `python <skill>/scripts/wiki.py task interface-
 
 ## Maintenance
 
+For `repository hygiene`, `staged diff` or `仓库卫生`, follow
+[Git tracking boundaries](maintenance-closeout.md#repository-hygiene).
+
 For unexplained disk growth, query the existing Wiki with `disk growth cleanup`
 or follow [storage and resource inventory](maintenance-closeout.md#storage-and-resource-inventory).
 At closeout, pause or resume, use the [interrupted retry release](maintenance-closeout.md#interrupted-retry-release) as a worked case. Return stable changes to the [recovery owner](engineering-contracts.md#recovery), keep scoped evidence and outstanding work in the existing task record, and run the project's usual fixture checks.

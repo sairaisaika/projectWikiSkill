@@ -52,6 +52,13 @@ Review changed source as a signal, not as proof that all prose is stale. Normali
 whole-file hashes intentionally flag conservative review; only update reviewed_at
 after reading the affected rule/caller. Build timestamps are not review evidence.
 
+## Repository hygiene
+
+For new files, generated leftovers and staged diff review, follow
+[repository hygiene and tracking boundaries](repository-hygiene.md). Classify before
+creation and after generation; commit tasks recheck before staging and before commit.
+Ignore/tracking decisions do not change the retention protections below.
+
 ## Closeout and maintenance sweeps
 
 Use the project's Maintenance section as the entrance, not a new knowledge store.
@@ -172,6 +179,11 @@ a realistic query against the actual index. A navigation-only section can point 
 existing workflows or diagrams; it need not create another owner or diagram.
 
 > ## Maintenance
+>
+> Before file creation, after generation, before staging and before commit, use
+> **[our repository hygiene procedure]**. Include the
+> [canonical/private boundary and configuration index](repository-hygiene.md#wiki-boundary-and-configuration-index)
+> here, adapting it in place for an existing Wiki. Keep retention separate.
 >
 > When **[our local storage budget or growth trigger]** is hit, or at **[our
 > maintenance cadence]**, start at **[our read-only inventory instructions]**.

@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Repository hygiene and Git boundaries](repository-hygiene-20261120.md) | Native discovery and ten real temporary Git cases for classification boundaries, staged review and protected retention | Synthetic command/method checks; no downstream adoption, remote enforcement, release or installation |
 | [Line-boundary text parts](line-boundary-pages-20261116.md) | Unchanged-source red regressions and a synthetic multi-owner replay: partial parts end after a complete fitting line; exact reassembly | Oversized single lines still split mid-line; no adoption or savings claim |
 | [Default capture record text](capture-record-text-20261116.md) | Old-source controls and exact same-record continuation/JSON replay | Installed37 guided use is partial; general adoption remains separate |
 | [Linux static0.2.36 installation and guided use, 2026-11-16](installed-036-observation-20261116.md) | Exact platform/main CI;21/21 installed payload hashes; fresh genuine guided invocation | Static copy/no auto-update; partial Context and continuation reading; no independent adoption or cost claim |
@@ -37,8 +38,8 @@ These reports describe measured runs, not expected scores to copy into a new pro
 | [Native implementation return](native-implementation-return-c50-20261022.md) | Real paired-repository implementation, coordinator async negatives/corrections, original wiki return and post-commit reconciliation retaining a capability gap | Familiar coordinator; source tests and direct packaged CLI use, no device/product acceptance, hook or speedup claim |
 | [Fresh native read-only return](native-readonly-return-20261022.md) | Actual delegated native review exposed source gaps and invalid return shape; optional unreviewed preparation used by the resumed worker, compatible finish and omission negatives checked | One fresh reviewer plus guided format recovery; no engineering implementation, automatic hooks, speedup or product acceptance |
 | [Codex installed-cache refresh](codex-host-refresh-20261022.md) | Valid old 0.2.2 cache detected; official update, 0.2.3 source closure and fresh read-only CLI component/query use observed | No desktop refresh, hooks, complete native read-only cycle, speedup or product acceptance |
-| fixture-structure.json | Eight schema-2 routes resolve; structural average 98.0, minimum 92; six view kinds and optional engineering metrics | A missing TS test deliberately loses points; field completeness is not semantic truth |
-| fixture-routing.json | 21/21 known questions top-1/top-2; 4/4 unknown controls rejected | Author-curated synthetic self-test, not independent adoption |
+| fixture-structure.json | Nine schema-2 routes resolve; minimum structural score 92; six view kinds and optional engineering metrics | A missing TS test deliberately loses points; field completeness is not semantic truth |
+| fixture-routing.json | 24/24 known questions top-1/top-2; 4/4 unknown controls rejected | Author-curated synthetic self-test, not independent adoption |
 | forward-trial.md | One fresh evaluator drafted a six-category plan wiki-first with no exploratory search, then checked cited source | One synthetic trial before corrections; no speedup baseline |
 | smv-legacy-audit.json | Existing real project's 10 schema-1 routes resolve; schema-2 precision gaps are reported | Read-only audit; not migrated, not awarded a schema-2 score |
 | engineering-and-six-view-trials.md | Two fresh read-only trials used wiki-first plans and surfaced concrete missing constraints | Synthetic tasks; no time/speedup baseline or live product acceptance |
