@@ -209,3 +209,31 @@ class RepositoryVisibilityTests(unittest.TestCase):
             self.assertEqual((self.root / name).read_bytes(), content)
         self.assertIn('Do not automatically move, delete,', self.method)
         self.assertIn('private does not remove prior public exposure or repair Git history', self.method)
+
+    def test_same_repository_does_not_authorize_wrong_or_extra_publication_refs(self):
+        # Synthetic review record, not a Git argument parser or a publication call.
+        approved = {'action': 'push', 'repo': 'example/project',
+                    'url': 'https://example.invalid/example/project.git',
+                    'refs': [('refs/heads/topic', 'refs/heads/topic')],
+                    'resolved': True, 'history_reviewed': True, 'policy': 'reviewed'}
+        cases = [approved,
+                 dict(approved, refs=[('refs/heads/other', 'refs/heads/topic')]),
+                 dict(approved, refs=[('refs/heads/topic', 'refs/heads/other')]),
+                 dict(approved, refs=approved['refs'] + [('refs/heads/extra', 'refs/heads/extra')]),
+                 dict(approved, refs=approved['refs'] + [('refs/tags/v1', 'refs/tags/v1')]),
+                 dict(approved, resolved=False), dict(approved, action='mirror'),
+                 dict(approved, history_reviewed=False), dict(approved, policy='changed')]
+        for index, candidate in enumerate(cases):
+            with self.subTest(index=index):
+                self.assertEqual(self.observed(self.metadata('public', candidate['repo']),
+                                               candidate['repo']), 'public')
+                within_review = (candidate['action'] == approved['action']
+                                 and candidate['refs'] == approved['refs']
+                                 and candidate['resolved'] and candidate['history_reviewed']
+                                 and candidate['policy'] == approved['policy'])
+                self.assertEqual(within_review, index == 0)
+        for requirement in ('exact source → target refs', 'PR base/head',
+                            'relevant newly exposed history', 'configuration/defaults',
+                            'wildcards, mirror, tags', 'applicable target policy changes',
+                            'literal supplied URL', 'not a remote name'):
+            self.assertIn(requirement, self.method)

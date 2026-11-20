@@ -65,8 +65,20 @@ For a Git push, inspect the explicit target first, then relevant
 use `git remote get-url --push --all REMOTE` to resolve that remote's push URLs
 and URL rewrites. These are read-only local configuration checks using the safe
 Git prefix below; replace BRANCH/REMOTE with the reviewed names. An explicit
-connector/API repository overrides Git defaults. Treat URLs as discovery clues,
+connector/API repository overrides Git defaults. A literal supplied URL is a URL
+target, not a remote name for `remote get-url`; verify its effective destination
+identity separately, without inferring visibility. Treat URLs as discovery clues,
 never visibility or authorization proof; don't echo credentials embedded in them.
+
+Confirm the authorized publication action and exact source → target refs,
+including PR base/head repositories and branches. Review every branch/tag ref to
+be sent and the relevant newly exposed history under the same content/audience
+rules; a safe tip or repository identity alone is insufficient. Refuse unresolved
+or extra refs from configuration/defaults, wildcards, mirror, tags or other implicit
+expansion. Prefer an explicit narrow operation limited to the authorized refs.
+Recheck when the action, refs or applicable target policy changes, as well as
+immediately before publication. This is a scoped review, not permission to expose
+history, run remote instructions or repair history automatically.
 
 After verifying the exact host/repository identity and authorized account, use an
 authorized read of that destination's repository metadata (e.g. GitHub's repository

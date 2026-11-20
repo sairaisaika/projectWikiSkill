@@ -44,6 +44,7 @@ and disposable real Git repositories, never remote writes or real sensitive data
 | Wider release audience | Synthetic public release destination from private source requires public approval; all publication surfaces and invariant sensitive-data exclusions are present |
 | New setup scaffolds | All three filenames can be tracked; public/unknown choose public-safe template bodies, private/internal choose the shared authorized bodies; no filename-based ban |
 | Existing scaffold conflict | Synthetic existing internal decisions remain unchanged, tracked and at the same HEAD/index even after public/private metadata review; ignore rules are not changed by the review |
+| Same repository, different publication refs | One authorized source→target branch passes the synthetic review record; wrong source/target branch, extra branch/tag, unresolved expansion, mirror action, unreviewed history and changed target policy fail despite identical public repository metadata. No parser or publication is executed |
 | Tracking is independent | A tracked synthetic file remains indexed and unchanged for all four metadata classes even when matching ignore |
 
 The metadata binder in the tests is a test-only interpretation of the documented
@@ -56,12 +57,19 @@ The first full run found two same-page links incompatible with this repository's
 package link checker. They now use explicit `repository-hygiene.md#...` paths;
 the checker was not changed or bypassed.
 
+Independent review then identified missing publication ref/history scope. The
+method now confirms the authorized action, exact source/target refs including PR
+branches, every exposed branch/tag and relevant history, and refuses implicit or
+unresolved expansion. Literal URL targets remain URLs rather than remote names.
+One synthetic regression covers approved versus wrong/extra refs and stale action,
+history or policy evidence; it adds no runtime Git parser or publication call.
+
 ## Validation closure
 
 Local environment: Linux, Python 3.12.14 and Git 2.56.1.
 
-- Focused hygiene/visibility suites: 22/22 (12 retained hygiene and 10 visibility/scaffold).
-- Full suite: 491 collected, 490 passed, one existing Windows-junction skip.
+- Focused hygiene/visibility suites: 23/23 (12 retained hygiene and 11 visibility/scaffold/ref-scope).
+- Full suite: 492 collected, 491 passed, one existing Windows-junction skip.
 - Fixture contracts: 12/12 passed.
 - Fixture and maintainer Wiki checks: ready, no drift; 9 and 11 routes respectively.
 - Fixture routing: 24/24 known queries top-1/top-2, 4/4 unknown controls rejected;
