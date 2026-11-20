@@ -166,6 +166,13 @@
       "expected_routes": [
         "recovery"
       ]
+    },
+    {
+      "id": "storage-maintenance",
+      "query": "磁盘空间回收：不用的脚本、构建缓存和旧归档",
+      "expected_routes": [
+        "storage-maintenance"
+      ]
     }
   ],
   "task_map_cases": [

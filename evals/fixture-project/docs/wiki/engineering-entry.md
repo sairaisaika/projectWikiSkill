@@ -24,3 +24,9 @@ Query the skill helper against this fixture root. The generated
 draft a plan, then inspect only the cited implementation before editing.
 
 For a compound interface change, `python <skill>/scripts/wiki.py task interface-change --root <fixture>` lists all four declared work surfaces and their routes without reading source files. Query only the chosen route next. This scope is curated, not an inferred complete dependency graph.
+
+## Maintenance
+
+For unexplained disk growth, query the existing Wiki with `disk growth cleanup`
+or follow [storage and resource inventory](maintenance-closeout.md#storage-and-resource-inventory).
+At closeout, pause or resume, use the [interrupted retry release](maintenance-closeout.md#interrupted-retry-release) as a worked case. Return stable changes to the [recovery owner](engineering-contracts.md#recovery), keep scoped evidence and outstanding work in the existing task record, and run the project's usual fixture checks.
