@@ -8,6 +8,10 @@ wiki. Without that manifest, report the native audit results; do not call the wi
 invalid merely because `wiki.py` cannot ingest it. An adapter is a separate design
 choice and must reuse native metadata rather than introduce hand-maintained copies.
 
+For repository hygiene, add missing boundary/configuration fields to the existing
+entry in place using [the Wiki boundary](repository-hygiene.md#wiki-boundary-and-configuration-index).
+Preserve native owners and private storage; don't invent a second canonical Wiki.
+
 ## Recover the actual review baseline
 
 Before taking over interrupted work, compare working tree, local commits, remote

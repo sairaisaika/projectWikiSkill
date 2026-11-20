@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Route file creation, generated leftovers and staged review through repository hygiene: precise shared/repository-local ignore suggestions (linked worktrees share local excludes), ancestor-aware negation, canonical/private Wiki boundaries and independent retention protection. Add synthetic Git semantics and native-route tests; no automatic rules, staging, cleanup or hooks. See [evidence](evals/reports/repository-hygiene-20261120.md).
+
 - Add a bounded, read-only apparent-size inventory helper and route project storage inventory, development closeout, pause and restart through a discoverable Maintenance entry. Return durable lessons, bounded evidence and open work to existing owners; distinguish resource inventory from cleanup authority. No new gate, schema or migration.
 
 - Define project/section/page diagram authoring and native return dispositions; add opt-in route presence checks and bounded source-ID-based review suggestions to audit. Existing manifests remain compatible; no renderer, semantic enforcement or automatic redraw.

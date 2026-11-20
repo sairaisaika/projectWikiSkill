@@ -67,3 +67,40 @@ and resources are illustrative, not measured or approved:
 
 Report incomplete measurements and keep all dispositions pending unless a
 separate authorized workflow resolves them. Do not clean up in this fixture.
+
+## Repository hygiene
+
+Follow the [repository hygiene procedure](../../../../project-wiki/references/repository-hygiene.md)
+from this existing Maintenance owner before writing and at both commit boundaries.
+This is a synthetic example: preserve canonical project maps, stable decisions,
+maintenance/acceptance routes and sanitized fixtures in the Wiki. Personal drafts,
+private records, credentials, user data and raw logs stay outside canonical pages;
+local-only material needs an approved location, potentially outside the clone.
+
+For a new Wiki, use the procedure's entry template before creating its first page.
+For this established Wiki, supplement this section in place and link the current
+owners; do not create another Wiki or duplicate policy. Record only actual relevant
+configurations: this fixture has no standalone `.gitignore`, GitHub workflows, PR
+template or CODEOWNERS (missing at its root); default branch and remote gates are
+not applicable because this directory is an offline fixture, not a hosted repository.
+A temporary Git repository in the tests supplies separate synthetic configurations.
+
+Synthetic decisions to exercise with that repository:
+
+- `build/cache.bin`: shared, rebuildable, non-authoritative; suggest its exact
+  `.gitignore` rule, preserving any active/retained copy independently.
+- `scratch/local-note.txt`: personal noise in the local repository; propose local
+  exclude only after checking its shared linked-worktree scope. For true worktree
+  isolation, do not rely on the shared exclude.
+- `package-lock.json`, `.env.example`, `tests/fixtures/public.json` and canonical
+  Wiki: keep tracked by fixture policy; expose overbroad rules rather than force-add.
+- `tracked-output.txt`: already tracked but now matching ignore; report the
+  conflict, with no automatic untrack or history repair.
+- `archives/held.zip`: synthetic held recovery copy, ignored but protected;
+  retain under the [existing retention procedure](#storage-and-resource-inventory).
+- Unknown output or unsafe staged bytes: leave review unresolved with a safe
+  label; do not publish content or infer permission from the staged list.
+
+These are agent review cases, not a filename-based automatic classifier. Before
+staging and before commit, route the actual cached name/status list to owners and
+review only known-safe synthetic cached patches, even if the worktree differs.

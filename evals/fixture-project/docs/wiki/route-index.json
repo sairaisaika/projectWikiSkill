@@ -1789,6 +1789,93 @@
       },
       "reviewed_at": "2026-11-20",
       "locations": []
+    },
+    {
+      "id": "repository-hygiene",
+      "title": "Review repository hygiene and staged diff",
+      "kind": "plan",
+      "aliases": [
+        "repository hygiene",
+        "staged diff",
+        "Git tracking boundaries",
+        "ignore rules",
+        "仓库卫生",
+        "暂存内容",
+        "Git 跟踪边界"
+      ],
+      "docs": [
+        "docs/wiki/maintenance-closeout.md#repository-hygiene"
+      ],
+      "plan": {
+        "outcomes": [
+          "Classify task outputs and distinguish ignore, tracking and retention."
+        ],
+        "dependencies": [
+          "Known provenance, project tracking policy and safe inspection scope."
+        ],
+        "interfaces": [
+          "Native Wiki entry, path-specific Git metadata and staged name/status list."
+        ],
+        "deliverables": [
+          "Safe disposition and unresolved conflicts in the existing task record."
+        ],
+        "exit_evidence": [
+          "Known paths reviewed before creation, after generation, before staging and before commit; protected evidence retained."
+        ],
+        "unknowns": [
+          "Real owner authorization and sensitive data are not represented by the synthetic fixture."
+        ]
+      },
+      "interface": {
+        "inputs": [
+          "Task-known paths, relevant configuration and staged list for commit tasks."
+        ],
+        "outputs": [
+          "Tracking suggestions, safe review findings and unresolved conflicts."
+        ],
+        "errors": [
+          "Unknown sensitivity or provenance blocks writes and content propagation."
+        ],
+        "compatibility": "Reuse native Maintenance and configuration index without automatic edits or staging.",
+        "failure_modes": {
+          "returned": [
+            "Ignore matches and tracked conflicts are metadata, not disposal permission."
+          ],
+          "thrown": [
+            "Git failure is unknown, not a no-match decision."
+          ],
+          "unsupported": [
+            "No automatic classification, untrack, history rewrite, cleanup or secrets remediation."
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "independent-boundaries",
+          "statement": "Ignore, tracking and retention are independent; report unknown or tracked conflicts without automatic mutation.",
+          "source_ids": [],
+          "proposed": true
+        }
+      ],
+      "impact": [
+        "Canonical Wiki and sanitized examples stay under project policy; private data stays in approved storage."
+      ],
+      "checks": [
+        {
+          "command": "python <skill>/scripts/wiki.py query --root . \"staged diff\"",
+          "scope": "Routes the staged review procedure without inspecting contents or changing Git."
+        }
+      ],
+      "boundary": "Synthetic workflow plan; no hosted-project settings or natural agent adoption is asserted.",
+      "unknowns": [
+        "Remote enforcement and actual private data handling are not exercised."
+      ],
+      "evidence": {
+        "implementation": "planned",
+        "observations": []
+      },
+      "reviewed_at": "2026-11-20",
+      "locations": []
     }
   ],
   "task_maps": [

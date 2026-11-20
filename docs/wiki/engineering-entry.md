@@ -1,6 +1,6 @@
 # Engineering entry
 
-> Reviewed: 2026-11-03 against c062224
+> Reviewed: 2026-11-20 against 71c9c23 for Maintenance/Git boundaries; other sections retain their prior scope
 
 This repository ships **project-wiki**, an agent skill plus an optional host plugin.
 The skill teaches an agent to keep a project's wiki source-backed: route a task to its
@@ -40,6 +40,23 @@ table when you already know the area.
 | The generated route index (do not edit by hand) | — | [route-index.md](route-index.md) |
 
 ## Maintenance
+
+For file creation, generated leftovers and staged review use
+[repository hygiene](../../project-wiki/references/repository-hygiene.md).
+Canonical project maps, stable decisions, maintenance/acceptance entrances and
+sanitized evidence/examples follow the tracked homes below. Machine absolute paths,
+local preferences, drafts, caches, private records, credentials, user data and raw
+logs are local-only/private; sensitive material stays in an approved location,
+which may be outside the clone. Ignore does not grant retention or cleanup authority.
+
+| Repository configuration | Verified source / boundary (2026-11-20) |
+|---|---|
+| Shared ignore | [`.gitignore`](../../.gitignore); no rule change in this task |
+| CI | [check.yml](../../.github/workflows/check.yml); configured Ubuntu/Windows × Python 3.10/3.13, not proof of required checks |
+| PR template / CODEOWNERS | Missing in the checked root, `.github/` and `docs/` locations |
+| Default branch | `main`, verified from repository metadata; local branch is not authority |
+| Required checks, branch protection, release gates | Remote enforcement unverified; workflow alone is insufficient. Follow existing owner authorization; this task does not release. |
+| Personal excludes | Git-resolved local configuration; do not publish machine paths or personal rules |
 
 Start with [read-only storage inventory](../../project-wiki/references/maintenance.md#inventory-storage-without-cleaning-it)
 when usage grows unexpectedly or a selected maintenance review is due.
@@ -101,6 +118,7 @@ Do not add a version paragraph to `README.md`, `docs/PLUGIN_PLAN.md` or the top 
 | `scripts/package_plugin.py` | `test_plugin_package.py`, `test_legacy_hooks.py`, `test_portable_hooks.py`, `test_package_newlines.py`, `test_package_integrity.py` | `scripts/plugin_doctor.py` (it re-derives the receipt) |
 | `scripts/plugin_doctor.py` | `test_plugin_package.py`, `test_package_integrity.py`, `test_package_newlines.py`, `test_codex_inventory.py`, `test_codex_hooks.py`, `test_lifecycle.py` | Receipt fields in `package_plugin.py` |
 | `hooks/*.json` | `test_lifecycle.py`, `test_legacy_hooks.py`, `test_edit_gate.py`, `test_portable_hooks.py`, `test_codex_hooks.py` | Packaging profile, [hooks-and-gates.md](hooks-and-gates.md) |
+| `project-wiki/references/repository-hygiene.md` | `test_repository_hygiene.py` (real temporary Git repositories and native routes) | Existing Maintenance entries, fixture routes/evaluation and retention protections |
 | `project-wiki/SKILL.md`, `project-wiki/references/*.md`, `project-wiki/agents/openai.yaml`, `README.md` | `test_skill_package.py` (metadata; every link and anchor resolves inside the repo) | The owning reference only; no version or caveat paragraph |
 
 Before handing back, run the steps of

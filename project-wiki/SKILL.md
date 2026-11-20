@@ -120,6 +120,17 @@ mechanism actually runs before adding a rule; "no wiki change" is a valid outcom
 Fix the responsible layer and test the next real task. More prose or another
 acknowledgement does not establish improvement.
 
+## Repository hygiene before writes and commits
+
+Use [repository hygiene](references/repository-hygiene.md) through the project's
+Maintenance entry: classify before creating files, reconcile unknown outputs after
+generation, and, for a commit task, recheck tracking/rules and staged content before
+staging and again before committing. Use read-only path checks; do not automatically
+change rules, untrack or stage files. Keep secrets/private data out of the repository;
+ignore, Git tracking and retention are independent. New Wiki entries include the
+[canonical/private boundary and configuration index](references/repository-hygiene.md#wiki-boundary-and-configuration-index);
+existing Wiki entries gain missing fields in place without a second source of truth.
+
 ## Maintain project storage and close out development
 
 When a project grows past its budget or reaches a selected maintenance cadence,
