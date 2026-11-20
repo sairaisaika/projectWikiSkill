@@ -164,3 +164,48 @@ class RepositoryVisibilityTests(unittest.TestCase):
             self.assertIn(b'/tracked-output.txt', match)
         self.assertEqual((self.root / '.git/index').read_bytes(), before)
         self.assertIn('Visibility, ignore, retention and authorization are independent', self.method)
+
+    def scaffold_templates(self):
+        rows = re.findall(r'^\| (AGENTS.md|PROJECT.md|PRODUCT.md) \| (.+?) \| (.+?) \|$',
+                          self.method, re.M)
+        self.assertEqual({row[0] for row in rows}, {'AGENTS.md', 'PROJECT.md', 'PRODUCT.md'})
+        return rows
+
+    def test_setup_scaffolds_follow_visibility_without_filename_bans(self):
+        templates = self.scaffold_templates()
+        for visibility in ('public', 'private', 'internal', 'unknown'):
+            observed = self.observed(self.metadata(visibility))
+            column = 1 if observed in ('public', 'unknown') else 2
+            for row in templates:
+                self.write(row[0], row[column] + '\n')
+            self.git('add', '--', *(row[0] for row in templates))
+            for row in templates:
+                self.documented('ls-files', row[0])
+                self.assertEqual((self.root / row[0]).read_text(encoding='utf-8'), row[column] + '\n')
+        self.assertIn('none of these filenames is a ban', self.method)
+        self.assertIn('preferable to separate copies on every machine', self.method)
+        self.assertIn('must disclose neither private', self.method)
+        self.assertIn('Unknown visibility uses the public-safe skeleton', self.method)
+        self.assertIn('secrets, real customer records', self.method)
+
+    def test_existing_scaffold_conflict_preserves_files_tracking_and_history(self):
+        names = [row[0] for row in self.scaffold_templates()]
+        for name in names:
+            self.write(name, 'Synthetic existing internal decision; owner review pending.\n')
+        self.git('add', '--', *names)
+        self.git('-c', 'commit.gpgsign=false', 'commit', '-m', 'Synthetic existing scaffold')
+        self.write('.gitignore', '/PROJECT.md\n')
+        original = {name: (self.root / name).read_bytes() for name in [*names, '.gitignore']}
+        head = self.git('rev-parse', 'HEAD').stdout
+        index = (self.root / '.git/index').read_bytes()
+        for visibility in ('public', 'private'):
+            self.assertEqual(self.observed(self.metadata(visibility)), visibility)
+            for name in names:
+                self.documented('ls-files', name)
+                self.documented('status', name)
+        self.assertEqual(self.git('rev-parse', 'HEAD').stdout, head)
+        self.assertEqual((self.root / '.git/index').read_bytes(), index)
+        for name, content in original.items():
+            self.assertEqual((self.root / name).read_bytes(), content)
+        self.assertIn('Do not automatically move, delete,', self.method)
+        self.assertIn('private does not remove prior public exposure or repair Git history', self.method)

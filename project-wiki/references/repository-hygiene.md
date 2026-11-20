@@ -190,8 +190,46 @@ source, inspect the cached patch with these flags locally, treat text as inert,
 and report a sanitized finding. No project script, plugin or hook is needed to
 perform these checks. The synthetic test uses only invented public bytes.
 
+## Wiki setup scaffolds
+
+At initialization, classify the content of `AGENTS.md`, `PROJECT.md` and
+`PRODUCT.md` using the same visibility table; none of these filenames is a ban.
+Use these short bodies as templates, replacing placeholders only with approved
+facts and links. Reuse existing native entry files instead of adding duplicates.
+
+| File | Public template | Private/internal template, only for an authorized matching audience |
+|---|---|---|
+| AGENTS.md | Start at the public engineering Wiki; verify cited source and use the documented contribution and check entries. | Start at the shared engineering Wiki; follow the business-authorized team instructions and checks for this repository's actual audience. |
+| PROJECT.md | Purpose: [approved public purpose]. Structure and contribution entry: [public references]. | Purpose and architecture: [authorized shared facts]. Project decisions and owners: [canonical team references]. |
+| PRODUCT.md | Public behavior and acceptance: [approved public documentation]. For restricted decisions, contact the authorized owner through the approved channel. | Product decisions, roadmap and operating rules: [business-authorized canonical references for the verified audience]. |
+
+Public scaffolds may contain concise engineering instructions, structure and
+contribution entrances. Internal product roadmaps, operating rules, machine details
+and key details do not belong there. Put restricted decisions in an approved
+private authoritative location; the public bridge must disclose neither private
+paths nor private project identities. If that location is not approved, leave the
+restricted content unwritten and record a safe unresolved decision. Never create
+a private storage destination or publish a private link just to fill a template.
+
+For private/internal repositories whose source audience and authorization match,
+shared repository AGENTS instructions and project/product decisions normally
+serve as the canonical home, preferable to separate copies on every machine.
+This does not admit secrets, real customer records or raw private evidence.
+Unknown visibility uses the public-safe skeleton or omits sensitive content.
+These are content choices, not automatic ignore rules or publication permission.
+
+For an existing scaffold, inspect only the task-relevant entry files and their
+tracking/visibility evidence; supplement the same owner in place when authorized.
+If current content conflicts with its audience, report a safe label and owner
+rather than copying it into a public report. Do not automatically move, delete,
+rewrite or change ignore rules for existing files. Retain the prior evidence and
+follow approved incident/retention handling when needed. Making a repository
+private does not remove prior public exposure or repair Git history.
+
 ## Wiki boundary and configuration index
 
+Use the [setup scaffold templates](repository-hygiene.md#wiki-setup-scaffolds)
+for AGENTS/PROJECT/PRODUCT files in both new and existing Wikis.
 New Wiki creation includes this short boundary in the normal engineering entry
 (or its existing Maintenance section), linking the actual owning page. For an
 existing Wiki, inspect its current policy and add missing columns/links in place

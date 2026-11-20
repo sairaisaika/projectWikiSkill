@@ -11,7 +11,10 @@ this task's named destination and date; it is not inferred from the clone URL.
 
 The one [owning hygiene method](../../project-wiki/references/repository-hygiene.md#visibility-and-publication-scope)
 now applies visibility and audience checks before creation, after generation,
-before staging, before commit and immediately before publication. Existing Wiki
+before staging, before commit and immediately before publication. Public/private
+AGENTS/PROJECT/PRODUCT templates share that method: public-safe bodies, authorized
+shared internal decisions, no secret/customer content and no automatic moves or
+claim that private visibility repairs history. Existing Wiki
 entries and the new-Wiki boundary link the same table. No scanner, executable
 policy checker, second registry, hook or visibility/ignore/security setting change.
 
@@ -26,7 +29,7 @@ Ignore, retention and authorization remain separate; tracked files stay tracked.
 
 ## Synthetic acceptance
 
-Eight focused tests initially fail against the prior method, then pass after the
+The original eight focused tests initially fail against the prior method, then pass after the
 visibility section and routes are added. The suite uses invented public metadata
 and disposable real Git repositories, never remote writes or real sensitive data.
 
@@ -39,6 +42,8 @@ and disposable real Git repositories, never remote writes or real sensitive data
 | Multiple destinations and fork/PR | Multiple real push URLs are retained; synthetic private source and public upstream require the public row, not source visibility alone |
 | Changes require new evidence | Changing a real push URL invalidates the old private repository observation; fresh public metadata binds the new target; unverified account remains unknown |
 | Wider release audience | Synthetic public release destination from private source requires public approval; all publication surfaces and invariant sensitive-data exclusions are present |
+| New setup scaffolds | All three filenames can be tracked; public/unknown choose public-safe template bodies, private/internal choose the shared authorized bodies; no filename-based ban |
+| Existing scaffold conflict | Synthetic existing internal decisions remain unchanged, tracked and at the same HEAD/index even after public/private metadata review; ignore rules are not changed by the review |
 | Tracking is independent | A tracked synthetic file remains indexed and unchanged for all four metadata classes even when matching ignore |
 
 The metadata binder in the tests is a test-only interpretation of the documented
@@ -55,8 +60,8 @@ the checker was not changed or bypassed.
 
 Local environment: Linux, Python 3.12.14 and Git 2.56.1.
 
-- Focused hygiene/visibility suites: 20/20 (12 retained hygiene and 8 new visibility).
-- Full suite: 489 collected, 488 passed, one existing Windows-junction skip.
+- Focused hygiene/visibility suites: 22/22 (12 retained hygiene and 10 visibility/scaffold).
+- Full suite: 491 collected, 490 passed, one existing Windows-junction skip.
 - Fixture contracts: 12/12 passed.
 - Fixture and maintainer Wiki checks: ready, no drift; 9 and 11 routes respectively.
 - Fixture routing: 24/24 known queries top-1/top-2, 4/4 unknown controls rejected;

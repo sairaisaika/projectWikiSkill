@@ -111,3 +111,7 @@ entries include that boundary; existing entries supplement it here in place.
 This offline fixture has unknown future publication destinations; local paths do
 not imply private visibility. Tests supply synthetic repository/release metadata
 and temporary Git remotes, with no real remote access or sensitive data.
+
+For setup or an existing scaffold, use the same [AGENTS/PROJECT/PRODUCT templates](../../../../project-wiki/references/repository-hygiene.md#wiki-setup-scaffolds).
+Classify contents and audience rather than rejecting a filename; reuse the current
+owner and leave existing conflicting files intact pending authorized disposition.
