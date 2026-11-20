@@ -83,7 +83,7 @@ class RepositoryHygieneTests(unittest.TestCase):
         link = re.search(r'\[repository hygiene procedure\]\(([^)]+)\)', page.read_text(encoding='utf-8'))
         self.assertEqual((page.parent / link.group(1)).resolve(), METHOD)
 
-    def test_shared_and_checkout_local_noise_have_different_rule_provenance(self):
+    def test_shared_and_repository_local_noise_have_different_rule_provenance(self):
         self.write('.gitignore', '/build/cache.bin\n')
         self.write('build/cache.bin', 'regenerable public bytes')
         self.write('scratch/local-note.txt', 'synthetic personal noise')
@@ -97,6 +97,49 @@ class RepositoryHygieneTests(unittest.TestCase):
         self.assertEqual(self.documented('status', 'build/cache.bin').stdout, b'!! build/cache.bin\n')
         # Config-source discovery is read-only; no global preference is invented.
         self.documented('config --show-origin', codes=(1,))
+
+    def test_linked_worktrees_share_repository_local_exclude_in_both_directions(self):
+        linked = self.root.parent / 'linked'
+        self.git('worktree', 'add', '--detach', str(linked), 'HEAD')
+        self.assertTrue((linked / '.git').is_file())
+        paths = []
+        for root in (self.root, linked):
+            raw = self.git('-C', str(root), 'rev-parse', '--git-path', 'info/exclude').stdout
+            path = Path(raw.decode('utf-8').strip())
+            paths.append((path if path.is_absolute() else root / path).resolve())
+            (root / 'personal-note.txt').write_text('synthetic public note\n', encoding='utf-8')
+            (root / 'second-note.txt').write_text('synthetic public note\n', encoding='utf-8')
+        self.assertEqual(paths[0], paths[1])
+        # These writes only arrange synthetic state; the method proposes rules.
+        paths[0].write_text('/personal-note.txt\n', encoding='utf-8')
+        for root in (self.root, linked):
+            result = self.git('-C', str(root), 'check-ignore', '-v', '--', 'personal-note.txt')
+            self.assertIn(b'/personal-note.txt', result.stdout)
+        with paths[1].open('a', encoding='utf-8') as stream:
+            stream.write('/second-note.txt\n')
+        for root in (self.root, linked):
+            for name in ('personal-note.txt', 'second-note.txt'):
+                result = self.git('-C', str(root), 'status', '--porcelain=v1',
+                                  '--untracked-files=all', '--ignored', '--', name)
+                self.assertEqual(result.stdout, ('!! ' + name + '\n').encode())
+                self.git('-C', str(root), 'ls-files', '--error-unmatch', '--', name, codes=(1,))
+        self.assertIn('linked worktrees share this file', self.method)
+        self.assertIn('do not rely on this shared exclude', self.method)
+
+    def test_child_negation_requires_traversable_ancestor_directories(self):
+        self.write('.gitignore', '/tests/\n!tests/fixtures/public.json\n')
+        for path in ('tests/fixtures/public.json', 'tests/fixtures/other.json', 'tests/other.txt'):
+            self.write(path, 'synthetic public input\n')
+        match = self.ignored('tests/fixtures/public.json')
+        self.assertIn('.gitignore:1:/tests/', match)
+        self.assertTrue(self.documented('status', 'tests/fixtures/public.json').stdout.startswith(b'!!'))
+        rules = re.search(r'```gitignore\n([^`]+)```', self.method)
+        self.assertIsNotNone(rules)
+        self.write('.gitignore', rules.group(1))
+        self.assertIn('!/tests/fixtures/public.json', self.ignored('tests/fixtures/public.json'))
+        self.assertTrue(self.documented('status', 'tests/fixtures/public.json').stdout.startswith(b'??'))
+        for path in ('tests/fixtures/other.json', 'tests/other.txt'):
+            self.assertTrue(self.documented('status', path).stdout.startswith(b'!!'))
 
     def test_required_lockfile_example_fixture_expose_overbroad_rules(self):
         self.write('.gitignore', '*.json\n.env.*\n!tests/fixtures/public.json\n')

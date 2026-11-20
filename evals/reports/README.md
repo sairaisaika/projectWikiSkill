@@ -4,7 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
-| [Repository hygiene and Git boundaries](repository-hygiene-20261120.md) | Native discovery and ten real temporary Git cases for classification boundaries, staged review and protected retention | Synthetic command/method checks; no downstream adoption, remote enforcement, release or installation |
+| [Repository hygiene and Git boundaries](repository-hygiene-20261120.md) | Native discovery and twelve real temporary Git cases for classification boundaries, staged review and protected retention | Synthetic command/method checks; no downstream adoption, remote enforcement, release or installation |
 | [Line-boundary text parts](line-boundary-pages-20261116.md) | Unchanged-source red regressions and a synthetic multi-owner replay: partial parts end after a complete fitting line; exact reassembly | Oversized single lines still split mid-line; no adoption or savings claim |
 | [Default capture record text](capture-record-text-20261116.md) | Old-source controls and exact same-record continuation/JSON replay | Installed37 guided use is partial; general adoption remains separate |
 | [Linux static0.2.36 installation and guided use, 2026-11-16](installed-036-observation-20261116.md) | Exact platform/main CI;21/21 installed payload hashes; fresh genuine guided invocation | Static copy/no auto-update; partial Context and continuation reading; no independent adoption or cost claim |

@@ -9,7 +9,7 @@ was touched. No hooks, automatic ignore/staging/cleanup, release or installation
 
 The [owning method](../../project-wiki/references/repository-hygiene.md) connects
 pre-creation, post-generation, pre-staging and pre-commit review. Shared precise
-ignore suggestions, checkout-local excludes and cross-repository personal
+ignore suggestions, repository-local excludes (shared by linked worktrees) and cross-repository personal
 preferences remain distinct from project tracking and protected retention.
 The existing Maintenance section supplies the canonical/private Wiki boundary
 and path/configuration index; new Wiki setup uses the same template. The fixture
@@ -22,14 +22,16 @@ The added routes intentionally carry planned evidence for their review plans.
 
 ## Synthetic acceptance
 
-`python -m unittest discover -s tests -p test_repository_hygiene.py -v`: 10/10 pass.
+`python -m unittest discover -s tests -p test_repository_hygiene.py -v`: 12/12 pass.
 Every case creates its own real Git repository with global/system configuration
 isolated. Git mutating commands exist only to arrange disposable test state.
 
 | Case | Observed evidence |
 |---|---|
 | Skill → native entry/query → owning procedure | English, Chinese and staged-diff queries select the hygiene route in both Wiki roots; the fixture's link resolves to the one packaged method |
-| Shared output vs checkout noise | Exact `.gitignore` and Git-resolved `info/exclude` report different rule provenance; no global exclude configuration is invented |
+| Shared output vs repository-local noise | Exact `.gitignore` and Git-resolved `info/exclude` report different rule provenance; no global exclude configuration is invented |
+| Linked-worktree exclude scope | Both worktrees resolve the same `info/exclude`; a rule written from either side affects both. These rules cannot provide worktree isolation |
+| Excluded ancestor and child negation | `/tests/` defeats the child exception; the documented traversable-ancestor pattern includes the public fixture while both sibling controls remain ignored |
 | Required lockfile, example and fixture | Overbroad `*.json`/`.env.*` hide required paths; negated public fixture reports a matching rule yet remains untracked rather than ignored |
 | Tracked-but-ignored | Default check-ignore omits the tracked path; no-index reveals the rule; index bytes and HEAD stay unchanged |
 | Index vs worktree and late staged arrival | Cached patch contains the staged version only; repeated name/status changes when a new path is staged; configured external diff/textconv/fsmonitor do not run |
@@ -46,11 +48,22 @@ known queries); these now expect 9 routes / 24 known queries and preserve the
 intentional one-wrong-answer control (23/24). No threshold was relaxed. No real secret was
 used or echoed. This is a self-authored regression exercise, not a blind agent trial.
 
+## Independent review follow-up
+
+Review of the first candidate found that the original exclude-scope wording
+incorrectly implied isolation to one worktree. Corrected the method, fixture and
+summary to describe repository-local scope shared by linked worktrees, with a
+scope check before proposals and an explicit warning against relying on it for
+true worktree isolation. A bidirectional real linked-worktree regression now
+checks that finding. Added the excluded-parent negation counterexample and a
+traversable-ancestor control with two still-ignored sibling files. No ignore
+configuration in this repository or a consumer repository was changed.
+
 ## Validation closure
 
 Local environment: Linux, Python 3.12.14, Git 2.56.1.
 
-- Full unit suite: 479 collected, 478 passed, one existing Windows-junction skip.
+- Full unit suite: 481 collected, 480 passed, one existing Windows-junction skip.
 - Fixture contracts: 12/12 passed.
 - Fixture Wiki check: ready, no drift, 9 routes, minimum structural score 92.
 - Fixture evaluation: 24/24 known queries top-1/top-2, 4/4 unknown controls rejected;

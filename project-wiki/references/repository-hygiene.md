@@ -1,6 +1,6 @@
 # Repository hygiene and Git tracking boundaries
 
-> Reviewed: 2026-11-20 against main 71c9c23; method and synthetic checks, not downstream adoption.
+> Reviewed: 2026-11-20 against PR74 3c46e90; method and synthetic checks, not downstream adoption.
 
 Use this through the project's Maintenance entry whenever a task creates files,
 leaves uncertain outputs, or prepares a commit. This is an agent decision workflow,
@@ -33,7 +33,7 @@ not a scanner, hook, automatic ignore editor or authority to stage files.
 | Class and evidence | Tracking disposition |
 |---|---|
 | Shared generated output, reproducible from known inputs, non-authoritative (e.g. `build/cache.bin`) | Suggest an exact repository-relative `.gitignore` rule such as `/build/cache.bin`, only if project policy agrees. Preserve separately any active output, unique evidence or retention hold. |
-| Personal noise limited to this checkout (e.g. `scratch/local-note.txt`) | Prefer a proposed `.git/info/exclude` rule, locating it with Git rather than assuming `.git` is a directory. A private note may instead require an approved location outside the clone. |
+| Personal noise in this local repository (e.g. `scratch/local-note.txt`) | Prefer a proposed `.git/info/exclude` rule after checking its scope: linked worktrees share this file, so a rule may affect all of them. Locate it with Git rather than assuming `.git` is a directory. For true worktree isolation, do not rely on this shared exclude; choose an approved separate location or an owner-reviewed alternative. Private notes may require storage outside the clone. |
 | Personal preference applying across repositories (e.g. an editor's disposable state) | Only then consider the user's existing global ignore configuration; never install or change it automatically. |
 | Source, required lockfiles, publicly reproducible configuration, templates, sanitized fixtures/examples, canonical Wiki | Track under the project's policy. Inspect a rule that hides `package-lock.json`, `.env.example` or `tests/fixtures/public.json`; do not silently accept an overbroad `*.json` or `.env.*` rule or force-add around it. |
 | Credentials, private user data, sensitive raw attachments/logs or evidence | Do not write into or propagate through the repository, Wiki, tool output, patch or PR. Use only an approved protected location if storage is authorized; ignore is not a security boundary. |
@@ -95,9 +95,29 @@ for errors. Its verbose output shows source, line and pattern; a negated pattern
 `--no-index` explains a rule even for a tracked file, but does not change the index.
 Confirm final ignored/untracked/tracked status with the path-scoped status and
 index checks together. Read exact parent/nested `.gitignore` rules for that path,
-plus the actual exclude and configured global file only as needed. No match or an
+plus the actual exclude and configured global file only as needed. Resolve
+`git rev-parse --git-path info/exclude` from each relevant known linked worktree
+to check the shared scope before proposing a rule; it is local to the repository,
+not necessarily isolated to one worktree. Do not enumerate unrelated worktrees.
+No match or an
 empty history is not a classification; a missing HEAD on a new repository means
 history is unavailable. Distinguish expected no-match from failed Git checks.
+
+A child negation cannot re-include a file while an ancestor directory is excluded.
+For example, `/tests/` followed by `!tests/fixtures/public.json` still excludes
+that public fixture: Git does not traverse the excluded directory. A proposed
+narrow alternative, if project policy requires only this fixture to be included,
+keeps its ancestors traversable:
+
+```gitignore
+/tests/*
+!/tests/fixtures/
+/tests/fixtures/*
+!/tests/fixtures/public.json
+```
+
+Check the effective result for both the fixture and excluded siblings with the
+read-only commands above. This example is not permission to edit ignore rules.
 
 For a commit task the one intentionally repository-wide check is the **staged
 name/status list**, not a filesystem scan. Parse NUL records (including both paths

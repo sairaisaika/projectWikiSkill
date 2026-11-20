@@ -89,7 +89,9 @@ Synthetic decisions to exercise with that repository:
 
 - `build/cache.bin`: shared, rebuildable, non-authoritative; suggest its exact
   `.gitignore` rule, preserving any active/retained copy independently.
-- `scratch/local-note.txt`: checkout-specific noise; propose local exclude only.
+- `scratch/local-note.txt`: personal noise in the local repository; propose local
+  exclude only after checking its shared linked-worktree scope. For true worktree
+  isolation, do not rely on the shared exclude.
 - `package-lock.json`, `.env.example`, `tests/fixtures/public.json` and canonical
   Wiki: keep tracked by fixture policy; expose overbroad rules rather than force-add.
 - `tracked-output.txt`: already tracked but now matching ignore; report the
