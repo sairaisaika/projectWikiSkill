@@ -31,6 +31,18 @@ class PluginPackageTests(unittest.TestCase):
         builder.build(out)
         return out
 
+    def test_claude_marketplace_exposes_only_the_current_canonical_skill(self):
+        identity = json.loads((ROOT / 'plugin.json').read_text(encoding='utf-8'))
+        catalog = json.loads((ROOT / '.claude-plugin/marketplace.json').read_text(encoding='utf-8'))
+        self.assertEqual(catalog['name'], identity['name'])
+        self.assertEqual(catalog['plugins'], [{
+            **{key: identity[key] for key in ('name', 'version', 'description')},
+            'source': './',
+            'skills': ['./project-wiki/'],
+        }])
+        self.assertTrue((ROOT / 'project-wiki/SKILL.md').is_file())
+        self.assertFalse((ROOT / 'hooks/hooks.json').exists())
+
     def test_same_canonical_skill_for_both_hosts_and_no_activation_claim(self):
         out = self.package()
         report = doctor.inspect(out, ROOT)
