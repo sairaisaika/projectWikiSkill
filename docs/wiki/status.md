@@ -15,6 +15,7 @@
 
 | Version / surface | Verified state | Evidence |
 |---|---|---|
+| Visibility review source candidate | Eight new synthetic metadata/Git controls and all 12 hygiene controls pass; 489 unit tests (one platform skip), 12 fixtures, both Wiki checks/evaluation and all three package/source doctor profiles pass locally. Exact-head CI and independent review pending | [Evidence and limits](../../evals/reports/repository-visibility-20261120.md) |
 | Repository hygiene source candidate | Shipped method and twelve synthetic Git controls pass; 481 unit tests (one platform skip), 12 fixtures, Wiki checks/evaluation and three package/source doctor profiles pass locally. Exact-head CI and independent review pending | [Evidence and boundaries](../../evals/reports/repository-hygiene-20261120.md) |
 | 0.2.39 source | Merged at78f7741daf88e03433cb542738b4ce7f84668ea7; the saved current reader selects one authored span or returns unknown/ambiguous, with existing bounded continuation | [PR69](https://github.com/sairaisaika/projectWikiSkill/pull/69), [source and controls](../../evals/reports/current-view-20261117.md) |
 | Exact platform CI | Corrected PR head9f7d219 passes both event matrices; merge-main44049860690 passes all four Ubuntu/Windows × Python3.10/3.13 jobs. Initial Windows fixture failures remain in the report | [main matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/44049860690), [portability failures](../../evals/reports/current-view-20261117.md#first-platform-ci-failure-and-windows-reproduction) |

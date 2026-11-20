@@ -104,3 +104,10 @@ Synthetic decisions to exercise with that repository:
 These are agent review cases, not a filename-based automatic classifier. Before
 staging and before commit, route the actual cached name/status list to owners and
 review only known-safe synthetic cached patches, even if the worktree differs.
+
+For visibility questions, use the same [visibility and publication review](../../../../project-wiki/references/repository-hygiene.md#visibility-and-publication-scope)
+before creation, after generation, before staging and before commit. New Wiki
+entries include that boundary; existing entries supplement it here in place.
+This offline fixture has unknown future publication destinations; local paths do
+not imply private visibility. Tests supply synthetic repository/release metadata
+and temporary Git remotes, with no real remote access or sensitive data.

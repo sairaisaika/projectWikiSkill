@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add destination visibility and publication-audience review to the existing hygiene checkpoints and Wiki boundary; public/private/internal/unknown use verified metadata, with no relaxation for secrets or raw private data. See [synthetic evidence](evals/reports/repository-visibility-20261120.md).
+
 - Route file creation, generated leftovers and staged review through repository hygiene: precise shared/repository-local ignore suggestions (linked worktrees share local excludes), ancestor-aware negation, canonical/private Wiki boundaries and independent retention protection. Add synthetic Git semantics and native-route tests; no automatic rules, staging, cleanup or hooks. See [evidence](evals/reports/repository-hygiene-20261120.md).
 
 - Add a bounded, read-only apparent-size inventory helper and route project storage inventory, development closeout, pause and restart through a discoverable Maintenance entry. Return durable lessons, bounded evidence and open work to existing owners; distinguish resource inventory from cleanup authority. No new gate, schema or migration.
