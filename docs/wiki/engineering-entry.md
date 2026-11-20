@@ -39,6 +39,17 @@ table when you already know the area.
 | Which failure classes recur and who fixed them | — | [known-failures.md](known-failures.md) |
 | The generated route index (do not edit by hand) | — | [route-index.md](route-index.md) |
 
+## Maintenance
+
+Start with [read-only storage inventory](../../project-wiki/references/maintenance.md#inventory-storage-without-cleaning-it)
+when usage grows unexpectedly or a selected maintenance review is due.
+Use the shipped [closeout sweep](../../project-wiki/references/maintenance.md#closeout-and-maintenance-sweeps)
+at closeout, handoff, pause or resume. Return stable facts to the owner routes above.
+Record execution evidence in [reports](../../evals/reports/README.md), open work in
+[the task record](../../PROJECT.md) or [known failures](known-failures.md), and use
+the [existing checks](#per-change-surface-convention). Optional packet finish only
+applies to packet work.
+
 ## Where knowledge lives
 
 Each fact has one home. Other surfaces link to that home and do not restate it.

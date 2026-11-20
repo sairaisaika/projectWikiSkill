@@ -52,6 +52,147 @@ Review changed source as a signal, not as proof that all prose is stale. Normali
 whole-file hashes intentionally flag conservative review; only update reviewed_at
 after reading the affected rule/caller. Build timestamps are not review evidence.
 
+## Closeout and maintenance sweeps
+
+Use the project's Maintenance section as the entrance, not a new knowledge store.
+Sweep at the end of a change, fix, incident or handoff; when pausing or abandoning
+work with unresolved effects; and on resume or before final acceptance. A release,
+activation or rollback can warrant a sweep with no source diff. Also sweep the
+relevant prior slices when drift or repeated friction becomes visible. Look at this task's
+actual changes, checks, decisions, failed attempts and known resources; include
+only implicated owners and declared peers. Handoff, cleanup and verification can
+each finish at different times. No scheduled job or whole-wiki scan is required.
+
+1. **Recover knowledge.** Compare the outcome and actual diff with the plan, then
+   inspect the source and impacted owners. Return a reusable rule, decision,
+   dependency, failure mode or verified check path to the existing owner section
+   and its affected projections. Link rather than duplicate. A useful negative
+   result may justify a guard; a one-off mistake may only need an evidence link.
+   For recurring friction, preserve the first failure, find the responsible
+   layer and improve that existing seam using [Wiki evolution](wiki-evolution.md).
+2. **Recover verification and open work.** Put chronological attempts, receipts
+   and run-specific findings in the existing task/audit/history, with revision
+   (or artifact), environment, scope, result and material exceptions or not-run
+   checks. A later pass does not erase a first failure or establish deployment.
+   Keep pending proposals, unresolved decisions, owner and exit evidence in
+   the existing task/debt/incident system. Do not turn chat, logs, tool success
+   or a suggested fix into canonical truth or authority. Report unavailable
+   evidence and consequential unknowns; a reasoned no-Wiki-change is valid.
+3. **Account for development residue.** Inspect only task-known worktrees,
+   branches, processes, test identities/fixtures, artifacts and temporary
+   flags/settings as applicable. In the existing task record, note the exact
+   resource (use a safe reference when sensitive), ownership/scope, intended
+   disposition (retain, hand off, removed and verified, or pending), evidence
+   and next owner/action if unresolved. If none is known, skip the inventory.
+   Do not delete, stop, revoke, expire or repurpose an unknown, shared or live
+   resource on inference. A suggestion or this workflow grants no
+   authority. Take cleanup action only within explicit authority and safely
+   verify its result; record otherwise as pending. Preserve evidence needed
+   to understand a failure or continue work; keep secrets and private data out
+   of public Wiki, artifacts and reports.
+4. **Use native closeout.** If the project uses a native return/gate or an existing
+   packet `finish`, run or reconcile it in its usual authorized workflow; connect
+   its actual result to this sweep. [Packet finish](collaboration-workflow.md#reconcile-the-actual-return)
+   reconciles declared changes and review dispositions. It does not invent
+   verification, mark unrun work passed, authorize cleanup, or replace semantic
+   owner review. Do not add a second workflow for projects without packets.
+
+On pause or interruption, leave the smallest useful checkpoint in the existing
+task record: last verified revision and environment, retained evidence, unfinished
+change/check, any still-active or unknown effect, current owner and next safe
+action. On restart, compare against the live checkout/runtime as applicable;
+reverify drift or expired authority and reconcile prior effects before replaying
+writes. Keep previously unrun work visibly not run until it has its own evidence.
+Close only what the observed result supports.
+
+### Inventory storage without cleaning it
+
+Choose the project's growth trigger (budget, unexpectedly large delta or
+free-space warning) and a useful cadence such as release, handoff, or the
+project's regular maintenance review. At the trigger, start **read-only** with
+one authorized project/worktree/output root, not a home directory, all disks,
+all cloud storage or every peer automatically. Check the biggest known scopes
+first. Repeat on selected subroots only when the result would affect a decision.
+Report a partial inventory as partial; do not present totals from different
+roots, exclusions or budgets as a growth trend.
+
+```sh
+python <skill>/scripts/storage_inventory.py --root <project> --exclude <protected-relative-path> --max-entries 10000 --max-depth 5
+```
+
+Replace placeholders; omit `--exclude` only for a root known not to contain
+protected data. Repeat it for every applicable protected relative path using slash separators.
+Exclusions are matched conservatively without case or Unicode normalization
+differences and their names are not printed. Choose a narrow safe root or stop
+if protected boundaries or mounts cannot be identified; do not use this helper
+as a sandbox for an untrusted or concurrently rearranged tree.
+
+The scan visits immediate children first and reports at most 25 ranked rows.
+If its entry or depth budget is reached, or it cannot inspect a path, use
+`status`, `root_entries_complete` and the row's `partial` marker before drawing
+conclusions. The ranking uses scanned bytes only, not the sizes of unvisited
+subtrees. It skips observed symlinks, reparse points and different-device
+entries; same-device mounts can still be reached, and live scans are not atomic.
+The scanner is only for local filesystem metadata: it does not identify ownership,
+unused scripts, retention, runtime activity or reclaimable bytes. Logical bytes
+are not filesystem blocks or guaranteed savings (e.g. sparse/shared files).
+Use the project's existing, separately authorized metadata views for protected
+systems, showing only aggregate or anonymous metadata and applicable retention.
+Do not traverse their records, copy private names, or open contents for this sweep.
+
+For a candidate worth reviewing, retain a compact row in the existing maintenance
+task: **size/basis and root → owner and consumers → authoritative source or restore
+path → retention/holds → active/unknown → disposition and evidence**. Use a safe
+label for sensitive paths. Check actual references, current runs, aliases and
+scheduled jobs before recommending removal. An old timestamp, ignored file,
+duplicate-looking name or quiet current process is not evidence of disposability.
+
+| Type | Decide from evidence, not appearance |
+|---|---|
+| Rebuildable caches, builds or test artifacts | Identify the exact generator, pinned inputs and expected regeneration. Check whether a live run or release uses the output; keep a needed failure artifact or sole known good build. |
+| Apparently unused scripts | Check direct references and indirect entry points: package commands, CI, native hooks, host schedulers, runbooks, string-based dispatch or external callers. Static no-match alone does not prove unused; keep unknowns and ask the owner. |
+| Obsolete or overlapping archives | Compare identity and real consumers, ensure a verified complete retained copy and restore path, follow retention and holds. Do not assume date, compressed size or filename proves equivalence. |
+| Sustained records and backups | Treat user/service data and qualifying snapshots as protected. Use owner-approved retention and restore policy; legal/operational holds or unknown ownership block removal. Record aggregate sizes only through an authorized metadata source. |
+
+The storage scan only reads metadata. It does not write or clean up. A candidate list is not a
+deletion plan or permission. An authorized cleanup, if later requested, belongs
+to the project's normal procedure with exact scope and verified effects; never
+wire removal into the scan, a hook, a gate or agent startup.
+
+### Maintenance entry template
+
+Copy this as a short heading in the project's existing engineering entry, index
+or equivalent native landing page. Replace the placeholders with project values
+and working native links. If no budget or owner has been agreed, say so rather
+than borrowing another project's defaults. Use only the roles the project needs; if the reader's native indexes support sections,
+route closeout/maintenance there too. Use the native index's own fields; for
+schema-2 routes, the bundled fixture demonstrates a planned query with aliases
+for disk growth and cleanup and a docs anchor, without inventing source. Test
+a realistic query against the actual index. A navigation-only section can point to
+existing workflows or diagrams; it need not create another owner or diagram.
+
+> ## Maintenance
+>
+> When **[our local storage budget or growth trigger]** is hit, or at **[our
+> maintenance cadence]**, start at **[our read-only inventory instructions]**.
+> Scope the scan to **[approved development roots]** and exclude **[protected
+> scopes]** using **[the retention owner's policy]**. Keep inventory output in
+> **[our private maintenance record]**; publish only safe aggregate evidence.
+>
+> At change/incident closeout, handoff, pause or resume, review this task's
+> affected owners and actual evidence. Return lasting rules to their owning
+> pages; keep run evidence in the task/audit history and open work in the
+> existing task/debt record. Inventory any known residue with owner and
+> disposition, then use the ordinary project checks. A suggested action is
+> not authorization. Start at: **owner routes**, **task and evidence record**,
+> **open work**, **resource inventory and retention**, **native checks**.
+
+New wikis add this entry when created. Existing wikis use their existing
+equivalent; if missing, add this small entry in the next relevant authorized
+maintenance task. If read-only, propose the location in the handoff instead.
+Do not require a retroactive inventory, move historical evidence, or force
+migration of an existing layout just to standardize the heading.
+
 ## An actionable plan
 
 For each work item, record:

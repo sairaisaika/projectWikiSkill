@@ -1,6 +1,6 @@
 ---
 name: project-wiki
-description: Build, audit, and maintain source-backed engineering wikis that route project questions to exact interfaces, rules, impacts, checks, and implementation plans. Use for wiki creation, project orientation, engineering knowledge handoffs, documentation drift, or evaluating whether a wiki can replace exploratory code search.
+description: Build, audit, and maintain source-backed engineering wikis that route project questions to exact interfaces, rules, impacts, checks, and implementation plans. Use for wiki creation, project orientation, engineering knowledge handoffs, documentation drift, project disk growth/resource inventory, or evaluating whether a wiki can replace exploratory code search.
 ---
 
 # Project Wiki
@@ -119,6 +119,26 @@ architecture. Classify first from execution evidence, and audit where each
 mechanism actually runs before adding a rule; "no wiki change" is a valid outcome.
 Fix the responsible layer and test the next real task. More prose or another
 acknowledgement does not establish improvement.
+
+## Maintain project storage and close out development
+
+When a project grows past its budget or reaches a selected maintenance cadence,
+start at the project's Maintenance section and use the
+[read-only storage inventory](references/maintenance.md#inventory-storage-without-cleaning-it).
+Check cache/build/test artifacts, scripts, archives and protected retention
+separately. Size, age and ignore status never grant cleanup authority.
+
+After a feature, fix, incident, handoff or paused slice, start from the project's
+Maintenance section and do the [bounded closeout sweep](references/maintenance.md#closeout-and-maintenance-sweeps).
+Return durable, source-backed lessons to their existing owner; preserve exact
+verification, open work and resource dispositions in the existing project records.
+A passing `finish` or a green test is not a cleanup or acceptance certificate.
+On resume, match the recorded revision and inspect what is still active before
+rerunning work or touching leftovers.
+
+For a new wiki, put a visible [Maintenance section](references/maintenance.md#maintenance-entry-template)
+in its normal entry. For an existing wiki, reuse its equivalent or add the short
+route at the next relevant maintenance workflow; no bulk migration or new gate.
 
 ## Apply the feature completion rule
 

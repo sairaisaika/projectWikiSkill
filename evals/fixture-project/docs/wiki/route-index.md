@@ -11,6 +11,7 @@ Generated positions; source wins over stale prose. Read only the relevant route.
 | recovery: Timeout and bounded recovery decisions | `src/recovery.py:23` (implementation)<br>`src/recovery.py:17` (contract)<br>`src/recovery.py:5` (contract)<br>`src/recovery.py:6` (contract)<br>`tests/test_engineering_contracts.py:25` (consumer) | [engineering-contracts.md#recovery](engineering-contracts.md#recovery) |
 | wire-format: Heartbeat serializer layout | `src/heartbeat.py:4` (declaration)<br>`src/heartbeat.py:8` (implementation)<br>`src/heartbeat.py:14` (consumer) | [engineering-contracts.md#wire-format](engineering-contracts.md#wire-format) |
 | project-views: Fixture architecture and offline deployment | `src/service.py:4` (implementation)<br>`src/ports.py:5` (declaration)<br>`src/client.py:4` (consumer)<br>`src/tagging.py:9` (implementation)<br>`src/tagging.py:27` (implementation)<br>`src/recovery.py:23` (implementation)<br>`src/heartbeat.py:8` (implementation)<br>`tests/test_contracts.py:12` (caller)<br>`tests/test_engineering_contracts.py:11` (caller)<br>`src/provider.ts:2` (contract) | [project-views.md#architecture](project-views.md#architecture)<br>[project-views.md#deployment](project-views.md#deployment) |
+| storage-maintenance: Review disk growth and development residue | Planned; no implementation asserted | [maintenance-closeout.md#storage-and-resource-inventory](maintenance-closeout.md#storage-and-resource-inventory) |
 
 ## Compound task maps
 

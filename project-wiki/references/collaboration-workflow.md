@@ -542,7 +542,10 @@ template fails reconciliation. It is optional formatting help, not another gate.
 `pages`, `capabilities` and `unregistered` are keyed objects, not lists. Verified
 `references` are reachable repository-relative file paths (with a declared peer
 alias when needed); put line ranges, symbols and prose in `reason`. Keep richer
-human findings separately rather than substituting them for these fields.
+human findings separately rather than substituting them for these fields. For
+knowledge return, paused or unverified work, and resource disposition, follow the
+existing [maintenance closeout sweep](maintenance.md#closeout-and-maintenance-sweeps);
+a reconciled packet does not establish those outcomes on its own.
 
 Review shape (the paths and capabilities are project-specific):
 

@@ -37,7 +37,7 @@ class WikiTests(unittest.TestCase):
     def test_fixture_structure_and_honest_missing_ts_tests(self):
         report = wiki.audit(self.root, self.manifest)
         self.assertTrue(report['ready'])
-        self.assertEqual(report['route_count'], 7)
+        self.assertEqual(report['route_count'], 8)
         scores = {row['id']: row['score']['total'] for row in report['routes']}
         self.assertEqual(scores['external-source'], 92)
         self.assertEqual(scores['public-api'], 100)
@@ -46,8 +46,8 @@ class WikiTests(unittest.TestCase):
     def test_routing_questions_and_unknown_controls(self):
         report = wiki.evaluate(self.root, self.manifest, wiki.read_json(REPO / 'evals/tasks.json'))
         self.assertTrue(report['passed'])
-        self.assertEqual(report['top1']['numerator'], 20)
-        self.assertEqual(report['top1']['denominator'], 20)
+        self.assertEqual(report['top1']['numerator'], 21)
+        self.assertEqual(report['top1']['denominator'], 21)
         self.assertEqual(report['unknown_rejection']['numerator'], 4)
         self.assertLessEqual(report['max_response_words'], 450)
 
@@ -220,8 +220,8 @@ class WikiTests(unittest.TestCase):
         tasks = wiki.read_json(REPO / 'evals/tasks.json')
         tasks['tasks'][0]['expected_routes'] = ['tagger']
         report = wiki.evaluate(self.root, self.manifest, tasks)
-        self.assertEqual(report['top1']['numerator'], 19)
-        self.assertEqual(report['top1']['denominator'], 20)
+        self.assertEqual(report['top1']['numerator'], 20)
+        self.assertEqual(report['top1']['denominator'], 21)
         tasks['thresholds']['min_top1'] = 1
         self.assertFalse(wiki.evaluate(self.root, self.manifest, tasks)['passed'])
 

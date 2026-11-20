@@ -1352,6 +1352,90 @@
           ]
         }
       ]
+    },
+    {
+      "id": "storage-maintenance",
+      "title": "Review disk growth and development residue",
+      "kind": "plan",
+      "aliases": [
+        "disk growth cleanup",
+        "storage inventory",
+        "unused scripts and archives",
+        "磁盘空间回收",
+        "冗余资源"
+      ],
+      "docs": [
+        "docs/wiki/maintenance-closeout.md#storage-and-resource-inventory"
+      ],
+      "plan": {
+        "outcomes": [
+          "Distinguish large review candidates from protected or active resources."
+        ],
+        "dependencies": [
+          "Authorized project root, exclusions and retention owner."
+        ],
+        "interfaces": [
+          "Project build output, scheduler references, archive policy and retained records."
+        ],
+        "deliverables": [
+          "Bounded read-only inventory; verified consumer, source and retention checks; proposed dispositions."
+        ],
+        "exit_evidence": [
+          "Each candidate retains owner, evidence and status; protected roots are excluded and no deletion is performed."
+        ],
+        "unknowns": [
+          "Host scheduler references, archive restorability and exact retention are not verified in the synthetic fixture."
+        ]
+      },
+      "interface": {
+        "inputs": [
+          "An explicit known worktree or build root, exclusions and scan budgets."
+        ],
+        "outputs": [
+          "Logical-size metadata and completion/limits, not deletion decisions."
+        ],
+        "errors": [
+          "Over-budget, denied, excluded and unknown remain visible."
+        ],
+        "compatibility": "Use the existing maintenance entry and normal task records; no new schema or automatic cleanup.",
+        "failure_modes": {
+          "returned": [
+            "A partial inventory is still a bounded observation."
+          ],
+          "thrown": [
+            "An invalid scope must not scan."
+          ],
+          "unsupported": [
+            "The inventory cannot decide ownership, activity, retention or reclaimability."
+          ]
+        }
+      },
+      "rules": [
+        {
+          "id": "observe-not-dispose",
+          "statement": "Inventory is read-only; retain unknown, protected and active resources until evidence and authorization resolve disposition.",
+          "source_ids": [],
+          "proposed": true
+        }
+      ],
+      "impact": [
+        "Check build/test consumers, CI/host script callers and archive restore requirements separately."
+      ],
+      "checks": [
+        {
+          "command": "python <skill>/scripts/wiki.py query --root . \"disk growth cleanup\"",
+          "scope": "Routes the simulated request without scanning or changing the project."
+        }
+      ],
+      "boundary": "This is an illustrative scoped review plan, not measured usage, a cleanup task, or production retention policy.",
+      "unknowns": [
+        "No live project scope, callers, archives or durable records are represented."
+      ],
+      "evidence": {
+        "implementation": "planned",
+        "observations": []
+      },
+      "reviewed_at": "2026-11-20"
     }
   ],
   "diagram_policy": {
