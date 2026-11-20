@@ -125,8 +125,10 @@ acknowledgement does not establish improvement.
 Use [repository hygiene](references/repository-hygiene.md) through the project's
 Maintenance entry: classify before creating files, reconcile unknown outputs after
 generation, and, for a commit task, recheck tracking/rules and staged content before
-staging and again before committing. Use read-only path checks; do not automatically
-change rules, untrack or stage files. Keep secrets/private data out of the repository;
+staging and again before committing. At each checkpoint apply
+[destination visibility and publication scope](references/repository-hygiene.md#visibility-and-publication-scope),
+including wider PR/artifact/release audiences. Use read-only path checks; do not automatically
+change rules, untrack or stage files. Keep credentials and raw sensitive personal/user data out of the repository;
 ignore, Git tracking and retention are independent. New Wiki entries include the
 [canonical/private boundary and configuration index](references/repository-hygiene.md#wiki-boundary-and-configuration-index);
 existing Wiki entries gain missing fields in place without a second source of truth.

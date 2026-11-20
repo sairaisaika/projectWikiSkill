@@ -1448,7 +1448,10 @@
         "ignore rules",
         "仓库卫生",
         "暂存内容",
-        "Git 跟踪边界"
+        "Git 跟踪边界",
+        "repository visibility",
+        "public private internal",
+        "仓库可见性"
       ],
       "docs": [
         "docs/wiki/maintenance-closeout.md#repository-hygiene"
