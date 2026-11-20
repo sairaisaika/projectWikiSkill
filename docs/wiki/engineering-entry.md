@@ -1,6 +1,6 @@
 # Engineering entry
 
-> Reviewed: 2026-11-20 against 095a5e1 for Maintenance/Git boundaries; other sections retain their prior scope
+> Reviewed: 2026-11-20 against de918a5 for Maintenance/diagnostic entry; other sections retain their prior scope
 
 This repository ships **project-wiki**, an agent skill plus an optional host plugin.
 The skill teaches an agent to keep a project's wiki source-backed: route a task to its
@@ -40,6 +40,10 @@ table when you already know the area.
 | The generated route index (do not edit by hand) | — | [route-index.md](route-index.md) |
 
 ## Maintenance
+
+For incident symptoms and technical contract changes, use the shipped
+[evidence-to-contract path](../../project-wiki/references/engineering-depth.md#debug-from-evidence-to-a-technical-contract);
+its acceptance case is the [offline fixture owner](../../evals/fixture-project/docs/wiki/interfaces.md#diagnostic-evidence).
 
 For file creation, generated leftovers and staged review use
 [repository hygiene](../../project-wiki/references/repository-hygiene.md).
@@ -122,6 +126,7 @@ Do not add a version paragraph to `README.md`, `docs/PLUGIN_PLAN.md` or the top 
 | `scripts/plugin_doctor.py` | `test_plugin_package.py`, `test_package_integrity.py`, `test_package_newlines.py`, `test_codex_inventory.py`, `test_codex_hooks.py`, `test_lifecycle.py` | Receipt fields in `package_plugin.py` |
 | `hooks/*.json` | `test_lifecycle.py`, `test_legacy_hooks.py`, `test_edit_gate.py`, `test_portable_hooks.py`, `test_codex_hooks.py` | Packaging profile, [hooks-and-gates.md](hooks-and-gates.md) |
 | `project-wiki/references/repository-hygiene.md` | `test_repository_hygiene.py`, `test_repository_visibility.py` (real temporary Git repositories, synthetic metadata and native routes) | Existing Maintenance entries, fixture routes/evaluation and retention protections |
+| `engineering-depth.md` diagnostic path | `test_log_contract_navigation.py`; fixture `test_diagnostic_evidence.py` | Default packaged entry, ordinary-task skip cue and the existing fixture contract owner |
 | `project-wiki/SKILL.md`, `project-wiki/references/*.md`, `project-wiki/agents/openai.yaml`, `README.md` | `test_skill_package.py` (metadata; every link and anchor resolves inside the repo) | The owning reference only; no version or caveat paragraph |
 
 Before handing back, run the steps of

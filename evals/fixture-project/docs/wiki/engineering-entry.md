@@ -27,6 +27,9 @@ For a compound interface change, `python <skill>/scripts/wiki.py task interface-
 
 ## Maintenance
 
+For `log contract debugging` or `日志契约`, start at the
+[diagnostic evidence owner](interfaces.md#diagnostic-evidence).
+
 For `repository hygiene`, `staged diff` or `仓库卫生`, follow
 [Git tracking boundaries](maintenance-closeout.md#repository-hygiene).
 

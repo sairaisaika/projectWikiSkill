@@ -21,7 +21,10 @@
         "HTTP 错误",
         "外部接口",
         "业务流程",
-        "流程图"
+        "流程图",
+        "log contract debugging",
+        "incident symptom",
+        "日志契约"
       ],
       "sources": [
         {
@@ -47,7 +50,8 @@
         }
       ],
       "docs": [
-        "docs/wiki/interfaces.md#public-api"
+        "docs/wiki/interfaces.md#public-api",
+        "docs/wiki/interfaces.md#diagnostic-evidence"
       ],
       "interface": {
         "inputs": [
@@ -89,7 +93,8 @@
         "Changing errors affects read_articles and its compatibility contract."
       ],
       "tests": [
-        "tests/test_contracts.py"
+        "tests/test_contracts.py",
+        "tests/test_diagnostic_evidence.py"
       ],
       "checks": [
         {

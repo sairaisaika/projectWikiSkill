@@ -8,6 +8,15 @@ description: Build, audit, and maintain source-backed engineering wikis that rou
 Make the wiki cheaper to use than guessing filenames. Optimize **time to a correct,
 actionable location** for a task, and a correct system model for orientation, not page count, diagram count, or an impressive aggregate score.
 
+## Keep the entry proportional
+
+For a routine narrow task in a known component that clearly changes no durable
+knowledge, runtime behavior/contracts and leaves no uncertain effects or artifacts,
+use the project's existing lightweight path. Do not add a specialist read or record
+solely for PWS. Honor the project's mandatory gates and any relevant file-creation,
+staging or publication hygiene trigger; this cue does not waive them. Otherwise
+choose the task-specific path below and follow only its relevant owner links.
+
 ## File-first entry for an existing native Wiki
 
 When candidate paths are known, run `workflow.py prepare --files` with the task
@@ -76,6 +85,11 @@ that coordination protocol is actually needed; existing project gates stay nativ
   commit's acknowledgement list runs past about ten pages, the repair is
   granularity: give rules identity and route/gate by rule edges rather than by
   shared file; see change navigation.
+- **Debug a technical contract:** for incident symptoms or claimed/observed behavior
+  that conflicts with a technical boundary, use its existing owner and the
+  [evidence-to-contract path](references/engineering-depth.md#debug-from-evidence-to-a-technical-contract).
+  Keep project receipts, runtime diagnostics and audit trails distinct; add only
+  the project-owned diagnostic agreement needed at the touched boundary.
 - **Create or repair:** start with representative user questions, inspect current
   source and constraints, then document the smallest useful routes. Never infer
   implementation from a README, package name, type declaration, or planned feature.

@@ -47,8 +47,8 @@
       "top2": true,
       "unknown_rejected": null,
       "locations_ok": true,
-      "response_words": 158,
-      "response_bytes": 1380,
+      "response_words": 161,
+      "response_bytes": 1460,
       "candidate_count": 1,
       "truncated": false
     },
@@ -65,8 +65,8 @@
       "top2": true,
       "unknown_rejected": null,
       "locations_ok": true,
-      "response_words": 158,
-      "response_bytes": 1380,
+      "response_words": 161,
+      "response_bytes": 1460,
       "candidate_count": 1,
       "truncated": false
     },
@@ -83,8 +83,8 @@
       "top2": true,
       "unknown_rejected": null,
       "locations_ok": true,
-      "response_words": 158,
-      "response_bytes": 1380,
+      "response_words": 161,
+      "response_bytes": 1460,
       "candidate_count": 1,
       "truncated": false
     },
@@ -374,8 +374,8 @@
       "top2": true,
       "unknown_rejected": null,
       "locations_ok": true,
-      "response_words": 158,
-      "response_bytes": 1380,
+      "response_words": 161,
+      "response_bytes": 1460,
       "candidate_count": 1,
       "truncated": false
     },
