@@ -188,6 +188,10 @@ existing workflows or diagrams; it need not create another owner or diagram.
 
 > ## Maintenance
 >
+> For new/generated files or local-only destinations, go directly to **[our File
+> placement table]** in this owner; adapt the small
+> [placement template](repository-hygiene.md#file-placement) using approved locations.
+>
 > Before file creation, after generation, before staging and before commit, use
 > **[our repository hygiene procedure]**. Include the
 > [canonical/private boundary and configuration index](repository-hygiene.md#wiki-boundary-and-configuration-index)

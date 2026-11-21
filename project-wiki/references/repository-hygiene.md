@@ -1,17 +1,55 @@
 # Repository hygiene and Git tracking boundaries
 
-> Reviewed: 2026-11-20 against main 095a5e1; method and synthetic checks, not downstream adoption.
+> Reviewed: 2026-11-21 against main e83b0b2 for file placement; prior tracking/publication boundaries retained, not downstream adoption.
 
 Use this through the project's Maintenance entry whenever a task creates files,
 leaves uncertain outputs, or prepares a commit. This is an agent decision workflow,
 not a scanner, hook, automatic ignore editor or authority to stage files.
+
+## File placement
+
+For “where should this new file go?”, use the project's native Maintenance owner
+and its small **File placement** table. Humans can read that Markdown directly;
+agents follow the same owner through the native entry or a scoped task query.
+Link directly to the table, aiming for at most two navigation steps. Reuse existing
+paths and headings; onboarding records only actual approved locations. An unclear
+or unapproved location blocks the write: resolve it with the owner first. Do not
+invent a `.local` convention, scaffold speculative directories or migrate files.
+
+Keep intent, location and ownership here; **Git is the effective ignore truth**.
+Use the read-only path checks below to verify the selected path and relevant rule
+source, not a copied list of ignore patterns in the Wiki. Name shared disposable,
+reproducible outputs explicitly and narrowly; a directory is never a content
+allowlist. Harmless personal scratch follows repository-local exclude scope
+(including shared linked worktrees), not team ignore by default. For worktree
+isolation, use an approved separate location. Sensitive or durable private data
+needs approved protected storage; private visibility or an ignored directory
+provides no authorization. Apply the existing classification, visibility and
+retention rules to each file, including after generation and at commit boundaries.
+
+Adapt these rows in the existing Maintenance owner, keeping only applicable rows
+and linking native policy. Locations are safe repo-relative paths or approved
+opaque handles, never private absolute paths or sensitive identifiers. If storage
+is not approved, say so rather than inventing a handle or a usable-looking path.
+
+| Purpose / disposition | Safe path or approved handle | Owner | Retention / rule source |
+|---|---|---|---|
+| Repo-safe truth and required inputs; track by project policy | [existing source/config/Wiki paths, required lockfile, .env.example, approved fixture] | [native owner] | [canonical policy and version authority] |
+| Shared disposable reproducible output; narrow shared ignore only if approved | [explicit existing output path] | [generator/consumer owner] | [rebuild inputs, active use/holds, actual Git rule source] |
+| Harmless personal scratch; repository-local exclude scope | [approved location or unresolved] | [user/owner] | [local scope and retention; linked-worktree caveat] |
+| Sensitive or durable private data; protected storage | [approved safe handle or no approved destination] | [authorized data owner] | [access, retention/restore/holds; no in-clone fallback] |
+
+This table does not authorize writing, cleanup, ignore edits, force-add or automatic
+disposition. Existing files in conflict stay with their owner pending resolution.
+A text-only tweak with no new artifact keeps the existing lightweight task path;
+there is no new hook, registry, scanner or universal gate.
 
 ## Classify at each task boundary
 
 1. **Before creating a file**, identify its purpose, producer, consumers, authoritative
    inputs, rebuild/restore path, sensitivity and intended location. Check
    [visibility and publication scope](repository-hygiene.md#visibility-and-publication-scope) for the intended destinations. Consult the
-   project's tracked policy and path/configuration index below. Choose a disposition
+   project's [File placement](repository-hygiene.md#file-placement) owner and path/configuration index below. Choose a disposition
    from the table before writing. Unknown sensitivity or storage location blocks that
    write until resolved; don't create a private artifact in the clone for convenience.
 2. **After generation**, reconcile only this task's known output paths, including
