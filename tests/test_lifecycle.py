@@ -514,7 +514,9 @@ class LifecycleTests(unittest.TestCase):
         self.assertLess(len(selected), 4096)
         self.assertGreater(len(json.dumps(selected).encode('utf-8')), adapter.MAX_CONTEXT)
         self.packet['outcome'] = 'x' * (adapter.MAX_CONTEXT + 100)
-        with patch.object(adapter.Path, 'is_file', return_value=True), patch.object(adapter.workflow, 'read_json', return_value=self.packet):
+        # macOS caps a whole path at 1024 bytes (Linux: 4096), so lstat would raise
+        # ENAMETOOLONG before the overflow logic under test; stub the filesystem checks.
+        with patch.object(adapter.Path, 'is_file', return_value=True), patch.object(adapter.Path, 'is_symlink', return_value=False), patch.object(adapter.workflow, 'read_json', return_value=self.packet):
             result = adapter.deliver(self.event, selected)
         context = result['hookSpecificOutput']['additionalContext']
         data = json.loads(context.split('\n', 1)[1])

@@ -1093,7 +1093,19 @@ def capture_arguments(parser):
     parser.add_argument('--preserve-artifact', action='append', default=[], help='Explicit absolute existing evidence file to hash-check; no write prevention or continuous monitoring')
 
 
+def require_supported_python() -> None:
+    """Fail clearly instead of with a version-specific TypeError deep in a command."""
+    if sys.version_info < (3, 10):
+        found = '.'.join(map(str, sys.version_info[:3]))
+        sys.stderr.write(
+            f'project-wiki needs Python 3.10+; {sys.executable} is {found}. '
+            'Rerun with a newer interpreter, for example python3.12 or '
+            '`uv run --python 3.12 python <script> ...`.\n')
+        raise SystemExit(2)
+
+
 def main(argv=None) -> int:
+    require_supported_python()
     if hasattr(sys.stdout, 'reconfigure'):
         sys.stdout.reconfigure(encoding='utf-8',newline='\n')
     parser = argparse.ArgumentParser(description=__doc__)

@@ -911,7 +911,19 @@ def emit(value):
     print(json.dumps(value, ensure_ascii=False, indent=2))
 
 
+def require_supported_python() -> None:
+    """Fail clearly instead of with a version-specific TypeError deep in a command."""
+    if sys.version_info < (3, 10):
+        found = '.'.join(map(str, sys.version_info[:3]))
+        sys.stderr.write(
+            f'project-wiki needs Python 3.10+; {sys.executable} is {found}. '
+            'Rerun with a newer interpreter, for example python3.12 or '
+            '`uv run --python 3.12 python <script> ...`.\n')
+        raise SystemExit(2)
+
+
 def main(argv=None):
+    require_supported_python()
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
     for command in ('query', 'task', 'list', 'audit', 'build', 'check', 'evaluate'):

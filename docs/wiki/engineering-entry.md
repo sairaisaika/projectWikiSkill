@@ -59,7 +59,7 @@ for actual destinations and wider PR/artifact/release audiences. Ignore does not
 |---|---|
 | Visibility / publication destination | `sairaisaika/projectWikiSkill` is public; verified repository metadata and connected account `sairaisaika` on 2026-11-20. This task targets that repository; future targets and publication surfaces require their own review. |
 | Shared ignore | [`.gitignore`](../../.gitignore); no rule change in this task |
-| CI | [check.yml](../../.github/workflows/check.yml); configured Ubuntu/Windows × Python 3.10/3.13, not proof of required checks |
+| CI | [check.yml](../../.github/workflows/check.yml); configured Ubuntu/Windows/macOS × Python 3.10/3.13, not proof of required checks |
 | PR template / CODEOWNERS | Missing in the checked root, `.github/` and `docs/` locations |
 | Default branch | `main`, verified from repository metadata; local branch is not authority |
 | Required checks, branch protection, release gates | Remote enforcement unverified; workflow alone is insufficient. Follow existing owner authorization; this task does not release. |
