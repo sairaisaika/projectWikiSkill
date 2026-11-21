@@ -1,0 +1,16 @@
+{
+  "name": "project-wiki",
+  "description": "Project Wiki for Claude Code.",
+  "owner": {
+    "name": "projectWikiSkill contributors"
+  },
+  "plugins": [
+    {
+      "name": "project-wiki",
+      "source": "./",
+      "description": "Source-backed Wiki structure, task routing, change review and agent handoffs.",
+      "version": "0.2.39",
+      "skills": ["./project-wiki/"]
+    }
+  ]
+}

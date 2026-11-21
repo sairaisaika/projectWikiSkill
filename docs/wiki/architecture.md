@@ -237,6 +237,11 @@ context stamp or a design-first wiki change, and passes on its own defects. Full
 
 `scripts/package_plugin.py` builds a plugin directory from the canonical skill.
 
+Claude Code can also install from the GitHub checkout. [The marketplace catalog](../../.claude-plugin/marketplace.json)
+points to the repository root and explicitly loads the canonical `project-wiki/` skill directory. The catalog mirrors
+the name, description and version in `plugin.json`; the package test checks that they agree. Direct installation
+exposes the skill. The separately built package provides provenance receipts and the optional hook profile.
+
 - **CLI**: `package_plugin.py --output NEW_DIR [--with-lifecycle-hooks] [--hook-layout {legacy,portable}]`. The layout defaults to `legacy`. `portable` is allowed only together with `--with-lifecycle-hooks`.
 - **Outputs**: `skills/project-wiki/**` (only `.md/.py/.yaml/.yml/.json`; `__pycache__` and `.pytest_cache` are skipped; any other suffix or a hidden path fails the build), `LICENSE`, `scripts/plugin_doctor.py`, `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, plus `hooks/{codex,claude}.json` when hooks are included, and the receipt `PACKAGE-SOURCES.json` (`schema_version` 2, `source_byte_policy` `utf8-crlf-to-lf-v1`). `root_manifest_projection` is `canonical-identity-v1` without hooks, `legacy-host-hooks-v1` for the legacy layout (no root `plugin.json`), or `portable-openai-hooks-v1` (root `plugin.json` whose `extensions["com.openai"].hooks` is `./hooks/codex.json`).
 - **Never**: installs, enables or trusts anything, writes inside the source checkout, overwrites an existing output, follows symlinks or junction aliases, or packages hidden or unlisted files.

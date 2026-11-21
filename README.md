@@ -33,6 +33,21 @@ The version identity is [`plugin.json`](plugin.json). What is verified for each 
 
 ## 使用
 
+### 在 Claude Code 安装插件
+
+在终端运行：
+
+```sh
+claude plugin marketplace add sairaisaika/projectWikiSkill
+claude plugin install project-wiki@project-wiki
+```
+
+在新会话中使用 `/project-wiki:project-wiki`。用 `claude plugin details project-wiki@project-wiki`
+核对组件。此入口加载仓库中的 `project-wiki/`，包含一个 skill。可选 hooks 使用下文的独立打包方式。
+已安装同名本地市场版本时，先查看 `claude plugin list`，再选择要保留的安装来源。
+
+### 独立 Skill 与 Python 工具
+
 将整个 `project-wiki` 文件夹放入目标工具支持的 skills 目录，或通过支持 GitHub 子目录的 skill 安装器从本仓 `project-wiki` 子目录安装。安装位置由用户决定，仓库内容不自动修改本机配置。
 
 Python 3.10+ 即可运行工具，无第三方依赖：
