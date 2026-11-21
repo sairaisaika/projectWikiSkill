@@ -2,7 +2,7 @@
 
 ## Real-task observation
 
-During the isolated pilot-project fix, two identical current prepares under installed0.2.24 took1.302s and0.182s. Capture bytes and mtime stayed identical, and the second call explicitly skipped native execution, but repeated the complete2115-character scope index. Evidence is retained privately under pilot-project-handoffs/20261107-codex-takeover/rsc-final-prepare-*.txt and rsc-final-prepare-reuse.json. This is one Codex task observation, not a Claude adoption result or a token/fee estimate.
+During the isolated pilot-project fix, two identical current prepares under installed0.2.24 took1.302s and0.182s. Capture bytes and mtime stayed identical, and the second call explicitly skipped native execution, but repeated the complete2115-character scope index. Evidence is retained privately outside this repository. This is one Codex task observation, not a Claude adoption result or a token/fee estimate.
 
 ## Change and acceptance boundaries
 
