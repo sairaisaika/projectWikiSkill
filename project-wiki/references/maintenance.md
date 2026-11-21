@@ -597,6 +597,13 @@ Keep both inputs honest:
 }
 ```
 
+Track `edit-gate.json` as shared project policy. The stamp and `skip_file` are
+per-worker session state: keep them out of commits. Where project policy agrees,
+propose exact rules such as `/.project-wiki/stamp.json` and
+`/.project-wiki/design.skip` rather than ignoring `/.project-wiki/` as a whole;
+use [repository hygiene](repository-hygiene.md#classify-at-each-task-boundary)
+to choose between the shared `.gitignore` and the local exclude.
+
 A project that already has its own pre-edit hook keeps it and does not also
 enable this one: two gates with different predicates give two answers. Either
 way, record in the audit above whether the hook is wired on the machines that run

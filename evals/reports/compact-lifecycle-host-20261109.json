@@ -3,7 +3,7 @@
   "scope": "Task-local source adapter, not global managed-plugin installation or efficiency comparison",
   "sourceCommit": "2a093098665f78b62c24399a7e602368314da765",
   "sourceAdapterSha256": "105f3170b1bce074d0e343e6e5ce9e676a8535b65d9c8b6e4253370e38aca973",
-  "sessionId": "<withheld-session>",
+  "sessionId": "<host session id, withheld>",
   "hookRecordIndex": 6,
   "firstModelToolRecordIndex": 18,
   "hookExitCode": 0,
@@ -16,12 +16,12 @@
     "pointer": "/workflow/context/sources",
     "checkouts": {
       "root": {
-        "root": "/home/<user>/consumer-claude-storage-review-20261109",
-        "head": "<withheld-revision>"
+        "root": "<private consumer root checkout>",
+        "head": "<private consumer revision, withheld>"
       },
       "peer:mobile": {
-        "root": "/home/<user>/consumer-mobile-cloud-drafts-20261108",
-        "head": "<withheld-revision>"
+        "root": "<private consumer mobile checkout>",
+        "head": "<private consumer revision, withheld>"
       }
     },
     "meaning": "Reported checkout identities match selected snapshots; physical reads, correct deployment pairing, agent use and semantic accuracy remain unverified."
@@ -48,5 +48,6 @@
     "focusedTests": 23,
     "fullTests": 391,
     "platformSkip": 1
-  }
+  },
+  "redaction": "Consumer checkout paths, revisions and the host session id were withheld for this public repository on 2026-11-20; recorded comparison results are unchanged."
 }
