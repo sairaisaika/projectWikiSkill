@@ -1466,7 +1466,14 @@
         "生成的报告",
         "个人临时文件",
         "个人笔记",
-        "公开报告"
+        "公开报告",
+        "design records",
+        "development resources",
+        "design versus development",
+        "设计资源",
+        "开发资源",
+        "开发过程文件",
+        "设计文档"
       ],
       "docs": [
         "docs/wiki/maintenance-closeout.md#repository-hygiene",

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Separate design records to preserve (requirements, architecture, contracts, accepted decisions, canonical diagrams/design assets) from development resources (task plans, captures, drafts, prototypes, runs, handoffs, agent logs) inside the existing File placement owner: separate homes and retention, no task scratch as design authority, promotion only by distillation at closeout. See [synthetic evidence](evals/reports/design-development-separation-20261121.md).
+
 - Public-repository hygiene sweep: withhold private pilot/consumer names, machine checkout paths, private revisions and a host session id from four evaluation reports (recorded results unchanged). The repository history was also rewritten and republished on 2026-11-21 so earlier commits no longer carry these identifiers; pre-reset commit and PR links no longer resolve. Document which consumer `.project-wiki/` files are shared policy and which are per-worker state to keep out of commits. No `.gitignore` change: the helpers write only caller-chosen paths.
 
 - `wiki.py` and `workflow.py` exit 2 with the interpreter path, its version and a rerun hint on Python older than 3.10, instead of failing mid-command (for example `build` raised `write_text() got an unexpected keyword argument 'newline'` on macOS's Xcode Python 3.9). SKILL.md commands use `python3` and point out the macOS 3.9 default. CI adds macOS, and a lifecycle test no longer trips macOS's 1024-byte path limit.

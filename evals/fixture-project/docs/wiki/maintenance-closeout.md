@@ -128,12 +128,16 @@ Git checks establish effective rules; the table records intent, owner and retent
 
 | Purpose / disposition | Safe path or approved handle | Owner | Retention / rule source |
 |---|---|---|---|
-| Repo-safe truth and required inputs | `docs/wiki/`, `.env.example`, `package-lock.json`, `tests/fixtures/public.json` | Fixture maintainer / contract owner | Track approved public examples and canonical inputs; see repository hygiene above. A hiding rule is a conflict, not permission to force-add. |
+| Design record to preserve | `docs/wiki/` | Fixture maintainer / contract owner | Canonical design and contract pages, edited in place with dated history. Cite source or retained evidence, never task scratch. |
+| Development working material | `work/` (one folder per task) | Fixture task owner | Plans in progress, captures, handoffs and run output for the current task. Only evidence a design page cites is retained, bound to its revision; the rest leaves with the task. Not a home for design decisions. |
+| Repo-safe truth and required inputs | `.env.example`, `package-lock.json`, `tests/fixtures/public.json` | Fixture maintainer / contract owner | Track approved public examples and canonical inputs; see repository hygiene above. A hiding rule is a conflict, not permission to force-add. |
 | Shared generated report | `build/review-report.json` | Fixture build/test owner | Reproducible public sample from the synthetic placement test setup; Git supplies the narrow shared rule. Keep active/failure/held evidence pending owner review. |
 | Harmless personal scratch | `scratch/local-note.txt` | Synthetic local user | Approved harmless scratch only; use Git-resolved local exclude, shared by linked worktrees. This is not a private-data store or an isolated worktree location. |
 | Customer export / private durable data | No approved in-clone home; protected destination unresolved | Authorized data owner | No write for public/private/internal/unknown until approved protected storage and retention/access are resolved; neither ignore nor a directory grants permission. |
 | Existing held recovery copy | `archives/held.zip` (existing only) | Recovery owner | Keep the existing hold/restore protection even if ignored; not a destination for new private backups or authority to move/delete it. |
 
+A dated plan or session note is development working material even when it is
+public; at closeout its durable conclusion returns to the design record.
 A customer export cannot be placed in the report or scratch row by changing its
 filename. No protected store is actually configured in this fixture. Stop before
 writing and ask the authorized owner for a safe approved handle; do not publish

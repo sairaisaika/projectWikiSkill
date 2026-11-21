@@ -100,6 +100,32 @@ class FilePlacementTests(unittest.TestCase):
         self.assertEqual(self.git('ls-files', '-z').stdout, before)
         self.assertIn('unapproved location blocks the write', self.method)
 
+    def test_design_records_and_development_resources_have_separate_homes(self):
+        rows = self.placement_rows()
+        design = self.path_for('Design record to preserve')
+        working = self.path_for('Development working material')
+        # Separate homes: neither location nests inside the other.
+        self.assertFalse(design.startswith(working) or working.startswith(design))
+        self.assertIn('dated history', rows['Design record to preserve'][2])
+        self.assertIn('never task scratch', rows['Design record to preserve'][2])
+        self.assertIn('task owner', rows['Development working material'][1])
+        self.assertIn('Not a home for design decisions', rows['Development working material'][2])
+        # The canonical method states the axis and its promotion path once.
+        for phrase in ('### Separate design records from development resources',
+                       'separate homes and separate retention',
+                       'only by distillation at closeout',
+                       'independent of tracking, ignore and visibility'):
+            self.assertIn(phrase, self.method)
+        entry = (hygiene.SKILL / 'SKILL.md').read_text(encoding='utf-8')
+        menu = entry.split('## Choose the work', 1)[1].split('\n## ', 1)[0]
+        self.assertIn('references/repository-hygiene.md#separate-design-records-from-development-resources', menu)
+        for question in ('开发资源和设计资源应该分开放在哪里？', '开发过程文件和设计文档分别放哪里？',
+                         '任务草稿和设计文档分别放哪里？',
+                         'Where do development resources go versus design records?'):
+            route = self.query(hygiene.SKILL, question)[0]
+            self.assertEqual(route['id'], 'repository-hygiene')
+            self.assertIn('docs/wiki/maintenance-closeout.md#file-placement', route['docs'])
+
     def test_ordinary_text_edit_has_no_extra_route_or_material(self):
         entry = (hygiene.SKILL / 'SKILL.md').read_text(encoding='utf-8')
         self.assertLess(entry.index('## Keep the entry proportional'), entry.index('## Choose the work'))
