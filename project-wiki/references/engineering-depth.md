@@ -1,6 +1,6 @@
 # Engineering depth: constraints that can be checked
 
-> Reviewed: 2026-11-20 against de918a5 for the diagnostic workflow; other profiles retain their prior scope.
+> Reviewed: 2026-11-20 against 6639e41 for the diagnostic workflow; other profiles retain their prior scope.
 
 Use this reference when a route involves lifecycle, wire/data contracts, scheduling,
 resources or choices whose rationale is easy to lose. The user's reference material

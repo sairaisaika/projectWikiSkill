@@ -1,7 +1,7 @@
 # PWS file placement — 2026-11-21
 
 Baseline: canonical public `sairaisaika/projectWikiSkill` main
-`e83b0b2948d3b5846611c27f3ba590b0c4130ddc`, fresh isolated checkout. Repository
+`95cb05c81d2c69c26c0dc0014717dde15b614414`, fresh isolated checkout. Repository
 metadata/account verification confirms public visibility, default main and push
 permission for connected `sairaisaika`; no downstream repository was inspected.
 No applicable root/scoped AGENTS or .agents skills were present for the method;

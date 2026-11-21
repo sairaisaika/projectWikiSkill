@@ -311,7 +311,7 @@ quoted to readers. Rationale:
 
 ## Historical evidence
 
-> Reviewed: 2026-11-03 against c062224; task-views known gap verified against fc310fe
+> Reviewed: 2026-11-03 against 5056787; task-views known gap verified against b8dd295
 
 
 ### Saved state-preview reader (0.2.23)

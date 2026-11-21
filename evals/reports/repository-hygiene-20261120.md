@@ -1,6 +1,6 @@
 # Repository hygiene and Git boundaries — 2026-11-20
 
-Source baseline: main `71c9c2301679abc096c94e7e5d95f1eec45ba1bd` (#73).
+Source baseline: main `9406d16c15c24079e71ac546170ab95b03c2ac6f` (#73).
 Scope: shipped agent guidance, native Wiki discovery and real temporary Git
 repositories with synthetic public bytes. No consumer project or local user tree
 was touched. No hooks, automatic ignore/staging/cleanup, release or installation.

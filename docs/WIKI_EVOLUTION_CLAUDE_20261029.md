@@ -1,7 +1,7 @@
 ---
 type: Plan
 owner: Claude (original iOS QA task owner context)
-base: 3276f7182ef04e7d1297ebb0a08696b96cd09731
+base: ed33290895bfcf3001ce8bec2bc24fc10f1e42ce
 ---
 # Wiki evolution guide — Claude plan and result
 

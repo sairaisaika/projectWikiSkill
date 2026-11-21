@@ -1,6 +1,6 @@
 # Repository hygiene and Git tracking boundaries
 
-> Reviewed: 2026-11-21 against main e83b0b2 for file placement; prior tracking/publication boundaries retained, not downstream adoption.
+> Reviewed: 2026-11-21 against main 95cb05c for file placement; prior tracking/publication boundaries retained, not downstream adoption.
 
 Use this through the project's Maintenance entry whenever a task creates files,
 leaves uncertain outputs, or prepares a commit. This is an agent decision workflow,

@@ -1,6 +1,6 @@
 # Audit an established wiki without building a parallel truth system
 
-> Reviewed: 2026-11-21 against de918a5 for task-facing section placement; other sections retain their prior scope.
+> Reviewed: 2026-11-21 against 6639e41 for task-facing section placement; other sections retain their prior scope.
 
 An existing wiki can already have stronger domain coverage than this skill's
 fixture: responsibility chapters, diagrams, producer/consumer tables, a reverse

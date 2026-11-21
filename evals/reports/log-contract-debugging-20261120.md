@@ -1,6 +1,6 @@
 # ProjectWikiSkill (PWS): log-to-contract debugging — 2026-11-20
 
-Baseline: main `de918a53bb8f51a29ff63d8c06df0c205ff4d86a`, in a fresh isolated
+Baseline: main `6639e41c28a957ec49ef3ac29f2f238681b7ebf5`, in a fresh isolated
 checkout. No root AGENTS.md or .agents skills are present; the fixture's AGENTS
 and maintainer engineering entry supplied the applicable native routes and checks.
 
@@ -105,11 +105,11 @@ gate is authorized.
 ## Main integration and assertion precision — 2026-11-21
 
 The existing draft integrates verified main
-`e5df41dea1dd35a4f39ce9b600dcf688a071ca99`, including the approved native section
+`08bc35b5e4dde8bb1396971e800f5a2b822f9828`, including the approved native section
 placement and marketplace changes. Their canonical guide/report and marketplace
 files/test helper are byte-identical to main; both changelog and report-index rows
 are retained. Only Current task changes in PROJECT; history/conventions stay intact.
-The earlier merge preparation against `9303a25` was unpublished and superseded
+The earlier merge preparation against `90f131a` was unpublished and superseded
 when main advanced, rather than publishing against a stale base.
 
 Independent review found that the offline event check inferred unavailable from

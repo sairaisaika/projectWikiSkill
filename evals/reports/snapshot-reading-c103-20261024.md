@@ -104,7 +104,7 @@ coordinator separately checked the delivered files and output hashes. This is
 reported source/output consumption, not independent tracing of every physical
 read or full semantic certification.
 
-Source `21b4ba5` and normal PR24 merge `a6a99d0` have equal trees
+Source `d4f221c` and normal PR24 merge `c504528` have equal trees
 `0362b778ea938e48d04bfc15ee5620c5ea30848e`. Exact source runs40054633994 /
 40054637871 and main run40054950068 passed Ubuntu/Windows Python3.10/3.13; each
 matrix job ran175 unit tests and12 fixture tests plus the original navigation

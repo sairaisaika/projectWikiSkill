@@ -1,7 +1,7 @@
 # PWS native section placement — 2026-11-21
 
 Baseline: public `sairaisaika/projectWikiSkill` main
-`de918a53bb8f51a29ff63d8c06df0c205ff4d86a`, fresh isolated checkout.
+`6639e41c28a957ec49ef3ac29f2f238681b7ebf5`, fresh isolated checkout.
 Repository metadata confirms public visibility and default main; connected account
 `sairaisaika` has push permission. No root or scoped AGENTS/.agents skills were
 present for the edited guide; maintainer engineering-entry instructions apply.

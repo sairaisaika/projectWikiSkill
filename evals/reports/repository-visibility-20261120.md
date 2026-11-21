@@ -1,6 +1,6 @@
 # Destination visibility and publication scope — 2026-11-20
 
-Baseline: main `095a5e13c12cdc97bd45f03b918165669f9e3fe4` after PR74.
+Baseline: main `32836274c9fb296e6ce38300b6cab8fb495ea80a` after PR74.
 The prior checkout was unavailable; work used a fresh isolated temporary clone.
 The connected account and destination repository metadata were read explicitly:
 account `sairaisaika`, repository `sairaisaika/projectWikiSkill` (id 1420071963),

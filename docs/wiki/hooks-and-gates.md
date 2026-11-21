@@ -1,6 +1,6 @@
 # Hooks and gates
 
-> Reviewed: 2026-11-03 against c062224; lessons-for-the-skill 5, 7, 11 and 12 re-verified against fc310fe; lifecycle-delivery overflow tiers reviewed 2026-11-09 against 9258456 plus the working change
+> Reviewed: 2026-11-03 against 5056787; lessons-for-the-skill 5, 7, 11 and 12 re-verified against b8dd295; lifecycle-delivery overflow tiers reviewed 2026-11-09 against deaf8dc plus the working change
 
 The skill ships two optional host hooks: SessionStart delivery (`lifecycle.py`) and a Claude
 pre-edit gate (`edit_gate.py`). It recommends, but does not ship, after-edit gates. This page

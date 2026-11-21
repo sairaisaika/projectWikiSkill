@@ -189,7 +189,7 @@
             "level": "source",
             "reference": "project-wiki/scripts/wiki.py",
             "claim": "main, resolve_route, resolve_source, audit and rank exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -436,7 +436,7 @@
             "level": "source",
             "reference": "project-wiki/scripts/workflow.py",
             "claim": "capture, validate_native and check_capture exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -647,7 +647,7 @@
             "level": "source",
             "reference": "project-wiki/scripts/workflow.py",
             "claim": "start, delegate and readonly_baseline exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -974,7 +974,7 @@
             "level": "source",
             "reference": "project-wiki/scripts/workflow.py",
             "claim": "task_view and the --snapshot-only option exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -1262,7 +1262,7 @@
             "level": "source",
             "reference": "project-wiki/scripts/workflow.py",
             "claim": "capture_return and repository_changes exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -1446,7 +1446,7 @@
             "level": "source",
             "reference": "project-wiki/scripts/workflow.py",
             "claim": "review_template and finish exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -1654,7 +1654,7 @@
             "level": "source",
             "reference": "project-wiki/scripts/lifecycle.py",
             "claim": "deliver and main exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -1861,7 +1861,7 @@
             "level": "source",
             "reference": "project-wiki/scripts/edit_gate.py",
             "claim": "read_config, judge and main exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -2054,7 +2054,7 @@
             "level": "source",
             "reference": "scripts/package_plugin.py",
             "claim": "build and root_manifest exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]
@@ -2244,7 +2244,7 @@
             "level": "source",
             "reference": "scripts/plugin_doctor.py",
             "claim": "main, inspect, inspect_codex_hooks and inspect_codex_inventory exist as named.",
-            "revision": "c062224 working tree",
+            "revision": "5056787 working tree",
             "observed_at": "2026-11-03"
           }
         ]

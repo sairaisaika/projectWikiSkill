@@ -1,6 +1,6 @@
 # Actual0.2.5 host update and bounded use, 2026-10-22
 
-Scope: source main `3cac3ef`, one official Windows Codex CLI update, a fresh
+Scope: source main `a661bba`, one official Windows Codex CLI update, a fresh
 read-only CLI source-maintenance review and fixture query, and a separately
 scoped Linux Claude native-source review. These are separate evidence layers;
 neither package/source checks nor a review establishes product/device acceptance.

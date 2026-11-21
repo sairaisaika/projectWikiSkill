@@ -1,6 +1,6 @@
 # Engineering entry
 
-> Reviewed: 2026-11-20 against de918a5 for Maintenance/diagnostic entry; other sections retain their prior scope
+> Reviewed: 2026-11-20 against 6639e41 for Maintenance/diagnostic entry; other sections retain their prior scope
 
 This repository ships **project-wiki**, an agent skill plus an optional host plugin.
 The skill teaches an agent to keep a project's wiki source-backed: route a task to its

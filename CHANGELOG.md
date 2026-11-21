@@ -102,7 +102,7 @@ SessionStart overflow now delivers routing first: when the compact index exceeds
 Compact optional SessionStart routing delivery with all file-owner edges and source observations; explicitly deferred operational records and bounded host-local readers. Fixed6KiB budget, snapshot-only behavior and visible overflow remain. Global installation/adoption are separate.
 
 
-> Reviewed: 2026-11-03 against c062224
+> Reviewed: 2026-11-03 against 5056787
 
 Version history, newest first. Current per-version status (CI, main, package,
 installation, hooks, use) is one table in [docs/wiki/status.md](docs/wiki/status.md);
@@ -184,7 +184,7 @@ new hook, gate activation or adoption claim. See [current state](docs/wiki/statu
 
 ## Earlier source changes under 0.2.19
 
-Payload changes after the pinned ee6c065 copies, with no version bump: split-owner
+Payload changes after the pinned 68f9db4 copies, with no version bump: split-owner
 handoff guidance (2026-10-30); rule-based routing, invariant tables and five-layer miss
 classification (2026-10-31); the optional Claude pre-edit gate
 `project-wiki/scripts/edit_gate.py` with `PreToolUse` in `hooks/claude.json`
@@ -203,7 +203,7 @@ and a designed-not-implemented state for design-first pages. Session log:
 
 0.2.19 is a source candidate for the evolution workflow, exercised in real
 product and Wiki-maintenance tasks with independent rework retained. Skill-only
-copies pinned to ee6c065 now match all 19 source files on the selected Mac Codex
+copies pinned to 68f9db4 now match all 19 source files on the selected Mac Codex
 and Linux Claude hosts; the new Claude invocation advertised and natively loaded
 the skill. The subsequent Mac catalog also advertises it and Root read the
 installed entry. Correct adoption and lower rework/context cost remain separate checks. No plugin hooks, trust or access settings changed.
