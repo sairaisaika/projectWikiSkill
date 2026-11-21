@@ -1,6 +1,6 @@
 # Repository hygiene and Git tracking boundaries
 
-> Reviewed: 2026-11-21 against main 95cb05c for file placement; prior tracking/publication boundaries retained, not downstream adoption.
+> Reviewed: 2026-11-21 against main dac0289 and branch b04ca47 for design/development retention; prior tracking/publication boundaries retained, not downstream adoption.
 
 Use this through the project's Maintenance entry whenever a task creates files,
 leaves uncertain outputs, or prepares a commit. This is an agent decision workflow,
@@ -27,6 +27,33 @@ needs approved protected storage; private visibility or an ignored directory
 provides no authorization. Apply the existing classification, visibility and
 retention rules to each file, including after generation and at commit boundaries.
 
+### Separate design records from development resources
+
+Before choosing a row, decide what the file is for. A **design record** states what
+the software is and why: requirements and acceptance, architecture, interface
+contracts, accepted decisions, canonical diagrams and the design assets the product
+depends on. A **development resource** is a by-product of building it: task plans in
+progress, captures and packets, drafts, prototypes and spikes, experiment or
+evaluation runs, handoff notes, agent transcripts, caches and build/test output.
+
+Give them separate homes and separate retention. Design records live with their
+canonical owner and change in place with dated history. Development resources live
+in the native task/evidence record or an approved working location and follow the
+task's retention. Do not file dated plans, session diaries or run output inside the
+canonical design area, and do not cite scratch, a draft or an unretained run as the
+authority for a current design statement. Development material reaches a design
+record only by distillation at closeout: return the durable conclusion to its owner
+([Wiki evolution](wiki-evolution.md#2-decide-where-the-knowledge-belongs)), keep
+evidence bound to its revision under the applicable retention policy.
+A design citation is not a prerequisite for retention: independent audit,
+rollback/restore, compliance/retention holds and other approved evidence remain
+protected even when not cited. Lifecycle guidance grants no
+deletion authority; missing rules remain unresolved with the owner. Prototype or
+spike code enters production paths only through the normal
+reviewed change. This axis is independent of tracking, ignore and visibility: a
+development resource may be tracked (a public evaluation report), and a design
+asset may need protected storage.
+
 Adapt these rows in the existing Maintenance owner, keeping only applicable rows
 and linking native policy. Locations are safe repo-relative paths or approved
 opaque handles, never private absolute paths or sensitive identifiers. If storage
@@ -34,7 +61,9 @@ is not approved, say so rather than inventing a handle or a usable-looking path.
 
 | Purpose / disposition | Safe path or approved handle | Owner | Retention / rule source |
 |---|---|---|---|
-| Repo-safe truth and required inputs; track by project policy | [existing source/config/Wiki paths, required lockfile, .env.example, approved fixture] | [native owner] | [canonical policy and version authority] |
+| Design record to preserve | [canonical Wiki/design owner path] | [design or contract owner] | [versioned in place; superseded text kept as dated history] |
+| Development working material | [native task/evidence record or approved working location] | [task owner] | [task retention protects independent audit, rollback/restore, compliance/retention holds and other approved evidence even when not cited; bind retained evidence to its revision; no deletion authority; missing rules remain unresolved] |
+| Repo-safe truth and required inputs; track by project policy | [existing source/config paths, required lockfile, .env.example, approved fixture] | [native owner] | [canonical policy and version authority] |
 | Shared disposable reproducible output; narrow shared ignore only if approved | [explicit existing output path] | [generator/consumer owner] | [rebuild inputs, active use/holds, actual Git rule source] |
 | Harmless personal scratch; repository-local exclude scope | [approved location or unresolved] | [user/owner] | [local scope and retention; linked-worktree caveat] |
 | Sensitive or durable private data; protected storage | [approved safe handle or no approved destination] | [authorized data owner] | [access, retention/restore/holds; no in-clone fallback] |

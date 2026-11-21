@@ -89,7 +89,9 @@ that coordination protocol is actually needed; existing project gates stay nativ
   native Maintenance owner's **File placement** table before writing. Reuse its
   approved locations; if missing or unclear, use the
   [placement guidance](references/repository-hygiene.md#file-placement) to resolve
-  the location with that owner, not a guessed directory.
+  the location with that owner, not a guessed directory. Keep design records to
+  preserve apart from development working material; see
+  [design versus development](references/repository-hygiene.md#separate-design-records-from-development-resources).
 - **Debug a technical contract:** for incident symptoms or claimed/observed behavior
   that conflicts with a technical boundary, use its existing owner and the
   [evidence-to-contract path](references/engineering-depth.md#debug-from-evidence-to-a-technical-contract).

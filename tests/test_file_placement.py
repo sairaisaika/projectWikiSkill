@@ -100,6 +100,48 @@ class FilePlacementTests(unittest.TestCase):
         self.assertEqual(self.git('ls-files', '-z').stdout, before)
         self.assertIn('unapproved location blocks the write', self.method)
 
+    def test_design_records_and_development_resources_have_separate_homes(self):
+        rows = self.placement_rows()
+        design = self.path_for('Design record to preserve')
+        working = self.path_for('Development working material')
+        # Separate homes: neither location nests inside the other.
+        self.assertFalse(design.startswith(working) or working.startswith(design))
+        self.assertIn('dated history', rows['Design record to preserve'][2])
+        self.assertIn('never task scratch', rows['Design record to preserve'][2])
+        self.assertIn('task owner', rows['Development working material'][1])
+        self.assertIn('Not a home for design decisions', rows['Development working material'][2])
+        # The canonical method states the axis and its promotion path once.
+        for phrase in ('### Separate design records from development resources',
+                       'separate homes and separate retention',
+                       'only by distillation at closeout',
+                       'independent of tracking, ignore and visibility'):
+            self.assertIn(phrase, self.method)
+        entry = (hygiene.SKILL / 'SKILL.md').read_text(encoding='utf-8')
+        menu = entry.split('## Choose the work', 1)[1].split('\n## ', 1)[0]
+        self.assertIn('references/repository-hygiene.md#separate-design-records-from-development-resources', menu)
+        for question in ('开发资源和设计资源应该分开放在哪里？', '开发过程文件和设计文档分别放哪里？',
+                         '任务草稿和设计文档分别放哪里？',
+                         'Where do development resources go versus design records?'):
+            route = self.query(hygiene.SKILL, question)[0]
+            self.assertEqual(route['id'], 'repository-hygiene')
+            self.assertIn('docs/wiki/maintenance-closeout.md#file-placement', route['docs'])
+
+    def test_uncited_development_evidence_keeps_independent_retention(self):
+        template = next(line for line in self.method.splitlines()
+                        if line.startswith('| Development working material |'))
+        fixture = self.placement_rows()['Development working material'][2]
+        for text in (template, fixture):
+            with self.subTest(surface='template' if text == template else 'fixture'):
+                for protection in ('independent audit', 'rollback/restore', 'compliance/retention holds',
+                                   'other approved evidence', 'even when not cited'):
+                    self.assertIn(protection, text)
+                self.assertIn('no deletion authority', text)
+                self.assertIn('missing rules remain unresolved', text)
+                self.assertNotIn('only cited evidence', text.lower())
+                self.assertNotIn('the rest leaves with the task', text.lower())
+        self.assertTrue('A design citation is not a prerequisite for retention' in self.method,
+                        'The canonical explanation must preserve uncited evidence')
+
     def test_ordinary_text_edit_has_no_extra_route_or_material(self):
         entry = (hygiene.SKILL / 'SKILL.md').read_text(encoding='utf-8')
         self.assertLess(entry.index('## Keep the entry proportional'), entry.index('## Choose the work'))
