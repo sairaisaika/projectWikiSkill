@@ -6,6 +6,10 @@ is that the next task finds the right knowledge **at the right grain**, not that
 task appends another paragraph. Appending is often correct; it should be a decision,
 not the default.
 
+For a routine task with no knowledge, behavior/contract, uncertain effect or artifact
+change, use the [lightweight entry cue](../SKILL.md#keep-the-entry-proportional)
+instead of extra specialist reading or a PWS-only record.
+
 Proportionality here never overrides a project's own requirements. If the project
 asks every task for a wiki start, end or efficiency note, a task that changes no
 knowledge still records it; a short "no wiki change" with its reason is enough.

@@ -4,6 +4,11 @@ Use `docs/wiki/routes.json` as the curated manifest. Use a small engineering ent
 to explain query vocabulary; keep large explanations feature-local. Source declarations
 and explanations have different jobs: a file list alone is not an engineering wiki.
 
+When a technical boundary needs diagnostics, link its existing owner to the
+[evidence-to-contract path](engineering-depth.md#debug-from-evidence-to-a-technical-contract).
+Use native schema/tests and safe observations; no new route fields or logging
+schema are required. Logs do not replace the contract.
+
 ## Record shape
 
 ```json

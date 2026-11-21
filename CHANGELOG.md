@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Connect incident observations to native technical contracts, producer/consumer sources and focused checks through existing owners; distinguish receipts, diagnostics and audit trails, and preserve unknown runtime/coverage. Add a routine-task skip cue without waiving project gates or triggered hygiene. See [synthetic and navigation evidence](evals/reports/log-contract-debugging-20261120.md).
+
 - Clarify native Wiki task entrances, owner sections and direct cross-links, with a public-checkout fallback boundary for optional local conveniences. See [bounded route review](evals/reports/native-section-placement-20261121.md).
 
 - Add destination visibility and publication-audience review to the existing hygiene checkpoints and Wiki boundary, including public/private AGENTS/PROJECT/PRODUCT scaffold templates; public/private/internal/unknown use verified metadata, with no relaxation for secrets or raw private data. See [synthetic evidence](evals/reports/repository-visibility-20261120.md).

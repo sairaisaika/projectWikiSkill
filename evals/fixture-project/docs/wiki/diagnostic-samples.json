@@ -1,0 +1,160 @@
+{
+  "kind": "synthetic-diagnostic-examples",
+  "runtime_evidence": false,
+  "packets": [
+    {
+      "id": "packet-a",
+      "coverage": "complete",
+      "events": [
+        {
+          "timestamp": "2000-01-01T00:00:00Z",
+          "service": "article-service",
+          "build": "fixture-source-v1",
+          "environment": "synthetic",
+          "operation": "article.read",
+          "event": "service.result",
+          "outcome": "succeeded",
+          "error_code": "none",
+          "failure_class": "none",
+          "retry": "not_applicable",
+          "data_state": "empty",
+          "correlation_id": "synthetic-op-1",
+          "contract": "article-result/v1"
+        },
+        {
+          "timestamp": "2000-01-01T00:00:00Z",
+          "service": "legacy-client",
+          "build": "fixture-source-v1",
+          "environment": "synthetic",
+          "operation": "article.read",
+          "event": "client.result",
+          "outcome": "succeeded",
+          "error_code": "none",
+          "failure_class": "none",
+          "retry": "not_applicable",
+          "data_state": "empty",
+          "correlation_id": "synthetic-op-1",
+          "contract": "article-result/v1"
+        }
+      ]
+    },
+    {
+      "id": "packet-b",
+      "coverage": "complete",
+      "events": [
+        {
+          "timestamp": "2000-01-01T00:00:00Z",
+          "service": "article-service",
+          "build": "fixture-source-v1",
+          "environment": "synthetic",
+          "operation": "article.read",
+          "event": "service.result",
+          "outcome": "failed",
+          "error_code": "unavailable",
+          "failure_class": "known",
+          "retry": "unknown",
+          "data_state": "unavailable",
+          "correlation_id": "synthetic-op-2",
+          "contract": "article-result/v1"
+        },
+        {
+          "timestamp": "2000-01-01T00:00:00Z",
+          "service": "legacy-client",
+          "build": "fixture-source-v1",
+          "environment": "synthetic",
+          "operation": "article.read",
+          "event": "client.result",
+          "outcome": "failed",
+          "error_code": "legacy_none",
+          "failure_class": "unknown",
+          "retry": "unknown",
+          "data_state": "unavailable",
+          "correlation_id": "synthetic-op-2",
+          "contract": "article-result/v1"
+        }
+      ]
+    },
+    {
+      "id": "packet-c",
+      "coverage": "complete",
+      "events": [
+        {
+          "timestamp": "2000-01-01T00:00:00Z",
+          "service": "article-service",
+          "build": "fixture-source-v1",
+          "environment": "synthetic",
+          "operation": "article.read",
+          "event": "service.result",
+          "outcome": "failed",
+          "error_code": "unavailable",
+          "failure_class": "known",
+          "retry": "unknown",
+          "data_state": "unavailable",
+          "correlation_id": "synthetic-op-3",
+          "contract": "article-result/v1"
+        },
+        {
+          "timestamp": "2000-01-01T00:00:00Z",
+          "service": "legacy-client",
+          "build": "fixture-source-v1",
+          "environment": "synthetic",
+          "operation": "article.read",
+          "event": "client.result",
+          "outcome": "succeeded",
+          "error_code": "none",
+          "failure_class": "none",
+          "retry": "not_applicable",
+          "data_state": "empty",
+          "correlation_id": "synthetic-op-3",
+          "contract": "article-result/v1"
+        }
+      ]
+    },
+    {
+      "id": "packet-d",
+      "coverage": "complete",
+      "events": [
+        {
+          "timestamp": "2000-01-01T00:00:00Z",
+          "service": "article-service",
+          "build": "fixture-source-v1",
+          "environment": "synthetic",
+          "operation": "article.read",
+          "event": "service.accepted",
+          "outcome": "accepted",
+          "error_code": "none",
+          "failure_class": "none",
+          "retry": "unknown",
+          "data_state": "unknown",
+          "correlation_id": "synthetic-op-4",
+          "contract": "article-result/v1"
+        }
+      ]
+    },
+    {
+      "id": "packet-e",
+      "coverage": "sampled",
+      "events": []
+    },
+    {
+      "id": "packet-f",
+      "coverage": "unknown",
+      "events": [
+        {
+          "timestamp": "2000-01-01T00:00:00Z",
+          "service": "article-service",
+          "build": "fixture-source-v1",
+          "environment": "synthetic",
+          "operation": "article.read",
+          "event": "service.result",
+          "outcome": "succeeded",
+          "error_code": "none",
+          "failure_class": "none",
+          "retry": "not_applicable",
+          "data_state": "empty",
+          "contract": "article-result/v1"
+        }
+      ]
+    }
+  ]
+}

@@ -59,10 +59,18 @@ For new files, generated leftovers and staged diff review, follow
 creation and after generation; commit tasks recheck before staging and before commit.
 Ignore/tracking decisions do not change the retention protections below.
 
+For incident evidence or a log/contract mismatch, use the existing contract owner
+and [evidence-to-contract debugging path](engineering-depth.md#debug-from-evidence-to-a-technical-contract).
+Keep native receipts, diagnostic sinks and audit sources distinct; unknown runtime
+coverage remains unknown. Do not collect production logs for a Wiki task.
+
 ## Closeout and maintenance sweeps
 
 Use the project's Maintenance section as the entrance, not a new knowledge store.
-Sweep at the end of a change, fix, incident or handoff; when pausing or abandoning
+For tasks meeting the [routine-task cue](../SKILL.md#keep-the-entry-proportional),
+the project's lightweight closeout suffices; no extra specialist read or PWS-only
+record is required. Honor project gates and relevant hygiene safeguards. Otherwise,
+sweep at the end of a change, fix, incident or handoff; when pausing or abandoning
 work with unresolved effects; and on resume or before final acceptance. A release,
 activation or rollback can warrant a sweep with no source diff. Also sweep the
 relevant prior slices when drift or repeated friction becomes visible. Look at this task's
