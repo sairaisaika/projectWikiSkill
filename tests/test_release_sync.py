@@ -98,7 +98,7 @@ class ReleaseSyncTests(unittest.TestCase):
         # Even an explicitly pinned incomplete receipt cannot equal a valid target.
         self.assertNotEqual(sync.check(target, path, sync.sha256(path.read_bytes()))['status'], 'same')
         (target / 'LICENSE').unlink()
-        self.assertEqual(sync.check(target, path, sync.sha256(path.read_bytes()))['status'], 'invalid_target')
+        self.assertEqual(sync.check(target, path, sync.sha256(path.read_bytes()))['status'], 'invalid_candidate')
 
     def test_candidate_python_is_never_executed_and_cli_does_not_write_cache(self):
         marker = self.home / 'must-not-exist'
@@ -250,11 +250,138 @@ class ReleaseSyncTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             redirect.redirect_request(req, None, 302, 'redirect', {}, 'https://example.com/synthetic')
 
+    def test_standalone_two_explicit_copies_and_canonical_byte_policy(self):
+        output, receipt, pin = self.bundle()
+        first, second = self.home / 'first-skill', self.home / 'second-skill'
+        for target in (first, second):
+            shutil.copytree(output / 'package/skills/project-wiki', target)
+        path = first / 'SKILL.md'
+        path.write_bytes(path.read_bytes().replace(b'\n', b'\r\n'))
+        cache = first / '__pycache__'
+        cache.mkdir()
+        (cache / 'synthetic.pyc').write_bytes(b'non-distribution fixture cache')
+        (second / 'SKILL.md').write_text('Synthetic divergent skill')
+        before = {p: p.read_bytes() for p in first.rglob('*') if p.is_file()}
+        for candidate in (output, output / 'release-receipt.json'):
+            self.assertEqual(sync.check(first, candidate, pin, 'standalone-skill')['status'], 'same')
+            self.assertEqual(sync.check(second, candidate, pin, 'standalone-skill')['status'], 'different')
+        self.assertEqual(before, {p: p.read_bytes() for p in first.rglob('*') if p.is_file()})
+        result = subprocess.run([sys.executable, '-B', str(ROOT / 'scripts/pws-sync'), '--check',
+                                 '--target-kind', 'standalone-skill', '--target', str(first),
+                                 '--candidate', str(output / 'release-receipt.json'),
+                                 '--trusted-receipt-sha256', pin], capture_output=True, text=True)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertEqual(json.loads(result.stdout)['session_loading'], 'unverified')
+
+    def test_standalone_exact_coverage_missing_extra_and_bad_receipt(self):
+        output, receipt, pin = self.bundle()
+        target = self.home / 'skill'
+        shutil.copytree(output / 'package/skills/project-wiki', target)
+        extra = target / 'unexpected.txt'
+        extra.write_text('Synthetic extra')
+        self.assertEqual(sync.check(target, output, pin, 'standalone-skill')['status'], 'invalid_target')
+        extra.unlink()
+        (target / 'SKILL.md').unlink()
+        self.assertEqual(sync.check(target, output, pin, 'standalone-skill')['status'], 'invalid_target')
+        receipt['package_receipt']['canonical_skill_files']['../escape'] = '0' * 64
+        path = self.home / 'bad-receipt.json'
+        path.write_bytes(release.builder.json_bytes(receipt))
+        self.assertEqual(sync.check(target, path, sync.sha256(path.read_bytes()), 'standalone-skill')['status'], 'invalid_candidate')
+
+    def test_standalone_symlink_and_cache_alias_are_refused(self):
+        output, receipt, pin = self.bundle()
+        target = self.home / 'skill'
+        shutil.copytree(output / 'package/skills/project-wiki', target)
+        cache = target / '__pycache__'
+        cache.mkdir()
+        try:
+            (cache / 'alias').symlink_to(output / 'package/LICENSE')
+        except OSError:
+            self.skipTest('Symlink creation unavailable on this host')
+        self.assertEqual(sync.check(target, output, pin, 'standalone-skill')['status'], 'invalid_target')
+        alias = self.home / 'alias'
+        alias.symlink_to(target, target_is_directory=True)
+        self.assertEqual(sync.check(alias, output, pin, 'standalone-skill')['status'], 'invalid_target')
+
+    def test_exact_git_blobs_exclude_ignored_checkout_and_ignore_export_attributes(self):
+        (self.source / '.gitattributes').write_text('/project-wiki/SKILL.md export-ignore\n')
+        self.base = self.commit()
+        (self.source / '.git/info/exclude').write_text('project-wiki/ignored.md\n')
+        (self.source / 'project-wiki/ignored.md').write_text('Synthetic ignored checkout-only payload')
+        self.assertEqual(self.git('status', '--porcelain'), '')
+        output, receipt, pin = self.bundle()
+        self.assertTrue((output / 'package/skills/project-wiki/SKILL.md').is_file())
+        self.assertFalse((output / 'package/skills/project-wiki/ignored.md').exists())
+        self.assertEqual(receipt['package_receipt'], release.describe_commit(self.source, self.base)['package_receipt'])
+
+    def test_descriptor_mismatch_and_external_baseline_change_stop_before_publish(self):
+        output, baseline, pin = self.bundle()
+        (self.source / 'project-wiki/SKILL.md').write_text('Synthetic next payload')
+        for name in ('plugin.json', '.claude-plugin/marketplace.json'):
+            path = self.source / name
+            data = json.loads(path.read_text())
+            (data['plugins'][0] if 'plugins' in data else data)['version'] = '0.2.40'
+            path.write_text(json.dumps(data))
+        commit = self.commit()
+        env, event = self.metadata(commit)
+        api = FakeGitHub(commit)
+        api.seed(baseline)
+        original_bundle = release.bundle
+        def mismatched(*args):
+            result = original_bundle(*args)
+            result['inputs_sha256'] = '0' * 64
+            return result
+        with patch.object(release, 'bundle', mismatched), self.assertRaisesRegex(ValueError, 'descriptor'):
+            release.run_github(api, self.source, env, event, True)
+        self.assertEqual(api.writes, [])
+        original_request = api.request
+        reads = 0
+        def altered(path, *args, **kwargs):
+            nonlocal reads
+            if path.startswith('/releases?'):
+                reads += 1
+                if reads == 2:
+                    api.releases[0]['target_commitish'] = '0' * 40
+            return original_request(path, *args, **kwargs)
+        with patch.object(api, 'request', altered), self.assertRaisesRegex(ValueError, 'baseline'):
+            release.run_github(api, self.source, env, event, True)
+        self.assertEqual(api.writes, [])
+
+    def test_external_baseline_change_before_publication_and_failed_readback(self):
+        output, baseline, pin = self.bundle()
+        (self.source / 'project-wiki/SKILL.md').write_text('Synthetic next payload')
+        for name in ('plugin.json', '.claude-plugin/marketplace.json'):
+            path = self.source / name
+            data = json.loads(path.read_text())
+            (data['plugins'][0] if 'plugins' in data else data)['version'] = '0.2.40'
+            path.write_text(json.dumps(data))
+        commit = self.commit()
+        env, event = self.metadata(commit)
+        for failure in ('baseline', 'readback'):
+            api = FakeGitHub(commit)
+            api.seed(baseline)
+            original = api.request
+            reads = 0
+            def changed(path, method='GET', *args, **kwargs):
+                nonlocal reads
+                if path.startswith('/releases?'):
+                    reads += 1
+                    if failure == 'baseline' and reads == 3:
+                        api.releases[0]['target_commitish'] = '0' * 40
+                result = original(path, method, *args, **kwargs)
+                if failure == 'readback' and method == 'PATCH':
+                    api.releases[-1]['draft'] = True
+                return result
+            with self.subTest(failure=failure), patch.object(api, 'request', changed), self.assertRaises(ValueError):
+                release.run_github(api, self.source, env, event, True)
+            if failure == 'baseline':
+                self.assertFalse(any(method == 'PATCH' for method, path in api.writes))
+
     def test_workflow_gates_are_local_main_only_and_disabled(self):
         workflow = (ROOT / '.github/workflows/check.yml').read_text()
         for required in ('needs: check', "github.event_name == 'push'", "github.ref == 'refs/heads/main'",
                          "github.repository_id == '1466210381'", "needs.check.result == 'success'",
-                         "PWS_RELEASE_ENABLED: 'false'", 'cancel-in-progress: false', 'persist-credentials: false'):
+                         "if: >-\n      false &&", 'cancel-in-progress: false', 'persist-credentials: false'):
             self.assertIn(required, workflow)
         self.assertNotIn('workflow_run:', workflow)
         self.assertNotIn('download-artifact', workflow)
@@ -314,7 +441,7 @@ class FakeGitHub:
         if path == '/releases/3':
             return self.releases[-1]
         if path.startswith('/releases?'):
-            return self.releases
+            return copy.deepcopy(self.releases)
         if path.startswith('/git/ref/tags/'):
             tag = path.removeprefix('/git/ref/tags/')
             if tag not in self.tags:

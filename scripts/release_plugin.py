@@ -7,14 +7,12 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
-import io
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import subprocess
 import sys
-import tarfile
 import tempfile
 import urllib.error
 import urllib.request
@@ -71,22 +69,45 @@ def distribution(source: Path, package: Path) -> dict:
 
 @contextmanager
 def snapshot(source: Path, commit: str):
+    """Materialize exact tracked blobs, ignoring checkout files and archive attributes."""
     if not SHA.fullmatch(commit):
         raise ValueError('Exact commit required')
     with tempfile.TemporaryDirectory() as tmp:
-        root = Path(tmp) / 'source'
+        root = (Path(tmp) / 'source').resolve()  # macOS temporary roots may have aliases
         root.mkdir()
-        raw = subprocess.check_output(['git', '-C', str(source), 'archive', commit])
-        with tarfile.open(fileobj=io.BytesIO(raw)) as archive:
-            for member in archive.getmembers():
-                path = root / member.name
-                if not path.resolve().is_relative_to(root) or not (member.isfile() or member.isdir()):
-                    raise ValueError('Unsupported archive path or alias')
-                if member.isdir():
-                    path.mkdir(parents=True, exist_ok=True)
-                else:
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                    path.write_bytes(archive.extractfile(member).read())
+        listing = subprocess.check_output(['git', '-C', str(source), 'ls-tree', '-rz', '--full-tree', commit])
+        entries = []
+        for entry in listing.split(b'\0'):
+            if not entry:
+                continue
+            metadata, raw_name = entry.split(b'\t', 1)
+            mode, kind, object_id = metadata.decode('ascii').split()
+            name = raw_name.decode('utf-8')
+            relative = PurePosixPath(name)
+            if (mode not in ('100644', '100755') or kind != 'blob'
+                    or not SHA.fullmatch(object_id) or relative.is_absolute()
+                    or '..' in relative.parts or '\\' in name or relative.as_posix() != name):
+                raise ValueError('Unsupported tracked path, alias or submodule')
+            entries.append((name, object_id))
+        raw = subprocess.check_output(['git', '-C', str(source), 'cat-file', '--batch'],
+                                      input=''.join(oid + '\n' for _, oid in entries).encode('ascii'))
+        offset = 0
+        for name, oid in entries:
+            end = raw.index(b'\n', offset)
+            actual_oid, kind, length = raw[offset:end].decode('ascii').split()
+            size = int(length)
+            start = end + 1
+            data = raw[start:start + size]
+            if actual_oid != oid or kind != 'blob' or len(data) != size or raw[start + size:start + size + 1] != b'\n':
+                raise ValueError('Incomplete Git blob response')
+            path = root / name
+            if not path.resolve().is_relative_to(root):
+                raise ValueError('Tracked path escapes snapshot')
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data)
+            offset = start + size + 1
+        if offset != len(raw):
+            raise ValueError('Unexpected Git blob response')
         yield root
 
 
@@ -103,7 +124,8 @@ def bundle(source: Path, output: Path, commit: str) -> dict:
     if output.resolve().is_relative_to(source.resolve()) or output.exists():
         raise ValueError('Choose a new output outside the checkout')
     output.mkdir()
-    description = distribution(source, output / 'package')
+    with snapshot(source, commit) as tree:
+        description = distribution(tree, output / 'package')
     archive_path = output / 'package.zip'
     with zipfile.ZipFile(archive_path, 'x', compression=zipfile.ZIP_DEFLATED) as archive:
         for path in sorted((output / 'package').rglob('*')):
@@ -252,6 +274,28 @@ def released_receipt(api: GitHub, release: dict) -> dict:
     return receipt
 
 
+def inventory_identity(releases: list, own_id: int | None = None) -> list:
+    """Release baseline identity, excluding only this attempt's separately verified draft."""
+    records = []
+    for item in releases:
+        if item['id'] == own_id:
+            continue
+        records.append({key: item[key] for key in
+                        ('id', 'tag_name', 'target_commitish', 'draft', 'prerelease')})
+        records[-1]['assets'] = sorted(
+            ({key: asset.get(key) for key in ('id', 'name', 'digest')} for asset in item['assets']),
+            key=lambda asset: asset['id'])
+    return sorted(records, key=lambda item: item['id'])
+
+
+def recheck_baseline(api: GitHub, initial: list, baseline_release: dict,
+                     previous: dict, own_id: int | None = None) -> None:
+    live = bounded_list(api, '/releases')
+    if (inventory_identity(live, own_id) != inventory_identity(initial)
+            or released_receipt(api, baseline_release) != previous):
+        raise ValueError('Release baseline changed; stop for independent review')
+
+
 def run_github(api: GitHub, source: Path, env: dict, event: dict, publish: bool = False) -> dict:
     commit = guard(api, source, env, event)
     releases = bounded_list(api, '/releases')
@@ -290,7 +334,10 @@ def run_github(api: GitHub, source: Path, env: dict, event: dict, publish: bool 
     with tempfile.TemporaryDirectory() as tmp:
         output = Path(tmp) / 'bundle'
         receipt = bundle(source, output, commit)
+        if any(receipt[key] != current[key] for key in ('version', 'inputs_sha256', 'package_receipt')):
+            raise ValueError('Bundle differs from approved descriptor')
         guard(api, source, env, event)  # recheck live main, permissions boundary and CI before first write
+        recheck_baseline(api, releases, formal[0], previous)
         api.request('/git/refs', 'POST', {'ref': 'refs/tags/' + tag, 'sha': commit})
         release = api.request('/releases', 'POST', {'tag_name': tag, 'target_commitish': commit,
                     'name': tag, 'draft': True, 'prerelease': False,
@@ -301,10 +348,14 @@ def run_github(api: GitHub, source: Path, env: dict, event: dict, publish: bool 
             if asset.get('state') != 'uploaded' or asset.get('digest') != 'sha256:' + sha256(data):
                 raise ValueError('Upload not verified; draft retained for manual recovery')
         guard(api, source, env, event)
+        recheck_baseline(api, releases, formal[0], previous, release['id'])
         pending = api.request('/releases/' + str(release['id']))
         if not pending['draft'] or released_receipt(api, {**pending, 'draft': False}) != receipt:
             raise ValueError('Draft or assets changed before publication')
         api.request('/releases/' + str(release['id']), 'PATCH', {'draft': False, 'make_latest': 'true'})
+        completed = api.request('/releases/' + str(release['id']))
+        if released_receipt(api, completed) != receipt:
+            raise ValueError('Publication readback differs; outcome needs inspection')
     return {'status': 'released', 'source_commit': commit, 'version': receipt['version'], 'published': True}
 
 

@@ -23,7 +23,10 @@ jobs:
       - run: python project-wiki/scripts/wiki.py check --root .
   release:
     needs: check
+    # Default OFF: a separate reviewed enable change must replace this false.
+    # No runner or write token is provisioned for this job while disabled.
     if: >-
+      false &&
       github.event_name == 'push' && github.ref == 'refs/heads/main' &&
       github.repository_id == '1466210381' && needs.check.result == 'success'
     runs-on: ubuntu-latest
@@ -35,9 +38,8 @@ jobs:
       actions: read
       pull-requests: read
     env:
-      # Bootstrap is a separate reviewed operation. No first release/backfill.
-      # Enabling later requires a reviewed code change, not a repository secret.
-      PWS_RELEASE_ENABLED: 'false'
+      # Reached only after the reviewed job-level enable condition and matrix.
+      PWS_RELEASE_ENABLED: 'true'
     steps:
       - uses: actions/checkout@v4
         with:

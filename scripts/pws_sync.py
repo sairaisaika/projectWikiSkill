@@ -8,7 +8,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 import re
 import sys
 
@@ -51,19 +51,74 @@ def read_receipt(path: Path, trusted_digest: str) -> dict:
     return receipt
 
 
-def check(target: Path, candidate: Path | None, trusted_digest: str | None) -> dict:
+def standalone_inventory(receipt: dict) -> dict:
+    """Project the authenticated builder inventory; no alternate source manifest."""
+    expected = {}
+    for name, digest in receipt['package_receipt']['canonical_skill_files'].items():
+        relative = PurePosixPath(name)
+        if (relative.parts[:1] != ('project-wiki',) or len(relative.parts) < 2
+                or '..' in relative.parts or '\\' in name or relative.as_posix() != name
+                or not DIGEST.fullmatch(digest)):
+            raise ValueError('Invalid canonical skill inventory')
+        target = '/'.join(relative.parts[1:])
+        if receipt['package_receipt']['files'].get('skills/project-wiki/' + target) != digest:
+            raise ValueError('Unbound skill projection')
+        expected[target] = digest
+    projected = {name.removeprefix('skills/project-wiki/'): digest
+                 for name, digest in receipt['package_receipt']['files'].items()
+                 if name.startswith('skills/project-wiki/')}
+    if not expected or 'SKILL.md' not in expected or projected != expected:
+        raise ValueError('Incomplete skill projection')
+    if receipt['package_receipt']['source_byte_policy'] != plugin_doctor.SOURCE_BYTE_POLICY:
+        raise ValueError('Unsupported canonical byte policy')
+    return expected
+
+
+def standalone_check(target: Path, expected: dict) -> str:
+    if (target.is_symlink() or not target.is_dir()
+            or target.resolve() != target.absolute().parent.resolve() / target.name):
+        return 'invalid_target'
+    root = target.resolve()
+    actual = {}
+    for path in root.rglob('*'):
+        # Refuse aliases even within ignored cache directories; never read them.
+        if path.is_symlink() or path.resolve() != path.absolute():
+            return 'invalid_target'
+        relative = path.relative_to(root)
+        # These are the builder's existing non-distribution cache exclusions.
+        # No other extra files are silently accepted, and nothing is deleted.
+        if any(part in ('__pycache__', '.pytest_cache') for part in relative.parts):
+            continue
+        if path.is_dir():
+            continue
+        if not path.is_file():
+            return 'invalid_target'
+        actual[relative.as_posix()] = path
+    if set(actual) != set(expected):
+        return 'invalid_target'
+    hashes = {name: sha256(plugin_doctor.canonical_source_bytes(path.read_bytes()))
+              for name, path in actual.items()}
+    return 'same' if hashes == expected else 'different'
+
+
+def check(target: Path, candidate: Path | None, trusted_digest: str | None,
+          target_kind: str = 'package') -> dict:
     result = {'status': 'no_trusted_input', 'installation': 'not performed',
               'session_loading': 'unverified', 'network': 'not used',
-              'trust': 'caller must independently authenticate the pinned receipt'}
+              'trust': 'caller must independently authenticate the pinned receipt',
+              'target_kind': target_kind, 'comparison': 'files only; host loading is not observed'}
     if candidate is None or trusted_digest is None:
         return result
     try:
-        if candidate.is_symlink():
+        if candidate.is_symlink() or candidate.resolve() != candidate.absolute().parent.resolve() / candidate.name:
             raise ValueError('Aliased candidate')
         directory = candidate.is_dir()
         receipt = read_receipt(candidate / 'release-receipt.json' if directory else candidate,
                                trusted_digest)
         expected = receipt['package_receipt']
+        skill_expected = standalone_inventory(receipt)
+        if target_kind not in ('package', 'standalone-skill'):
+            raise ValueError('Unsupported target kind')
         result.update(version=receipt['version'], source_commit=receipt['source_commit'],
                       candidate_verification='package bytes' if directory else 'pinned receipt only')
         if directory:
@@ -80,7 +135,12 @@ def check(target: Path, candidate: Path | None, trusted_digest: str | None) -> d
     try:
         if not target.exists() and not target.is_symlink():
             return {**result, 'status': 'not_installed'}
-        if target.is_symlink() or not plugin_doctor.inspect(target)['package_valid']:
+        if target_kind == 'standalone-skill':
+            return {**result, 'status': standalone_check(target, skill_expected),
+                    'ignored_existing_cache_names': ['__pycache__', '.pytest_cache'],
+                    'byte_policy': plugin_doctor.SOURCE_BYTE_POLICY}
+        if (target.is_symlink() or target.resolve() != target.absolute().parent.resolve() / target.name
+                or not plugin_doctor.inspect(target)['package_valid']):
             return {**result, 'status': 'invalid_target'}
         actual = json.loads((target / 'PACKAGE-SOURCES.json').read_text(encoding='utf-8'))
     except (OSError, ValueError, KeyError, TypeError):
@@ -93,11 +153,12 @@ def check(target: Path, candidate: Path | None, trusted_digest: str | None) -> d
 def main() -> int:
     parser = argparse.ArgumentParser(prog='pws-sync', description=__doc__)
     parser.add_argument('--check', required=True, action='store_true')
-    parser.add_argument('--target', required=True, type=Path, help='Explicit installed package directory')
+    parser.add_argument('--target', required=True, type=Path, help='Explicit local target directory')
+    parser.add_argument('--target-kind', choices=('package', 'standalone-skill'), default='package')
     parser.add_argument('--candidate', type=Path, help='Offline bundle directory or release-receipt.json')
     parser.add_argument('--trusted-receipt-sha256', help='Digest obtained through an independently trusted channel')
     args = parser.parse_args()
-    result = check(args.target, args.candidate, args.trusted_receipt_sha256)
+    result = check(args.target, args.candidate, args.trusted_receipt_sha256, args.target_kind)
     print(json.dumps(result, ensure_ascii=True))
     return 0 if result['status'] == 'same' else 1 if result['status'] in ('different', 'not_installed') else 2
 

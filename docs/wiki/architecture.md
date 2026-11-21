@@ -265,13 +265,16 @@ The `release` job in [check.yml](../../.github/workflows/check.yml) depends on a
 OS/Python checks in the **same run**. It accepts only a non-forced canonical
 `push` to `main`, repository ID `1466210381`, an exact commit confirmed as a merged
 PR into that main, and the still-current main SHA. It rechecks the workflow/run
-identity and all six successful jobs through the API. Only this serialized job
+identity and all six successful jobs through the API. The job-level condition starts with literal `false`, so no runner or write token
+is provisioned until a separate reviewed enable change. Only this serialized job
 has `contents: write` (plus read access to Actions/PR metadata); no added secret,
 `workflow_run`, PR artifact download or execution of release contents is involved.
 The normal project review must approve each payload/version change; this does not
 claim a server-enforced review or branch-protection policy.
 
-**Default off:** `PWS_RELEASE_ENABLED: 'false'` lives in the reviewed workflow.
+**Default off:** the leading `false &&` in the job's `if` is the reviewed enable
+switch. Inside the enabled-only job, `PWS_RELEASE_ENABLED` also gates the script.
+Dry-run planning remains an explicit read-only script path, not a writable CI job.
 Even when enabled in a future reviewed change, absence of a formal release returns
 `bootstrap_required`. There is no automatic first release, baseline inference from
 `0.2.39`, or bootstrap flag. A separately authorized bootstrap must establish an
@@ -282,20 +285,28 @@ changed audience, stale main or failed matrix blocks publication.
 After bootstrap, compare against the highest numeric formal release, not the
 previous commit alone. Verify its exact lightweight tag, commit, version and asset
 digests and reproduce its package using the **current trusted builder**, without
-executing historical code. Multi-commit pushes compare aggregate inputs both to
+executing historical code. Both description and bundle materialize exact tracked
+Git blobs through `ls-tree`/`cat-file`; ignored checkout files cannot enter them.
+Git archive `export-ignore`/`export-subst` are deliberately not applied. Aliases and
+submodules in the tracked tree fail closed. The bundle descriptor must equal the
+preflight descriptor before any write. Multi-commit pushes compare aggregate inputs both to
 that formal baseline and to the event's `before` commit. Earlier unreleased input
 changes cannot be silently backfilled by a Wiki-only push. The new push must
 contain a real input change and version increase. A complete same-version,
 same-commit release is a no-op; other existing versions/tags/drafts block rather
 than overwrite. API inventories are bounded at 100 and fail closed at the bound.
 
-Before writing and again before publishing, recheck live main and CI. Create a new
+Before writing and again before publishing, recheck live main, CI and the release
+inventory/formal baseline; external publication changes stop this attempt. Create a new
 exact tag and draft, upload `package.zip` and `release-receipt.json`, verify both
-asset digests plus the complete draft receipt, then publish. Failures can leave a
+asset digests plus the complete draft receipt, then publish. Report success only
+after reading back the published release, tag and receipt. Failures can leave a
 tag/draft: automatic retry will not overwrite, delete or resume it; an owner must
 inspect it under separate recovery authorization. A failed write response can be
 uncertain (including publication); inspect remote state before retrying. Serialization is not a promise
-of transactional publication or immunity to concurrent administrator changes.
+of transactional publication or immunity to concurrent administrator changes;
+GitHub provides no compare-and-swap transaction across these API writes. This
+script refuses overwrites but does not assert or enable GitHub Immutable Releases.
 The receipt binds repository ID/name, source commit, version, SHA256 archive and
 the existing complete package receipt. GitHub metadata/access and independent
 receipt authentication are the trust boundary; hashes alone are not signatures.
@@ -322,8 +333,17 @@ file merely accompanying the download. No network fetch is performed by `--check
 validate. Receipt-only mode compares the complete pinned receipt against the
 explicit target validated by the trusted doctor; it does **not** claim to have
 inspected absent candidate bytes. No argument is inferred from host caches or
-configuration. Skill-only directories and host inventory discovery are outside
-this first step; the target is a package produced by the existing builder.
+configuration. The default target kind is a package produced by the existing builder.
+For an independently installed skill directory, explicitly select
+`--target-kind standalone-skill --target APPROVED_SKILL_DIRECTORY`. It projects
+`canonical_skill_files` from the same authenticated receipt and uses the existing
+`utf8-crlf-to-lf-v1` byte policy. Coverage must match exactly: missing/extra files,
+symlinks/junction aliases or escapes fail. Only the builder's existing
+`__pycache__` and `.pytest_cache` noise is excluded (reported, never removed), and
+aliases even inside those caches are refused. Unexpected files are not read.
+A complete differing skill reports `different`; `same` means these files match,
+not that a particular host installed, selected or loaded them. No host discovery
+or client connection is performed.
 
 | Report | Meaning / exit |
 |---|---|

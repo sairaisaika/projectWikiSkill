@@ -249,7 +249,7 @@
           "reason": "CI runs check/evaluate on the fixture and check on this repo",
           "needle": "wiki.py check --root evals/fixture-project",
           "line": 21,
-          "sha256": "2c7f7d3ef6d7f9a3effeddd0ca5d982dd015dd70bb5a471a6788839b5de7a68c"
+          "sha256": "20f002e84a74e8f0c4d77ab8db1cc8283c1bc3158ea52604da6551fccbecd60d"
         },
         {
           "id": "diagram-review",
@@ -2117,8 +2117,8 @@
           "path": "scripts/release_plugin.py",
           "reason": "Exact-main release decisions and no-hooks bundle using the canonical builder/doctor",
           "symbol": "run_github",
-          "line": 255,
-          "sha256": "679c6f0cadeea16209f6a7f2e70c60fb4a724d5e78e3649e42aa8077ff82f6cc"
+          "line": 299,
+          "sha256": "97bd9bfc1298df1f0f8431c8d15add23fd058c5ee8a4cdef8e5bd1f701ffb516"
         }
       ]
     },
@@ -2337,8 +2337,8 @@
           "path": "scripts/pws_sync.py",
           "reason": "Read-only pinned candidate/target comparison using the trusted doctor",
           "symbol": "check",
-          "line": 54,
-          "sha256": "1e262fd7f9b152b0de8450efedcc4db3cb8df95c2bbe7e4f1bd0c1c3aa7a9ce0"
+          "line": 104,
+          "sha256": "1d526074150c26bbeac46c09c3fc3de3df65b0932f8cabcff752d7cf6df278ce"
         }
       ]
     },

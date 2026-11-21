@@ -31,6 +31,32 @@ owns behavior, trust assumptions, statuses and recovery boundaries.
 - A final hardening pass retained explicit unknown publication state after failed
   write responses and made fixture versions independent of future canonical bumps.
 
+## Review corrections and first CI failure
+
+The initial PR head `bc8acd58c23b19d8a3dcd11c984a6ea9d038b2de` passed both Linux
+cells but failed macOS 3.13: the new archive snapshot compared a resolved member
+to an unresolved temporary root. Other pending matrix jobs were cancelled by
+matrix fail-fast. This is a candidate defect, not the unrelated Git maintenance
+lock race; no unrelated test fix was included. [Initial run](https://github.com/sairaisaika/projectWikiSkill/actions/runs/44881999893).
+
+Independent review also found that script-only disabling still provisioned a
+write-capable job and that ignored working-directory files could contaminate an
+"exact commit" bundle. The correction moves default-off into the job condition,
+uses exact tracked Git blobs for both descriptor and bundle (no archive-attribute
+filtering), and compares them before writing. Recheck the release inventory and
+formal baseline before first write and publication; verify successful publication
+by readback. Concurrency with administrators is not an atomic transaction or an
+Immutable Releases setting. Nineteen focused regressions now pass locally,
+including export-ignore, ignored checkout input, mismatched descriptors, external
+baseline changes at both boundaries and failed publication readback.
+
+The explicitly requested standalone target reuses canonical skill inventory and
+byte policy. Two synthetic standalone copies distinguish matching versus changed
+files, CRLF normalization, exact coverage, cache exclusions and alias refusal;
+no real client is contacted. The revised local full suite passes 522 tests (one existing platform skip),
+19 fixture tests, both Wiki checks/evaluation and all three package doctors.
+The final exact-head PR holds CI and transfer hashes.
+
 ## Linux handoff
 
 Use a reviewed exact candidate checkout and an approved fresh scratch directory:
@@ -51,6 +77,21 @@ reviewing the source checkout and bundle provenance; computing a hash does not
 by itself authenticate a downloaded release. Transfer `package.zip`,
 `release-receipt.json` and the candidate source's trusted checker/doctor together
 through an approved channel. The checkout tools are not installed into a host.
+For two **explicitly supplied** standalone installation paths, run separately:
+
+```sh
+python3 -B scripts/pws-sync --check --target-kind standalone-skill \
+  --target "$SKILL_ONE" --candidate /approved/scratch/new-bundle/release-receipt.json \
+  --trusted-receipt-sha256 REVIEWED_DIGEST
+python3 -B scripts/pws-sync --check --target-kind standalone-skill \
+  --target "$SKILL_TWO" --candidate /approved/scratch/new-bundle/release-receipt.json \
+  --trusted-receipt-sha256 REVIEWED_DIGEST
+```
+
+The operator supplies both path variables; the CLI does not discover them. The
+receipt/hash must be independently authenticated as above. `same` establishes
+file equality only, while `different` is a comparison result, not an update.
+
 The source commit and receipt/archive SHA256 make the candidate independently
 checkable; no output in this report refers to a live client or loaded session.
 
@@ -61,7 +102,7 @@ automatic updates, settings or hooks were performed. Publication remains disable
 The first real release requires separate authorization/bootstrap and a reviewed
 workflow enable change; no production success is inferred from synthetic APIs.
 Server enforcement, real upload failure recovery, concurrent administrator races,
-host-specific skill-only layouts, and active-session loading are unverified.
+host discovery, real standalone installations, and active-session loading are unverified.
 GitHub's API/job/asset formats and minimum token permission assumptions need the
 first separately authorized integration observation. The workflow is not a claim
 of branch protection. No generic updater or network-enabled checker was added.
