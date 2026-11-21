@@ -30,6 +30,7 @@ table when you already know the area.
 | When the optional pre-edit gate blocks an edit | `edit-gate` | [hooks-and-gates.md#edit-gate](hooks-and-gates.md#edit-gate) |
 | What a package contains, and what the hook layouts are | `packaging` | [architecture.md#packaging](architecture.md#packaging) |
 | What the doctor verifies, and which host evidence it reads | `doctor` | [architecture.md#doctor](architecture.md#doctor) |
+| How main releases are gated, or how to compare a local package without installing | `packaging` / `doctor` | [Release gate and offline comparison](architecture.md#release-gate-and-offline-comparison) |
 | Which JSON kind each command reads or writes | — | [architecture.md#packet-kinds](architecture.md#packet-kinds) |
 | Which path basis a field uses | — | [architecture.md#path-kinds](architecture.md#path-kinds) |
 | What the skill owns and what the consumer project owns | — | [architecture.md#ownership-boundary](architecture.md#ownership-boundary) |
@@ -123,6 +124,7 @@ Do not add a version paragraph to `README.md`, `docs/PLUGIN_PLAN.md` or the top 
 | `project-wiki/scripts/lifecycle.py` | `test_lifecycle.py` | `hooks/claude.json`, `hooks/codex.json`, [hooks-and-gates.md](hooks-and-gates.md) |
 | `project-wiki/scripts/edit_gate.py` | `test_edit_gate.py` | `hooks/claude.json`, [maintenance.md#pre-edit-gate-host-delivery-of-wiki-first](../../project-wiki/references/maintenance.md#pre-edit-gate-host-delivery-of-wiki-first) |
 | `scripts/package_plugin.py` | `test_plugin_package.py`, `test_legacy_hooks.py`, `test_portable_hooks.py`, `test_package_newlines.py`, `test_package_integrity.py` | `scripts/plugin_doctor.py` (it re-derives the receipt) |
+| `scripts/release_plugin.py`, `scripts/pws_sync.py`, `scripts/pws-sync`, release job | `test_release_sync.py` (synthetic API only) | [Release/check boundary](architecture.md#release-gate-and-offline-comparison); no real publication in tests |
 | `scripts/plugin_doctor.py` | `test_plugin_package.py`, `test_package_integrity.py`, `test_package_newlines.py`, `test_codex_inventory.py`, `test_codex_hooks.py`, `test_lifecycle.py` | Receipt fields in `package_plugin.py` |
 | `hooks/*.json` | `test_lifecycle.py`, `test_legacy_hooks.py`, `test_edit_gate.py`, `test_portable_hooks.py`, `test_codex_hooks.py` | Packaging profile, [hooks-and-gates.md](hooks-and-gates.md) |
 | `project-wiki/references/repository-hygiene.md` | `test_repository_hygiene.py`, `test_repository_visibility.py`, `test_file_placement.py` (real temporary Git repositories, synthetic metadata and native routes) | Existing Maintenance entries, fixture routes/evaluation and retention protections |

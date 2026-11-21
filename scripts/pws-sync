@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+"""Repository-local, check-only entry; no host installation or configuration."""
+import sys
+sys.dont_write_bytecode = True
+from pws_sync import main
+sys.exit(main())

@@ -235,6 +235,8 @@ context stamp or a design-first wiki change, and passes on its own defects. Full
 
 ## packaging
 
+> Release/check extension reviewed: 2026-11-21 against the candidate based on `68f6a6c`; other sections retain their prior scope.
+
 `scripts/package_plugin.py` builds a plugin directory from the canonical skill.
 
 Claude Code can also install from the GitHub checkout. [The marketplace catalog](../../.claude-plugin/marketplace.json)
@@ -245,6 +247,116 @@ exposes the skill. The separately built package provides provenance receipts and
 - **CLI**: `package_plugin.py --output NEW_DIR [--with-lifecycle-hooks] [--hook-layout {legacy,portable}]`. The layout defaults to `legacy`. `portable` is allowed only together with `--with-lifecycle-hooks`.
 - **Outputs**: `skills/project-wiki/**` (only `.md/.py/.yaml/.yml/.json`; `__pycache__` and `.pytest_cache` are skipped; any other suffix or a hidden path fails the build), `LICENSE`, `scripts/plugin_doctor.py`, `.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`, plus `hooks/{codex,claude}.json` when hooks are included, and the receipt `PACKAGE-SOURCES.json` (`schema_version` 2, `source_byte_policy` `utf8-crlf-to-lf-v1`). `root_manifest_projection` is `canonical-identity-v1` without hooks, `legacy-host-hooks-v1` for the legacy layout (no root `plugin.json`), or `portable-openai-hooks-v1` (root `plugin.json` whose `extensions["com.openai"].hooks` is `./hooks/codex.json`).
 - **Never**: installs, enables or trusts anything, writes inside the source checkout, overwrites an existing output, follows symlinks or junction aliases, or packages hidden or unlisted files.
+
+### Release gate and offline comparison
+
+[`release_plugin.py`](../../scripts/release_plugin.py) orchestrates the existing
+builder/doctor; it does not define another payload inventory. The no-hooks default
+is the only automatic-release profile. Maintainer Wiki/tests and release/check
+orchestration are not package inputs; changes under the **shipped** `project-wiki/`
+method are inputs. The release comparison derives canonical input hashes from the
+builder receipt, adds its projection implementation and marketplace catalog, and
+removes only version fields. Actual distribution changes require a numeric,
+increasing `plugin.json` version mirrored in the Claude marketplace, in the
+current push. Version-only edits are rejected. This infrastructure PR changes no
+payload and does not bump either manifest.
+
+The `release` job in [check.yml](../../.github/workflows/check.yml) depends on all six
+OS/Python checks in the **same run**. It accepts only a non-forced canonical
+`push` to `main`, repository ID `1466210381`, an exact commit confirmed as a merged
+PR into that main, and the still-current main SHA. It rechecks the workflow/run
+identity and all six successful jobs through the API. The job-level condition starts with literal `false`, so no runner or write token
+is provisioned until a separate reviewed enable change. Only this serialized job
+has `contents: write` (plus read access to Actions/PR metadata); no added secret,
+`workflow_run`, PR artifact download or execution of release contents is involved.
+The normal project review must approve each payload/version change; this does not
+claim a server-enforced review or branch-protection policy.
+
+**Default off:** the leading `false &&` in the job's `if` is the reviewed enable
+switch. Inside the enabled-only job, `PWS_RELEASE_ENABLED` also gates the script.
+Dry-run planning remains an explicit read-only script path, not a writable CI job.
+Even when enabled in a future reviewed change, absence of a formal release returns
+`bootstrap_required`. There is no automatic first release, baseline inference from
+`0.2.39`, or bootstrap flag. A separately authorized bootstrap must establish an
+exact main tag and complete receipt/assets accepted by this gate; it is outside
+this PR. A missing or incompatible baseline, ambiguous inventory, ancestry gap,
+changed audience, stale main or failed matrix blocks publication.
+
+After bootstrap, compare against the highest numeric formal release, not the
+previous commit alone. Verify its exact lightweight tag, commit, version and asset
+digests and reproduce its package using the **current trusted builder**, without
+executing historical code. Both description and bundle materialize exact tracked
+Git blobs through `ls-tree`/`cat-file`; ignored checkout files cannot enter them.
+Git archive `export-ignore`/`export-subst` are deliberately not applied. Aliases and
+submodules in the tracked tree fail closed. The bundle descriptor must equal the
+preflight descriptor before any write. Multi-commit pushes compare aggregate inputs both to
+that formal baseline and to the event's `before` commit. Earlier unreleased input
+changes cannot be silently backfilled by a Wiki-only push. The new push must
+contain a real input change and version increase. A complete same-version,
+same-commit release is a no-op; other existing versions/tags/drafts block rather
+than overwrite. API inventories are bounded at 100 and fail closed at the bound.
+
+Before writing and again before publishing, recheck live main, CI and the release
+inventory/formal baseline; external publication changes stop this attempt. Create a new
+exact tag and draft, upload `package.zip` and `release-receipt.json`, verify both
+asset digests plus the complete draft receipt, then publish. Report success only
+after reading back the published release, tag and receipt. Failures can leave a
+tag/draft: automatic retry will not overwrite, delete or resume it; an owner must
+inspect it under separate recovery authorization. A failed write response can be
+uncertain (including publication); inspect remote state before retrying. Serialization is not a promise
+of transactional publication or immunity to concurrent administrator changes;
+GitHub provides no compare-and-swap transaction across these API writes. This
+script refuses overwrites but does not assert or enable GitHub Immutable Releases.
+The receipt binds repository ID/name, source commit, version, SHA256 archive and
+the existing complete package receipt. GitHub metadata/access and independent
+receipt authentication are the trust boundary; hashes alone are not signatures.
+
+[`pws-sync`](../../scripts/pws-sync) is a repository-local **check-only** CLI. Run
+it from a reviewed checkout with Python 3.10+, never from candidate package code:
+
+```sh
+python3 -B scripts/release_plugin.py --bundle /approved/scratch/new-bundle
+python3 -B scripts/pws-sync --check --target /explicit/local/package \
+  --candidate /approved/scratch/new-bundle \
+  --trusted-receipt-sha256 DIGEST_FROM_INDEPENDENTLY_TRUSTED_RECEIPT
+```
+
+These paths are illustrative handles, not required directories. `--bundle` requires
+a clean exact checkout, writes a new scratch bundle only and prints its digest.
+For a local experiment, independently review that checkout and its output before
+trusting that digest. A published candidate's receipt digest must come from the
+verified canonical release or another approved channel, not from an untrusted
+file merely accompanying the download. No network fetch is performed by `--check`.
+
+`--candidate` accepts the complete bundle directory or just a pinned
+`release-receipt.json`. Directory mode requires the archive and actual package to
+validate. Receipt-only mode compares the complete pinned receipt against the
+explicit target validated by the trusted doctor; it does **not** claim to have
+inspected absent candidate bytes. No argument is inferred from host caches or
+configuration. The default target kind is a package produced by the existing builder.
+For an independently installed skill directory, explicitly select
+`--target-kind standalone-skill --target APPROVED_SKILL_DIRECTORY`. It projects
+`canonical_skill_files` from the same authenticated receipt and uses the existing
+`utf8-crlf-to-lf-v1` byte policy. Coverage must match exactly: missing/extra files,
+symlinks/junction aliases or escapes fail. Only the builder's existing
+`__pycache__` and `.pytest_cache` noise is excluded (reported, never removed), and
+aliases even inside those caches are refused. Unexpected files are not read.
+A complete differing skill reports `different`; `same` means these files match,
+not that a particular host installed, selected or loaded them. No host discovery
+or client connection is performed.
+
+| Report | Meaning / exit |
+|---|---|
+| `same` | Valid target and complete candidate receipt match, exit 0; no session-load claim |
+| `different` | Valid target differs, including equal-version/different-byte cases, exit 1; not necessarily a newer version |
+| `not_installed` | Explicit target path is absent, exit 1; no global installation claim |
+| `no_trusted_input` | Candidate or independently authenticated receipt pin missing, exit 2 |
+| `invalid_candidate` / `invalid_target` | Corrupt/incomplete/aliased input, exit 2; never equal or updated |
+
+Checking does not install, replace, cache, enable hooks, change configuration,
+execute/download candidate content or report a successful update. Host loading,
+trust, active sessions and adoption remain unverified. Linux handoff commands and
+measured limits are in the [offline release/check evidence](../../evals/reports/release-sync-20261121.md).
 
 ## doctor
 
