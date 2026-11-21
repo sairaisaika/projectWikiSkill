@@ -50,7 +50,7 @@ claude plugin install project-wiki@project-wiki
 
 将整个 `project-wiki` 文件夹放入目标工具支持的 skills 目录，或通过支持 GitHub 子目录的 skill 安装器从本仓 `project-wiki` 子目录安装。安装位置由用户决定，仓库内容不自动修改本机配置。
 
-Python 3.10+ 即可运行工具，无第三方依赖：
+Python 3.10+ 即可运行工具，无第三方依赖。macOS 自带的 `/usr/bin/python3` 可能是 3.9；先用 `python3 --version` 确认，必要时改用 `python3.12` 等较新解释器（旧版本会直接报错并退出）：
 
 ```sh
 python project-wiki/scripts/wiki.py query --root <project> "外部源端口"

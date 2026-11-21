@@ -269,17 +269,19 @@ it is reported or used as a baseline; see
 [the quality model](references/quality-model.md#validate-the-probe-before-trusting-or-ratcheting-its-numbers).
 
 The bundled dependency-free Python 3.10+ helper works without installing this skill
-inside the target repository. `<skill>` means this skill's actual directory:
+inside the target repository. `<skill>` means this skill's actual directory. Check
+`python3 --version` first: macOS's `/usr/bin/python3` may be 3.9, so use a newer
+interpreter (for example `python3.12`) when it is older than 3.10:
 
 ```sh
-python <skill>/scripts/wiki.py query --root <project> "external source"
-python <skill>/scripts/wiki.py list --root <project>
-python <skill>/scripts/wiki.py task --root <project>
-python <skill>/scripts/wiki.py task <task-id> --root <project>
-python <skill>/scripts/wiki.py audit --root <project>
-python <skill>/scripts/wiki.py build --root <project>
-python <skill>/scripts/wiki.py check --root <project>
-python <skill>/scripts/wiki.py evaluate --root <project> --tasks <tasks.json>
+python3 <skill>/scripts/wiki.py query --root <project> "external source"
+python3 <skill>/scripts/wiki.py list --root <project>
+python3 <skill>/scripts/wiki.py task --root <project>
+python3 <skill>/scripts/wiki.py task <task-id> --root <project>
+python3 <skill>/scripts/wiki.py audit --root <project>
+python3 <skill>/scripts/wiki.py build --root <project>
+python3 <skill>/scripts/wiki.py check --root <project>
+python3 <skill>/scripts/wiki.py evaluate --root <project> --tasks <tasks.json>
 ```
 
 Queries resolve only the selected curated files; they read source but do not scan
