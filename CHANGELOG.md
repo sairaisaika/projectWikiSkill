@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Public-repository hygiene sweep: withhold private pilot/consumer names, machine checkout paths, private revisions and a host session id from four evaluation reports (recorded results unchanged; earlier commits still contain them). Document which consumer `.project-wiki/` files are shared policy and which are per-worker state to keep out of commits. No `.gitignore` change: the helpers write only caller-chosen paths.
+- Public-repository hygiene sweep: withhold private pilot/consumer names, machine checkout paths, private revisions and a host session id from four evaluation reports (recorded results unchanged). The repository history was also rewritten and republished on 2026-11-21 so earlier commits no longer carry these identifiers; pre-reset commit and PR links no longer resolve. Document which consumer `.project-wiki/` files are shared policy and which are per-worker state to keep out of commits. No `.gitignore` change: the helpers write only caller-chosen paths.
 
 - Route new/generated and local-only file questions to a project-owned Maintenance placement table, retaining Git rule authority, approved storage and ordinary-edit proportionality. See [synthetic Git and cold navigation evidence](evals/reports/file-placement-20261121.md).
 
