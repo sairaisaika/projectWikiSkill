@@ -249,7 +249,7 @@
           "reason": "CI runs check/evaluate on the fixture and check on this repo",
           "needle": "wiki.py check --root evals/fixture-project",
           "line": 21,
-          "sha256": "ca4c72c813bd701277c7e797d0e431fbc8fc2165c9dc9229740be1e87a3377cf"
+          "sha256": "2c7f7d3ef6d7f9a3effeddd0ca5d982dd015dd70bb5a471a6788839b5de7a68c"
         },
         {
           "id": "diagram-review",
@@ -1929,7 +1929,11 @@
         "with-lifecycle-hooks",
         "receipt",
         "打包",
-        "插件包"
+        "插件包",
+        "automatic release",
+        "release gate",
+        "release_plugin.py",
+        "自动发版"
       ],
       "sources": [
         {
@@ -1959,12 +1963,20 @@
           "path": "scripts/plugin_doctor.py",
           "reason": "Re-derives and verifies the receipt",
           "symbol": "inspect"
+        },
+        {
+          "id": "release",
+          "role": "implementation",
+          "path": "scripts/release_plugin.py",
+          "reason": "Exact-main release decisions and no-hooks bundle using the canonical builder/doctor",
+          "symbol": "run_github"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#packaging",
         "docs/wiki/architecture.md#host-manifests",
-        "docs/wiki/invariants.md#packaging-and-doctor-package_pluginpy-plugin_doctorpy"
+        "docs/wiki/invariants.md#packaging-and-doctor-package_pluginpy-plugin_doctorpy",
+        "docs/wiki/architecture.md#release-gate-and-offline-comparison"
       ],
       "interface": {
         "inputs": [
@@ -2037,7 +2049,8 @@
         "tests/test_legacy_hooks.py",
         "tests/test_portable_hooks.py",
         "tests/test_package_newlines.py",
-        "tests/test_package_integrity.py"
+        "tests/test_package_integrity.py",
+        "tests/test_release_sync.py"
       ],
       "checks": [
         {
@@ -2060,7 +2073,7 @@
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-03",
+      "reviewed_at": "2026-11-21",
       "locations": [
         {
           "id": "cli",
@@ -2097,6 +2110,15 @@
           "symbol": "inspect",
           "line": 225,
           "sha256": "5eb5f038158b467616e9779bad61b5be98a1598f7f64518702ced7ab1ec34f67"
+        },
+        {
+          "id": "release",
+          "role": "implementation",
+          "path": "scripts/release_plugin.py",
+          "reason": "Exact-main release decisions and no-hooks bundle using the canonical builder/doctor",
+          "symbol": "run_github",
+          "line": 255,
+          "sha256": "679c6f0cadeea16209f6a7f2e70c60fb4a724d5e78e3649e42aa8077ff82f6cc"
         }
       ]
     },
@@ -2112,7 +2134,10 @@
         "package_valid",
         "host evidence",
         "体检",
-        "诊断"
+        "诊断",
+        "pws-sync --check",
+        "offline package comparison",
+        "只读同步检查"
       ],
       "sources": [
         {
@@ -2149,11 +2174,19 @@
           "path": "scripts/package_plugin.py",
           "reason": "Every package ships the doctor, so doctor edits change package bytes",
           "needle": "payload['scripts/plugin_doctor.py']"
+        },
+        {
+          "id": "sync-check",
+          "role": "consumer",
+          "path": "scripts/pws_sync.py",
+          "reason": "Read-only pinned candidate/target comparison using the trusted doctor",
+          "symbol": "check"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#doctor",
-        "docs/wiki/invariants.md#packaging-and-doctor-package_pluginpy-plugin_doctorpy"
+        "docs/wiki/invariants.md#packaging-and-doctor-package_pluginpy-plugin_doctorpy",
+        "docs/wiki/architecture.md#release-gate-and-offline-comparison"
       ],
       "interface": {
         "inputs": [
@@ -2225,7 +2258,8 @@
         "tests/test_codex_inventory.py",
         "tests/test_codex_hooks.py",
         "tests/test_package_integrity.py",
-        "tests/test_lifecycle.py"
+        "tests/test_lifecycle.py",
+        "tests/test_release_sync.py"
       ],
       "checks": [
         {
@@ -2250,7 +2284,7 @@
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-03",
+      "reviewed_at": "2026-11-21",
       "locations": [
         {
           "id": "cli",
@@ -2296,6 +2330,15 @@
           "needle": "payload['scripts/plugin_doctor.py']",
           "line": 119,
           "sha256": "abe4113e6394d85b71e16c0ace7c37e4fb68618d3a1c303226f21cbaacffb891"
+        },
+        {
+          "id": "sync-check",
+          "role": "consumer",
+          "path": "scripts/pws_sync.py",
+          "reason": "Read-only pinned candidate/target comparison using the trusted doctor",
+          "symbol": "check",
+          "line": 54,
+          "sha256": "1e262fd7f9b152b0de8450efedcc4db3cb8df95c2bbe7e4f1bd0c1c3aa7a9ce0"
         }
       ]
     },

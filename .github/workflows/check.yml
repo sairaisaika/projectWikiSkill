@@ -21,3 +21,33 @@ jobs:
       - run: python project-wiki/scripts/wiki.py check --root evals/fixture-project
       - run: python project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --tasks evals/tasks.json
       - run: python project-wiki/scripts/wiki.py check --root .
+  release:
+    needs: check
+    if: >-
+      github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+      github.repository_id == '1466210381' && needs.check.result == 'success'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pws-release-1466210381
+      cancel-in-progress: false
+    permissions:
+      contents: write
+      actions: read
+      pull-requests: read
+    env:
+      # Bootstrap is a separate reviewed operation. No first release/backfill.
+      # Enabling later requires a reviewed code change, not a repository secret.
+      PWS_RELEASE_ENABLED: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Plan or publish the exact verified main revision
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python -B scripts/release_plugin.py --github --publish
