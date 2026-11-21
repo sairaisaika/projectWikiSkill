@@ -34,7 +34,8 @@ table when you already know the area.
 | Which path basis a field uses | — | [architecture.md#path-kinds](architecture.md#path-kinds) |
 | What the skill owns and what the consumer project owns | — | [architecture.md#ownership-boundary](architecture.md#ownership-boundary) |
 | What each host hook file declares | — | [architecture.md#host-manifests](architecture.md#host-manifests) |
-| What is verified for each version | — | [status.md](status.md) |
+| Where design records and development files belong | `repository-hygiene` | [File placement](#file-placement) |
+| What source, CI and actual installed versions are verified | `version-status` | [status.md#current-state](status.md#current-state) |
 | Which test guards a behavior, and which gaps are untested | — | [invariants.md](invariants.md) |
 | Which failure classes recur and who fixed them | — | [known-failures.md](known-failures.md) |
 | The generated route index (do not edit by hand) | — | [route-index.md](route-index.md) |
@@ -73,6 +74,18 @@ Record execution evidence in [reports](../../evals/reports/README.md), open work
 [the task record](../../PROJECT.md) or [known failures](known-failures.md), and use
 the [existing checks](#per-change-surface-convention). Optional packet finish only
 applies to packet work.
+
+### File placement
+
+| Purpose | Existing location or disposition | Owner | Retention and boundary |
+|---|---|---|---|
+| Design record to preserve | [`docs/wiki/`](#where-knowledge-lives), in its existing fact/contract section | Native module or contract owner | Version in place; move superseded facts into dated history. Return durable conclusions by distillation, not by importing drafts or logs. |
+| Open development work and next action | [`PROJECT.md`](../../PROJECT.md), sanitized task status only | Task owner | Pending work and follow-up, not current design authority. Existing dated plans outside `docs/wiki/` are not moved by this rule. |
+| Retained publishable development evidence | [`evals/reports/`](../../evals/reports/README.md), sanitized and approved for public visibility | Task/evidence owner | Bind to exact revision, method and limits. Independent audit, rollback/restore, compliance/retention holds and other approved evidence are protected even when not cited. |
+| Raw evidence, working drafts, disposable output and personal scratch | No approved universal in-clone location. Use an approved scoped private location if one exists; otherwise stop and resolve with the owner. | Task and data owner | Retention applies before any cleanup. Ignored, old, duplicate or unreferenced is not permission to publish, move or delete. Do not publish raw logs, private paths or credentials. |
+
+Use existing source/config/fixture ownership for required inputs; this table does
+not create a storage location, update ignore rules or grant cleanup authority.
 
 ## Where knowledge lives
 
