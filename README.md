@@ -1,95 +1,86 @@
-# projectWikiSkill
+# ProjectWikiSkill
 
-Use [$project-wiki](project-wiki/SKILL.md) to connect a project task to its rules,
-implementation, knowledge structure and verified return. Keep the project's native
-Wiki as the fact owner; the skill supplies the working method.
+**English** · [简体中文](README.zh-CN.md)
 
-- Start a real task: [skill entry](project-wiki/SKILL.md#choose-the-work).
-- Decide where new knowledge belongs, diagnose a missed rule, or migrate a page:
-  [Wiki evolution](project-wiki/references/wiki-evolution.md).
-- Capture and return work across agents: [collaboration workflow](project-wiki/references/collaboration-workflow.md).
-- Run the helper or package it: [usage](README.md#使用).
-- Maintain this repository: [engineering entry](docs/wiki/engineering-entry.md).
+**Go from an engineering question to the exact code, contracts, and checks it touches.**
 
-The version identity is [`plugin.json`](plugin.json). What is verified for each version
-(CI, main, package, installed hosts, hooks, delivery, use) is one table in
-[docs/wiki/status.md](docs/wiki/status.md). Version history is in
-[CHANGELOG.md](CHANGELOG.md); measured evidence is in
-[evals/reports/](evals/reports/README.md).
+ProjectWikiSkill (PWS) is a skill for building and using a source-backed project Wiki. The project's own Wiki remains the source of truth; PWS helps people and agents find the right page, verify the relevant source, and leave a useful handoff. It works with an existing Wiki without requiring a second index or replacing the project's checks.
 
-让项目 Wiki 成为比猜文件名、全仓搜索更省事的工程入口。
+[Try the example](README.md#quick-start) · [Install](README.md#install) · [CLI reference](README.md#cli-reference) · [Maintain this repository](docs/wiki/engineering-entry.md)
 
-可安装 skill 在 [`project-wiki/`](project-wiki/SKILL.md)，名称为 `$project-wiki`。它将问题、精确源码位置、接口契约、规则、影响面、检查与证据边界连接起来；分别量化结构完整度、任务路由表现、语义核验和实际使用效果，避免一个总分掩盖未知。
+## Quick start
 
-- [了解项目与导读](project-wiki/references/learning-and-orientation.md)：从产品、角色和跨域例子建立理解；区分全文阅读与导语巡读，理解验收与任务定位分别评价。
-- [功能闭环规则](project-wiki/references/feature-completeness.md)：所有功能按用户结果核必要能力与八维证据；文档结构、实现接通、运行验收分别判，缺口不能当完成。
-- [结构契约](project-wiki/references/route-contract.md)：接口声明、实现、消费者、规则来源、失败与兼容、精确定位。
-- [量化模型](project-wiki/references/quality-model.md)：100 分结构量表、任务命中率与独立演练指标。
-- [持续维护](project-wiki/references/maintenance.md)：改动触发、计划交付、漂移检查、CI 与交接。
-- [既有 Wiki 接入](project-wiki/references/native-wiki-adoption.md)：复用原生索引与闸，恢复中断审阅，沿生产者、消费者、部署证据核验事实；不强制迁移到第二套 manifest。
-- [六图框架](project-wiki/references/diagram-framework.md)：架构、流程、时序、数据模型、部署、状态六种视角的职责与项目级覆盖检查。
-- [工程深度](project-wiki/references/engineering-depth.md)：字段/单位/字节布局、状态守卫与上下文、重试和资源边界、轻量决策记录。
-- [复合改动定位](project-wiki/references/change-navigation.md)：任务地图、内部编辑接缝、捕获范围、共用规则与完整工作面验收。
+**Try it without installing a plugin.** From a checkout of this repository, run:
 
-## 使用
+```sh
+python project-wiki/scripts/wiki.py query --root evals/fixture-project "service client failures" --limit 1
+```
 
-### 在 Claude Code 安装插件
+The example returns `public-api` and points to the [contract](evals/fixture-project/docs/wiki/interfaces.md#public-api), the [declaration](evals/fixture-project/src/ports.py), the [service](evals/fixture-project/src/service.py), and the [legacy caller](evals/fixture-project/src/client.py). It exposes a distinction worth preserving before editing: a source returning `None` means **unavailable**; returning `[]` means **success with no results**. The query points to offline checks. It does not run them or verify a live service.
 
-在终端运行：
+**In your own project**, [start with the skill](project-wiki/SKILL.md#choose-the-work), ask a concrete engineering question, and read the relevant Wiki section before inspecting the named implementation. If your Wiki already has its own navigation and checks, [reuse those](project-wiki/references/native-wiki-adoption.md). A routine edit in a known file does not need an extra PWS workflow.
+
+<a name="使用"></a>
+## Install
+
+### Claude Code: marketplace plugin
 
 ```sh
 claude plugin marketplace add sairaisaika/projectWikiSkill
 claude plugin install project-wiki@project-wiki
 ```
 
-在新会话中使用 `/project-wiki:project-wiki`。用 `claude plugin details project-wiki@project-wiki`
-核对组件。此入口加载仓库中的 `project-wiki/`，包含一个 skill。可选 hooks 使用下文的独立打包方式。
-已安装同名本地市场版本时，先查看 `claude plugin list`，再选择要保留的安装来源。
+In a new Claude Code session, invoke `/project-wiki:project-wiki`. Use Claude Code’s `/plugin` panel to inspect the installed components. If a local marketplace already provides a plugin with this name, check `claude plugin list` before choosing an installation source. This repository's marketplace entry includes one skill and no hooks. See [Claude Code's plugin guide](https://code.claude.com/docs/en/discover-plugins).
 
-### 独立 Skill 与 Python 工具
+### Codex: standalone skill
 
-将整个 `project-wiki` 文件夹放入目标工具支持的 skills 目录，或通过支持 GitHub 子目录的 skill 安装器从本仓 `project-wiki` 子目录安装。安装位置由用户决定，仓库内容不自动修改本机配置。
+Copy the [entire `project-wiki/` directory](project-wiki/SKILL.md) into one of these [Codex skill locations](https://developers.openai.com/codex/skills):
 
-Python 3.10+ 即可运行工具，无第三方依赖。macOS 自带的 `/usr/bin/python3` 可能是 3.9；先用 `python3 --version` 确认，必要时改用 `python3.12` 等较新解释器（旧版本会直接报错并退出）：
+| Scope | Destination |
+| --- | --- |
+| One project | `<project>/.agents/skills/project-wiki/` |
+| Your user account | `~/.agents/skills/project-wiki/` |
 
-```sh
-python project-wiki/scripts/wiki.py query --root <project> "外部源端口"
-python project-wiki/scripts/wiki.py task --root <project>
-python project-wiki/scripts/wiki.py task <task-id> --root <project>
-python project-wiki/scripts/wiki.py list --root <project>
-python project-wiki/scripts/wiki.py audit --root <project>
-python project-wiki/scripts/wiki.py build --root <project>
-python project-wiki/scripts/wiki.py check --root <project>
-python project-wiki/scripts/wiki.py evaluate --root <project> --tasks <tasks.json>
-```
+Keep `SKILL.md`, `references/`, and `scripts/` together. Invoke `$project-wiki` in Codex; if it doesn't appear, restart Codex. For another host that supports standalone skills, copy the same directory to that host's documented skill location. This option does not install hooks or manage host configuration.
 
-`wiki.py` reads a schema 1 or 2 manifest at `docs/wiki/routes.json`. Entry points:
+## CLI reference
 
-| Script | Commands | Boundary |
-|---|---|---|
-| `project-wiki/scripts/wiki.py` | `query`, `task`, `list`, `audit`, `build`, `check`, `evaluate` | Route-manifest navigation, structural audit and routing evaluation |
-| `project-wiki/scripts/workflow.py` | `capture`, `capture-return`, `start`, `delegate`, `show` (`--snapshot-only`), `review-template`, `finish` | Revision-bound native Wiki context, delegation and diff reconciliation; `capture` and `capture-return` run only an explicit caller-supplied native argv. See [collaboration workflow](project-wiki/references/collaboration-workflow.md) |
-| `project-wiki/scripts/edit_gate.py` | none: reads one Claude `PreToolUse` event on stdin | Optional pre-edit gate, active only in a checkout holding `.project-wiki/edit-gate.json`. See [pre-edit gate](project-wiki/references/maintenance.md#pre-edit-gate-host-delivery-of-wiki-first) |
-| `scripts/package_plugin.py` | `--output <new-directory>` `[--with-lifecycle-hooks [--hook-layout legacy\|portable]]` | Builds a package from the canonical skill; default is skill-only; writes no host configuration |
-| `scripts/plugin_doctor.py` | `--package <package>` `[--source <checkout>]`, optional saved `--codex-inventory`/`--codex-marketplace`/`--codex-version-file`/`--codex-hooks`/`--codex-hooks-cwd`, `--claude-transcript` | Inspects package/source closure and caller-saved host snapshots; never enables, trusts or runs hooks |
+**Python 3.10+**, with no third-party Python dependencies. Use an interpreter that meets the minimum; on macOS, the system `python3` may be older. Check with `python3 --version`, and replace `python` below with an installed compatible interpreter if needed. See [version status](docs/wiki/status.md#current-state) for what was verified on each platform.
 
-The hook profile (`--with-lifecycle-hooks`) adds `hooks/codex.json` and
-`hooks/claude.json`: `SessionStart` saved-task delivery through `lifecycle.py`, plus
-the Claude-only `PreToolUse` edit gate. See
-[optional lifecycle delivery](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery).
+| Tool | Commands and boundaries |
+| --- | --- |
+| [`wiki.py`](project-wiki/scripts/wiki.py) | `query`, `task [id]`, `list`, `audit`, `build`, `check`, `evaluate`. Reads schema 1 or 2 at `docs/wiki/routes.json` under the chosen root. Only `build` writes its generated route index; the helper never runs checks listed in the Wiki. |
+| [`workflow.py`](project-wiki/scripts/workflow.py) | `prepare`, `capture`, `capture-return`, `start`, `delegate`, `show`, `review-template`, `finish`, `update-state`, `show-state`, `apply-state`. A native program runs only when its argument list and execution are explicitly supplied and approved. Use `show --snapshot-only` for saved context without live reads. Explicit state apply is scoped to the unchanged Wiki page bound to the saved plan. See [the collaboration guide](project-wiki/references/collaboration-workflow.md). |
+| [`storage_inventory.py`](project-wiki/scripts/storage_inventory.py) | `--root PATH`, optional `--exclude PATH`, `--max-entries N`, `--max-depth N`. Bounded, read-only metadata inventory; reported sizes are not reclaimable space, and the tool does not decide what may be deleted. |
+| [`package_plugin.py`](scripts/package_plugin.py) | `--output <new-directory>`; optional `--with-lifecycle-hooks` and `--hook-layout legacy\|portable`. Builds a skill-only package by default and does not write host configuration. |
+| [`plugin_doctor.py`](scripts/plugin_doctor.py) | `--package <package>`, optional `--source <checkout>` and saved host inputs (`--claude-transcript`, `--codex-inventory`, `--codex-marketplace`, `--codex-version-file`, `--codex-hooks`, `--codex-hooks-cwd`). Inspects the package, source, and supplied evidence; does not enable, trust, or run hooks. |
+| [`edit_gate.py`](project-wiki/scripts/edit_gate.py) | Reads one Claude `PreToolUse` event from stdin. Optional, and active only in a checkout with `.project-wiki/edit-gate.json`. |
 
-可以先在本仓完整样例上运行：
+The [optional hook profile](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery) adds Codex and Claude `SessionStart` saved-context delivery and the Claude-only `PreToolUse` gate. Packaging is not installation, host trust, or proof the hook ran.
+
+To try the rest of the local fixture workflow:
 
 ```sh
-python project-wiki/scripts/wiki.py build --root evals/fixture-project
+python project-wiki/scripts/wiki.py check --root evals/fixture-project
 python project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --tasks evals/tasks.json
 python -m unittest discover -s tests -v
 ```
 
-六图样例的可选渲染验收使用 `node evals/render-diagrams.mjs`，需要可用的 Playwright 与 Chrome；可用 `WIKI_PLAYWRIGHT_MODULE` 指向已有模块、`WIKI_BROWSER_CHANNEL` 选择浏览器。工具不自动安装依赖，默认输出到临时目录；Mermaid CDN 可由 `WIKI_MERMAID_URL` 指定固定版本。核心 Python 工具仍无第三方依赖。
+For [optional diagram rendering](evals/render-diagrams.mjs), run `node evals/render-diagrams.mjs` with Playwright and Chrome already available. `WIKI_PLAYWRIGHT_MODULE`, `WIKI_BROWSER_CHANNEL`, and `WIKI_MERMAID_URL` select the module, browser channel, and Mermaid URL. Output goes to a temporary directory by default; the script installs nothing. Rendering does not verify diagram accuracy.
 
-各类分数与采用证据分层报告，见 [量化模型](project-wiki/references/quality-model.md) 与 [docs/wiki/status.md](docs/wiki/status.md)。仅 `build` 写生成索引；其余命令不执行目标项目或清单中的检查命令。
+## Guides
 
-项目起源于两个共用 Wiki 的开源仓库的接口改进演练；skill 是通用工程方法，不要求固定技术栈、固定页数或每个功能画六张图。
+| I want to… | Start here |
+| --- | --- |
+| Learn a project or locate a multi-file change | [Orientation](project-wiki/references/learning-and-orientation.md) · [Change navigation](project-wiki/references/change-navigation.md) |
+| Describe an interface, failure mode, or system view | [Route contract](project-wiki/references/route-contract.md) · [Engineering depth](project-wiki/references/engineering-depth.md) · [Six diagram views](project-wiki/references/diagram-framework.md) |
+| Reuse, update, or maintain an existing Wiki | [Native Wiki adoption](project-wiki/references/native-wiki-adoption.md) · [Wiki evolution](project-wiki/references/wiki-evolution.md) · [Maintenance](project-wiki/references/maintenance.md) |
+| Decide where design records and development resources belong | [File placement](project-wiki/references/repository-hygiene.md#file-placement) |
+| Hand work off or check what a feature actually delivers | [Collaboration workflow](project-wiki/references/collaboration-workflow.md) · [Feature completeness](project-wiki/references/feature-completeness.md) |
+| Judge Wiki quality or actual use | [Quality model](project-wiki/references/quality-model.md) · [Evaluation reports](evals/reports/README.md) |
 
-[验证记录](evals/reports/README.md)：结构评分、任务自测、独立试用与真实项目采用记录；逐版本状态见 [docs/wiki/status.md](docs/wiki/status.md)。
+PWS does not require a particular stack, a fixed number of pages, or six diagrams per feature. Structural checks, routing results, source verification, and observed use are different kinds of evidence.
+
+## Repository status
+
+For work on PWS itself, start at the [maintainer Wiki](docs/wiki/engineering-entry.md). [Version status](docs/wiki/status.md#current-state) separates verified source, CI, packages, host installations, and observed use. See [`plugin.json`](plugin.json) for the version declared by this checkout and [CHANGELOG](CHANGELOG.md) for history.
