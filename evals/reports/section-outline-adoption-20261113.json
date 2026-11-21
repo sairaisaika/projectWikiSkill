@@ -1,16 +1,16 @@
 {
   "kind": "installed034 and one real acceptance-plan task; not business acceptance",
-  "source": "49a51fcaeed611fba6d4917d59b005aa3ecedc32",
+  "source": "a8bde7494cdbc8b813278b1f9189066d3ad9fb89",
   "mainCi": {
     "run": 43375666106,
     "conclusion": "success"
   },
   "installation": {
     "at": "2026-11-13T06:07:36.770404+00:00",
-    "source": "49a51fcaeed611fba6d4917d59b005aa3ecedc32",
+    "source": "a8bde7494cdbc8b813278b1f9189066d3ad9fb89",
     "mainCi": {
       "conclusion": "success",
-      "headSha": "49a51fcaeed611fba6d4917d59b005aa3ecedc32",
+      "headSha": "a8bde7494cdbc8b813278b1f9189066d3ad9fb89",
       "status": "completed"
     },
     "version": "0.2.34",

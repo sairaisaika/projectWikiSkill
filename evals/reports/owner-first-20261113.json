@@ -1,6 +1,6 @@
 {
   "kind": "same saved consumer context replay, not independent adoption",
-  "sourceBase": "d6477252b8a4757d9dc7259e74ab1bb412fa3ca1",
+  "sourceBase": "963f69f8a8fe39b2bfbb2a7b5be438afe7092aa1",
   "consumerSource": "a7b7af7d1fc47a1e11008e8b1dcd62335d4ed2d2",
   "sample": "MCP registry task capture, owner inventory previously below broad candidates",
   "replay": {

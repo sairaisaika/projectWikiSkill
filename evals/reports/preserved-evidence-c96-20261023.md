@@ -15,7 +15,7 @@ capture contained its original stdout; exact saved bytes matching the prior hash
 were recovered, while the mistaken new run and recovery record were retained.
 This was an output-path mistake, not proof of a product incident or lost chat.
 
-An original-helper synthetic characterization at source `b469455` reproduced the
+An original-helper synthetic characterization at source `b39fd2f` reproduced the
 scope gap: a private file outside Git changed from a failing result to a passing
 result, `actual_files` remained empty and structural reconciliation succeeded.
 The helper still retained a capability gap and did **not** certify business
@@ -39,7 +39,7 @@ a distinct destination remains required practice.
 
 ## Actual local checks
 
-Canonical implementation checkpoint: `b2200cd`. The new workflow helper bytes
+Canonical implementation checkpoint: `1367db0`. The new workflow helper bytes
 were copied to Linux and independently matched SHA256
 `b512193b590950637325df84f85686595df15de996c95cab9220f210e0b825d4`.
 

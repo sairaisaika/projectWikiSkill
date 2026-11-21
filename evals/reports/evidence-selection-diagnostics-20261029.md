@@ -4,7 +4,7 @@ type: Evaluation
 # Selected-evidence diagnostic ordinal — bounded self-test
 
 ## Source and problem
-Base b8a1782ac032db61bd2216681c316cb6823fe503; candidate source version 0.2.18.
+Base 45a1888fd4b9e7d0ceab6a84a686ee9e2abad3a5; candidate source version 0.2.18.
 The observed real capture correctly refused missing selected evidence but returned
 only `Selected artifact is missing or unreadable`. Later caller-guessed incorrect
 paths caused the same unlocated refusal. Treat this as one diagnostic deficiency,
@@ -90,7 +90,7 @@ The original Claude iOS owner subsequently read the packet, inspected image/rece
 Package validation: default skill-only0.2.18 package built successfully with23 payload files; current doctor reports package/source/support/input bytes/identity matching. Hooks were not included, installation was not performed, and host execution/delivery layers remain unverified.
 
 ## Windows CI portability rework
-Root reported CI40968530564 at83613b24589b0f65abf1a2c916cbe3469a418e35: Windows3.13 job123779103149 failed only the new cause-string assertion. WinError2 formats the filename using repr, so its escaped backslashes do not match the raw path string. Ubuntu3.10/3.13 passed; Windows3.10 was cancelled by fail-fast. This is a test assertion portability defect, not a demonstrated runtime diagnostic/privacy failure.
+Root reported CI40968530564 at9fd5763360c239c91876a9369e97469f2281df52: Windows3.13 job123779103149 failed only the new cause-string assertion. WinError2 formats the filename using repr, so its escaped backslashes do not match the raw path string. Ubuntu3.10/3.13 passed; Windows3.10 was cancelled by fail-fast. This is a test assertion portability defect, not a demonstrated runtime diagnostic/privacy failure.
 The test now compares `Path(cause.filename)` directly to the selected missing Path. It still proves the cause is FileNotFoundError and retains the actual subprocess assertions: exact safe JSON, exit1, no capture output, no path/name/content in stdout/stderr, and empty stderr. workflow.py remains SHA256 c5017764570b57fecb847d3c92869bd8e3f60db3b478a3a3fcbbb701dfcab8c2.
 Focused PreservedEvidenceTests rerun on Linux:17 passed, including the real CLI case. Windows CI rerun remains pending; this local result is not Windows acceptance. No commit/push or host configuration change was performed in this rework. Prior independent review and real preparation adoption receipts above are preserved.
 Efficiency: exact CI file/assertion mapped directly to the existing test; no new tool, policy, or broad source investigation was needed. No token/cost measurement.

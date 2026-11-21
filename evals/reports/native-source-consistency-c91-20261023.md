@@ -90,7 +90,7 @@ gaps or the overall user goal.
 ## Adoption after the candidate checkpoint
 
 The earlier paragraphs retain their checkpoint boundaries. Final source22b0a84
-was normally merged through PR21 as main759307f; both trees are
+was normally merged through PR21 as mainedc8a39; both trees are
 aa05c6cf36db5b472b7bd78d5410cefee39048c8. Exact source runs40010111653 and
 40010117029, and main40010635982, each passed all four Ubuntu/Windows
 Python3.10/3.13 jobs. The final guided difference review independently checked

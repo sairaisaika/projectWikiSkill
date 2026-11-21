@@ -58,7 +58,7 @@ The subsequent local Windows16-control run reached another POSIX-only fixture as
 
 ## Installation follow-up
 
-PR69 merged at78f7741daf88e03433cb542738b4ce7f84668ea7 after the corrected PR head9f7d219 passed both platform matrices. Exact merge-main44049860690 also passed all four jobs. The initial Windows failures are retained above. Root compared the clean merged payload, observed no running Claude process, verified the previous baseline, atomically exchanged the standalone directory, and read back all21 payload hashes. The0.2.38 backup stays outside host discovery. This is a manual refresh, not an automatic updater, hook/settings change, session restart or claim about adoption.
+PR69 merged atf58c9169e7e8c401d4cdb8702e08bb1692a57448 after the corrected PR head9f7d219 passed both platform matrices. Exact merge-main44049860690 also passed all four jobs. The initial Windows failures are retained above. Root compared the clean merged payload, observed no running Claude process, verified the previous baseline, atomically exchanged the standalone directory, and read back all21 payload hashes. The0.2.38 backup stays outside host discovery. This is a manual refresh, not an automatic updater, hook/settings change, session restart or claim about adoption.
 
 ## Fresh guided real-task review
 

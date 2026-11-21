@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "scope": "Task-local source adapter, not global managed-plugin installation or efficiency comparison",
-  "sourceCommit": "1cda0f0eb0b8b1668dc6651b2f273c4dfcc69fbb",
+  "sourceCommit": "2a093098665f78b62c24399a7e602368314da765",
   "sourceAdapterSha256": "105f3170b1bce074d0e343e6e5ce9e676a8535b65d9c8b6e4253370e38aca973",
   "sessionId": "<withheld-session>",
   "hookRecordIndex": 6,
@@ -36,7 +36,7 @@
     "Storage review and frozen12 pilot used different tasks, no paired A/B or token savings.",
     "Read-only task controls are CLI permissions, not an OS sandbox; unrelated pre-existing host startup hooks also ran."
   ],
-  "collisionGuardReplaySourceCommit": "4ab007b30a50827851df0f7cc287bdeeb7c9ff31",
+  "collisionGuardReplaySourceCommit": "6fa0e6bf7de545cc10e0841d4674e6bc01a62747",
   "coordinatorFollowup": {
     "scope": "source replay only, not another host run",
     "indexBytes": 6078,

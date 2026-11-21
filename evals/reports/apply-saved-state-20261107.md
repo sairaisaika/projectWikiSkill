@@ -31,7 +31,7 @@ relaxed. Final matrix/host evidence supersedes the first candidate.
 
 ### Final source and exact-plan task
 
-Final d5866cf ran360 Linux source cases with one platform skip; nine new cases also
+Final 44b4749 ran360 Linux source cases with one platform skip; nine new cases also
 passed on local Windows. All four Ubuntu/Windows Python3.10/3.13 jobs passed in
 [final CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/42377141265).
 Three final package profiles match source, support, input bytes and identity.

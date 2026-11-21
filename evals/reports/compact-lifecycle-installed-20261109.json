@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "scope": "Fresh guided read-only task, selected historical code/catalog snapshot; no efficacy comparison",
   "installedVersion": "0.2.30",
-  "installedSourceCommit": "aeb65685775f1fb96ef422be469f389791c8ffba",
+  "installedSourceCommit": "e106f7392bd88028a5f5a1caa2b14d7a60c88593",
   "installedPayloadFilesMatched": 21,
   "settingsScope": "task-local SessionStart only, no global settings change",
   "hookRecordIndex": 9,

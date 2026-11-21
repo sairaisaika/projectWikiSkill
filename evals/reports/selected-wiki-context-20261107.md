@@ -105,7 +105,7 @@ was changed by packaging or review.
 
 ## Bounded host adoption and actual use
 
-PR47 merged as 5a7918c, with the same source tree as final tested 03c21b2.
+PR47 merged as 1c6af59, with the same source tree as final tested 990de29.
 The final source matrix passed on Ubuntu/Windows with Python 3.10/3.13.
 One Linux Claude skill-only installation was atomically exchanged at a helper-idle
 boundary: all 21 payload files matched the merged source, settings stayed unchanged,
