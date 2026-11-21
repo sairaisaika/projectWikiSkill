@@ -1,5 +1,7 @@
 # Audit an established wiki without building a parallel truth system
 
+> Reviewed: 2026-11-21 against de918a5 for task-facing section placement; other sections retain their prior scope.
+
 An existing wiki can already have stronger domain coverage than this skill's
 fixture: responsibility chapters, diagrams, producer/consumer tables, a reverse
 source index, cross-repository contracts and change-touch gates. Keep those assets.
@@ -75,6 +77,37 @@ follow the rendered links to the original rule, then check whether a real review
 misstates its scope. Structural/navigation success alone does not establish less
 agent work or better conclusions; distinguish familiar-author trials from an
 independent evaluation before expanding the convention.
+
+### Place task entrances without moving their owners
+
+Use this when adopting or repairing a task-facing entry, not as a startup preamble
+or a required hierarchy. After honoring applicable repository instructions, an
+existing AGENTS can give a conditional first cue to the native Wiki front door;
+it need not contain the Wiki's section tree.
+
+- **Sibling entrances:** task lookup/troubleshooting and maintenance/handoff can
+  sit beside one another at that front door. They route work; Maintenance is not
+  a parent for every engineering topic.
+- **Owner sections:** feature-local diagrams and behavioral contracts stay as
+  children or neighbors of their existing feature/mechanism owner. Keep active
+  execution and acceptance with the native task/acceptance owner, and durable
+  lessons with the relevant rule or decision owner. Reuse
+  [page anatomy](page-anatomy.md#navigation-and-reading-order) and the existing
+  [maintenance return path](maintenance.md#closeout-and-maintenance-sweeps).
+- **Cross-links:** when the authoritative section is known, link directly to that
+  exact section. A hierarchy can provide orientation without requiring readers to
+  open every ancestor; do not copy the target's rules into the entrance.
+- **Optional conveniences:** installed/local skills, private drafts and host tools
+  may accelerate work, but must not be a required dead end in a fresh public
+  checkout. Point to an approved tracked equivalent if one exists; otherwise state
+  the capability/access limit. Do not expose private paths, automatically install
+  anything or create a placeholder to make a link look complete.
+
+Check one real task path and a routine known-file edit when repairing this entry.
+The latter keeps its native lightweight path, without extra adoption reading or
+records solely for PWS. Preserve the project's mandatory gates and any relevant
+file-creation, staging or publication safeguards; no new page, hook or gate follows
+from this section architecture.
 
 ## Learn from native strengths
 

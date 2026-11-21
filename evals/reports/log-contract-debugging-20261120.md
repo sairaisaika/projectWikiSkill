@@ -97,6 +97,36 @@ missing entry link/skip cue. The candidate passes both. This is regression evide
 not a claim that the tests were written before the method or proof of agent use.
 
 Exact-head remote CI and independent review remain pending; the draft PR carries
-the immutable head and CI run receipt. No install, release, merge, production
+the immutable head and CI run receipt. No install, release, merge to main, production
 collection, downstream mutation, ignore/security change, broad hook or new universal
 gate is authorized.
+
+
+## Main integration and assertion precision — 2026-11-21
+
+The existing draft integrates verified main
+`e5df41dea1dd35a4f39ce9b600dcf688a071ca99`, including the approved native section
+placement and marketplace changes. Their canonical guide/report and marketplace
+files/test helper are byte-identical to main; both changelog and report-index rows
+are retained. Only Current task changes in PROJECT; history/conventions stay intact.
+The earlier merge preparation against `9303a25` was unpublished and superseded
+when main advanced, rather than publishing against a stale base.
+
+Independent review found that the offline event check inferred unavailable from
+`result.get('data')`, allowing a wrong actual service error code to go unnoticed.
+The check now asserts the complete actual success/error result and legacy consumer
+output before building synthetic events, then copies the observed error code.
+Assertions use categorical failure messages without echoing supplied values.
+An in-memory synthetic wrong-error substitution passed the old focused test and
+failed the corrected test with one assertion failure; no production source changed.
+The seven normal diagnostic tests pass. This is a test-precision correction, not
+new runtime evidence, a new contract or a production fix.
+
+Combined validation passes: 495 unit tests (one existing platform skip), 19
+fixture tests, both Wiki checks/evaluation and all five identity/source checks in
+default/legacy/portable package doctors. The two navigation tests and twelve
+package tests run together (14 passed), proving the existing imported helper and
+marketplace check coexist in this tree. The normal diagnostic suite remains seven
+passing tests. Exact-head remote CI is pending publication; the PR will record the
+new immutable head, base and CI receipt. This is a normal merge into the existing feature branch, not a merge
+to main, install, release or update to another PR.

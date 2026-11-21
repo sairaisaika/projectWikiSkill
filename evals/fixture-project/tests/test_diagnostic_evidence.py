@@ -28,9 +28,16 @@ class DiagnosticEvidenceTests(unittest.TestCase):
                 def list_articles(self, query):
                     return rows
             result = get_articles(Source(), {})
+            expected_result = ({'ok': False, 'error': 'unavailable'} if rows is None
+                               else {'ok': True, 'data': rows})
+            self.assertTrue(result == expected_result, 'Actual service result differs from the fixture contract')
             # One operation: pass its produced result to the actual consumer.
             client = read_articles(lambda source, query: result, Source(), {})
-            packet = {'coverage': 'complete', 'events': [event('article-service', result.get('data')),
+            self.assertTrue(client == rows, 'Actual legacy consumer output differs from the fixture contract')
+            service_event = event('article-service', result['data'] if result['ok'] else None)
+            if not result['ok']:
+                service_event['error_code'] = result['error']
+            packet = {'coverage': 'complete', 'events': [service_event,
                                                         event('legacy-client', client)]}
             expected = 'consistent_error' if rows is None else 'consistent_success'
             self.assertEqual(assess(packet)['status'], expected)
