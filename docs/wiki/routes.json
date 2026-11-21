@@ -1743,9 +1743,20 @@
         "Git 跟踪边界",
         "repository visibility",
         "public private internal",
-        "仓库可见性"
+        "仓库可见性",
+        "file placement",
+        "development resources",
+        "design records",
+        "dated plan",
+        "设计资源",
+        "开发资源",
+        "设计文档",
+        "任务草稿",
+        "生成的报告",
+        "个人临时文件"
       ],
       "docs": [
+        "docs/wiki/engineering-entry.md#file-placement",
         "docs/wiki/engineering-entry.md#maintenance",
         "project-wiki/references/repository-hygiene.md"
       ],
@@ -1817,7 +1828,92 @@
         "implementation": "planned",
         "observations": []
       },
-      "reviewed_at": "2026-11-20"
+      "reviewed_at": "2026-11-21"
+    },
+    {
+      "id": "version-status",
+      "title": "Verify source, CI and installed release separately",
+      "kind": "plan",
+      "aliases": [
+        "installed versus only merged",
+        "installed versus merged",
+        "actually installed version",
+        "actual installed revision",
+        "实际安装",
+        "已安装版本",
+        "已经合并的版本",
+        "安装版和合并版"
+      ],
+      "docs": [
+        "docs/wiki/status.md#current-state"
+      ],
+      "plan": {
+        "outcomes": [
+          "Separate canonical source, exact CI, installed payload and observed use."
+        ],
+        "dependencies": [
+          "Known target repo ID and SHA; supplied host receipt if available."
+        ],
+        "interfaces": [
+          "Canonical status owner and linked verification sources."
+        ],
+        "deliverables": [
+          "Observed state and explicit unknowns for unverified surfaces."
+        ],
+        "exit_evidence": [
+          "Each claim identifies its revision or observation date and source."
+        ],
+        "unknowns": [
+          "Current host state without a fresh host receipt."
+        ]
+      },
+      "boundary": "Status lookup does not query, install, enable or attest a host.",
+      "reviewed_at": "2026-11-21",
+      "evidence": {
+        "implementation": "planned",
+        "observations": []
+      },
+      "rules": [
+        {
+          "id": "separate-evidence-layers",
+          "statement": "Report source, exact CI, installed payload and observed use separately; no current host claim without a fresh receipt.",
+          "source_ids": [],
+          "proposed": true
+        }
+      ],
+      "impact": [
+        "Read-only evidence lookup; no mutation of source or host."
+      ],
+      "checks": [
+        {
+          "command": "python project-wiki/scripts/wiki.py query --root . \"What exact revision is installed versus only merged?\"",
+          "scope": "Navigation-only control; it does not attest installation."
+        }
+      ],
+      "interface": {
+        "inputs": [
+          "Canonical repo ID, commit and optional dated host receipt."
+        ],
+        "outputs": [
+          "Links to source, CI, installation and use disclosures."
+        ],
+        "errors": [
+          "Missing evidence remains unknown."
+        ],
+        "compatibility": "No host execution or trust changes.",
+        "failure_modes": {
+          "returned": [
+            "Distinguish older host evidence from current repo baseline."
+          ],
+          "thrown": [],
+          "unsupported": [
+            "No live installation attestation."
+          ]
+        }
+      },
+      "unknowns": [
+        "New host state without a fresh host receipt."
+      ]
     }
   ]
 }
