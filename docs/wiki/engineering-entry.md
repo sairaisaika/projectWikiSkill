@@ -125,7 +125,7 @@ Do not add a version paragraph to `README.md`, `docs/PLUGIN_PLAN.md` or the top 
 | `scripts/package_plugin.py` | `test_plugin_package.py`, `test_legacy_hooks.py`, `test_portable_hooks.py`, `test_package_newlines.py`, `test_package_integrity.py` | `scripts/plugin_doctor.py` (it re-derives the receipt) |
 | `scripts/plugin_doctor.py` | `test_plugin_package.py`, `test_package_integrity.py`, `test_package_newlines.py`, `test_codex_inventory.py`, `test_codex_hooks.py`, `test_lifecycle.py` | Receipt fields in `package_plugin.py` |
 | `hooks/*.json` | `test_lifecycle.py`, `test_legacy_hooks.py`, `test_edit_gate.py`, `test_portable_hooks.py`, `test_codex_hooks.py` | Packaging profile, [hooks-and-gates.md](hooks-and-gates.md) |
-| `project-wiki/references/repository-hygiene.md` | `test_repository_hygiene.py`, `test_repository_visibility.py` (real temporary Git repositories, synthetic metadata and native routes) | Existing Maintenance entries, fixture routes/evaluation and retention protections |
+| `project-wiki/references/repository-hygiene.md` | `test_repository_hygiene.py`, `test_repository_visibility.py`, `test_file_placement.py` (real temporary Git repositories, synthetic metadata and native routes) | Existing Maintenance entries, fixture routes/evaluation and retention protections |
 | `engineering-depth.md` diagnostic path | `test_log_contract_navigation.py`; fixture `test_diagnostic_evidence.py` | Default packaged entry, ordinary-task skip cue and the existing fixture contract owner |
 | `project-wiki/SKILL.md`, `project-wiki/references/*.md`, `project-wiki/agents/openai.yaml`, `README.md` | `test_skill_package.py` (metadata; every link and anchor resolves inside the repo) | The owning reference only; no version or caveat paragraph |
 

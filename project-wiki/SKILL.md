@@ -85,6 +85,11 @@ that coordination protocol is actually needed; existing project gates stay nativ
   commit's acknowledgement list runs past about ten pages, the repair is
   granularity: give rules identity and route/gate by rule edges rather than by
   shared file; see change navigation.
+- **Place a file:** for a new/generated file or a local-only destination, go to the
+  native Maintenance owner's **File placement** table before writing. Reuse its
+  approved locations; if missing or unclear, use the
+  [placement guidance](references/repository-hygiene.md#file-placement) to resolve
+  the location with that owner, not a guessed directory.
 - **Debug a technical contract:** for incident symptoms or claimed/observed behavior
   that conflicts with a technical boundary, use its existing owner and the
   [evidence-to-contract path](references/engineering-depth.md#debug-from-evidence-to-a-technical-contract).

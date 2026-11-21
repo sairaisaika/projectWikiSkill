@@ -27,6 +27,10 @@ For a compound interface change, `python <skill>/scripts/wiki.py task interface-
 
 ## Maintenance
 
+For a new/generated file or local-only destination, use
+[File placement](maintenance-closeout.md#file-placement) (artifact placement /
+新文件放哪里). This is the same owner as repository hygiene below.
+
 For `log contract debugging` or `日志契约`, start at the
 [diagnostic evidence owner](interfaces.md#diagnostic-evidence).
 

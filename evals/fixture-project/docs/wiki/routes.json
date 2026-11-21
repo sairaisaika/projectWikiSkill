@@ -1456,10 +1456,21 @@
         "Git 跟踪边界",
         "repository visibility",
         "public private internal",
-        "仓库可见性"
+        "仓库可见性",
+        "artifact placement",
+        "generated output location",
+        "personal scratch location",
+        "新文件放哪里",
+        "生成报告放哪里",
+        "仅本地文件放哪里",
+        "生成的报告",
+        "个人临时文件",
+        "个人笔记",
+        "公开报告"
       ],
       "docs": [
-        "docs/wiki/maintenance-closeout.md#repository-hygiene"
+        "docs/wiki/maintenance-closeout.md#repository-hygiene",
+        "docs/wiki/maintenance-closeout.md#file-placement"
       ],
       "plan": {
         "outcomes": [

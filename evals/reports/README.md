@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [File placement](file-placement-20261121.md) | Project-owned location table, real synthetic Git checks and cold navigation / typo controls | Curated query coverage; initial Chinese misses retained; no runtime generator, real protected storage or broad adoption claim |
 | [Log-to-contract debugging](log-contract-debugging-20261120.md) | Synthetic source-bound event/contract checks, actual packaged navigation and two cold task controls | No production logger/sink, runtime evidence, deployment, broad adoption or efficiency claim |
 | [Native section placement](native-section-placement-20261121.md) | Bounded public-fixture route/thought check and ordinary-edit negative | Author-led documentation review; no blind-agent, installed-host or efficiency claim |
 | [Destination visibility and publication scope](repository-visibility-20261120.md) | Eleven synthetic metadata/real Git exercises, setup/existing scaffolds, exact publication refs and visibility routing through the existing hygiene procedure | Method/command validation only; no live-provider enforcement, publication or adoption claim |

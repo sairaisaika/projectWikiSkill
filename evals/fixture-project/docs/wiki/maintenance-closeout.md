@@ -115,3 +115,28 @@ and temporary Git remotes, with no real remote access or sensitive data.
 For setup or an existing scaffold, use the same [AGENTS/PROJECT/PRODUCT templates](../../../../project-wiki/references/repository-hygiene.md#wiki-setup-scaffolds).
 Classify contents and audience rather than rejecting a filename; reuse the current
 owner and leave existing conflicting files intact pending authorized disposition.
+
+
+### File placement
+
+This existing Maintenance owner answers location questions for the synthetic
+project. Use the table before creating a file, not a guessed root or `.local`
+directory. The disposable Git tests arrange the intended report location and its
+exact rule before the write request; this is authored fixture setup, not a claim
+that this directory has a real build system or standalone ignore configuration.
+Git checks establish effective rules; the table records intent, owner and retention.
+
+| Purpose / disposition | Safe path or approved handle | Owner | Retention / rule source |
+|---|---|---|---|
+| Repo-safe truth and required inputs | `docs/wiki/`, `.env.example`, `package-lock.json`, `tests/fixtures/public.json` | Fixture maintainer / contract owner | Track approved public examples and canonical inputs; see repository hygiene above. A hiding rule is a conflict, not permission to force-add. |
+| Shared generated report | `build/review-report.json` | Fixture build/test owner | Reproducible public sample from the synthetic placement test setup; Git supplies the narrow shared rule. Keep active/failure/held evidence pending owner review. |
+| Harmless personal scratch | `scratch/local-note.txt` | Synthetic local user | Approved harmless scratch only; use Git-resolved local exclude, shared by linked worktrees. This is not a private-data store or an isolated worktree location. |
+| Customer export / private durable data | No approved in-clone home; protected destination unresolved | Authorized data owner | No write for public/private/internal/unknown until approved protected storage and retention/access are resolved; neither ignore nor a directory grants permission. |
+| Existing held recovery copy | `archives/held.zip` (existing only) | Recovery owner | Keep the existing hold/restore protection even if ignored; not a destination for new private backups or authority to move/delete it. |
+
+A customer export cannot be placed in the report or scratch row by changing its
+filename. No protected store is actually configured in this fixture. Stop before
+writing and ask the authorized owner for a safe approved handle; do not publish
+private paths. For an unknown output, reconcile with this same owner rather than
+silently adding another location. A routine comment/README typo uses the native
+lightweight path, with no placement-specific record or additional reading.

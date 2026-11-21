@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Route new/generated and local-only file questions to a project-owned Maintenance placement table, retaining Git rule authority, approved storage and ordinary-edit proportionality. See [synthetic Git and cold navigation evidence](evals/reports/file-placement-20261121.md).
+
 - Connect incident observations to native technical contracts, producer/consumer sources and focused checks through existing owners; distinguish receipts, diagnostics and audit trails, and preserve unknown runtime/coverage. Add a routine-task skip cue without waiving project gates or triggered hygiene. See [synthetic and navigation evidence](evals/reports/log-contract-debugging-20261120.md).
 
 - Clarify native Wiki task entrances, owner sections and direct cross-links, with a public-checkout fallback boundary for optional local conveniences. See [bounded route review](evals/reports/native-section-placement-20261121.md).
