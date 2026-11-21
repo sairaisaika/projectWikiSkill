@@ -62,8 +62,8 @@ checks after normal source adoption; no running scoped execution is upgraded.
 
 The preceding table preserves the pre-adoption observation. Afterwards:
 
-- PR18 source `fe6d8d11b87d0548c3d59366015542d310cfc4d8` normally merged to
-  main `8c24a8a9ed77eb20c32a9aac965b1cac834f60f3`; their trees match. Both exact
+- PR18 source `6e66c08d563b5f9a4123be58a967c11f7a4ee956` normally merged to
+  main `5167405169ec607b266726b334f20f0044dd3767`; their trees match. Both exact
   source workflow runs39935263430/39935310648 and exact main39935649839 passed
   Ubuntu/Windows Python3.10/3.13 checks. The clean canonical checkout fast-forwarded.
 - The immutable package was rebuilt from that clean main; its existing official

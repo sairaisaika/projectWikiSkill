@@ -16,7 +16,7 @@ A synthetic 11-owner impact-like text (2920 characters) at the CLI 4000-byte/40-
 
 ## Platform fixture correction
 
-The first PR matrix at6c331c4 reported one Windows3.10 failure in the700-byte subcase; its other Windows job was cancelled by fail-fast, while both Ubuntu jobs passed. The synthetic owner line, including unnecessary role/satellite fields, could not fit with the longer PowerShell continuation envelope, so the test incorrectly demanded a complete line where the documented oversized-line fallback applied.
+The first PR matrix at47c4363 reported one Windows3.10 failure in the700-byte subcase; its other Windows job was cancelled by fail-fast, while both Ubuntu jobs passed. The synthetic owner line, including unnecessary role/satellite fields, could not fit with the longer PowerShell continuation envelope, so the test incorrectly demanded a complete line where the documented oversized-line fallback applied.
 
 The fixture now retains its multibyte page/title and the same budgets and assertions; oversized-line coverage remains separate. Root replays all four controls against old/new source under both POSIX and PowerShell command formatting: each old-source branch produces8failed subcases and each candidate branch passes all4tests. This exercises quoting branches locally, not a replacement for actual Windows CI. Source pager logic is unchanged by the fixture correction; the failed remote run is retained as evidence: [first PR matrix](https://github.com/sairaisaika/projectWikiSkill/actions/runs/43966344896).
 

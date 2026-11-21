@@ -2,7 +2,7 @@
 
 ## Source, CI and installation
 
-Version0.2.36 merges through [PR64](https://github.com/sairaisaika/projectWikiSkill/pull/64), merge44162a52a6832712c7845843616402b64b306cf5. Exact [PR CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/43938712631) and [main CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/43940304098) succeed in all four Ubuntu/Windows Python3.10/3.13 jobs. The preceding compact-text PR63 also has successful PR/main matrices; see its report.
+Version0.2.36 merges through PR64 (pre-reset PR 64, removed), merge44162a52a6832712c7845843616402b64b306cf5. Exact [PR CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/43938712631) and [main CI](https://github.com/sairaisaika/projectWikiSkill/actions/runs/43940304098) succeed in all four Ubuntu/Windows Python3.10/3.13 jobs. The preceding compact-text PR63 also has successful PR/main matrices; see its report.
 
 The coordinator verified the canonical21 tracked standalone payload files against that merge, staged them outside Skill discovery, observed zero active global helper commands twice20 seconds apart, atomically exchanged directories using the host rename-exchange operation, then rechecked21/21 file hashes and the installed workflow help command. The old standalone payload remains backed up outside discovery. No hook, settings, process or original feature session was restarted or changed. The observations are not continuous exclusion of every possible concurrent reader.
 

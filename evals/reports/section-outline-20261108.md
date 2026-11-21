@@ -7,7 +7,7 @@ projections; this change makes the relevant saved sections discoverable.
 
 ## Source evidence
 
-- PR55 and exact merge main2172640 passed Ubuntu/Windows Python3.10/3.13 matrices.
+- PR55 and exact merge mainf5c7e4d passed Ubuntu/Windows Python3.10/3.13 matrices.
 - Local source suite:380 collected,379 executed,one platform skip; fixture12 passed.
   Fixture check/evaluation and maintainer Wiki check passed. Routing evaluation is
   an author-curated self-test, not independent understanding or adoption evidence.

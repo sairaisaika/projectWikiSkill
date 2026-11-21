@@ -1,6 +1,6 @@
 # Engineering entry
 
-> Reviewed: 2026-11-03 against c062224
+> Reviewed: 2026-11-03 against 5056787
 
 This repository ships **project-wiki**, an agent skill plus an optional host plugin.
 The skill teaches an agent to keep a project's wiki source-backed: route a task to its

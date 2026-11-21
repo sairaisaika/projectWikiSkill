@@ -26,7 +26,7 @@ that distinct boundary. This was test-harness correction, not a product fix.
 
 ## PR45 review
 
-Reviewed exact bf2d12b against fc310fe: eight documentation files, no helper/hook
+Reviewed exact ea259e2 against b8dd295: eight documentation files, no helper/hook
 or test mutation. The rules accurately distinguish native-project ownership and
 unimplemented gate gaps; no blocking documentation defect found in the changed
 text. Passing its checks does not implement its proposed mechanisms. This branch
@@ -90,12 +90,12 @@ portability repair; earlier Linux success is not substituted for that result.
 
 ## Merged source and bounded installation
 
-PR45 merged as cf2f350; PR46 was retargeted to main and merged as cc2bfa0.
-The merge tree exactly matches the verified PR46 head 5dbacfa. Merge-head CI is
+PR45 merged as 4243af7; PR46 was retargeted to main and merged as d222a3e.
+The merge tree exactly matches the verified PR46 head 85a6b05. Merge-head CI is
 tracked separately from the prior exact-head PR and push runs.
 
 At an observed quiet task boundary, one Linux Claude skill-only copy was updated
-from fc310fe to cc2bfa0 / identity 0.2.20. All twenty old tracked files matched
+from b8dd295 to d222a3e / identity 0.2.20. All twenty old tracked files matched
 before replacement; all twenty-one new tracked files matched after replacement.
 An atomic directory exchange left no missing-path interval; the old copy was
 retained outside skill discovery. No session restart, hook/settings change or

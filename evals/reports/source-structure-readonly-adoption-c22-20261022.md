@@ -59,8 +59,8 @@ trust and semantic/business acceptance unverified. Root separately inspected the
 actual native reads. Read-only finish used a normal native query and empty actual
 diff: structural reconciliation passed; product completion stayed unestablished.
 
-PR5 head `48812f3e0b92be2b138dbf761cf03c71c17c276e` passed both Ubuntu/Windows,
-Python3.10/3.13 matrix runs and normally merged to main `4ea89e1`. Local Windows
+PR5 head `48efbd1d31f343f61bc09ca987c38ea3e0f26720` passed both Ubuntu/Windows,
+Python3.10/3.13 matrix runs and normally merged to main `968a0d7`. Local Windows
 passed108 tests with one existing symlink-privilege skip. Source adoption does not
 prove an updated Codex desktop cache or permanent Linux installation.
 

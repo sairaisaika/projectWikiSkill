@@ -1,6 +1,6 @@
 # Installed-version drift and fresh-host discovery, 2026-10-22
 
-Scope: internal 0.2.3 payload at source revision `9f2a504`, one local Codex
+Scope: internal 0.2.3 payload at source revision `8c9acd5`, one local Codex
 installation update and one instructed fresh read-only CLI session. This is not
 desktop GUI discovery, automatic hooks, a native start/finish cycle, a blind
 efficiency comparison or product acceptance. Raw host files/transcripts stay private.

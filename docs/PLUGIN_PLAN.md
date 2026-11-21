@@ -234,7 +234,7 @@ First focused run caught an implementation omission: policy retention was checke
 in review preparation but not final reconciliation. The failing regression was
 retained and the final path now checks it too. Full checks, actual paired CLI
 replay, normal source/main adoption and host installation have separate evidence.
-PR21 source22b0a84 and main759307f have the same tree; both exact source matrices
+PR21 source22b0a84 and mainedc8a39 have the same tree; both exact source matrices
 and main CI40010635982 passed. Official Windows installation now reports0.2.7,
 with package/source closure, inventory and direct installed doctor checked.
 All23 previous-cache files were backed up before the official update removed it.
@@ -244,8 +244,8 @@ This is explicit helper use, not automatic desktop lifecycle or Linux installati
 Running scoped Claude0.2.4, hooks and trust were unchanged. See the
 [bounded source and host return](../evals/reports/native-source-consistency-c91-20261023.md#adoption-after-the-candidate-checkpoint).
 
-Historical checkpoint (2026-10-23):0.2.6 normally adopted via PR18, source `fe6d8d1`
-and main `8c24a8a` have identical trees. Both source workflow runs and exact main
+Historical checkpoint (2026-10-23):0.2.6 normally adopted via PR18, source `6e66c08`
+and main `5167405` have identical trees. Both source workflow runs and exact main
 workflow39935649839 passed Ubuntu/Windows Python3.10/3.13. One Windows host was
 updated through the existing official plugin entry, with package/source closure,
 inventory and direct installed-doctor invocation checked. The prior cache was
@@ -286,7 +286,7 @@ as overall completion. No hooks, host configuration, registry, credentials or
 running scoped worker is changed by this addition.
 
 Historical checkpoint (2026-10-22):0.2.5 source was normally adopted at main
-`3cac3ef`, with exact main CI green. Official Windows CLI inventory now reports
+`a661bba`, with exact main CI green. Official Windows CLI inventory now reports
 installed/enabled0.2.5; actual cache/source inspection and one fresh read-only
 CLI Skill/query/source review passed separately. A fresh scoped Linux native
 review is recorded independently. Desktop current-chat refresh, trusted hooks,
@@ -486,7 +486,7 @@ empty editing paths and unchanged legacy editing behavior. A nominal read-only
 return with wiki/source differences is not certified as unchanged. This is scoped
 workflow metadata, not filesystem enforcement or proof of no transient/ignored
 writes. Native extra impact fields remain intact. Version bump changes the actual
-bundled workflow/reference payload. PR5 normally merged to main4ea89e1 after both
+bundled workflow/reference payload. PR5 normally merged to main968a0d7 after both
 CI matrix runs passed. A fresh scoped Linux invocation used the candidate Skill
 and native per-file structures, then returned an empty repository diff; initial
 CLI/display/section-reading misses were preserved rather than called first-pass

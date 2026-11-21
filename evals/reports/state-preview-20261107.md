@@ -73,7 +73,7 @@ marker formats remain outside this heuristic and need their native adapter.
 
 ### Bounded installation and fresh guided use
 
-Final source b14fa04 passed all four platform jobs in run42374939151,351 Linux
+Final source b5e6f80 passed all four platform jobs in run42374939151,351 Linux
 cases (one platform skip),17 new cases on Linux/Windows and three matching final
 package profiles. Merge9945aca matched the tested tree; one helper-idle atomic
 Linux copy exchange retained its old tree, verified21 files and changed no settings.

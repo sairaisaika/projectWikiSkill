@@ -1,5 +1,5 @@
 {
-  "sourceSha": "ee6c065d38b8ee0d133f6bcdbf55877bbb4367a6",
+  "sourceSha": "68f9db4719fa30288f8304eeeac12f07e6727883",
   "sourceVersion": "0.2.19 candidate",
   "payloadFiles": {
     "SKILL.md": "fb04b447177c84b3578d8e45241fca29b58e6b01224e9081f839b764646b8927",
@@ -45,7 +45,7 @@
   ],
   "scope": "Skill-only copy; no plugin registration, hooks, trust, settings or access changes. Native Skill invoked explicitly; not automatic task-start hook evidence.",
   "ci": {
-    "head": "ee6c065d38b8ee0d133f6bcdbf55877bbb4367a6",
+    "head": "68f9db4719fa30288f8304eeeac12f07e6727883",
     "run": 40990893408,
     "windows313Job": 123852760820,
     "testedMerge": "961d9c195add454bacf671d4a832bf7be15dc656",
