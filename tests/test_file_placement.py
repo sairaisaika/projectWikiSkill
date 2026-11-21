@@ -126,6 +126,22 @@ class FilePlacementTests(unittest.TestCase):
             self.assertEqual(route['id'], 'repository-hygiene')
             self.assertIn('docs/wiki/maintenance-closeout.md#file-placement', route['docs'])
 
+    def test_uncited_development_evidence_keeps_independent_retention(self):
+        template = next(line for line in self.method.splitlines()
+                        if line.startswith('| Development working material |'))
+        fixture = self.placement_rows()['Development working material'][2]
+        for text in (template, fixture):
+            with self.subTest(surface='template' if text == template else 'fixture'):
+                for protection in ('independent audit', 'rollback/restore', 'compliance/retention holds',
+                                   'other approved evidence', 'even when not cited'):
+                    self.assertIn(protection, text)
+                self.assertIn('no deletion authority', text)
+                self.assertIn('missing rules remain unresolved', text)
+                self.assertNotIn('only cited evidence', text.lower())
+                self.assertNotIn('the rest leaves with the task', text.lower())
+        self.assertTrue('A design citation is not a prerequisite for retention' in self.method,
+                        'The canonical explanation must preserve uncited evidence')
+
     def test_ordinary_text_edit_has_no_extra_route_or_material(self):
         entry = (hygiene.SKILL / 'SKILL.md').read_text(encoding='utf-8')
         self.assertLess(entry.index('## Keep the entry proportional'), entry.index('## Choose the work'))

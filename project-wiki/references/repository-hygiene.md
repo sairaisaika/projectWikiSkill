@@ -1,6 +1,6 @@
 # Repository hygiene and Git tracking boundaries
 
-> Reviewed: 2026-11-21 against main 95cb05c for file placement; prior tracking/publication boundaries retained, not downstream adoption.
+> Reviewed: 2026-11-21 against main dac0289 and branch b04ca47 for design/development retention; prior tracking/publication boundaries retained, not downstream adoption.
 
 Use this through the project's Maintenance entry whenever a task creates files,
 leaves uncertain outputs, or prepares a commit. This is an agent decision workflow,
@@ -43,9 +43,13 @@ task's retention. Do not file dated plans, session diaries or run output inside 
 canonical design area, and do not cite scratch, a draft or an unretained run as the
 authority for a current design statement. Development material reaches a design
 record only by distillation at closeout: return the durable conclusion to its owner
-([Wiki evolution](wiki-evolution.md#2-decide-where-the-knowledge-belongs)), keep a
-cited run as retained evidence bound to its revision, and leave the rest with the
-task. Prototype or spike code enters production paths only through the normal
+([Wiki evolution](wiki-evolution.md#2-decide-where-the-knowledge-belongs)), keep
+evidence bound to its revision under the applicable retention policy.
+A design citation is not a prerequisite for retention: independent audit,
+rollback/restore, compliance/retention holds and other approved evidence remain
+protected even when not cited. Lifecycle guidance grants no
+deletion authority; missing rules remain unresolved with the owner. Prototype or
+spike code enters production paths only through the normal
 reviewed change. This axis is independent of tracking, ignore and visibility: a
 development resource may be tracked (a public evaluation report), and a design
 asset may need protected storage.
@@ -58,7 +62,7 @@ is not approved, say so rather than inventing a handle or a usable-looking path.
 | Purpose / disposition | Safe path or approved handle | Owner | Retention / rule source |
 |---|---|---|---|
 | Design record to preserve | [canonical Wiki/design owner path] | [design or contract owner] | [versioned in place; superseded text kept as dated history] |
-| Development working material | [native task/evidence record or approved working location] | [task owner] | [task lifetime; only cited evidence retained, bound to its revision] |
+| Development working material | [native task/evidence record or approved working location] | [task owner] | [task retention protects independent audit, rollback/restore, compliance/retention holds and other approved evidence even when not cited; bind retained evidence to its revision; no deletion authority; missing rules remain unresolved] |
 | Repo-safe truth and required inputs; track by project policy | [existing source/config paths, required lockfile, .env.example, approved fixture] | [native owner] | [canonical policy and version authority] |
 | Shared disposable reproducible output; narrow shared ignore only if approved | [explicit existing output path] | [generator/consumer owner] | [rebuild inputs, active use/holds, actual Git rule source] |
 | Harmless personal scratch; repository-local exclude scope | [approved location or unresolved] | [user/owner] | [local scope and retention; linked-worktree caveat] |

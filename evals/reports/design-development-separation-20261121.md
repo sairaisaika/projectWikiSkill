@@ -46,3 +46,28 @@ No new route, owner, manifest, query algorithm, scanner, hook or migration.
 Curated alias coverage and a self-test by the author; no blind reader, independent
 adoption or downstream migration. This repository's own `docs/` still holds dated
 plan files beside `docs/wiki/`; applying the rule here is a separate change.
+
+
+## Retention review correction
+
+The public repository identity for this follow-up is **1466210381**, verified with
+the authorized connected account; the existing design/development branch starts at
+`b04ca47af24fc58cefe69467ee0e2bd5f3353d73` on main
+`dac028902561bec4df1bc752f6320c6b7cef95a6`. Work uses a fresh isolated checkout of
+that repository only. No archive objects, checkout or repository was reused.
+
+Independent review found that the canonical template and synthetic working-material
+row said only design-cited evidence is retained. Both rows and the neighboring
+canonical explanation now preserve independent audit, rollback/restore,
+compliance/retention holds and other approved evidence even when not cited.
+Lifecycle guidance grants no deletion authority; missing rules remain unresolved.
+The existing design/development ownership split and promotion path are unchanged.
+
+One narrow regression checks the standalone template and fixture rows plus the
+canonical explanation. It fails against the previous wording on both surfaces,
+then passes with the repair. These are documentation-contract checks, not a
+retention engine or permission to delete anything. Combined local validation passes: 503 unit tests on Linux (one existing platform
+skip), 19 fixture tests, both Wiki checks, 28-question fixture evaluation and all
+three package doctors (package_valid and four source/identity flags true). The
+six focused placement tests pass, including the new retention regression. Exact-head
+CI is pending publication; the PR will bind results to the new candidate SHA. No release, install, settings change or merge is performed.

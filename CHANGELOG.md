@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Separate design records to preserve (requirements, architecture, contracts, accepted decisions, canonical diagrams/design assets) from development resources (task plans, captures, drafts, prototypes, runs, handoffs, agent logs) inside the existing File placement owner: separate homes and retention, no task scratch as design authority, promotion only by distillation at closeout. See [synthetic evidence](evals/reports/design-development-separation-20261121.md).
+- Separate design records to preserve (requirements, architecture, contracts, accepted decisions, canonical diagrams/design assets) from development resources (task plans, captures, drafts, prototypes, runs, handoffs, agent logs) inside the existing File placement owner: separate homes and retention, no task scratch as design authority, promotion only by distillation at closeout. Retention also protects uncited audit, recovery and held evidence; lifecycle guidance grants no deletion authority. See [synthetic evidence](evals/reports/design-development-separation-20261121.md).
 
 - Public-repository hygiene sweep: withhold private pilot/consumer names, machine checkout paths, private revisions and a host session id from four evaluation reports (recorded results unchanged). The repository history was also rewritten and republished on 2026-11-21 so earlier commits no longer carry these identifiers; pre-reset commit and PR links no longer resolve. Document which consumer `.project-wiki/` files are shared policy and which are per-worker state to keep out of commits. No `.gitignore` change: the helpers write only caller-chosen paths.
 
