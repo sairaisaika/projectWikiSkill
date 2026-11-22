@@ -67,7 +67,7 @@
           "id": "cli",
           "role": "declaration",
           "path": "project-wiki/scripts/wiki.py",
-          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes",
+          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes; opt-in review receipts",
           "symbol": "main"
         },
         {
@@ -111,27 +111,45 @@
           "path": "project-wiki/scripts/wiki.py",
           "symbol": "diagram_review",
           "reason": "Bounded changed-file candidates through existing diagram source IDs"
+        },
+        {
+          "id": "section-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "section_reviews",
+          "reason": "Existing rule evidence drift and retained explicit Git review baseline"
+        },
+        {
+          "id": "record-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "record_review",
+          "reason": "Explicit committed evidence review receipt; never an automatic rebuild acknowledgement"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#wiki-helper",
         "docs/wiki/invariants.md#wiki-helper-wikipy",
-        "project-wiki/references/route-contract.md#field-semantics"
+        "project-wiki/references/route-contract.md#field-semantics",
+        "project-wiki/references/route-contract.md#opt-in-section-evidence-review"
       ],
       "interface": {
         "inputs": [
           "--root PATH (default cwd)",
           "<root>/docs/wiki/routes.json plus the sources and Markdown anchors it names",
-          "query QUESTION [--limit 1..5] [--json]; task [TASK_ID]; evaluate --tasks PATH; find QUESTION [--json]; status; eval --tasks PATH [--ledger PATH.jsonl]"
+          "query QUESTION [--limit 1..5] [--json]; task [TASK_ID]; evaluate --tasks PATH; find QUESTION [--json]; status; eval --tasks PATH [--ledger PATH.jsonl]",
+          "Optional rule review.section; review ROUTE RULE --revision FULL_COMMIT [--repository-url URL]; check --reviews"
         ],
         "outputs": [
           "JSON reports (plain text for list and non-JSON query)",
-          "build writes only docs/wiki/route-index.json and route-index.md"
+          "build writes only docs/wiki/route-index.json and route-index.md",
+          "Explicit review writes only baseline receipts on existing rules; find/status expose needs_review and live/reviewed evidence locators"
         ],
         "errors": [
           "{\"valid\": false, \"error\": ...} with exit 1",
           "check exits 1 when audit is not ready or the index is stale",
-            "find/status exit 1 with reason invalid_wiki|stale_index|unknown|ambiguous|unresolved_source and 2 with reason no_wiki; eval exits 1 when the self-test fails or the opt-in ledger has any defect"
+          "find/status exit 1 with reason invalid_wiki|stale_index|unknown|ambiguous|unresolved_source and 2 with reason no_wiki; eval exits 1 when the self-test fails or the opt-in ledger has any defect",
+          "Opted-in missing/ambiguous/changed evidence or unavailable reviewed Git commit fails closed; build never clears review"
         ],
         "compatibility": "Schema 1 stays query/audit-only legacy gap analysis; build and check require schema 2. Field additions must keep existing manifests valid.",
         "failure_modes": {
@@ -192,6 +210,18 @@
             "tests/test_wiki.py",
             "tests/test_skill_package.py"
           ]
+        },
+        {
+          "id": "review-survives-rebuild",
+          "statement": "A generated index is not a section evidence review; only explicit committed review replaces the baseline.",
+          "source_ids": [
+            "section-review",
+            "record-review",
+            "cli"
+          ],
+          "tests": [
+            "tests/test_section_review.py"
+          ]
         }
       ],
       "impact": [
@@ -204,7 +234,8 @@
         "tests/test_engineering_depth.py",
         "tests/test_skill_package.py",
         "tests/test_context_reading.py",
-        "tests/test_diagram_lifecycle.py"
+        "tests/test_diagram_lifecycle.py",
+        "tests/test_section_review.py"
       ],
       "checks": [
         {
@@ -224,7 +255,7 @@
           "scope": "Structure and drift of this maintainer wiki; not semantic truth."
         }
       ],
-      "boundary": "Structural scoring and source-position drift only; semantic accuracy and independent adoption are not measured.",
+      "boundary": "Structural/index checks plus optional selected evidence drift; no semantic, signature, executed-test or runtime proof.",
       "unknowns": [
         "Whether the structural score correlates with editing success in a consumer project."
       ],

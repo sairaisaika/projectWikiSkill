@@ -118,6 +118,74 @@ their docs/scope are checked and enter snapshots. Use `task` to list them and
 `task <id>` to expand all declared surfaces without application source reads.
 See [change navigation](change-navigation.md) for schema and scope evaluation.
 
+
+## Opt-in section evidence review
+
+Use this only when a stable rule needs a retained evidence-review baseline. A fresh
+index says locations were rebuilt; it does not say the authored rule was reviewed.
+On an **existing schema 2 rule**, add a `review.section` pointing to one of that
+route's existing `docs` anchors. Reuse the rule's `source_ids` and `tests`; do not
+create a parallel registry. For the public offline fixture's `failure-not-empty`:
+
+```json
+"review": {"section": "docs/wiki/interfaces.md#public-api"}
+```
+
+Review that exact section, rule statement, selected source/config and tests yourself.
+Commit the opt-in, exact `review.section`, reviewed content and bindings, then
+explicitly record its **full Git
+commit ID**. For example, from the repository checkout (replace `FULL_COMMIT`):
+
+```sh
+python project-wiki/scripts/wiki.py review --root evals/fixture-project public-api failure-not-empty --revision FULL_COMMIT --repository-url https://github.com/sairaisaika/projectWikiSkill
+python project-wiki/scripts/wiki.py build --root evals/fixture-project
+python project-wiki/scripts/wiki.py find --root evals/fixture-project "client failures"
+python project-wiki/scripts/wiki.py check --root evals/fixture-project --reviews
+```
+
+`review` writes only a `baseline` receipt under that rule in `routes.json`: the
+explicitly reviewed commit, rule/section/evidence SHA256 fingerprints and reviewed
+locations. Inspect that receipt diff before committing. It refuses selected content
+or bindings that do not match the supplied commit. It does **not** assess truth,
+run tests, change authored prose or repair code. A reviewer may verify an unchanged
+rule against changed evidence, or revise it first; either requires this explicit
+recording step. `build` only regenerates indexes and never clears a review baseline.
+
+`find` reports `needs_review` for a selected rule whose prose, statement, evidence
+or selection changed, including after rebuilding. `status` exposes outstanding
+opted-in rules. Only `check --reviews` adds the review condition to the existing
+check; plain `check` keeps its structure/index contract. Rules without `review`
+retain their existing behavior and need no Git history. There is no automatic hook,
+background collection or adoption/migration requirement.
+
+Fingerprint boundaries are deliberately explicit:
+
+- The exact ATX section (including its subsections) ends at the next same/higher
+  heading. Unrelated neighboring prose does not invalidate it. Missing or ambiguous
+  headings/attached anchors fail closed.
+- A Python source symbol hashes its text including decorators and body, independent
+  of its file/line position. A pure move remains reviewed after the project updates
+  the declared source path and rebuilds; no scanner guesses new paths. Dependencies
+  outside that body must be selected separately through existing route sources.
+- Other languages/config use the existing unique `needle` locator and hash the
+  **whole selected file**, conservatively; no universal syntax parser is implied.
+  Selected tests also hash their whole file. UTF-8 and normalized newlines are used;
+  same line/function counts cannot hide content changes.
+
+Both text and JSON `find` retain a current path/line locator and the immutable
+reviewed Git object/line. Optional `--repository-url` supplies GitHub-compatible
+`/blob/COMMIT/PATH#L…` links; it is caller-declared, never inferred from a remote or
+proof of repository identity/access. Without it, use the recorded Git object with
+`git show`. The opt-in path requires Git 2.45+ with `--no-lazy-fetch` support. It disables optional
+locks, replace refs and lazy object downloads, and bounds each Git lookup to 15 seconds.
+The reviewed commit must remain available locally (including in CI);
+missing history, evidence, duplicate targets or damaged receipts remain unresolved,
+not fresh. Receipts are review records, not signatures or semantic/runtime proof.
+
+The opt-in pilot runs on isolated copies of the public offline fixture in
+`tests/test_section_review.py`; the shipped fixture's normal route behavior remains
+unchanged. Projects choose their own small set of rules and PR check invocation.
+
 ## Existing schema 1 wikis
 
 `audit` reads schema 1 as a **legacy gap analysis** and lists missing precision

@@ -2,7 +2,7 @@
 """Source-backed wiki navigation and measurable structural/routing acceptance.
 
 Python 3.10+, standard library only. Never executes recorded commands or project code.
-Only the explicit build command writes generated route-index files.
+Only build writes generated indexes; explicit review records a rule receipt in routes.json.
 """
 from __future__ import annotations
 
@@ -15,6 +15,8 @@ import math
 from pathlib import Path, PureWindowsPath
 import re
 import sys
+import subprocess
+from urllib.parse import quote, urlsplit
 
 
 class MissingManifest(ValueError):
@@ -920,6 +922,225 @@ def evaluate(root, manifest, taskfile):
 NOT_MEASURED = 'not measured'
 
 
+# Review receipts live on existing rules, independently of the generated index.
+def review_git(root, *args):
+    try:
+        result = subprocess.run(['git', '--no-optional-locks', '--no-replace-objects', '--no-lazy-fetch', '-C', str(root), *args],
+                                capture_output=True, check=False, timeout=15)
+    except subprocess.TimeoutExpired as error:
+        raise Invalid('Review Git lookup timed out; evidence remains unresolved') from error
+    if result.returncode:
+        raise Invalid('Review requires local committed evidence and Git 2.45+ with --no-lazy-fetch support; lookup failed')
+    return result.stdout.decode('utf-8-sig').replace('\r\n', '\n')
+
+
+def review_digest(value):
+    return hashlib.sha256(value.encode('utf-8')).hexdigest()
+
+
+def review_content(content, kind, selector):
+    """Hash bounded authored sections/symbols; positions are locators, not identity."""
+    lines = content.splitlines()
+    if kind == 'section':
+        _, headings, _ = markdown_scan(content)
+        matches = [(line, level) for name, line, level in headings if name == selector]
+        if len(matches) != 1:
+            raise Invalid('Review section must resolve to exactly one ATX heading or attached anchor')
+        start, level = matches[0]
+        end = min((line for _, line, depth in headings if line > start and depth <= level), default=len(lines))
+        # An alias immediately before the next heading belongs to that next section.
+        while end > start and (not lines[end - 1].strip() or re.fullmatch(r'''\s*<a\s+id=["'][^"']+["']\s*>\s*</a>\s*''', lines[end - 1], re.I)):
+            end -= 1
+        selected = '\n'.join(lines[start:end])
+    elif kind == 'symbol':
+        def nodes(node, prefix=''):
+            for child in ast.iter_child_nodes(node):
+                if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                    name = prefix + child.name
+                    yield name, child
+                    yield from nodes(child, name + '.')
+                else:
+                    yield from nodes(child, prefix)
+        matches = [node for name, node in nodes(ast.parse(content)) if name == selector]
+        if len(matches) != 1:
+            raise Invalid('Review symbol must resolve uniquely; update its declared route path after a move')
+        node = matches[0]
+        start = min([node.lineno, *[item.lineno for item in node.decorator_list]]) - 1
+        end = node.end_lineno
+        selected = '\n'.join(lines[start:end])
+    else:
+        start = 0
+        if kind == 'needle':
+            matches = [n for n, line in enumerate(lines) if selector in line]
+            if len(matches) != 1:
+                raise Invalid('Review needle must resolve uniquely')
+            start = matches[0]
+        selected = '\n'.join(lines)  # Non-Python source/config/test: conservative whole-file boundary.
+    return {'sha256': review_digest(selected), 'line': start + 1}
+
+
+def review_targets(row, rule):
+    config = rule['review']
+    if not isinstance(config, dict) or set(config) - {'section', 'baseline'}:
+        raise Invalid('Rule review supports section and an explicitly recorded baseline only')
+    section = config.get('section')
+    if not text(section) or section not in row.get('docs', []) or not section.partition('#')[2]:
+        raise Invalid('Review section must be an existing route docs reference with an anchor')
+    path, _, anchor = section.partition('#')
+    targets = [{'key': 'section', 'kind': 'section', 'path': path, 'selector': anchor}]
+    ids = rule.get('source_ids')
+    if not strings(ids) or not ids or len(set(ids)) != len(ids):
+        raise Invalid('Review needs unique existing rule source_ids')
+    for source_id in ids:
+        matches = [s for s in row.get('sources', []) if isinstance(s, dict) and s.get('id') == source_id]
+        if len(matches) != 1:
+            raise Invalid('Review source ID must resolve uniquely')
+        source = matches[0]
+        if text(source.get('symbol')) == text(source.get('needle')):
+            raise Invalid('Review source requires exactly one symbol or needle')
+        if not text(source.get('path')):
+            raise Invalid('Review source needs a repository-relative file path')
+        kind = 'symbol' if source.get('symbol') else 'needle'
+        if kind == 'symbol' and not source['path'].endswith('.py'):
+            raise Invalid('Review symbols use the existing Python AST contract; otherwise use a needle')
+        targets.append({'key': 'source:' + source_id, 'kind': kind, 'path': source['path'], 'selector': source[kind]})
+    tests = rule.get('tests', [])
+    if not strings(tests) or len(set(tests)) != len(tests) or any('#' in p for p in tests):
+        raise Invalid('Review rule tests must be unique whole-file paths')
+    targets.extend({'key': 'test:' + p, 'kind': 'file', 'path': p, 'selector': ''} for p in tests)
+    return targets
+
+
+def review_url(repository, revision, path, line):
+    if repository is None:
+        return None
+    if not text(repository):
+        raise Invalid('Review repository URL must be a nonempty HTTPS URL or omitted')
+    parsed = urlsplit(repository)
+    if parsed.scheme != 'https' or not parsed.netloc or parsed.username or parsed.password or parsed.query or parsed.fragment:
+        raise Invalid('Review repository URL must be an explicit HTTPS repository URL without credentials/query/fragment')
+    return repository.rstrip('/') + '/blob/' + revision + '/' + quote(path, safe='/') + '#L' + str(line)
+
+
+def review_current(root, row, rule):
+    targets = []
+    for target in review_targets(row, rule):
+        path = local(root, target['path'])
+        declared = root / target['path']
+        if not path.is_file() or any(p.is_symlink() for p in [declared, *declared.parents] if p != root and p.is_relative_to(root)):
+            raise Invalid('Review evidence must be a present regular file')
+        targets.append(dict(target, **review_content(path.read_text(encoding='utf-8-sig'), target['kind'], target['selector'])))
+    return targets
+
+
+def rule_review(root, row, rule):
+    result = {'route_id': row['id'], 'rule_id': rule['id'], 'status': 'needs_review', 'reasons': []}
+    try:
+        current = review_current(root, row, rule)
+        result['current'] = [dict(t, locator=t['path'] + '#L' + str(t['line'])) for t in current]
+        baseline = rule['review'].get('baseline')
+        if not isinstance(baseline, dict):
+            raise Invalid('No explicit review recorded')
+        revision = baseline.get('revision', '')
+        if not isinstance(revision, str) or not re.fullmatch(r'[0-9a-f]{40}|[0-9a-f]{64}', revision):
+            raise Invalid('Review revision must be a full Git commit ID')
+        if review_git(root, 'rev-parse', '--verify', revision + '^{commit}').strip() != revision:
+            raise Invalid('Review commit is unavailable')
+        prior = baseline.get('targets')
+        if not isinstance(prior, list) or not prior or any(not isinstance(t, dict) for t in prior):
+            raise Invalid('Review receipt has missing evidence')
+        keys = [t.get('key') for t in prior]
+        if len(set(keys)) != len(keys) or set(keys) != {t['key'] for t in current}:
+            raise Invalid('Review evidence selection changed or is ambiguous')
+        result['reviewed_revision'] = revision
+        result['reviewed'] = []
+        for old in prior:
+            if (type(old.get('line')) is not int or old['line'] < 1 or
+                    old.get('kind') not in {'section', 'symbol', 'needle', 'file'} or
+                    not isinstance(old.get('selector'), str) or
+                    not isinstance(old.get('sha256'), str) or not re.fullmatch(r'[0-9a-f]{64}', old['sha256'])):
+                raise Invalid('Review receipt has malformed fingerprint or locator metadata')
+            git_path = old['git_path']
+            if not text(git_path) or git_path.startswith('/') or '..' in git_path.split('/') or '\\' in git_path:
+                raise Invalid('Invalid reviewed Git path')
+            observed = review_content(review_git(root, 'show', revision + ':' + git_path), old['kind'], old['selector'])
+            if observed != {k: old[k] for k in ('sha256', 'line')}:
+                raise Invalid('Review receipt does not match its immutable Git evidence')
+            item = dict(old, git_object=revision + ':' + git_path,
+                        url=review_url(baseline.get('repository_url'), revision, git_path, old['line']))
+            result['reviewed'].append(item)
+            now = next(t for t in current if t['key'] == old['key'])
+            # Declared source path/line may move; identity, selection and bound bytes may not.
+            fields = ['kind', 'selector', 'sha256'] + ([] if now['key'].startswith('source:') else ['path'])
+            if any(now[k] != old[k] for k in fields):
+                result['reasons'].append(now['key'] + ' changed')
+        if baseline.get('statement_sha256') != review_digest(rule['statement']):
+            result['reasons'].append('rule statement changed')
+        result['status'] = 'needs_review' if result['reasons'] else 'reviewed'
+    except (ValueError, OSError, SyntaxError, TypeError, KeyError) as error:
+        result['reasons'].append(str(error))
+    return result
+
+
+def section_reviews(root, manifest, route_id=None):
+    records = [rule_review(root, row, rule) for row in manifest['routes']
+               if route_id is None or row['id'] == route_id
+               for rule in (row.get('rules', []) if isinstance(row.get('rules', []), list) else [])
+               if isinstance(rule, dict) and 'review' in rule]
+    return {'ready': all(r['status'] == 'reviewed' for r in records), 'rules': records,
+            'scope': 'Explicit review receipts and bound content drift; not semantic correctness, executed tests or runtime proof'}
+
+
+def record_review(root, manifest, route_id, rule_id, revision, repository_url=None):
+    if manifest['schema_version'] != 2:
+        raise Invalid('Section review is opt-in on existing schema 2 rules')
+    if not re.fullmatch(r'[0-9a-f]{40}|[0-9a-f]{64}', revision):
+        raise Invalid('Supply the full Git commit explicitly reviewed with --revision')
+    if review_git(root, 'rev-parse', '--verify', revision + '^{commit}').strip() != revision:
+        raise Invalid('Review revision is not an available commit')
+    repo_root = Path(review_git(root, 'rev-parse', '--show-toplevel').strip()).resolve()
+    rows = [r for r in manifest['routes'] if r['id'] == route_id]
+    if len(rows) != 1:
+        raise Invalid('Review route must resolve uniquely')
+    row = rows[0]
+    rules = [r for r in row.get('rules', []) if r['id'] == rule_id and 'review' in r]
+    if len(rules) != 1:
+        raise Invalid('Review rule must resolve uniquely and explicitly opt in')
+    rule = rules[0]
+    current = review_current(root, row, rule)
+    original_manifest = local(root, 'docs/wiki/routes.json').read_bytes()
+    # A dirty selected rule cannot be blessed under a commit that never contained it.
+    manifest_path = local(root, 'docs/wiki/routes.json')
+    committed = json.loads(review_git(root, 'show', revision + ':' + manifest_path.relative_to(repo_root).as_posix()))
+    old_rules = [r for row_ in committed['routes'] if row_['id'] == route_id for r in row_.get('rules', []) if r['id'] == rule_id]
+    if len(old_rules) != 1 or any(old_rules[0].get(k, []) != rule.get(k, []) for k in ('statement', 'source_ids', 'tests')):
+        raise Invalid('Commit the reviewed rule before recording its revision')
+    old_review = old_rules[0].get('review')
+    if not isinstance(old_review, dict) or old_review.get('section') != rule['review']['section']:
+        raise Invalid('Commit the rule opt-in and selected section before recording review')
+    old_row = next(r for r in committed['routes'] if r['id'] == route_id)
+    if rule['review']['section'] not in old_row.get('docs', []):
+        raise Invalid('Commit the selected section binding before recording review')
+    for source_id in rule['source_ids']:
+        old_sources = [s for s in old_row.get('sources', []) if isinstance(s, dict) and s.get('id') == source_id]
+        source = next(s for s in row['sources'] if s['id'] == source_id)
+        if len(old_sources) != 1 or any(old_sources[0].get(k) != source.get(k) for k in ('path', 'symbol', 'needle')):
+            raise Invalid('Commit selected source bindings before recording review')
+    for target in current:
+        target['git_path'] = local(root, target['path']).relative_to(repo_root).as_posix()
+        at_revision = review_content(review_git(root, 'show', revision + ':' + target['git_path']), target['kind'], target['selector'])
+        if at_revision != {k: target[k] for k in ('sha256', 'line')}:
+            raise Invalid('Commit selected evidence before recording its reviewed revision')
+        review_url(repository_url, revision, target['git_path'], target['line'])
+    rule['review']['baseline'] = {'revision': revision, 'statement_sha256': review_digest(rule['statement']),
+                                 'targets': current, 'repository_url': repository_url}
+    if manifest_path.read_bytes() != original_manifest:
+        raise Invalid('Manifest changed during review; no receipt written')
+    manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
+    return {'recorded': {'route_id': route_id, 'rule_id': rule_id, 'revision': revision},
+            'next': 'Review the receipt diff, then build to refresh generated locations; no authored prose or tests were edited'}
+
+
 def find_gate(root, manifest):
     """Why a find answer would not be authoritative right now; None when the gate is open."""
     report = audit(root, manifest)
@@ -933,10 +1154,15 @@ def find_gate(root, manifest):
 
 def find(root, manifest, question):
     """Authoritative owner/section/evidence or an explicit fail-closed reason; never a guessed first match."""
+    hits = rank(question, manifest['routes'])
+    if hits and (len(hits) == 1 or hits[0]['match_score'] != hits[1]['match_score']):
+        reviews = section_reviews(root, manifest, hits[0]['id'])
+        if not reviews['ready']:
+            return {'determinable': False, 'reason': 'needs_review', 'detail': 'Bound rule evidence needs explicit review; build cannot clear this state',
+                    'route_id': hits[0]['id'], 'section_reviews': reviews}
     gate = find_gate(root, manifest)
     if gate:
         return dict(determinable=False, **gate)
-    hits = rank(question, manifest['routes'])
     if not hits:
         return {'determinable': False, 'reason': 'unknown', 'detail': 'No curated route matches; repair the route instead of guessing', 'candidate_count': 0}
     if len(hits) > 1 and hits[0]['match_score'] == hits[1]['match_score']:
@@ -947,7 +1173,7 @@ def find(root, manifest, question):
     except (ValueError, OSError, SyntaxError, TypeError) as error:
         return {'determinable': False, 'reason': 'unresolved_source', 'detail': str(error), 'route_id': hits[0]['id'], 'candidate_count': len(hits)}
     evidence = row.get('evidence', {})
-    return {'determinable': True, 'owner': {'route_id': row['id'], 'title': row['title'], 'kind': row.get('kind'),
+    return {'determinable': True, **({'section_reviews': reviews} if reviews['rules'] else {}), 'owner': {'route_id': row['id'], 'title': row['title'], 'kind': row.get('kind'),
                                             'implementation': evidence.get('implementation'), 'reviewed_at': row.get('reviewed_at')},
             'sections': row.get('docs', []),
             'evidence': {'locations': [{'path': item['path'], 'line': item['line'], 'role': item['role'], 'sha256': item['sha256'],
@@ -960,16 +1186,29 @@ def find(root, manifest, question):
             'authority': 'on-disk route index matches current sources; Git provenance and semantic accuracy not verified'}
 
 
+def review_text(report):
+    lines = []
+    for rule in report.get('rules', []):
+        lines.append('  review: ' + rule['rule_id'] + ' ' + rule['status'])
+        lines.extend('    reason: ' + reason for reason in rule['reasons'])
+        lines.extend(f'    live: [{t["path"]}:{t["line"]}]({t["locator"]})' for t in rule.get('current', []))
+        for target in rule.get('reviewed', []):
+            lines.append('    reviewed: ' + (f'[{target["git_object"]}]({target["url"]})' if target['url'] else target['git_object'] + '#L' + str(target['line'])))
+    return lines
+
+
 def find_text(result):
     if not result['determinable']:
         return f'NOT DETERMINABLE ({result["reason"]}): {result["detail"]}' + (
-            '\n  candidates: ' + ', '.join(result['candidates']) if result.get('candidates') else '')
+            '\n  candidates: ' + ', '.join(result['candidates']) if result.get('candidates') else '') + (
+            '\n' + '\n'.join(review_text(result['section_reviews'])) if result.get('section_reviews') else '')
     owner, match = result['owner'], result['match']
     lines = [f'OWNER {owner["route_id"]}: {owner["title"]} [{owner["kind"]}/{owner["implementation"]}] reviewed {owner["reviewed_at"] or "unknown"}']
     lines += ['  section: ' + item for item in result['sections']]
     lines += [f'  evidence: {item["path"]}:{item["line"]} [{item["role"]}] sha256 {item["sha256"][:12]} — {item["reason"]}' for item in result['evidence']['locations']]
     lines += ['  rule: ' + rule for rule in result['evidence']['rules']]
     lines.append(f'  match: {match["score"]} vs runner-up {match["runner_up"] or "none"} {match["runner_up_score"] or ""} of {match["candidate_count"]} candidates')
+    lines.extend(review_text(result.get('section_reviews', {})))
     lines.append('  boundary: ' + (result['boundary'] or 'not recorded'))
     if result['unknowns']:
         lines.append('  unknowns: ' + ' | '.join(result['unknowns']))
@@ -1179,7 +1418,7 @@ def main(argv=None):
     require_supported_python()
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
-    for command in ('query', 'task', 'list', 'audit', 'build', 'check', 'evaluate', 'find', 'status', 'eval'):
+    for command in ('query', 'task', 'list', 'audit', 'build', 'check', 'evaluate', 'find', 'status', 'eval', 'review'):
         sub = commands.add_parser(command)
         sub.add_argument('--root', type=Path, default=Path.cwd())
         if command in ('query', 'find'):
@@ -1196,21 +1435,35 @@ def main(argv=None):
         if command == 'eval':
             sub.add_argument('--ledger', type=Path, default=None,
                              help='Opt-in: explicit local JSONL of vetted synthetic/public witnessed trials; any defect rejects the whole file')
+        if command == 'check':
+            sub.add_argument('--reviews', action='store_true', help='Fail if any opted-in rule lacks a current explicit review')
+        if command == 'review':
+            sub.add_argument('route_id')
+            sub.add_argument('rule_id')
+            sub.add_argument('--revision', required=True)
+            sub.add_argument('--repository-url', help='Explicit HTTPS repository URL for GitHub-compatible immutable blob links; never inferred from remotes')
         if command == 'task':
             sub.add_argument('task_id', nargs='?')
     args = parser.parse_args(argv)
     root = args.root.resolve()
     try:
         manifest = load(root)
+        if args.command == 'review':
+            emit(record_review(root, manifest, args.route_id, args.rule_id, args.revision, args.repository_url))
+            return 0
         if args.command == 'find':
             result = find(root, manifest, args.question)
             emit(result) if args.json else print(find_text(result))
             return 0 if result['determinable'] else 1
         if args.command == 'status':
             gate = find_gate(root, manifest)
+            reviews = section_reviews(root, manifest)
+            if not reviews['ready']:
+                gate = {'reason': 'needs_review', 'detail': 'At least one opted-in rule needs explicit evidence review'}
             emit({'wiki': 'present', 'schema_version': manifest['schema_version'], 'project': manifest['project'],
                   'route_count': len(manifest['routes']), 'find_gate': 'open' if gate is None else 'closed',
                   **({'closed_reason': gate['reason'], 'detail': gate['detail']} if gate else {}),
+                  **({'section_reviews': reviews} if reviews['rules'] else {}),
                   'measurement': NOT_MEASURED + '; opt in with eval --ledger <vetted.jsonl>',
                   'scope': 'structure and drift, not semantic truth or runtime acceptance'})
             return 0 if gate is None else 1
@@ -1256,11 +1509,14 @@ def main(argv=None):
             emit({'built': len(current['routes']), 'outputs': [machine.relative_to(root).as_posix(), human.relative_to(root).as_posix()]})
             return 0
         stale = is_stale(root, current)
-        emit({'valid': True, 'snapshot_stale': stale, 'ready': not stale,
+        reviews = section_reviews(root, manifest) if args.reviews else None
+        ready = not stale and (reviews is None or reviews['ready'])
+        emit({'valid': True, 'snapshot_stale': stale, 'ready': ready,
+              **({'section_reviews': reviews} if reviews is not None else {}),
               'route_count': len(current['routes']), 'structural_minimum': report['structural_minimum'],
               'diagram_coverage': report['diagram_coverage'],
               'scope': 'structure and drift, not semantic truth or runtime acceptance'})
-        return 1 if stale else 0
+        return 0 if ready else 1
     except MissingManifest as error:
         markers=[]
         for name in ('docs/wiki/INDEX.md','docs/wiki/MAP.md','scripts/wiki-task.ts','scripts/wiki-task.py'):
