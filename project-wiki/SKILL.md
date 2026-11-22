@@ -284,7 +284,22 @@ python3 <skill>/scripts/wiki.py audit --root <project>
 python3 <skill>/scripts/wiki.py build --root <project>
 python3 <skill>/scripts/wiki.py check --root <project>
 python3 <skill>/scripts/wiki.py evaluate --root <project> --tasks <tasks.json>
+python3 <skill>/scripts/wiki.py find --root <project> "external source"
+python3 <skill>/scripts/wiki.py status --root <project>
+python3 <skill>/scripts/wiki.py eval --root <project> --tasks <tasks.json> [--ledger <vetted.jsonl>]
 ```
+
+`find` returns the authoritative owner route, its sections and hashed source
+evidence only when the manifest exists, the audit is ready, the on-disk index is
+not stale and one candidate leads; otherwise it fails closed with an explicit
+reason (`no_wiki`, `invalid_wiki`, `stale_index`, `unknown`, `ambiguous`,
+`unresolved_source`) and never guesses. `status` shows that gate. `eval` reports
+deterministic fixture reachability separately from witnessed cold discovery,
+and explicit eligible use. Those rates require a vetted local synthetic/public
+JSONL ledger, which is rejected whole on defects and never echoed. Time savings
+are not measured by v0. An opt-in `required_routes` task field tests exact
+top-two compound coverage without redefining legacy alternative routes. These
+commands are optional; use the project's existing entry path for ordinary work.
 
 Queries resolve only the selected curated files; they read source but do not scan
 the repository or execute the application. Python supports qualified AST symbols;

@@ -23,7 +23,7 @@
           "id": "cli",
           "role": "declaration",
           "path": "project-wiki/scripts/wiki.py",
-          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate and exit codes",
+          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes",
           "symbol": "main"
         },
         {
@@ -78,7 +78,7 @@
         "inputs": [
           "--root PATH (default cwd)",
           "<root>/docs/wiki/routes.json plus the sources and Markdown anchors it names",
-          "query QUESTION [--limit 1..5] [--json]; task [TASK_ID]; evaluate --tasks PATH"
+          "query QUESTION [--limit 1..5] [--json]; task [TASK_ID]; evaluate --tasks PATH; find QUESTION [--json]; status; eval --tasks PATH [--ledger PATH.jsonl]"
         ],
         "outputs": [
           "JSON reports (plain text for list and non-JSON query)",
@@ -86,13 +86,15 @@
         ],
         "errors": [
           "{\"valid\": false, \"error\": ...} with exit 1",
-          "check exits 1 when audit is not ready or the index is stale"
+          "check exits 1 when audit is not ready or the index is stale",
+          "find/status exit 1 with reason invalid_wiki|stale_index|unknown|ambiguous|unresolved_source and 2 with reason no_wiki; eval exits 1 when the self-test fails or the opt-in ledger has any defect"
         ],
         "compatibility": "Schema 1 stays query/audit-only legacy gap analysis; build and check require schema 2. Field additions must keep existing manifests valid.",
         "failure_modes": {
           "returned": [
             "ValueError/OSError/SyntaxError/TypeError/KeyError become {\"valid\": false} and exit 1",
-            "query keeps a broken selected route as a warning with its doc pointers and exits 1"
+            "query keeps a broken selected route as a warning with its doc pointers and exits 1",
+            "find never returns a guessed owner: every closed gate is a {\"determinable\": false, \"reason\": ...} object"
           ],
           "thrown": [
             "Exception classes outside main()'s except tuple would propagate as a traceback; none identified in review"
@@ -188,23 +190,23 @@
           {
             "level": "source",
             "reference": "project-wiki/scripts/wiki.py",
-            "claim": "main, resolve_route, resolve_source, audit and rank exist as named.",
-            "revision": "5056787 working tree",
-            "observed_at": "2026-11-03"
+            "claim": "main, resolve_route, resolve_source, audit and rank exist as named; find, find_gate, read_ledger, measure and tiered_eval added for the terminal CLI.",
+            "revision": "68f6a6c working tree",
+            "observed_at": "2026-11-22"
           }
         ]
       },
       "kind": "interface",
-      "reviewed_at": "2026-11-06",
+      "reviewed_at": "2026-11-22",
       "locations": [
         {
           "id": "cli",
           "role": "declaration",
           "path": "project-wiki/scripts/wiki.py",
-          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate and exit codes",
+          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes",
           "symbol": "main",
-          "line": 925,
-          "sha256": "3cdc1294057629ea7a072fd478f47f1fa9aee376d3e235ae403acda5268cb509"
+          "line": 1168,
+          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
         },
         {
           "id": "route",
@@ -213,7 +215,7 @@
           "reason": "Validates one schema 1/2 route record, its sources, docs, rules and evidence",
           "symbol": "resolve_route",
           "line": 462,
-          "sha256": "3cdc1294057629ea7a072fd478f47f1fa9aee376d3e235ae403acda5268cb509"
+          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
         },
         {
           "id": "locate",
@@ -222,7 +224,7 @@
           "reason": "Exactly one Python symbol or needle match per source; no first-match fallback",
           "symbol": "resolve_source",
           "line": 159,
-          "sha256": "3cdc1294057629ea7a072fd478f47f1fa9aee376d3e235ae403acda5268cb509"
+          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
         },
         {
           "id": "audit",
@@ -231,7 +233,7 @@
           "reason": "Per-route structural score against min_structural_score; readiness",
           "symbol": "audit",
           "line": 599,
-          "sha256": "3cdc1294057629ea7a072fd478f47f1fa9aee376d3e235ae403acda5268cb509"
+          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
         },
         {
           "id": "rank",
@@ -240,7 +242,7 @@
           "reason": "Alias/title/id matching that orders query hits",
           "symbol": "rank",
           "line": 711,
-          "sha256": "3cdc1294057629ea7a072fd478f47f1fa9aee376d3e235ae403acda5268cb509"
+          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
         },
         {
           "id": "ci",
@@ -258,7 +260,7 @@
           "symbol": "diagram_review",
           "reason": "Bounded changed-file candidates through existing diagram source IDs",
           "line": 650,
-          "sha256": "3cdc1294057629ea7a072fd478f47f1fa9aee376d3e235ae403acda5268cb509"
+          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
         }
       ]
     },
