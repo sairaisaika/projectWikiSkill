@@ -1,95 +1,97 @@
-# projectWikiSkill
+# ProjectWikiSkill
 
-Use [$project-wiki](project-wiki/SKILL.md) to connect a project task to its rules,
-implementation, knowledge structure and verified return. Keep the project's native
-Wiki as the fact owner; the skill supplies the working method.
+### Know what you're changing before you change it.
 
-- Start a real task: [skill entry](project-wiki/SKILL.md#choose-the-work).
-- Decide where new knowledge belongs, diagnose a missed rule, or migrate a page:
-  [Wiki evolution](project-wiki/references/wiki-evolution.md).
-- Capture and return work across agents: [collaboration workflow](project-wiki/references/collaboration-workflow.md).
-- Run the helper or package it: [usage](README.md#使用).
-- Maintain this repository: [engineering entry](docs/wiki/engineering-entry.md).
+Back after a week away, you pick up an API someone else changed. The code is familiar; which document still describes what callers rely on?
 
-The version identity is [`plugin.json`](plugin.json). What is verified for each version
-(CI, main, package, installed hosts, hooks, delivery, use) is one table in
-[docs/wiki/status.md](docs/wiki/status.md). Version history is in
-[CHANGELOG.md](CHANGELOG.md); measured evidence is in
-[evals/reports/](evals/reports/README.md).
+PWS is a portable Skill that connects that question to the project's Wiki, implementation and checks — so the next change starts with evidence, and the next person can find it again.
 
-让项目 Wiki 成为比猜文件名、全仓搜索更省事的工程入口。
+**English** · [简体中文](README.zh-CN.md)
 
-可安装 skill 在 [`project-wiki/`](project-wiki/SKILL.md)，名称为 `$project-wiki`。它将问题、精确源码位置、接口契约、规则、影响面、检查与证据边界连接起来；分别量化结构完整度、任务路由表现、语义核验和实际使用效果，避免一个总分掩盖未知。
+**[Try it without a plugin ↓](README.md#quick-start)** · [Use with your agent](README.md#install) · [PWS's own Wiki](docs/wiki/engineering-entry.md)
 
-- [了解项目与导读](project-wiki/references/learning-and-orientation.md)：从产品、角色和跨域例子建立理解；区分全文阅读与导语巡读，理解验收与任务定位分别评价。
-- [功能闭环规则](project-wiki/references/feature-completeness.md)：所有功能按用户结果核必要能力与八维证据；文档结构、实现接通、运行验收分别判，缺口不能当完成。
-- [结构契约](project-wiki/references/route-contract.md)：接口声明、实现、消费者、规则来源、失败与兼容、精确定位。
-- [量化模型](project-wiki/references/quality-model.md)：100 分结构量表、任务命中率与独立演练指标。
-- [持续维护](project-wiki/references/maintenance.md)：改动触发、计划交付、漂移检查、CI 与交接。
-- [既有 Wiki 接入](project-wiki/references/native-wiki-adoption.md)：复用原生索引与闸，恢复中断审阅，沿生产者、消费者、部署证据核验事实；不强制迁移到第二套 manifest。
-- [六图框架](project-wiki/references/diagram-framework.md)：架构、流程、时序、数据模型、部署、状态六种视角的职责与项目级覆盖检查。
-- [工程深度](project-wiki/references/engineering-depth.md)：字段/单位/字节布局、状态守卫与上下文、重试和资源边界、轻量决策记录。
-- [复合改动定位](project-wiki/references/change-navigation.md)：任务地图、内部编辑接缝、捕获范围、共用规则与完整工作面验收。
+<a name="one-question-a-useful-starting-point"></a>
+## From a guess to a change you can explain
 
-## 使用
+**Before:** “The service failed. Can I just return an empty list?”
 
-### 在 Claude Code 安装插件
+<img src="docs/assets/question-to-evidence.svg" width="640" alt="Four steps in the offline example: ask whether failure means empty; read the Wiki contract where None differs from an empty list; inspect service.py and client.py; verify test_contracts.py." />
 
-在终端运行：
+**After checking the example:** `None` means unavailable; `[]` means a successful empty result. The service preserves that distinction, while the legacy client loses the precise error. Returning an empty list on failure would erase information the contract requires.
+
+You now have a [contract to preserve](evals/fixture-project/docs/wiki/interfaces.md#public-api), an [implementation](evals/fixture-project/src/service.py) and [caller](evals/fixture-project/src/client.py) to inspect, and [focused tests](evals/fixture-project/tests/test_contracts.py) to run. The [diagnostic exercise](evals/fixture-project/tests/test_diagnostic_evidence.py) shows how to check the evidence, too. This is a synthetic offline example, not a production incident.
+
+## Quick start
+
+**Run the offline example.** No agent, plugin or API key is needed. From a checkout of this repository, confirm **Python 3.10+** with `python --version`, then paste this single line (also suitable for Windows PowerShell):
+
+```sh
+python project-wiki/scripts/wiki.py query --root evals/fixture-project "How are service client failures handled?" --limit 1
+```
+
+The result names `public-api`, links the contract and source locations above, and identifies the two test files. It locates checks; it does not execute them or prove live service behavior.
+
+The helpers use only the Python standard library. On macOS/Linux, if your compatible interpreter is named `python3`, confirm `python3 --version` and use `python3` instead.
+
+<a name="使用"></a>
+<a name="独立-skill-与-python-工具"></a>
+## Install
+
+**A plugin is optional. Reading the Skill is enough to start.**
+
+The reusable unit is the **whole [`project-wiki/` directory](project-wiki/SKILL.md)**, including its references, scripts and metadata. Choose the path your tools support:
+
+<a name="any-coding-agent-that-can-read-project-files"></a>
+### Read it with any coding agent
+
+Check out this repository where your agent can read it, or copy the whole directory into a project-approved, shareable location. Then explicitly ask the agent to use it:
+
+> Read `project-wiki/SKILL.md` first. For this task, follow the relevant linked references and the project's existing Wiki. Find the owning pages, verify the source and checks, and return durable decisions and evidence to their existing owner.
+
+Adjust that entry path to its actual location. This is **explicit use** of project files; it does not register the Skill or promise automatic discovery.
+
+<a name="a-host-with-a-skill-loader"></a>
+### Let a Skill loader find it
+
+Place the same whole directory in the host's **documented Skill discovery path**, then use its documented invocation. Discovery and compatibility depend on the host; no universal installer is assumed.
+
+<a name="codex-standalone-skill"></a>
+<a name="在-claude-code-安装插件"></a>
+<a name="claude-code-marketplace-plugin"></a>
+<details>
+<summary><strong>Optional host setup: Codex, Claude Code, Marketplace and hooks</strong></summary>
+
+- **[Codex](https://developers.openai.com/codex/skills):** project-local `.agents/skills/project-wiki/`; invoke `$project-wiki`.
+- **[Claude Code](https://code.claude.com/docs/en/skills):** project-local `.claude/skills/project-wiki/`; invoke `/project-wiki`.
+
+Follow each host's documentation for user-wide paths and discovery. These examples do not establish support for other hosts or their hooks.
+
+**Claude Code Marketplace** is another optional entry:
 
 ```sh
 claude plugin marketplace add sairaisaika/projectWikiSkill
 claude plugin install project-wiki@project-wiki
 ```
 
-在新会话中使用 `/project-wiki:project-wiki`。用 `claude plugin details project-wiki@project-wiki`
-核对组件。此入口加载仓库中的 `project-wiki/`，包含一个 skill。可选 hooks 使用下文的独立打包方式。
-已安装同名本地市场版本时，先查看 `claude plugin list`，再选择要保留的安装来源。
+In a new session, invoke `/project-wiki:project-wiki`. This marketplace entry exposes one Skill, without hooks. Inspect components with `/plugin`; if another marketplace supplies the same name, check `claude plugin list` before choosing a source. See [Claude's plugin guide](https://code.claude.com/docs/en/discover-plugins).
 
-### 独立 Skill 与 Python 工具
+Optional `SessionStart` integration and the Claude-only `PreToolUse` gate are documented in [lifecycle delivery](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery). They are separate from explicit use and the Python demo; packaging does not install or grant trust to hooks.
 
-将整个 `project-wiki` 文件夹放入目标工具支持的 skills 目录，或通过支持 GitHub 子目录的 skill 安装器从本仓 `project-wiki` 子目录安装。安装位置由用户决定，仓库内容不自动修改本机配置。
+</details>
 
-Python 3.10+ 即可运行工具，无第三方依赖。macOS 自带的 `/usr/bin/python3` 可能是 3.9；先用 `python3 --version` 确认，必要时改用 `python3.12` 等较新解释器（旧版本会直接报错并退出）：
+## Use it on your project
 
-```sh
-python project-wiki/scripts/wiki.py query --root <project> "外部源端口"
-python project-wiki/scripts/wiki.py task --root <project>
-python project-wiki/scripts/wiki.py task <task-id> --root <project>
-python project-wiki/scripts/wiki.py list --root <project>
-python project-wiki/scripts/wiki.py audit --root <project>
-python project-wiki/scripts/wiki.py build --root <project>
-python project-wiki/scripts/wiki.py check --root <project>
-python project-wiki/scripts/wiki.py evaluate --root <project> --tasks <tasks.json>
-```
+**Ask → locate → verify → return.** Start at the [task menu](project-wiki/SKILL.md#choose-the-work). Your native Wiki stays the authority: [reuse its navigation and checks](project-wiki/references/native-wiki-adoption.md), and leave a small edit in a known file on the project's lightweight path.
 
-`wiki.py` reads a schema 1 or 2 manifest at `docs/wiki/routes.json`. Entry points:
+The runnable example uses PWS's route format. For an existing project, choose helpers through the adoption guide; a missing `routes.json` is not a reason to replace the project's own navigation.
 
-| Script | Commands | Boundary |
-|---|---|---|
-| `project-wiki/scripts/wiki.py` | `query`, `task`, `list`, `audit`, `build`, `check`, `evaluate` | Route-manifest navigation, structural audit and routing evaluation |
-| `project-wiki/scripts/workflow.py` | `capture`, `capture-return`, `start`, `delegate`, `show` (`--snapshot-only`), `review-template`, `finish` | Revision-bound native Wiki context, delegation and diff reconciliation; `capture` and `capture-return` run only an explicit caller-supplied native argv. See [collaboration workflow](project-wiki/references/collaboration-workflow.md) |
-| `project-wiki/scripts/edit_gate.py` | none: reads one Claude `PreToolUse` event on stdin | Optional pre-edit gate, active only in a checkout holding `.project-wiki/edit-gate.json`. See [pre-edit gate](project-wiki/references/maintenance.md#pre-edit-gate-host-delivery-of-wiki-first) |
-| `scripts/package_plugin.py` | `--output <new-directory>` `[--with-lifecycle-hooks [--hook-layout legacy\|portable]]` | Builds a package from the canonical skill; default is skill-only; writes no host configuration |
-| `scripts/plugin_doctor.py` | `--package <package>` `[--source <checkout>]`, optional saved `--codex-inventory`/`--codex-marketplace`/`--codex-version-file`/`--codex-hooks`/`--codex-hooks-cwd`, `--claude-transcript` | Inspects package/source closure and caller-saved host snapshots; never enables, trusts or runs hooks |
+<a name="cli-reference"></a>
+## Guides
 
-The hook profile (`--with-lifecycle-hooks`) adds `hooks/codex.json` and
-`hooks/claude.json`: `SessionStart` saved-task delivery through `lifecycle.py`, plus
-the Claude-only `PreToolUse` edit gate. See
-[optional lifecycle delivery](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery).
+- **Choose a task:** the [Skill's task menu](project-wiki/SKILL.md#choose-the-work) links to the relevant method, from orientation to maintenance and handoff.
+- **Use the Python tools:** the [Wiki helper contract](docs/wiki/architecture.md#wiki-helper) and [workflow commands](project-wiki/references/collaboration-workflow.md) explain inputs, outputs and limits.
+- **Contribute to PWS:** the [maintainer entry](docs/wiki/engineering-entry.md) owns architecture, packaging and repository checks.
 
-可以先在本仓完整样例上运行：
+## Repository status
 
-```sh
-python project-wiki/scripts/wiki.py build --root evals/fixture-project
-python project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --tasks evals/tasks.json
-python -m unittest discover -s tests -v
-```
-
-六图样例的可选渲染验收使用 `node evals/render-diagrams.mjs`，需要可用的 Playwright 与 Chrome；可用 `WIKI_PLAYWRIGHT_MODULE` 指向已有模块、`WIKI_BROWSER_CHANNEL` 选择浏览器。工具不自动安装依赖，默认输出到临时目录；Mermaid CDN 可由 `WIKI_MERMAID_URL` 指定固定版本。核心 Python 工具仍无第三方依赖。
-
-各类分数与采用证据分层报告，见 [量化模型](project-wiki/references/quality-model.md) 与 [docs/wiki/status.md](docs/wiki/status.md)。仅 `build` 写生成索引；其余命令不执行目标项目或清单中的检查命令。
-
-项目起源于两个共用 Wiki 的开源仓库的接口改进演练；skill 是通用工程方法，不要求固定技术栈、固定页数或每个功能画六张图。
-
-[验证记录](evals/reports/README.md)：结构评分、任务自测、独立试用与真实项目采用记录；逐版本状态见 [docs/wiki/status.md](docs/wiki/status.md)。
+For verified versions and evidence, see [status](docs/wiki/status.md#current-state), the [canonical manifest](plugin.json), [changelog](CHANGELOG.md) and [evaluation reports](evals/reports/README.md).
