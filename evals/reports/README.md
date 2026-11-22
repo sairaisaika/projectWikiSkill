@@ -1,5 +1,7 @@
 # Validation scope
 
+- [Section evidence review pilot](2026-11-22-section-review.md): explicit Git receipts, rebuild persistence and false-positive controls on the public offline fixture.
+
 These reports describe measured runs, not expected scores to copy into a new project.
 
 | Artifact | What it establishes | Limits |

@@ -64,7 +64,9 @@ Selected-page freshness opt-in is guarded by `test_page_hashes_reject_fresh_stam
 
 | Invariant | Enforced in | Guarding tests | Gap |
 |---|---|---|---|
-| `wiki.py` never executes recorded commands. Route `checks` are validated as data only. | `wiki.py` module (imports neither `subprocess` nor `os`); `wiki.py:resolve_route` ("commands are never executed") | `tests/test_wiki.py::WikiTests.test_commands_are_data_never_executed` | Gap: that test exercises only `audit`, `query` and `build`, not `check`, `evaluate`, `task` or `list`. No test asserts the import surface. |
+| `wiki.py` never executes recorded commands. Route `checks` are validated as data only. | `wiki.py` module (review uses fixed read-only Git argv, never recorded check commands); `wiki.py:resolve_route` ("commands are never executed") | `tests/test_wiki.py::WikiTests.test_commands_are_data_never_executed` | Gap: that test exercises only `audit`, `query` and `build`, not `check`, `evaluate`, `task` or `list`. No test asserts the import surface. |
+
+Opted-in rule review receipts survive index rebuilds: relevant section/source/test changes remain `needs_review`; explicit committed review alone clears it. Pure declared symbol moves and adjacent prose are controls. `tests/test_section_review.py` verifies these boundaries with real temporary Git and the public offline fixture. See [the review contract](../../project-wiki/references/route-contract.md#opt-in-section-evidence-review).
 
 ## Regenerating the test list
 

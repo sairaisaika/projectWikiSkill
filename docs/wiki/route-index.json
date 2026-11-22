@@ -23,7 +23,7 @@
           "id": "cli",
           "role": "declaration",
           "path": "project-wiki/scripts/wiki.py",
-          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes",
+          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes; opt-in review receipts",
           "symbol": "main"
         },
         {
@@ -67,27 +67,45 @@
           "path": "project-wiki/scripts/wiki.py",
           "symbol": "diagram_review",
           "reason": "Bounded changed-file candidates through existing diagram source IDs"
+        },
+        {
+          "id": "section-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "section_reviews",
+          "reason": "Existing rule evidence drift and retained explicit Git review baseline"
+        },
+        {
+          "id": "record-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "record_review",
+          "reason": "Explicit committed evidence review receipt; never an automatic rebuild acknowledgement"
         }
       ],
       "docs": [
         "docs/wiki/architecture.md#wiki-helper",
         "docs/wiki/invariants.md#wiki-helper-wikipy",
-        "project-wiki/references/route-contract.md#field-semantics"
+        "project-wiki/references/route-contract.md#field-semantics",
+        "project-wiki/references/route-contract.md#opt-in-section-evidence-review"
       ],
       "interface": {
         "inputs": [
           "--root PATH (default cwd)",
           "<root>/docs/wiki/routes.json plus the sources and Markdown anchors it names",
-          "query QUESTION [--limit 1..5] [--json]; task [TASK_ID]; evaluate --tasks PATH; find QUESTION [--json]; status; eval --tasks PATH [--ledger PATH.jsonl]"
+          "query QUESTION [--limit 1..5] [--json]; task [TASK_ID]; evaluate --tasks PATH; find QUESTION [--json]; status; eval --tasks PATH [--ledger PATH.jsonl]",
+          "Optional rule review.section; review ROUTE RULE --revision FULL_COMMIT [--repository-url URL]; check --reviews"
         ],
         "outputs": [
           "JSON reports (plain text for list and non-JSON query)",
-          "build writes only docs/wiki/route-index.json and route-index.md"
+          "build writes only docs/wiki/route-index.json and route-index.md",
+          "Explicit review writes only baseline receipts on existing rules; find/status expose needs_review and live/reviewed evidence locators"
         ],
         "errors": [
           "{\"valid\": false, \"error\": ...} with exit 1",
           "check exits 1 when audit is not ready or the index is stale",
-          "find/status exit 1 with reason invalid_wiki|stale_index|unknown|ambiguous|unresolved_source and 2 with reason no_wiki; eval exits 1 when the self-test fails or the opt-in ledger has any defect"
+          "find/status exit 1 with reason invalid_wiki|stale_index|unknown|ambiguous|unresolved_source and 2 with reason no_wiki; eval exits 1 when the self-test fails or the opt-in ledger has any defect",
+          "Opted-in missing/ambiguous/changed evidence or unavailable reviewed Git commit fails closed; build never clears review"
         ],
         "compatibility": "Schema 1 stays query/audit-only legacy gap analysis; build and check require schema 2. Field additions must keep existing manifests valid.",
         "failure_modes": {
@@ -148,6 +166,18 @@
             "tests/test_wiki.py",
             "tests/test_skill_package.py"
           ]
+        },
+        {
+          "id": "review-survives-rebuild",
+          "statement": "A generated index is not a section evidence review; only explicit committed review replaces the baseline.",
+          "source_ids": [
+            "section-review",
+            "record-review",
+            "cli"
+          ],
+          "tests": [
+            "tests/test_section_review.py"
+          ]
         }
       ],
       "impact": [
@@ -160,7 +190,8 @@
         "tests/test_engineering_depth.py",
         "tests/test_skill_package.py",
         "tests/test_context_reading.py",
-        "tests/test_diagram_lifecycle.py"
+        "tests/test_diagram_lifecycle.py",
+        "tests/test_section_review.py"
       ],
       "checks": [
         {
@@ -180,7 +211,7 @@
           "scope": "Structure and drift of this maintainer wiki; not semantic truth."
         }
       ],
-      "boundary": "Structural scoring and source-position drift only; semantic accuracy and independent adoption are not measured.",
+      "boundary": "Structural/index checks plus optional selected evidence drift; no semantic, signature, executed-test or runtime proof.",
       "unknowns": [
         "Whether the structural score correlates with editing success in a consumer project."
       ],
@@ -203,10 +234,10 @@
           "id": "cli",
           "role": "declaration",
           "path": "project-wiki/scripts/wiki.py",
-          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes",
+          "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes; opt-in review receipts",
           "symbol": "main",
-          "line": 1178,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "line": 1407,
+          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
         },
         {
           "id": "route",
@@ -214,8 +245,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Validates one schema 1/2 route record, its sources, docs, rules and evidence",
           "symbol": "resolve_route",
-          "line": 466,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "line": 468,
+          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
         },
         {
           "id": "locate",
@@ -223,8 +254,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Exactly one Python symbol or needle match per source; no first-match fallback",
           "symbol": "resolve_source",
-          "line": 163,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "line": 165,
+          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
         },
         {
           "id": "audit",
@@ -232,8 +263,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Per-route structural score against min_structural_score; readiness",
           "symbol": "audit",
-          "line": 603,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "line": 605,
+          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
         },
         {
           "id": "rank",
@@ -241,8 +272,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Alias/title/id matching that orders query hits",
           "symbol": "rank",
-          "line": 715,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "line": 717,
+          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
         },
         {
           "id": "ci",
@@ -259,8 +290,26 @@
           "path": "project-wiki/scripts/wiki.py",
           "symbol": "diagram_review",
           "reason": "Bounded changed-file candidates through existing diagram source IDs",
-          "line": 654,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "line": 656,
+          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+        },
+        {
+          "id": "section-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "section_reviews",
+          "reason": "Existing rule evidence drift and retained explicit Git review baseline",
+          "line": 1078,
+          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+        },
+        {
+          "id": "record-review",
+          "role": "implementation",
+          "path": "project-wiki/scripts/wiki.py",
+          "symbol": "record_review",
+          "reason": "Explicit committed evidence review receipt; never an automatic rebuild acknowledgement",
+          "line": 1087,
+          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
         }
       ]
     },

@@ -7,6 +7,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import unittest
+from unittest import mock
 from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[1]
@@ -300,13 +301,17 @@ class TerminalCliTests(unittest.TestCase):
         self.assertNotIn('DO_NOT_ECHO', output)
         self.assertFalse(json.loads(output)['tiers']['witnessed']['probe_validated'])
 
-    def test_existing_commands_and_import_surface_are_unchanged(self):
+    def test_non_opted_in_commands_never_start_subprocesses(self):
         code, output = self.call('evaluate', '--tasks', str(REPO / 'evals/tasks.json'))
         self.assertEqual(code, 0)
         self.assertEqual(json.loads(output), wiki.evaluate(self.root, self.manifest, wiki.read_json(REPO / 'evals/tasks.json')))
         source = HELPER.read_text(encoding='utf-8')
         self.assertNotIn('import os', source)
-        self.assertNotIn('subprocess', source)
+        with mock.patch.object(wiki.subprocess, 'run', side_effect=AssertionError('No Git/project process without opt-in')):
+            for args in [('evaluate', '--tasks', str(REPO / 'evals/tasks.json')), ('find', KNOWN),
+                         ('status',), ('check',), ('build',), ('query', KNOWN), ('audit',), ('list',), ('task',)]:
+                with self.subTest(command=args[0]):
+                    self.assertEqual(self.call(*args)[0], 0)
 
 
 if __name__ == '__main__':
