@@ -214,7 +214,7 @@ class SectionReviewTests(unittest.TestCase):
         self.save();self.call('build')
         self.assertEqual(self.find()[1]['reason'], 'needs_review')
         self.rule['review']['baseline'] = copy.deepcopy(baseline)
-        self.rule['review']['baseline']['targets'][0]['line'] = True
+        self.rule['review']['baseline']['targets'][-1]['line'] = True
         self.save();self.call('build')
         self.assertEqual(self.find()[1]['reason'], 'needs_review')
         self.rule['review']['baseline'] = baseline
