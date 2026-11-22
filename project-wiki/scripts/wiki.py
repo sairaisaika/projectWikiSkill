@@ -32,6 +32,10 @@ LEVELS = {'source', 'offline-tested', 'installed', 'live-verified'}
 DIAGRAM_KINDS = {'architecture', 'flow', 'sequence', 'data-model', 'deployment', 'state-machine'}
 STOP = {'a', 'an', 'the', 'to', 'of', 'for', 'and', 'or', 'is', 'it', 'in', 'on',
         'i', 'we', 'how', 'what', 'does', 'do', 'can', 'this', 'that', 'with', 'my'}
+# Treat Han next to an ASCII word as a boundary for exact ASCII aliases only.
+HAN = r'\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\U00020000-\U000323AF'
+HAN_ASCII_BOUNDARY = re.compile(
+    rf'(?<=[A-Za-z0-9_])(?=[{HAN}])|(?<=[{HAN}])(?=[A-Za-z0-9_])')
 
 
 def text(value):
@@ -713,17 +717,23 @@ def rank(query, routes):
     if not value:
         return []
     tokens = words(value)
+    ascii_value = HAN_ASCII_BOUNDARY.sub(' ', value)
+    new_tokens = words(ascii_value) - tokens if ascii_value != value else set()
     hits = []
     for row in routes:
         aliases = [row['id'], row['title'], *row.get('aliases', [])]
         points = 0
+        exact_split_tokens = set()
         for alias in aliases:
             alias = alias.casefold().strip()
-            matched = (re.search(r'(?<!\w)' + re.escape(alias) + r'(?!\w)', value) is not None
-                       if alias.isascii() else alias in value)
+            ascii_alias = alias.isascii()
+            matched = (re.search(r'(?<!\w)' + re.escape(alias) + r'(?!\w)', ascii_value) is not None
+                       if ascii_alias else alias in value)
             if matched:
                 points += 10 + min(len(alias), 30) / 10
-        points += len(tokens & words(' '.join(aliases)))
+                if ascii_alias and new_tokens:
+                    exact_split_tokens.update(words(alias) & new_tokens)
+        points += len(tokens & words(' '.join(aliases))) + len(exact_split_tokens)
         if points:
             hits.append((points, row))
     return [dict(row, match_score=round(points, 2))
@@ -907,6 +917,249 @@ def evaluate(root, manifest, taskfile):
             'task_map_scope': 'Declared expected IDs only; not semantic impact completeness'}
 
 
+NOT_MEASURED = 'not measured'
+
+
+def find_gate(root, manifest):
+    """Why a find answer would not be authoritative right now; None when the gate is open."""
+    report = audit(root, manifest)
+    if not report['ready']:
+        broken = [row['id'] for row in report['routes'] if not row['valid']]
+        return {'reason': 'invalid_wiki', 'detail': 'audit is not ready; routes with errors: ' + (', '.join(broken) or 'none') + '; see audit'}
+    if is_stale(root, snapshot(root, manifest)):
+        return {'reason': 'stale_index', 'detail': 'docs/wiki/route-index.* does not match current sources; rerun build after review'}
+    return None
+
+
+def find(root, manifest, question):
+    """Authoritative owner/section/evidence or an explicit fail-closed reason; never a guessed first match."""
+    gate = find_gate(root, manifest)
+    if gate:
+        return dict(determinable=False, **gate)
+    hits = rank(question, manifest['routes'])
+    if not hits:
+        return {'determinable': False, 'reason': 'unknown', 'detail': 'No curated route matches; repair the route instead of guessing', 'candidate_count': 0}
+    if len(hits) > 1 and hits[0]['match_score'] == hits[1]['match_score']:
+        tied = [row['id'] for row in hits if row['match_score'] == hits[0]['match_score']]
+        return {'determinable': False, 'reason': 'ambiguous', 'detail': 'Top candidates tie; split the question or add aliases', 'candidates': tied, 'candidate_count': len(hits)}
+    try:
+        row = resolve_route(root, hits[0], manifest['schema_version'])
+    except (ValueError, OSError, SyntaxError, TypeError) as error:
+        return {'determinable': False, 'reason': 'unresolved_source', 'detail': str(error), 'route_id': hits[0]['id'], 'candidate_count': len(hits)}
+    evidence = row.get('evidence', {})
+    return {'determinable': True, 'owner': {'route_id': row['id'], 'title': row['title'], 'kind': row.get('kind'),
+                                            'implementation': evidence.get('implementation'), 'reviewed_at': row.get('reviewed_at')},
+            'sections': row.get('docs', []),
+            'evidence': {'locations': [{'path': item['path'], 'line': item['line'], 'role': item['role'], 'sha256': item['sha256'],
+                                        'reason': item.get('reason', '')} for item in row['locations']],
+                         'observations': evidence.get('observations', []), 'rules': [rule['statement'] for rule in row.get('rules', [])],
+                         'tests': row.get('tests', []), 'checks': [check['command'] for check in row.get('checks', [])]},
+            'boundary': row.get('boundary'), 'unknowns': row.get('unknowns', []),
+            'match': {'score': row['match_score'], 'runner_up': hits[1]['id'] if len(hits) > 1 else None,
+                      'runner_up_score': hits[1]['match_score'] if len(hits) > 1 else None, 'candidate_count': len(hits)},
+            'authority': 'on-disk route index matches current sources; Git provenance and semantic accuracy not verified'}
+
+
+def find_text(result):
+    if not result['determinable']:
+        return f'NOT DETERMINABLE ({result["reason"]}): {result["detail"]}' + (
+            '\n  candidates: ' + ', '.join(result['candidates']) if result.get('candidates') else '')
+    owner, match = result['owner'], result['match']
+    lines = [f'OWNER {owner["route_id"]}: {owner["title"]} [{owner["kind"]}/{owner["implementation"]}] reviewed {owner["reviewed_at"] or "unknown"}']
+    lines += ['  section: ' + item for item in result['sections']]
+    lines += [f'  evidence: {item["path"]}:{item["line"]} [{item["role"]}] sha256 {item["sha256"][:12]} — {item["reason"]}' for item in result['evidence']['locations']]
+    lines += ['  rule: ' + rule for rule in result['evidence']['rules']]
+    lines.append(f'  match: {match["score"]} vs runner-up {match["runner_up"] or "none"} {match["runner_up_score"] or ""} of {match["candidate_count"]} candidates')
+    lines.append('  boundary: ' + (result['boundary'] or 'not recorded'))
+    if result['unknowns']:
+        lines.append('  unknowns: ' + ' | '.join(result['unknowns']))
+    return '\n'.join(lines)
+
+
+LEDGER_FIELDS = {
+    'ledger': {'record', 'schema_version', 'project', 'data_class', 'predicate_version'},
+    'baseline': {'record', 'id', 'query', 'method', 'elapsed_seconds'},
+    'trial': {'record', 'id', 'query', 'condition', 'witness', 'eligible', 'route_id', 'found', 'cold', 'used', 'elapsed_seconds', 'baseline_id'},
+}
+CONDITIONS = {'wiki', 'stale', 'no-wiki'}
+WITNESSES = {'independent', 'self'}
+
+
+def read_ledger(path, manifest):
+    """Strictly validate an explicit local JSONL ledger; any defect rejects the whole file."""
+    def reject(line, message):
+        raise Invalid(f'ledger line {line}: {message}')
+
+    def seconds(value, line):
+        if type(value) not in (int, float) or not 0 <= value <= 86400:
+            reject(line, 'elapsed_seconds must be between 0 and 86400')
+
+    try:
+        if not path.is_file():
+            raise Invalid('ledger must be a readable regular file')
+        with path.open('rb') as stream:
+            contents = stream.read(1_048_577)
+        if len(contents) > 1_048_576:
+            raise Invalid('ledger exceeds 1 MiB')
+        raw = contents.decode('utf-8-sig').split('\n')
+    except (OSError, UnicodeError):
+        raise Invalid('ledger must be a readable UTF-8 file') from None
+    if raw and raw[-1] == '':
+        raw.pop()
+    if not raw:
+        raise Invalid('ledger is empty; the first line must be the ledger header record')
+    header, baselines, trials = None, {}, {}
+    for number, line in enumerate(raw, 1):
+        if not line.strip():
+            reject(number, 'blank line')
+        if len(line) > 4096:
+            reject(number, 'record exceeds 4096 characters')
+        def no_duplicate_keys(pairs):
+            result = {}
+            for key, value in pairs:
+                if key in result:
+                    raise ValueError('duplicate key')
+                result[key] = value
+            return result
+        try:
+            record = json.loads(line, object_pairs_hook=no_duplicate_keys)
+        except (ValueError, RecursionError):
+            reject(number, 'invalid JSON or duplicate field')
+        if not isinstance(record, dict) or record.get('record') not in tuple(LEDGER_FIELDS):
+            reject(number, 'record must be an object with record ledger|baseline|trial')
+        kind = record['record']
+        if set(record) != LEDGER_FIELDS[kind]:
+            reject(number, f'{kind} fields must be exactly {sorted(LEDGER_FIELDS[kind])}')
+        if kind == 'ledger':
+            if number != 1 or header is not None:
+                reject(number, 'ledger header must be the first and only header record')
+            if record['schema_version'] != 1 or type(record['schema_version']) is not int:
+                reject(number, 'ledger schema_version must be 1')
+            if record['project'] != manifest['project']:
+                reject(number, 'ledger project does not match manifest project')
+            if record['data_class'] not in ('synthetic', 'public'):
+                reject(number, 'data_class must be synthetic or public; private or raw transcripts are refused')
+            if not text(record['predicate_version']):
+                reject(number, 'predicate_version must be a nonempty string')
+            header = record
+            continue
+        if header is None:
+            reject(number, 'ledger header must come first')
+        if not text(record['id']) or record['id'] in baselines or record['id'] in trials:
+            reject(number, 'id must be a nonempty string unique across baselines and trials')
+        if not text(record['query']):
+            reject(number, 'query must be a nonempty string')
+        seconds(record['elapsed_seconds'], number)
+        if kind == 'baseline':
+            if not text(record['method']):
+                reject(number, 'baseline method must be a nonempty string')
+            baselines[record['id']] = record
+            continue
+        if record['condition'] not in tuple(CONDITIONS) or record['witness'] not in tuple(WITNESSES):
+            reject(number, 'condition must be wiki|stale|no-wiki and witness independent|self')
+        if any(type(record[key]) is not bool for key in ('eligible', 'found', 'cold', 'used')):
+            reject(number, 'eligible, found, cold and used must be booleans')
+        if record['used'] and not (record['eligible'] and record['found'] and record['condition'] == 'wiki'):
+            reject(number, 'used requires eligible wiki-condition discovery')
+        route = record['route_id']
+        if route is not None and (not text(route) or route not in {row['id'] for row in manifest['routes']}):
+            reject(number, 'route_id is not in this manifest')
+        if record['found'] != (route is not None):
+            reject(number, 'found=true requires a route_id and found=false requires route_id null')
+        if record['baseline_id'] is not None and not text(record['baseline_id']):
+            reject(number, 'baseline_id must be null or a nonempty string')
+        trials[record['id']] = (number, record)
+    if header is None:
+        raise Invalid('ledger line 1: missing ledger header record')
+    paired = set()
+    for number, trial in trials.values():
+        ref = trial['baseline_id']
+        if ref is None:
+            continue
+        if ref in paired or not trial['used']:
+            reject(number, 'baseline must be unique to one eligible trial that used the wiki')
+        paired.add(ref)
+        if ref not in baselines:
+            reject(number, 'baseline_id does not name a baseline record')
+        if baselines[ref]['query'] != trial['query']:
+            reject(number, 'baseline query differs from the trial query; pairs must share the exact query')
+    return header, list(baselines.values()), [trial for _, trial in trials.values()]
+
+
+def measure(manifest, header, baselines, trials):
+    """Witnessed-use tiers with explicit denominators; no savings claim without a paired baseline."""
+    wiki = [row for row in trials if row['condition'] == 'wiki']
+    eligible = [row for row in wiki if row['eligible']]
+    independent = [row for row in eligible if row['witness'] == 'independent' and row['cold']]
+    selfw = [row for row in eligible if row['witness'] == 'self' and row['cold']]
+    def matches_leader(row):
+        top = rank(row['query'], manifest['routes'])
+        return bool(top and top[0]['id'] == row['route_id']
+                    and (len(top) == 1 or top[0]['match_score'] > top[1]['match_score']))
+
+    agreement = [row for row in wiki if row['found']]
+    agreed = sum(matches_leader(row) for row in agreement)
+    controls = {}
+    anomalies = []
+    for condition in ('stale', 'no-wiki'):
+        rows = [row for row in trials if row['condition'] == condition]
+        anomalies += [condition for row in rows if row['found']]
+        controls[condition] = ratio(sum(not row['found'] for row in rows), len(rows)) if rows else NOT_MEASURED
+    positive = any(row['found'] and matches_leader(row) for row in independent)
+    negative = all(value != NOT_MEASURED for value in controls.values())
+    validated = positive and negative and not anomalies
+    return {
+        'data_class': header['data_class'],
+        'records': {'baselines': len(baselines), 'trials': len(trials), 'wiki_condition_trials': len(wiki)},
+        'denominators': 'cold/self discovery: eligible cold wiki-condition trials by witness; eligible_use: explicitly used among all eligible wiki-condition trials',
+        'cold_discovery': ratio(sum(row['found'] for row in independent), len(independent)) if independent else NOT_MEASURED,
+        'self_witnessed_discovery': ratio(sum(row['found'] for row in selfw), len(selfw)) if selfw else NOT_MEASURED,
+        'eligible_use': ratio(sum(row['used'] for row in eligible), len(eligible)) if eligible else NOT_MEASURED,
+        'ineligible_trials': len(wiki) - len(eligible),
+        'unknown_under_wiki': {'count': sum(not row['found'] for row in wiki)},
+        'routing_agreement': ratio(agreed, len(agreement)) if agreement else NOT_MEASURED,
+        'time_savings': NOT_MEASURED,
+        'timing_scope': 'Not measured: same query alone does not verify equivalent task, model, conditions or correctness',
+        'negative_controls': controls, 'control_anomalies': anomalies,
+        'probe_validated': validated,
+        'probe_note': ('routing-agreeing independent cold discovery plus both fail-closed controls supplied' if validated else
+                       'needs routing-agreeing independent cold discovery and both fail-closed stale and no-wiki controls, with no control that found a route'),
+        'scope': 'Witnessed records as supplied; the helper did not observe the trials and cannot verify witness independence'}
+
+
+def tiered_eval(root, manifest, taskfile, ledger_path=None):
+    report = evaluate(root, manifest, taskfile)
+    compound = []
+    compound_inputs = {row['id']: row['required_routes'] for row in taskfile.get('tasks', [])
+                       if 'required_routes' in row}
+    route_ids = {row['id'] for row in manifest['routes']}
+    for row in report['tasks']:
+        required = compound_inputs.get(row['id'])
+        if row['id'] not in compound_inputs:
+            continue
+        if not strings(required) or len(required) != 2 or len(set(required)) != 2 or set(required) - route_ids:
+            raise Invalid('required_routes must name exactly two distinct manifest routes')
+        expected, actual = set(required), set(row['actual'])
+        missing, unexpected = sorted(expected - actual), sorted(actual - expected)
+        compound.append({'id': row['id'], 'missing_routes': missing, 'unexpected_routes': unexpected,
+                         'passed': not missing and not unexpected and row['locations_ok']})
+    passed = report['passed'] and all(case['passed'] for case in compound)
+    tiers = {'fixture_reachability': {'basis': 'deterministic curated self-test against declared expected routes',
+                                     **report, 'passed': passed, 'compound_cases': compound, 'compound_scope': 'explicit required_routes, exact top two',
+                                     'compound_exact': ratio(sum(case['passed'] for case in compound), len(compound))
+                                     if compound else NOT_MEASURED},
+             'cold_discovery': NOT_MEASURED, 'eligible_use': NOT_MEASURED, 'time_savings': NOT_MEASURED,
+             'negative_controls': NOT_MEASURED}
+    if ledger_path is not None:
+        header, baselines, trials = read_ledger(ledger_path, manifest)
+        measured = measure(manifest, header, baselines, trials)
+        tiers.update({key: measured.pop(key) for key in ('cold_discovery', 'eligible_use', 'time_savings', 'negative_controls')})
+        tiers['witnessed'] = measured
+    return {'passed': passed, 'tiers': tiers,
+            'ledger_supplied': ledger_path is not None,
+            'distinction': 'fixture reachability is deterministic and self-authored; the other tiers exist only when an explicit vetted ledger is supplied'}
+
+
 def emit(value):
     print(json.dumps(value, ensure_ascii=False, indent=2))
 
@@ -926,25 +1179,45 @@ def main(argv=None):
     require_supported_python()
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest='command', required=True)
-    for command in ('query', 'task', 'list', 'audit', 'build', 'check', 'evaluate'):
+    for command in ('query', 'task', 'list', 'audit', 'build', 'check', 'evaluate', 'find', 'status', 'eval'):
         sub = commands.add_parser(command)
         sub.add_argument('--root', type=Path, default=Path.cwd())
-        if command == 'query':
+        if command in ('query', 'find'):
             sub.add_argument('question')
-            sub.add_argument('--limit', type=int, choices=range(1, 6), default=2)
             sub.add_argument('--json', action='store_true')
+        if command == 'query':
+            sub.add_argument('--limit', type=int, choices=range(1, 6), default=2)
         if command == 'audit':
             sub.add_argument('--changed-file', action='append', default=[])
             sub.add_argument('--diagram-offset', type=int, default=0)
             sub.add_argument('--diagram-limit', type=int, default=20)
-        if command == 'evaluate':
+        if command in ('evaluate', 'eval'):
             sub.add_argument('--tasks', type=Path, required=True)
+        if command == 'eval':
+            sub.add_argument('--ledger', type=Path, default=None,
+                             help='Opt-in: explicit local JSONL of vetted synthetic/public witnessed trials; any defect rejects the whole file')
         if command == 'task':
             sub.add_argument('task_id', nargs='?')
     args = parser.parse_args(argv)
     root = args.root.resolve()
     try:
         manifest = load(root)
+        if args.command == 'find':
+            result = find(root, manifest, args.question)
+            emit(result) if args.json else print(find_text(result))
+            return 0 if result['determinable'] else 1
+        if args.command == 'status':
+            gate = find_gate(root, manifest)
+            emit({'wiki': 'present', 'schema_version': manifest['schema_version'], 'project': manifest['project'],
+                  'route_count': len(manifest['routes']), 'find_gate': 'open' if gate is None else 'closed',
+                  **({'closed_reason': gate['reason'], 'detail': gate['detail']} if gate else {}),
+                  'measurement': NOT_MEASURED + '; opt in with eval --ledger <vetted.jsonl>',
+                  'scope': 'structure and drift, not semantic truth or runtime acceptance'})
+            return 0 if gate is None else 1
+        if args.command == 'eval':
+            report = tiered_eval(root, manifest, read_json(args.tasks), args.ledger)
+            emit(report)
+            return 0 if report['passed'] else 1
         if args.command == 'task':
             emit(task_outline(root, manifest, args.task_id) if args.task_id else
                  {'task_maps': [{'id': item['id'], 'title': item['title'], 'scope': item['scope']} for item in task_maps(manifest)]})
@@ -995,6 +1268,7 @@ def main(argv=None):
                 if local(root,name).is_file():markers.append(name)
             except Invalid:pass
         emit({'valid':False,'error_code':'helper_manifest_missing','error':str(error),'native_markers':markers,
+              **({'determinable':False,'reason':'no_wiki','wiki':'absent','find_gate':'closed'} if args.command in ('find','status') else {}),
               'next_step':'Read the project entry/native-wiki-adoption guide. For native JSON routes use workflow.py prepare with explicit --files, reviewed --native-argv prefix and --runtime-input plus execution opt-in. Do not create a second manifest merely to satisfy this helper.',
               'reference':'references/native-wiki-adoption.md','native_execution':'not performed'})
         return 2
