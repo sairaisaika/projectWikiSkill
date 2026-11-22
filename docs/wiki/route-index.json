@@ -205,8 +205,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes",
           "symbol": "main",
-          "line": 1168,
-          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
+          "line": 1178,
+          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
         },
         {
           "id": "route",
@@ -214,8 +214,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Validates one schema 1/2 route record, its sources, docs, rules and evidence",
           "symbol": "resolve_route",
-          "line": 462,
-          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
+          "line": 466,
+          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
         },
         {
           "id": "locate",
@@ -223,8 +223,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Exactly one Python symbol or needle match per source; no first-match fallback",
           "symbol": "resolve_source",
-          "line": 159,
-          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
+          "line": 163,
+          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
         },
         {
           "id": "audit",
@@ -232,8 +232,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Per-route structural score against min_structural_score; readiness",
           "symbol": "audit",
-          "line": 599,
-          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
+          "line": 603,
+          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
         },
         {
           "id": "rank",
@@ -241,8 +241,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Alias/title/id matching that orders query hits",
           "symbol": "rank",
-          "line": 711,
-          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
+          "line": 715,
+          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
         },
         {
           "id": "ci",
@@ -259,8 +259,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "symbol": "diagram_review",
           "reason": "Bounded changed-file candidates through existing diagram source IDs",
-          "line": 650,
-          "sha256": "4551958215e3a4d708ecb02b290ca732632b07fec564bb782b24603d13cc1707"
+          "line": 654,
+          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
         }
       ]
     },

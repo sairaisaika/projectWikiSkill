@@ -32,6 +32,10 @@ LEVELS = {'source', 'offline-tested', 'installed', 'live-verified'}
 DIAGRAM_KINDS = {'architecture', 'flow', 'sequence', 'data-model', 'deployment', 'state-machine'}
 STOP = {'a', 'an', 'the', 'to', 'of', 'for', 'and', 'or', 'is', 'it', 'in', 'on',
         'i', 'we', 'how', 'what', 'does', 'do', 'can', 'this', 'that', 'with', 'my'}
+# Treat Han next to an ASCII word as a boundary for exact ASCII aliases only.
+HAN = r'\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\U00020000-\U000323AF'
+HAN_ASCII_BOUNDARY = re.compile(
+    rf'(?<=[A-Za-z0-9_])(?=[{HAN}])|(?<=[{HAN}])(?=[A-Za-z0-9_])')
 
 
 def text(value):
@@ -713,17 +717,23 @@ def rank(query, routes):
     if not value:
         return []
     tokens = words(value)
+    ascii_value = HAN_ASCII_BOUNDARY.sub(' ', value)
+    new_tokens = words(ascii_value) - tokens if ascii_value != value else set()
     hits = []
     for row in routes:
         aliases = [row['id'], row['title'], *row.get('aliases', [])]
         points = 0
+        exact_split_tokens = set()
         for alias in aliases:
             alias = alias.casefold().strip()
-            matched = (re.search(r'(?<!\w)' + re.escape(alias) + r'(?!\w)', value) is not None
-                       if alias.isascii() else alias in value)
+            ascii_alias = alias.isascii()
+            matched = (re.search(r'(?<!\w)' + re.escape(alias) + r'(?!\w)', ascii_value) is not None
+                       if ascii_alias else alias in value)
             if matched:
                 points += 10 + min(len(alias), 30) / 10
-        points += len(tokens & words(' '.join(aliases)))
+                if ascii_alias and new_tokens:
+                    exact_split_tokens.update(words(alias) & new_tokens)
+        points += len(tokens & words(' '.join(aliases))) + len(exact_split_tokens)
         if points:
             hits.append((points, row))
     return [dict(row, match_score=round(points, 2))

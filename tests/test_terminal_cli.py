@@ -72,6 +72,37 @@ class TerminalCliTests(unittest.TestCase):
         self.assertTrue(text.startswith('OWNER public-api:'))
         self.assertIn('section: docs/wiki/interfaces.md#public-api', text)
 
+    def test_find_accepts_adjacent_han_and_exact_ascii_alias(self):
+        question = 'ArticleSource挂了会返回空列表吗？'
+        code, result = self.call_json('find', question, '--json')
+        self.assertEqual((code, result['owner']['route_id']), (0, 'public-api'))
+        self.assertIn('Unavailable must not become an empty article list.', result['evidence']['rules'])
+        for spelling in ('ArticleSource 挂了会返回空列表吗？', '如果ArticleSource挂了？'):
+            with self.subTest(spelling=spelling):
+                other_code, other = self.call_json('find', spelling, '--json')
+                self.assertEqual((other_code, other), (0, result))
+        for spelling in ('FakeArticleSource挂了？', 'ArticleSource2挂了？', 'ArticleSource_other挂了？',
+                         'КArticleSource挂了？'):
+            with self.subTest(spelling=spelling):
+                other_code, other = self.call_json('find', spelling, '--json')
+                self.assertEqual((other_code, other['reason']), (1, 'unknown'))
+        control_code, control = self.call_json('find', '外部接口挂了会返回空列表吗？', '--json')
+        self.assertEqual((control_code, control['owner']['route_id']), (0, 'public-api'))
+
+    def test_find_preserves_curated_mixed_script_alias(self):
+        self.manifest['routes'][0]['aliases'].append('文献API')
+        (self.root / 'docs/wiki/routes.json').write_text(json.dumps(self.manifest), encoding='utf-8')
+        self.assertEqual(self.call('build')[0], 0)
+        code, result = self.call_json('find', '文献API挂了怎么办？', '--json')
+        self.assertEqual((code, result['owner']['route_id']), (0, 'public-api'))
+
+    def test_eval_witness_agreement_handles_adjacent_han_and_ascii(self):
+        question = 'ArticleSource挂了会返回空列表吗？'
+        path = self.ledger(header(), trial('mixed', question))
+        code, result = self.call_json('eval', '--tasks', str(REPO / 'evals/tasks.json'), '--ledger', str(path))
+        agreement = result['tiers']['witnessed']['routing_agreement']
+        self.assertEqual((code, agreement), (0, {'numerator': 1, 'denominator': 1, 'rate': 1.0}))
+
     def test_find_unknown_question_fails_closed_without_guessing(self):
         code, result = self.call_json('find', 'deploy the helm chart to kubernetes', '--json')
         self.assertEqual(code, 1)
