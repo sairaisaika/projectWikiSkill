@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="304" viewBox="0 0 640 304" role="img" aria-labelledby="title desc">
+  <title id="title">从问题到可核对的证据</title>
+  <desc id="desc">按箭头依次阅读问题、契约、实现与调用方、测试。基于仓内离线样例。</desc>
+  <rect width="640" height="304" rx="20" fill="#f3f8f5"/>
+  <g fill="none" stroke="#32745d" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M286 72 H350 M342 65 L350 72 L342 79"/>
+    <path d="M488 126 V178 M481 170 L488 178 L495 170"/>
+    <path d="M354 232 H290 M298 225 L290 232 L298 239"/>
+  </g>
+  <g transform="translate(16 16)">
+    <rect width="272" height="112" rx="12" fill="#ffffff" stroke="#c6d9cf"/>
+    <rect x="16" y="16" width="30" height="30" rx="9" fill="#e3efe7"/>
+    <text x="31" y="38" text-anchor="middle" fill="#286349" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700">1</text>
+    <text x="58" y="39" fill="#153e30" font-family="Noto Sans CJK SC, DejaVu Sans, sans-serif" font-size="23" font-weight="600">工程问题</text>
+    <text x="16" y="82" fill="#385c4d" font-family="Noto Sans CJK SC, DejaVu Sans, sans-serif" font-size="21">失败 = 空结果？</text>
+  </g>
+  <g transform="translate(352 16)">
+    <rect width="272" height="112" rx="12" fill="#ffffff" stroke="#c6d9cf"/>
+    <rect x="16" y="16" width="30" height="30" rx="9" fill="#e3efe7"/>
+    <text x="31" y="38" text-anchor="middle" fill="#286349" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700">2</text>
+    <text x="58" y="39" fill="#153e30" font-family="Noto Sans CJK SC, DejaVu Sans, sans-serif" font-size="23" font-weight="600">Wiki 契约</text>
+    <text x="16" y="82" fill="#385c4d" font-family="Noto Sans CJK SC, DejaVu Sans, sans-serif" font-size="21">None ≠ []</text>
+  </g>
+  <g transform="translate(352 176)">
+    <rect width="272" height="112" rx="12" fill="#ffffff" stroke="#c6d9cf"/>
+    <rect x="16" y="16" width="30" height="30" rx="9" fill="#e3efe7"/>
+    <text x="31" y="38" text-anchor="middle" fill="#286349" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700">3</text>
+    <text x="58" y="39" fill="#153e30" font-family="Noto Sans CJK SC, DejaVu Sans, sans-serif" font-size="23" font-weight="600">实现 / 调用方</text>
+    <text x="16" y="82" fill="#385c4d" font-family="Noto Sans CJK SC, DejaVu Sans, sans-serif" font-size="21">service.py · client.py</text>
+  </g>
+  <g transform="translate(16 176)">
+    <rect width="272" height="112" rx="12" fill="#ffffff" stroke="#c6d9cf"/>
+    <rect x="16" y="16" width="30" height="30" rx="9" fill="#e3efe7"/>
+    <text x="31" y="38" text-anchor="middle" fill="#286349" font-family="DejaVu Sans, sans-serif" font-size="19" font-weight="700">4</text>
+    <text x="58" y="39" fill="#153e30" font-family="Noto Sans CJK SC, DejaVu Sans, sans-serif" font-size="23" font-weight="600">针对性测试</text>
+    <text x="16" y="82" fill="#385c4d" font-family="Noto Sans CJK SC, DejaVu Sans, sans-serif" font-size="21">test_contracts.py</text>
+  </g>
+</svg>

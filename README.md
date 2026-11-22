@@ -1,22 +1,25 @@
 # ProjectWikiSkill
 
-Find the Wiki, code and tests behind an engineering question — and keep what you learn with the project.
+### Know what you're changing before you change it.
+
+Back after a week away, you pick up an API someone else changed. The code is familiar; which document still describes what callers rely on?
+
+PWS is a portable Skill that connects that question to the project's Wiki, implementation and checks — so the next change starts with evidence, and the next person can find it again.
 
 **English** · [简体中文](README.zh-CN.md)
 
-[Try the example](README.md#quick-start) · [Use with your agent](README.md#install) · [Explore PWS's Wiki](docs/wiki/engineering-entry.md)
+**[Try it without a plugin ↓](README.md#quick-start)** · [Use with your agent](README.md#install) · [PWS's own Wiki](docs/wiki/engineering-entry.md)
 
-## One question, a useful starting point
+<a name="one-question-a-useful-starting-point"></a>
+## From a guess to a change you can explain
 
-> How are service client failures handled?
+**Before:** “The service failed. Can I just return an empty list?”
 
-In the included example, that question leads to:
+<img src="docs/assets/question-to-evidence.svg" width="640" alt="Four steps in the offline example: ask whether failure means empty; read the Wiki contract where None differs from an empty list; inspect service.py and client.py; verify test_contracts.py." />
 
-- **Wiki →** [the public API contract](evals/fixture-project/docs/wiki/interfaces.md#public-api): unavailable is different from a successful empty result.
-- **Code →** [the service](evals/fixture-project/src/service.py) that reports the error, and [the client](evals/fixture-project/src/client.py) that consumes it.
-- **Tests →** [contract checks](evals/fixture-project/tests/test_contracts.py) and [diagnostic evidence](evals/fixture-project/tests/test_diagnostic_evidence.py) to verify before changing the behavior.
+**After checking the example:** `None` means unavailable; `[]` means a successful empty result. The service preserves that distinction, while the legacy client loses the precise error. Returning an empty list on failure would erase information the contract requires.
 
-PWS provides a reusable Skill for following this path in your project's own Wiki. You can read it directly, give it to a coding agent, or run the optional Python helpers yourself.
+You now have a [contract to preserve](evals/fixture-project/docs/wiki/interfaces.md#public-api), an [implementation](evals/fixture-project/src/service.py) and [caller](evals/fixture-project/src/client.py) to inspect, and [focused tests](evals/fixture-project/tests/test_contracts.py) to run. The [diagnostic exercise](evals/fixture-project/tests/test_diagnostic_evidence.py) shows how to check the evidence, too. This is a synthetic offline example, not a production incident.
 
 ## Quick start
 
@@ -34,9 +37,12 @@ The helpers use only the Python standard library. On macOS/Linux, if your compat
 <a name="独立-skill-与-python-工具"></a>
 ## Install
 
+**A plugin is optional. Reading the Skill is enough to start.**
+
 The reusable unit is the **whole [`project-wiki/` directory](project-wiki/SKILL.md)**, including its references, scripts and metadata. Choose the path your tools support:
 
-### Any coding agent that can read project files
+<a name="any-coding-agent-that-can-read-project-files"></a>
+### Read it with any coding agent
 
 Check out this repository where your agent can read it, or copy the whole directory into a project-approved, shareable location. Then explicitly ask the agent to use it:
 
@@ -44,7 +50,8 @@ Check out this repository where your agent can read it, or copy the whole direct
 
 Adjust that entry path to its actual location. This is **explicit use** of project files; it does not register the Skill or promise automatic discovery.
 
-### A host with a Skill loader
+<a name="a-host-with-a-skill-loader"></a>
+### Let a Skill loader find it
 
 Place the same whole directory in the host's **documented Skill discovery path**, then use its documented invocation. Discovery and compatibility depend on the host; no universal installer is assumed.
 

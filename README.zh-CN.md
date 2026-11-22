@@ -1,22 +1,25 @@
 # ProjectWikiSkill
 
-从一个工程问题，找到背后的 Wiki、源码和测试，再把查明的知识留在项目里。
+### 改代码前，先知道你在改什么。
+
+隔了一周回来，接手别人改过的接口。代码还认得，哪份文档仍然可信？调用方究竟依赖什么？
+
+PWS 是一个可独立使用的工程 Skill，把这些问题连到项目自己的 Wiki、实现和检查。让这次改动有据可依，也让下一个接手的人找得到依据。
 
 [English](README.md) · **简体中文**
 
-[试跑样例](README.zh-CN.md#快速开始) · [交给编程 Agent 使用](README.zh-CN.md#安装) · [浏览 PWS 自用 Wiki](docs/wiki/engineering-entry.md)
+**[不装插件，先试一次 ↓](README.zh-CN.md#快速开始)** · [交给编程 Agent](README.zh-CN.md#安装) · [PWS 自用 Wiki](docs/wiki/engineering-entry.md)
 
-## 问一句，找到从哪里开始
+<a name="问一句找到从哪里开始"></a>
+## 从「应该没事」到说得清楚
 
-> 服务的客户端失败时，是怎么处理的？
+**原先想的是：**「服务失败了，直接返回空列表行不行？」
 
-仓内样例将这个问题连到三个具体入口：
+<img src="docs/assets/question-to-evidence.zh-CN.svg" width="640" alt="离线样例的四步路线：提出失败是否等于空结果的问题；阅读区分 None 和空列表的 Wiki 契约；核对 service.py 与 client.py；运行 test_contracts.py 验证。" />
 
-- **Wiki →** [公开 API 契约](evals/fixture-project/docs/wiki/interfaces.md#public-api)：服务不可用，与请求成功但结果为空，是两种情况。
-- **源码 →** 报告错误的[服务实现](evals/fixture-project/src/service.py)，以及接收结果的[客户端](evals/fixture-project/src/client.py)。
-- **测试 →** 修改行为前应核对的[契约检查](evals/fixture-project/tests/test_contracts.py)和[诊断证据](evals/fixture-project/tests/test_diagnostic_evidence.py)。
+**核对样例后：** `None` 表示不可用，`[]` 表示成功但没有结果。服务保留了这一区别，旧客户端却会丢失具体错误。若把失败也改成空列表，就抹掉了契约要求保留的信息。
 
-PWS 把这条查找路径整理成可复用的 Skill，沿用项目自己的 Wiki。你可以直接阅读、交给编程 Agent，或独立运行可选的 Python 工具。
+现在，手上有了[不能破坏的契约](evals/fixture-project/docs/wiki/interfaces.md#public-api)、要核对的[实现](evals/fixture-project/src/service.py)与[调用方](evals/fixture-project/src/client.py)，以及该跑的[针对性测试](evals/fixture-project/tests/test_contracts.py)。[诊断演练](evals/fixture-project/tests/test_diagnostic_evidence.py)还展示了如何检查证据。这是仓内合成的离线样例，不是真实生产事故。
 
 <a name="quick-start"></a>
 ## 快速开始
@@ -36,9 +39,12 @@ python project-wiki/scripts/wiki.py query --root evals/fixture-project "How are 
 <a name="独立-skill-与-python-工具"></a>
 ## 安装
 
+**插件是可选项，先读 Skill 就能开始。**
+
 可复用的单元是**整个 [`project-wiki/` 目录](project-wiki/SKILL.md)**，包括其中的参考文档、脚本和元数据。按工具能力选择入口：
 
-### 任何能读项目文件的编程 Agent
+<a name="任何能读项目文件的编程-agent"></a>
+### 让能读项目文件的 Agent 显式使用
 
 将本仓库检出到 Agent 能读取的位置，或把完整目录放到项目批准、可共同引用的位置。然后明确让 Agent 使用它：
 
@@ -46,7 +52,8 @@ python project-wiki/scripts/wiki.py query --root evals/fixture-project "How are 
 
 入口路径以实际放置位置为准。这是对项目文件的**显式使用**，不会注册 Skill，也不承诺自动发现。
 
-### 带有 Skill loader 的宿主
+<a name="带有-skill-loader-的宿主"></a>
+### 让 Skill loader 发现它
 
 将同一个完整目录放进宿主**文档规定的 Skill 发现路径**，按其说明调用。发现机制和兼容范围由宿主决定，不假设存在通用安装器。
 
