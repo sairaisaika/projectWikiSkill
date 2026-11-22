@@ -28,10 +28,20 @@ python project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --task
 python project-wiki/scripts/wiki.py check --root .
 ```
 
-The 16 focused review regressions and 538 repository tests pass locally (one existing
+The 18 focused review regressions and 540 repository tests pass locally (one existing
 platform skip), as do 19 fixture tests, both Wiki checks and 28 routing tasks. A default
 package build and doctor source comparison pass; nothing is installed. Exact-head CI
 results are recorded in the draft PR after publication; a fresh generated index alone
 is not those results. No automatic hooks, daemon, network fetch, authored prose repair,
 installation or release were added. Whole-file needle/test boundaries are conservative;
 only selected Python symbols have a bounded syntax-aware fingerprint in this pilot.
+
+The first candidate CI exposed a Windows-only test setup error: directly removing
+read-only Git objects failed. The no-Git negative control now moves the temporary
+Git directory outside the fixture instead; no permission or production behavior
+is changed. Final exact-head matrix results are retained in the PR.
+
+Recording also requires the exact opted-in section in the supplied committed rule;
+dirty opt-in additions and switches to another existing anchor are rejected. Fresh
+non-opt-in controls require no Git executable; only opt-in cases capability-skip
+when Git 2.45+ / `--no-lazy-fetch` is unavailable. The no-fetch guard is not relaxed.

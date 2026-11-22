@@ -236,8 +236,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes; opt-in review receipts",
           "symbol": "main",
-          "line": 1407,
-          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+          "line": 1417,
+          "sha256": "368336651b12f1411834ef30d0443939c819aed1576a6d464440fa86e2fbd0ca"
         },
         {
           "id": "route",
@@ -246,7 +246,7 @@
           "reason": "Validates one schema 1/2 route record, its sources, docs, rules and evidence",
           "symbol": "resolve_route",
           "line": 468,
-          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+          "sha256": "368336651b12f1411834ef30d0443939c819aed1576a6d464440fa86e2fbd0ca"
         },
         {
           "id": "locate",
@@ -255,7 +255,7 @@
           "reason": "Exactly one Python symbol or needle match per source; no first-match fallback",
           "symbol": "resolve_source",
           "line": 165,
-          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+          "sha256": "368336651b12f1411834ef30d0443939c819aed1576a6d464440fa86e2fbd0ca"
         },
         {
           "id": "audit",
@@ -264,7 +264,7 @@
           "reason": "Per-route structural score against min_structural_score; readiness",
           "symbol": "audit",
           "line": 605,
-          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+          "sha256": "368336651b12f1411834ef30d0443939c819aed1576a6d464440fa86e2fbd0ca"
         },
         {
           "id": "rank",
@@ -273,7 +273,7 @@
           "reason": "Alias/title/id matching that orders query hits",
           "symbol": "rank",
           "line": 717,
-          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+          "sha256": "368336651b12f1411834ef30d0443939c819aed1576a6d464440fa86e2fbd0ca"
         },
         {
           "id": "ci",
@@ -291,7 +291,7 @@
           "symbol": "diagram_review",
           "reason": "Bounded changed-file candidates through existing diagram source IDs",
           "line": 656,
-          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+          "sha256": "368336651b12f1411834ef30d0443939c819aed1576a6d464440fa86e2fbd0ca"
         },
         {
           "id": "section-review",
@@ -299,8 +299,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "symbol": "section_reviews",
           "reason": "Existing rule evidence drift and retained explicit Git review baseline",
-          "line": 1078,
-          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+          "line": 1085,
+          "sha256": "368336651b12f1411834ef30d0443939c819aed1576a6d464440fa86e2fbd0ca"
         },
         {
           "id": "record-review",
@@ -308,8 +308,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "symbol": "record_review",
           "reason": "Explicit committed evidence review receipt; never an automatic rebuild acknowledgement",
-          "line": 1087,
-          "sha256": "b37854a00dcb588bdac21fb8c22231ef7dfcda97ef0d555339207dd307569a0d"
+          "line": 1094,
+          "sha256": "368336651b12f1411834ef30d0443939c819aed1576a6d464440fa86e2fbd0ca"
         }
       ]
     },

@@ -930,7 +930,7 @@ def review_git(root, *args):
     except subprocess.TimeoutExpired as error:
         raise Invalid('Review Git lookup timed out; evidence remains unresolved') from error
     if result.returncode:
-        raise Invalid('Review requires local committed evidence and Git with --no-lazy-fetch support; lookup failed')
+        raise Invalid('Review requires local committed evidence and Git 2.45+ with --no-lazy-fetch support; lookup failed')
     return result.stdout.decode('utf-8-sig').replace('\r\n', '\n')
 
 
@@ -1012,8 +1012,10 @@ def review_targets(row, rule):
 
 
 def review_url(repository, revision, path, line):
-    if not repository:
+    if repository is None:
         return None
+    if not text(repository):
+        raise Invalid('Review repository URL must be a nonempty HTTPS URL or omitted')
     parsed = urlsplit(repository)
     if parsed.scheme != 'https' or not parsed.netloc or parsed.username or parsed.password or parsed.query or parsed.fragment:
         raise Invalid('Review repository URL must be an explicit HTTPS repository URL without credentials/query/fragment')
@@ -1053,6 +1055,11 @@ def rule_review(root, row, rule):
         result['reviewed_revision'] = revision
         result['reviewed'] = []
         for old in prior:
+            if (type(old.get('line')) is not int or old['line'] < 1 or
+                    old.get('kind') not in {'section', 'symbol', 'needle', 'file'} or
+                    not isinstance(old.get('selector'), str) or
+                    not isinstance(old.get('sha256'), str) or not re.fullmatch(r'[0-9a-f]{64}', old['sha256'])):
+                raise Invalid('Review receipt has malformed fingerprint or locator metadata')
             git_path = old['git_path']
             if not text(git_path) or git_path.startswith('/') or '..' in git_path.split('/') or '\\' in git_path:
                 raise Invalid('Invalid reviewed Git path')
@@ -1108,6 +1115,9 @@ def record_review(root, manifest, route_id, rule_id, revision, repository_url=No
     old_rules = [r for row_ in committed['routes'] if row_['id'] == route_id for r in row_.get('rules', []) if r['id'] == rule_id]
     if len(old_rules) != 1 or any(old_rules[0].get(k, []) != rule.get(k, []) for k in ('statement', 'source_ids', 'tests')):
         raise Invalid('Commit the reviewed rule before recording its revision')
+    old_review = old_rules[0].get('review')
+    if not isinstance(old_review, dict) or old_review.get('section') != rule['review']['section']:
+        raise Invalid('Commit the rule opt-in and selected section before recording review')
     old_row = next(r for r in committed['routes'] if r['id'] == route_id)
     if rule['review']['section'] not in old_row.get('docs', []):
         raise Invalid('Commit the selected section binding before recording review')

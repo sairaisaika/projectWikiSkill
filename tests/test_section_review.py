@@ -20,6 +20,12 @@ spec.loader.exec_module(wiki)
 
 class SectionReviewTests(unittest.TestCase):
     def setUp(self):
+        try:
+            capability = subprocess.run(['git', '--no-lazy-fetch', '--version'], capture_output=True, timeout=15)
+        except (OSError, subprocess.TimeoutExpired):
+            self.skipTest('Opt-in tests require Git 2.45+ with --no-lazy-fetch support')
+        if capability.returncode:
+            self.skipTest('Opt-in tests require Git 2.45+ with --no-lazy-fetch support')
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = (Path(self.temp.name) / 'fixture').resolve()
@@ -207,6 +213,10 @@ class SectionReviewTests(unittest.TestCase):
         self.rule['review']['baseline']['targets'][0]['sha256'] = '0' * 64
         self.save();self.call('build')
         self.assertEqual(self.find()[1]['reason'], 'needs_review')
+        self.rule['review']['baseline'] = copy.deepcopy(baseline)
+        self.rule['review']['baseline']['targets'][0]['line'] = True
+        self.save();self.call('build')
+        self.assertEqual(self.find()[1]['reason'], 'needs_review')
         self.rule['review']['baseline'] = baseline
         self.rule['tests'].append('tests/test_diagnostic_evidence.py');self.save();self.call('build')
         self.assertEqual(self.find()[1]['reason'], 'needs_review')
@@ -214,7 +224,7 @@ class SectionReviewTests(unittest.TestCase):
 
     def test_no_opt_in_retains_existing_find_and_check_without_git(self):
         del self.rule['review'];self.save()
-        shutil.rmtree(self.root / '.git')
+        (self.root / '.git').rename(self.root.parent / 'saved-git')
         self.assertEqual(self.call('build')[0], 0)
         self.assertEqual(self.find()[0], 0)
         self.assertNotIn('section_reviews', self.find()[1])
@@ -233,17 +243,54 @@ class SectionReviewTests(unittest.TestCase):
             self.assertIn(argv[6], ['show', 'rev-parse'])
             self.assertFalse(call.kwargs.get('shell', False))
 
+    def test_review_requires_committed_opt_in_and_exact_section(self):
+        self.rule['review']['section'] = 'docs/wiki/interfaces.md#diagnostic-evidence'
+        self.save()
+        before = (self.root / 'docs/wiki/routes.json').read_bytes()
+        self.assertEqual(self.call('review', 'public-api', 'failure-not-empty', '--revision', self.initial)[0], 1)
+        self.assertEqual(before, (self.root / 'docs/wiki/routes.json').read_bytes())
+        del self.rule['review'];self.save();self.commit()
+        no_opt_in = self.git('rev-parse', 'HEAD').strip()
+        self.rule['review'] = {'section': 'docs/wiki/interfaces.md#public-api'};self.save()
+        before = (self.root / 'docs/wiki/routes.json').read_bytes()
+        self.assertEqual(self.call('review', 'public-api', 'failure-not-empty', '--revision', no_opt_in)[0], 1)
+        self.assertEqual(before, (self.root / 'docs/wiki/routes.json').read_bytes())
+
+    def test_unreviewed_opt_in_does_not_claim_fresh(self):
+        del self.rule['review']['baseline'];self.save();self.call('build')
+        self.assertEqual(self.find()[1]['reason'], 'needs_review')
+        self.assertEqual(self.call('check', '--reviews')[0], 1)
+
+
+class NonOptInSectionReviewTests(unittest.TestCase):
+    """No Git executable or capability probe is needed for the default path."""
+    call = SectionReviewTests.call
+    save = SectionReviewTests.save
+    find = SectionReviewTests.find
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = (Path(self.temp.name) / 'fixture').resolve()
+        shutil.copytree(REPO / 'evals/fixture-project', self.root, ignore=shutil.ignore_patterns('__pycache__'))
+        self.manifest = wiki.load(self.root)
+        self.row = self.manifest['routes'][0]
+
+    def test_fresh_non_git_fixture_needs_no_git_capability(self):
+        self.assertFalse((self.root / '.git').exists())
+        with mock.patch.object(wiki.subprocess, 'run', side_effect=AssertionError('No opt-in, no subprocess')):
+            self.assertEqual(self.call('build')[0], 0)
+            self.assertEqual(self.find()[0], 0)
+            self.assertNotIn('section_reviews', self.find()[1])
+            self.assertEqual(self.call('check')[0], 0)
+            self.assertEqual(self.call('check', '--reviews')[0], 0)
+
     def test_malformed_non_opted_in_rules_keep_invalid_wiki_result(self):
         for rules in [None, [None], ['review']]:
             self.row['rules'] = rules;self.save()
             result = self.find()
             self.assertEqual(result[0], 1)
             self.assertEqual(result[1]['reason'], 'invalid_wiki')
-
-    def test_unreviewed_opt_in_does_not_claim_fresh(self):
-        del self.rule['review']['baseline'];self.save();self.call('build')
-        self.assertEqual(self.find()[1]['reason'], 'needs_review')
-        self.assertEqual(self.call('check', '--reviews')[0], 1)
 
 
 if __name__ == '__main__':

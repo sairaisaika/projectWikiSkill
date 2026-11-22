@@ -132,7 +132,8 @@ create a parallel registry. For the public offline fixture's `failure-not-empty`
 ```
 
 Review that exact section, rule statement, selected source/config and tests yourself.
-Commit the reviewed content and bindings, then explicitly record its **full Git
+Commit the opt-in, exact `review.section`, reviewed content and bindings, then
+explicitly record its **full Git
 commit ID**. For example, from the repository checkout (replace `FULL_COMMIT`):
 
 ```sh
@@ -175,7 +176,7 @@ Both text and JSON `find` retain a current path/line locator and the immutable
 reviewed Git object/line. Optional `--repository-url` supplies GitHub-compatible
 `/blob/COMMIT/PATH#L…` links; it is caller-declared, never inferred from a remote or
 proof of repository identity/access. Without it, use the recorded Git object with
-`git show`. The opt-in path requires Git with `--no-lazy-fetch` support. It disables optional
+`git show`. The opt-in path requires Git 2.45+ with `--no-lazy-fetch` support. It disables optional
 locks, replace refs and lazy object downloads, and bounds each Git lookup to 15 seconds.
 The reviewed commit must remain available locally (including in CI);
 missing history, evidence, duplicate targets or damaged receipts remain unresolved,
