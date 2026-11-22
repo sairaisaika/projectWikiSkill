@@ -1,111 +1,90 @@
-<div align="center">
-
 # ProjectWikiSkill
 
-**A portable Skill that connects engineering questions to your project's Wiki, code and checks.**
+Find the Wiki, code and tests behind an engineering question — and keep what you learn with the project.
 
 **English** · [简体中文](README.zh-CN.md)
 
-[Quick start](README.md#quick-start) · [Install the Skill](README.md#install) · [PWS's own Wiki](docs/wiki/engineering-entry.md)
+[Try the example](README.md#quick-start) · [Use with your agent](README.md#install) · [Explore PWS's Wiki](docs/wiki/engineering-entry.md)
 
-</div>
+## One question, a useful starting point
 
----
+> How are service client failures handled?
+
+In the included example, that question leads to:
+
+- **Wiki →** [the public API contract](evals/fixture-project/docs/wiki/interfaces.md#public-api): unavailable is different from a successful empty result.
+- **Code →** [the service](evals/fixture-project/src/service.py) that reports the error, and [the client](evals/fixture-project/src/client.py) that consumes it.
+- **Tests →** [contract checks](evals/fixture-project/tests/test_contracts.py) and [diagnostic evidence](evals/fixture-project/tests/test_diagnostic_evidence.py) to verify before changing the behavior.
+
+PWS provides a reusable Skill for following this path in your project's own Wiki. You can read it directly, give it to a coding agent, or run the optional Python helpers yourself.
 
 ## Quick start
 
-No Agent, plugin or API key needed. Confirm **Python 3.10+** with `python --version`, then run this single line from a checkout of the repository. For Windows PowerShell, use this same command:
+**Run the offline example.** No agent, plugin or API key is needed. From a checkout of this repository, confirm **Python 3.10+** with `python --version`, then paste this single line (also suitable for Windows PowerShell):
 
 ```sh
-python project-wiki/scripts/wiki.py query --root evals/fixture-project "service client failures" --limit 1
+python project-wiki/scripts/wiki.py query --root evals/fixture-project "How are service client failures handled?" --limit 1
 ```
 
-Selected output from the included offline example:
+The result names `public-api`, links the contract and source locations above, and identifies the two test files. It locates checks; it does not execute them or prove live service behavior.
 
-```text
-public-api: Public article service and legacy client
-  rule: Unavailable must not become an empty article list.
-  tests: tests/test_contracts.py tests/test_diagnostic_evidence.py
-```
-
-One question leads to the [contract](evals/fixture-project/docs/wiki/interfaces.md#public-api) → [implementation](evals/fixture-project/src/service.py) → [consumer](evals/fixture-project/src/client.py) → [checks](evals/fixture-project/tests/test_contracts.py). The [example contract](evals/fixture-project/docs/wiki/interfaces.md#public-api) keeps `None` (unavailable) distinct from `[]` (successful, empty result). The query locates evidence; it does not run the checks or prove live service behavior.
-
-The Python helpers use only the standard library. On macOS/Linux, if your compatible interpreter is named `python3`, check `python3 --version` and replace `python` above with `python3`.
+The helpers use only the Python standard library. On macOS/Linux, if your compatible interpreter is named `python3`, confirm `python3 --version` and use `python3` instead.
 
 <a name="使用"></a>
 <a name="独立-skill-与-python-工具"></a>
 ## Install
 
-The portable unit is the **entire [`project-wiki/` directory](project-wiki/SKILL.md)**. Keep `SKILL.md`, `references/`, `scripts/` and the bundled metadata together. Copy that directory to your host's documented Skill location; copying `SKILL.md` alone loses its guides and tools.
+The reusable unit is the **whole [`project-wiki/` directory](project-wiki/SKILL.md)**, including its references, scripts and metadata. Choose the path your tools support:
+
+### Any coding agent that can read project files
+
+Check out this repository where your agent can read it, or copy the whole directory into a project-approved, shareable location. Then explicitly ask the agent to use it:
+
+> Read `project-wiki/SKILL.md` first. For this task, follow the relevant linked references and the project's existing Wiki. Find the owning pages, verify the source and checks, and return durable decisions and evidence to their existing owner.
+
+Adjust that entry path to its actual location. This is **explicit use** of project files; it does not register the Skill or promise automatic discovery.
+
+### A host with a Skill loader
+
+Place the same whole directory in the host's **documented Skill discovery path**, then use its documented invocation. Discovery and compatibility depend on the host; no universal installer is assumed.
 
 <a name="codex-standalone-skill"></a>
-
-| Host | Project-local location | Invoke |
-| --- | --- | --- |
-| [Codex](https://developers.openai.com/codex/skills) | `.agents/skills/project-wiki/` | `$project-wiki` |
-| [Claude Code](https://code.claude.com/docs/en/skills) | `.claude/skills/project-wiki/` | `/project-wiki` |
-
-For user-wide locations and discovery behavior, follow the linked host documentation. Other hosts can use the same directory **where their documented Skill support allows it**; that does not establish host-specific installation or hook compatibility. This standalone path adds no hooks or host configuration.
-
 <a name="在-claude-code-安装插件"></a>
 <a name="claude-code-marketplace-plugin"></a>
 <details>
-<summary><strong>Alternative: Claude Code Marketplace</strong></summary>
+<summary><strong>Optional host setup: Codex, Claude Code, Marketplace and hooks</strong></summary>
+
+- **[Codex](https://developers.openai.com/codex/skills):** project-local `.agents/skills/project-wiki/`; invoke `$project-wiki`.
+- **[Claude Code](https://code.claude.com/docs/en/skills):** project-local `.claude/skills/project-wiki/`; invoke `/project-wiki`.
+
+Follow each host's documentation for user-wide paths and discovery. These examples do not establish support for other hosts or their hooks.
+
+**Claude Code Marketplace** is another optional entry:
 
 ```sh
 claude plugin marketplace add sairaisaika/projectWikiSkill
 claude plugin install project-wiki@project-wiki
 ```
 
-In a new session, invoke `/project-wiki:project-wiki`. This repository's marketplace entry exposes one Skill, without hooks. Use `/plugin` to inspect components; if another marketplace already supplies the same name, check `claude plugin list` before choosing a source. See [Claude's plugin guide](https://code.claude.com/docs/en/discover-plugins).
+In a new session, invoke `/project-wiki:project-wiki`. This marketplace entry exposes one Skill, without hooks. Inspect components with `/plugin`; if another marketplace supplies the same name, check `claude plugin list` before choosing a source. See [Claude's plugin guide](https://code.claude.com/docs/en/discover-plugins).
+
+Optional `SessionStart` integration and the Claude-only `PreToolUse` gate are documented in [lifecycle delivery](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery). They are separate from explicit use and the Python demo; packaging does not install or grant trust to hooks.
 
 </details>
 
 ## Use it on your project
 
-Start with the [task menu](project-wiki/SKILL.md#choose-the-work), either directly in Markdown or through your host's Skill entry. For example:
+**Ask → locate → verify → return.** Start at the [task menu](project-wiki/SKILL.md#choose-the-work). Your native Wiki stays the authority: [reuse its navigation and checks](project-wiki/references/native-wiki-adoption.md), and leave a small edit in a known file on the project's lightweight path.
 
-> Before changing this API's error handling, find its Wiki contract, producer, consumers and checks. Verify the relevant source, then return the decision and evidence to the existing owner.
+The runnable example uses PWS's route format. For an existing project, choose helpers through the adoption guide; a missing `routes.json` is not a reason to replace the project's own navigation.
 
-**Ask → locate → verify → return.** Your project's Wiki remains the authority. [Reuse its existing navigation and checks](project-wiki/references/native-wiki-adoption.md); PWS does not require a parallel Wiki, another index or a fixed documentation layout. A small edit in a known file stays on the project's lightweight path.
-
-The demo uses this repository's route format. For your own Wiki, follow the adoption guide before choosing a helper; a missing `routes.json` is not a reason to replace an existing native router.
-
+<a name="cli-reference"></a>
 ## Guides
 
-| Your task | Read next |
-| --- | --- |
-| Understand a project or plan a change | [Orientation](project-wiki/references/learning-and-orientation.md) · [Change navigation](project-wiki/references/change-navigation.md) |
-| Explain behavior, contracts or diagrams | [Engineering depth](project-wiki/references/engineering-depth.md) · [Diagram views](project-wiki/references/diagram-framework.md) |
-| Maintain knowledge and place new files | [Wiki evolution](project-wiki/references/wiki-evolution.md) · [Maintenance](project-wiki/references/maintenance.md) · [File placement](project-wiki/references/repository-hygiene.md#file-placement) |
-| Hand work off and verify what was delivered | [Collaboration](project-wiki/references/collaboration-workflow.md) · [Feature completeness](project-wiki/references/feature-completeness.md) |
-
-## CLI reference
-
-Use the existing references when you need details:
-
-- **Query, audit and check a Wiki:** [Wiki helper contract](docs/wiki/architecture.md#wiki-helper) and [route format](project-wiki/references/route-contract.md).
-- **Prepare context or hand work off:** [workflow commands](project-wiki/references/collaboration-workflow.md).
-- **Inspect storage, build a package or check its provenance:** [storage inventory](project-wiki/references/maintenance.md#inventory-storage-without-cleaning-it), [packaging](docs/wiki/architecture.md#packaging) and [doctor](docs/wiki/architecture.md#doctor).
-
-<details>
-<summary><strong>Optional hooks and additional checks</strong></summary>
-
-[Lifecycle delivery](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery) describes optional `SessionStart` integration and the Claude-only `PreToolUse` gate. These are separate from the standalone Skill and Python demo; packaging does not install or grant trust to hooks.
-
-Run the example's structural checks with:
-
-```sh
-python3 project-wiki/scripts/wiki.py check --root evals/fixture-project
-python3 project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --tasks evals/tasks.json
-```
-
-[Repository checks](docs/wiki/engineering-entry.md#per-change-surface-convention), [optional diagram rendering](evals/render-diagrams.mjs) and the [quality model](project-wiki/references/quality-model.md) cover deeper validation. Structure, source correctness and actual use are separate evidence.
-
-</details>
+- **Choose a task:** the [Skill's task menu](project-wiki/SKILL.md#choose-the-work) links to the relevant method, from orientation to maintenance and handoff.
+- **Use the Python tools:** the [Wiki helper contract](docs/wiki/architecture.md#wiki-helper) and [workflow commands](project-wiki/references/collaboration-workflow.md) explain inputs, outputs and limits.
+- **Contribute to PWS:** the [maintainer entry](docs/wiki/engineering-entry.md) owns architecture, packaging and repository checks.
 
 ## Repository status
 
-PWS uses its own [maintainer Wiki](docs/wiki/engineering-entry.md) for architecture, contracts, maintenance and checks. Start there when contributing to this repository.
-
-[Version status](docs/wiki/status.md#current-state) · [Canonical manifest](plugin.json) · [Changelog](CHANGELOG.md) · [Evaluation reports](evals/reports/README.md)
+For verified versions and evidence, see [status](docs/wiki/status.md#current-state), the [canonical manifest](plugin.json), [changelog](CHANGELOG.md) and [evaluation reports](evals/reports/README.md).

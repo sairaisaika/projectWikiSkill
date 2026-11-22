@@ -1,116 +1,95 @@
-<div align="center">
-
 # ProjectWikiSkill
 
-**一个可独立使用的 Skill，让工程问题连到项目自己的 Wiki、源码与检查。**
+从一个工程问题，找到背后的 Wiki、源码和测试，再把查明的知识留在项目里。
 
 [English](README.md) · **简体中文**
 
-[快速试用](README.zh-CN.md#quick-start) · [安装 Skill](README.zh-CN.md#install) · [PWS 自用 Wiki](docs/wiki/engineering-entry.md)
+[试跑样例](README.zh-CN.md#快速开始) · [交给编程 Agent 使用](README.zh-CN.md#安装) · [浏览 PWS 自用 Wiki](docs/wiki/engineering-entry.md)
 
-</div>
+## 问一句，找到从哪里开始
 
----
+> 服务的客户端失败时，是怎么处理的？
+
+仓内样例将这个问题连到三个具体入口：
+
+- **Wiki →** [公开 API 契约](evals/fixture-project/docs/wiki/interfaces.md#public-api)：服务不可用，与请求成功但结果为空，是两种情况。
+- **源码 →** 报告错误的[服务实现](evals/fixture-project/src/service.py)，以及接收结果的[客户端](evals/fixture-project/src/client.py)。
+- **测试 →** 修改行为前应核对的[契约检查](evals/fixture-project/tests/test_contracts.py)和[诊断证据](evals/fixture-project/tests/test_diagnostic_evidence.py)。
+
+PWS 把这条查找路径整理成可复用的 Skill，沿用项目自己的 Wiki。你可以直接阅读、交给编程 Agent，或独立运行可选的 Python 工具。
 
 <a name="quick-start"></a>
 ## 快速开始
 
-无需 Agent、插件或 API key。先用 `python --version` 确认是 **Python 3.10+**，再在本仓库的检出目录执行下面这一行；Windows PowerShell 使用同一命令：
+**试跑离线样例。** 无需 Agent、插件或 API key。在本仓库的检出目录，先用 `python --version` 确认是 **Python 3.10+**，再粘贴下面这一行（Windows PowerShell 也使用同一命令）：
 
 ```sh
-python project-wiki/scripts/wiki.py query --root evals/fixture-project "service client failures" --limit 1
+python project-wiki/scripts/wiki.py query --root evals/fixture-project "How are service client failures handled?" --limit 1
 ```
 
-仓内离线样例的部分实际输出：
+结果会定位到 `public-api`，给出上面的契约与源码位置，并列出两份测试文件。查询负责找到检查，不会执行它们，也不证明真实服务的运行情况。
 
-```text
-public-api: Public article service and legacy client
-  rule: Unavailable must not become an empty article list.
-  tests: tests/test_contracts.py tests/test_diagnostic_evidence.py
-```
-
-一个问题，找到[契约](evals/fixture-project/docs/wiki/interfaces.md#public-api) → [实现](evals/fixture-project/src/service.py) → [调用方](evals/fixture-project/src/client.py) → [检查](evals/fixture-project/tests/test_contracts.py)。[样例契约](evals/fixture-project/docs/wiki/interfaces.md#public-api)保留了 `None`（不可用）和 `[]`（成功但没有结果）的区别。查询负责定位证据，不会替你执行检查，也不证明真实服务的运行情况。
-
-Python 工具只使用标准库。在 macOS/Linux 上，如果兼容的解释器叫 `python3`，先用 `python3 --version` 确认，再将上面的 `python` 换成 `python3`。
+工具只使用 Python 标准库。在 macOS/Linux 上，如果兼容的解释器叫 `python3`，先确认 `python3 --version`，再改用 `python3`。
 
 <a name="install"></a>
 <a name="使用"></a>
 <a name="独立-skill-与-python-工具"></a>
 ## 安装
 
-可移植的单元是**整个 [`project-wiki/` 目录](project-wiki/SKILL.md)**。保留其中的 `SKILL.md`、`references/`、`scripts/` 和配套元数据，按宿主文档复制到 Skill 目录；只复制 `SKILL.md` 会缺少指南和工具。
+可复用的单元是**整个 [`project-wiki/` 目录](project-wiki/SKILL.md)**，包括其中的参考文档、脚本和元数据。按工具能力选择入口：
+
+### 任何能读项目文件的编程 Agent
+
+将本仓库检出到 Agent 能读取的位置，或把完整目录放到项目批准、可共同引用的位置。然后明确让 Agent 使用它：
+
+> 先读 `project-wiki/SKILL.md`。针对当前任务，按需阅读已链接的参考文档，并沿用项目自己的 Wiki。找到负责页面，核对源码与检查，把稳定决策和证据回写到原来的负责位置。
+
+入口路径以实际放置位置为准。这是对项目文件的**显式使用**，不会注册 Skill，也不承诺自动发现。
+
+### 带有 Skill loader 的宿主
+
+将同一个完整目录放进宿主**文档规定的 Skill 发现路径**，按其说明调用。发现机制和兼容范围由宿主决定，不假设存在通用安装器。
 
 <a name="codex作为独立-skill-安装"></a>
-
-| 宿主 | 项目内位置 | 调用方式 |
-| --- | --- | --- |
-| [Codex](https://developers.openai.com/codex/skills) | `.agents/skills/project-wiki/` | `$project-wiki` |
-| [Claude Code](https://code.claude.com/docs/en/skills) | `.claude/skills/project-wiki/` | `/project-wiki` |
-
-用户级目录和发现机制以各宿主的上述文档为准。其他宿主在**其文档明确支持 Skill 的范围内**可使用同一目录；这不代表特定宿主的安装或 hooks 已经过验证。独立 Skill 路径不添加 hooks，也不修改宿主配置。
-
 <a name="在-claude-code-安装插件"></a>
 <a name="claude-code通过插件市场安装"></a>
 <details>
-<summary><strong>另一种方式：Claude Code Marketplace</strong></summary>
+<summary><strong>可选宿主设置：Codex、Claude Code、Marketplace 与 hooks</strong></summary>
+
+- **[Codex](https://developers.openai.com/codex/skills)：** 项目内放到 `.agents/skills/project-wiki/`，用 `$project-wiki` 调用。
+- **[Claude Code](https://code.claude.com/docs/en/skills)：** 项目内放到 `.claude/skills/project-wiki/`，用 `/project-wiki` 调用。
+
+用户级路径和发现方式以各宿主文档为准。这些示例不代表其他宿主或其 hooks 已获支持。
+
+**Claude Code Marketplace** 是另一个可选入口：
 
 ```sh
 claude plugin marketplace add sairaisaika/projectWikiSkill
 claude plugin install project-wiki@project-wiki
 ```
 
-在新会话中调用 `/project-wiki:project-wiki`。本仓库的市场入口提供一个 Skill，不含 hooks。用 `/plugin` 查看组件；若已从其他市场装过同名插件，先用 `claude plugin list` 确认再选择来源。详见 [Claude 插件指南](https://code.claude.com/docs/en/discover-plugins)。
+在新会话中调用 `/project-wiki:project-wiki`。本市场入口提供一个 Skill，不含 hooks。用 `/plugin` 查看组件；若其他市场提供同名插件，先用 `claude plugin list` 确认再选择来源。详见 [Claude 插件指南](https://code.claude.com/docs/en/discover-plugins)。
+
+可选的 `SessionStart` 集成和仅适用于 Claude 的 `PreToolUse` 编辑闸见[生命周期投递](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery)。它们与显式使用、Python demo 分开；打包不等于安装或授予 hooks 信任。
 
 </details>
 
 ## 用到自己的项目
 
-从[任务菜单](project-wiki/SKILL.md#choose-the-work)开始：可以直接阅读 Markdown，也可以通过宿主的 Skill 入口使用。例如：
+**提问 → 定位 → 核对 → 回写。** 从[任务菜单](project-wiki/SKILL.md#choose-the-work)开始。项目原有 Wiki 仍是事实来源：[沿用它的导航和检查](project-wiki/references/native-wiki-adoption.md)，已知文件里的小改动继续走项目原有的轻量路径。
 
-> 修改这个 API 的错误处理之前，先找出它的 Wiki 契约、生产者、调用方和检查。核对相关源码，再把决策和证据回写到原来的负责页面。
+可运行样例使用 PWS 的路由格式。接入已有项目时，按接入指南选择工具；缺少 `routes.json` 不意味着应该替换项目自己的导航。
 
-**提问 → 定位 → 核对 → 回写。** 项目自己的 Wiki 仍是事实来源。[沿用已有导航和检查](project-wiki/references/native-wiki-adoption.md)，不必另造 Wiki、维护第二套索引或采用固定文档结构。已知文件里的小改动，继续走项目原有的轻量路径。
-
-上面的 demo 使用本仓库的路由格式。接入自己的 Wiki 时，先按接入指南选择工具；缺少 `routes.json` 不意味着应该替换项目已有的导航。
-
+<a name="cli-reference"></a>
+<a name="命令行工具"></a>
 <a name="guides"></a>
 ## 阅读指南
 
-| 当前任务 | 接着读 |
-| --- | --- |
-| 理解项目、规划改动 | [项目导读](project-wiki/references/learning-and-orientation.md) · [改动定位](project-wiki/references/change-navigation.md) |
-| 说明行为、契约或图表 | [工程深度](project-wiki/references/engineering-depth.md) · [图表视角](project-wiki/references/diagram-framework.md) |
-| 维护知识、安排新文件 | [Wiki 演进](project-wiki/references/wiki-evolution.md) · [持续维护](project-wiki/references/maintenance.md) · [文件归位](project-wiki/references/repository-hygiene.md#file-placement) |
-| 交接任务、核对交付结果 | [协作流程](project-wiki/references/collaboration-workflow.md) · [功能闭环](project-wiki/references/feature-completeness.md) |
-
-<a name="cli-reference"></a>
-## 命令行工具
-
-需要细节时，直接查已有参考：
-
-- **查询、审计和检查 Wiki：** [Wiki 工具契约](docs/wiki/architecture.md#wiki-helper)与[路由格式](project-wiki/references/route-contract.md)。
-- **准备上下文或交接任务：** [工作流命令](project-wiki/references/collaboration-workflow.md)。
-- **盘点存储、打包或校验来源：** [存储盘点](project-wiki/references/maintenance.md#inventory-storage-without-cleaning-it)、[打包](docs/wiki/architecture.md#packaging)与[doctor](docs/wiki/architecture.md#doctor)。
-
-<details>
-<summary><strong>可选 hooks 与进一步检查</strong></summary>
-
-[生命周期投递](project-wiki/references/collaboration-workflow.md#optional-lifecycle-delivery)说明可选的 `SessionStart` 集成和仅适用于 Claude 的 `PreToolUse` 编辑闸。它们与独立 Skill、Python demo 分开；打包不等于安装或授予 hooks 信任。
-
-继续运行样例的结构检查：
-
-```sh
-python3 project-wiki/scripts/wiki.py check --root evals/fixture-project
-python3 project-wiki/scripts/wiki.py evaluate --root evals/fixture-project --tasks evals/tasks.json
-```
-
-进一步验证见[仓库检查入口](docs/wiki/engineering-entry.md#per-change-surface-convention)、[可选图表渲染](evals/render-diagrams.mjs)和[质量模型](project-wiki/references/quality-model.md)。结构、源码正确性和实际使用是不同层次的证据。
-
-</details>
+- **选择任务：** [Skill 任务菜单](project-wiki/SKILL.md#choose-the-work)按需链接到具体方法，涵盖导读、维护与交接。
+- **使用 Python 工具：** [Wiki 工具契约](docs/wiki/architecture.md#wiki-helper)和[工作流命令](project-wiki/references/collaboration-workflow.md)说明输入、输出与限制。
+- **参与 PWS 开发：** [维护者入口](docs/wiki/engineering-entry.md)负责架构、打包和仓库检查。
 
 <a name="repository-status"></a>
 ## 仓库状态
 
-PWS 用自己的[维护者 Wiki](docs/wiki/engineering-entry.md)记录架构、契约、维护与检查。参与本仓库开发，从这里进入。
-
-[版本状态](docs/wiki/status.md#current-state) · [权威 manifest](plugin.json) · [更新记录](CHANGELOG.md) · [验证报告](evals/reports/README.md)
+已验证版本与证据见[状态页](docs/wiki/status.md#current-state)、[权威 manifest](plugin.json)、[更新记录](CHANGELOG.md)和[验证报告](evals/reports/README.md)。
