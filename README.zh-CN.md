@@ -15,12 +15,10 @@
 <a name="quick-start"></a>
 ## 快速开始
 
-无需 Agent、插件或 API key。准备 **Python 3.10+**，在本仓库的检出目录运行：
+无需 Agent、插件或 API key。先用 `python --version` 确认是 **Python 3.10+**，再在本仓库的检出目录执行下面这一行；Windows PowerShell 使用同一命令：
 
 ```sh
-python3 project-wiki/scripts/wiki.py query \
-  --root evals/fixture-project \
-  "service client failures" --limit 1
+python project-wiki/scripts/wiki.py query --root evals/fixture-project "service client failures" --limit 1
 ```
 
 仓内离线样例的部分实际输出：
@@ -33,7 +31,7 @@ public-api: Public article service and legacy client
 
 一个问题，找到[契约](evals/fixture-project/docs/wiki/interfaces.md#public-api) → [实现](evals/fixture-project/src/service.py) → [调用方](evals/fixture-project/src/client.py) → [检查](evals/fixture-project/tests/test_contracts.py)。[样例契约](evals/fixture-project/docs/wiki/interfaces.md#public-api)保留了 `None`（不可用）和 `[]`（成功但没有结果）的区别。查询负责定位证据，不会替你执行检查，也不证明真实服务的运行情况。
 
-Python 工具只使用标准库。先用 `python3 --version` 确认版本；低于 3.10 时，换用机器上已安装的兼容解释器。
+Python 工具只使用标准库。在 macOS/Linux 上，如果兼容的解释器叫 `python3`，先用 `python3 --version` 确认，再将上面的 `python` 换成 `python3`。
 
 <a name="install"></a>
 <a name="使用"></a>

@@ -14,12 +14,10 @@
 
 ## Quick start
 
-No Agent, plugin or API key needed. With **Python 3.10+**, run this from a checkout of the repository:
+No Agent, plugin or API key needed. Confirm **Python 3.10+** with `python --version`, then run this single line from a checkout of the repository. For Windows PowerShell, use this same command:
 
 ```sh
-python3 project-wiki/scripts/wiki.py query \
-  --root evals/fixture-project \
-  "service client failures" --limit 1
+python project-wiki/scripts/wiki.py query --root evals/fixture-project "service client failures" --limit 1
 ```
 
 Selected output from the included offline example:
@@ -32,7 +30,7 @@ public-api: Public article service and legacy client
 
 One question leads to the [contract](evals/fixture-project/docs/wiki/interfaces.md#public-api) → [implementation](evals/fixture-project/src/service.py) → [consumer](evals/fixture-project/src/client.py) → [checks](evals/fixture-project/tests/test_contracts.py). The [example contract](evals/fixture-project/docs/wiki/interfaces.md#public-api) keeps `None` (unavailable) distinct from `[]` (successful, empty result). The query locates evidence; it does not run the checks or prove live service behavior.
 
-The Python helpers use only the standard library. Check `python3 --version` first; if it is older than 3.10, use a compatible interpreter already installed on your machine.
+The Python helpers use only the standard library. On macOS/Linux, if your compatible interpreter is named `python3`, check `python3 --version` and replace `python` above with `python3`.
 
 <a name="使用"></a>
 <a name="独立-skill-与-python-工具"></a>
