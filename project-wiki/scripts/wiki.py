@@ -689,7 +689,15 @@ def diagram_review(root, manifest, changed_files, offset=0, limit=20):
             candidates.append({'route_id': row['id'], 'path': None, 'kind': None,
                                'basis': 'changed route has no declared diagram; assess authoring need',
                                'disposition': 'pending'})
-    candidates.sort(key=lambda item: (item['route_id'], item['path'] or '', item['kind'] or ''))
+    declared = {item.get('path') for row in manifest['routes'] if isinstance(row.get('diagrams'), list)
+                for item in row['diagrams'] if isinstance(item, dict)}
+    native, skipped = undeclared_diagram_mentions(root, changed, declared)
+    for path, hits in native:
+        mapped.update(hits)
+        candidates.append({'route_id': None, 'path': path, 'kind': None,
+                           'basis': 'undeclared Mermaid names a changed file; review it or declare it',
+                           'disposition': 'pending'})
+    candidates.sort(key=lambda item: (item['route_id'] or '', item['path'] or '', item['kind'] or ''))
     rows, size = [], 0
     for item in candidates[offset:offset + limit]:
         length = len(json.dumps(item, ensure_ascii=False).encode('utf-8'))
@@ -699,13 +707,63 @@ def diagram_review(root, manifest, changed_files, offset=0, limit=20):
             break
         rows.append(item); size += length
     end = offset + len(rows)
-    return {'scope': 'Declared references only; not semantic diff, coverage, rendering or review completion',
+    return {'scope': 'Declared references and literal file names inside undeclared Mermaid blocks; '
+                     'not semantic diff, coverage, rendering or review completion',
             'changed_file_count': len(changed), 'unmapped_file_count': len(changed - mapped),
             'candidate_count': len(candidates), 'unavailable_route_count': unavailable,
+            'undeclared_pages_skipped': skipped,
             'offset': offset, 'limit': limit,
             'next_offset': end if end < len(candidates) else None,
             'truncated': end < len(candidates), 'candidates': rows,
             'finish': 'Record updated, reviewed unchanged or pending with reason and diff revision in the native task return; no automatic rewrite'}
+
+
+#: Bounds for reading undeclared Mermaid in the Wiki directory during a change review.
+NATIVE_PAGE_LIMIT = 2000
+NATIVE_PAGE_BYTES = 1024 * 1024
+
+
+def undeclared_diagram_mentions(root, changed, declared):
+    """Sections whose closed Mermaid text names a changed file, outside declared diagrams.
+
+    A Wiki that draws its architecture directly in Markdown, without diagram records,
+    would otherwise get "no declared diagram" for a change to a file its own drawing
+    names. This is a literal text match on the repository-relative path or the file
+    name, bounded and deterministic; it neither parses Mermaid nor reads source files,
+    and a match only suggests review.
+    """
+    names = {}
+    for path in changed:
+        base = path.rsplit('/', 1)[-1]
+        names[path] = [path] + ([base] if '.' in base else [])
+    wiki_dir = local(root, 'docs/wiki')
+    if not wiki_dir.is_dir():
+        return [], 0
+    pages = sorted(p for p in wiki_dir.rglob('*.md') if p.is_file())
+    skipped = max(0, len(pages) - NATIVE_PAGE_LIMIT)
+    found = {}
+    for page in pages[:NATIVE_PAGE_LIMIT]:
+        with page.open('rb') as stream:
+            raw = stream.read(NATIVE_PAGE_BYTES + 1)
+        if len(raw) > NATIVE_PAGE_BYTES:
+            skipped += 1
+            continue
+        content = raw.decode('utf-8-sig', errors='replace')
+        lines = content.splitlines()
+        _, headings, diagrams = markdown_scan(content)
+        relative = page.relative_to(root).as_posix()
+        for first, last in diagrams:
+            nearest = max((line for _, line, _ in headings if line < first), default=None)
+            section = next((name for name, line, _ in headings if line == nearest), None)
+            anchor = relative + ('#' + section if section else '')
+            if anchor in declared or relative in declared:
+                continue
+            body = '\n'.join(lines[first + 1:last])
+            hits = {path for path, needles in names.items()
+                    if any(re.search(r'(?<![\w/.-])' + re.escape(needle) + r'(?![\w])', body) for needle in needles)}
+            if hits:
+                found.setdefault(anchor, set()).update(hits)
+    return sorted(found.items()), skipped
 
 
 def words(value):
