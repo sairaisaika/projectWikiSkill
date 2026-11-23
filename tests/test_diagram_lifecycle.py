@@ -145,3 +145,72 @@ class DiagramLifecycleTests(unittest.TestCase):
                 result = json.loads(cp.stdout)
                 self.assertFalse(result['routes'][0]['valid'])
                 self.assertEqual(result['diagram_review']['unavailable_route_count'], 1)
+
+
+class UndeclaredMermaidReviewTests(unittest.TestCase):
+    """Mermaid drawn directly in Wiki pages is reachable from a changed file by its literal name."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temp.cleanup)
+        self.root = (Path(self.temp.name) / 'project').resolve()
+        shutil.copytree(ROOT / 'evals/fixture-project', self.root, ignore=shutil.ignore_patterns('__pycache__'))
+        self.manifest = wiki.load(self.root)
+        self.page = self.root / 'docs/wiki/native-architecture.md'
+        self.page.write_text(
+            '# Architecture\nProse naming src/recovery.py outside any drawing.\n'
+            '## Module graph\n```mermaid\nflowchart LR\n  A["service.py"] --> B["src/recovery.py"]\n```\n'
+            '## Unrelated\n```mermaid\nflowchart LR\n  X["myservice.py"] --> Y["other"]\n```\n'
+            '## Listing\n```text\nservice.py\n```\n', encoding='utf-8')
+
+    def native(self, *paths):
+        report = wiki.diagram_review(self.root, self.manifest, list(paths), 0, 50)
+        return report, [item for item in report['candidates'] if item['route_id'] is None]
+
+    def test_a_drawing_that_names_the_changed_file_is_suggested_by_section(self):
+        report, rows = self.native('src/service.py')
+        self.assertEqual([item['path'] for item in rows], ['docs/wiki/native-architecture.md#module-graph'])
+        self.assertEqual(rows[0]['disposition'], 'pending')
+        self.assertIn('undeclared Mermaid', rows[0]['basis'])
+        self.assertIn('undeclared Mermaid', report['scope'])
+        self.assertEqual(report['undeclared_pages_skipped'], 0)
+
+    def test_the_full_path_matches_and_a_longer_name_does_not(self):
+        _, rows = self.native('src/recovery.py')
+        self.assertEqual([item['path'] for item in rows], ['docs/wiki/native-architecture.md#module-graph'])
+        _, rows = self.native('lib/myservice.py')
+        self.assertEqual([item['path'] for item in rows], ['docs/wiki/native-architecture.md#unrelated'])
+
+    def test_prose_and_other_fences_are_not_drawings(self):
+        self.page.write_text('# Architecture\nservice.py is described here.\n```text\nservice.py\n```\n', encoding='utf-8')
+        _, rows = self.native('src/service.py')
+        self.assertEqual(rows, [])
+
+    def test_a_file_only_a_drawing_names_is_mapped_not_unmapped(self):
+        self.page.write_text('# Architecture\n```mermaid\nflowchart LR\n  A["brand_new.py"] --> B\n```\n', encoding='utf-8')
+        report, rows = self.native('src/brand_new.py', 'src/never_mentioned.py')
+        self.assertEqual([item['path'] for item in rows], ['docs/wiki/native-architecture.md#architecture'])
+        self.assertEqual(report['unmapped_file_count'], 1)
+
+    def test_a_declared_diagram_section_is_not_suggested_twice(self):
+        declared = self.manifest['routes'][0]['diagrams'][0]['path']
+        name, _, fragment = declared.partition('#')
+        page = self.root / name
+        page.write_text(page.read_text(encoding='utf-8').replace('```mermaid\n', '```mermaid\n%% service.py\n'),
+                        encoding='utf-8')
+        _, rows = self.native('src/service.py')
+        self.assertNotIn(declared, [item['path'] for item in rows])
+
+    def test_an_oversized_page_is_skipped_and_counted(self):
+        self.page.write_text('# Big\n```mermaid\nflowchart LR\n  A["service.py"]\n```\n' + 'x' * (1024 * 1024),
+                             encoding='utf-8')
+        report, rows = self.native('src/service.py')
+        self.assertEqual(rows, [])
+        self.assertEqual(report['undeclared_pages_skipped'], 1)
+
+    def test_the_review_is_deterministic_and_reads_only(self):
+        before = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        first, _ = self.native('src/service.py', 'src/recovery.py')
+        second, _ = self.native('src/recovery.py', 'src/service.py')
+        self.assertEqual(first, second)
+        self.assertEqual(before, {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()})

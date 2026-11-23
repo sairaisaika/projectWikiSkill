@@ -176,6 +176,16 @@ python <skill>/scripts/wiki.py audit --root <project> --changed-file src/service
 The `diagram_review` field follows `diagram.source_ids` through the route's sources
 and matches diagram page paths. Missing source IDs use an explicitly labelled
 conservative route fallback; routes with no diagrams request an authoring decision.
+The review also reads the closed Mermaid blocks under `docs/wiki/` that no route
+declares, and suggests the section of any block whose text names a changed file by
+its repository-relative path or file name. A Wiki that draws architecture directly in
+Markdown would otherwise receive only "no declared diagram" for a change to a file its
+own figure names. These rows carry `route_id: null` and the basis `undeclared Mermaid
+names a changed file; review it or declare it`. The match is literal and bounded (2,000
+pages of at most 1 MiB; larger or further pages are counted in
+`undeclared_pages_skipped`): it does not parse Mermaid, follow renamed symbols or see a
+drawing that names a module only by a label, so an empty result is not a clean review.
+Declaring the diagram with `source_ids` remains the precise form.
 Unmapped paths are counted, not declared safe. Malformed route shapes are skipped
 with `unavailable_route_count`; the normal audit retains their errors, not a clean
 review claim. Results are deterministic, bounded
