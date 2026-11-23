@@ -205,8 +205,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "argparse subcommands query|task|list|audit|build|check|evaluate|find|status|eval and exit codes",
           "symbol": "main",
-          "line": 1178,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "line": 1236,
+          "sha256": "4ef57ad67f117fe299c4ac8ef7add26d553008db6a851848fce1055129d8a70f"
         },
         {
           "id": "route",
@@ -215,7 +215,7 @@
           "reason": "Validates one schema 1/2 route record, its sources, docs, rules and evidence",
           "symbol": "resolve_route",
           "line": 466,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "sha256": "4ef57ad67f117fe299c4ac8ef7add26d553008db6a851848fce1055129d8a70f"
         },
         {
           "id": "locate",
@@ -224,7 +224,7 @@
           "reason": "Exactly one Python symbol or needle match per source; no first-match fallback",
           "symbol": "resolve_source",
           "line": 163,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "sha256": "4ef57ad67f117fe299c4ac8ef7add26d553008db6a851848fce1055129d8a70f"
         },
         {
           "id": "audit",
@@ -233,7 +233,7 @@
           "reason": "Per-route structural score against min_structural_score; readiness",
           "symbol": "audit",
           "line": 603,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "sha256": "4ef57ad67f117fe299c4ac8ef7add26d553008db6a851848fce1055129d8a70f"
         },
         {
           "id": "rank",
@@ -241,8 +241,8 @@
           "path": "project-wiki/scripts/wiki.py",
           "reason": "Alias/title/id matching that orders query hits",
           "symbol": "rank",
-          "line": 715,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "line": 773,
+          "sha256": "4ef57ad67f117fe299c4ac8ef7add26d553008db6a851848fce1055129d8a70f"
         },
         {
           "id": "ci",
@@ -260,7 +260,7 @@
           "symbol": "diagram_review",
           "reason": "Bounded changed-file candidates through existing diagram source IDs",
           "line": 654,
-          "sha256": "88b2897392d8fbde3e5c9b862f15f740e1b3fd2913286873ce56570ecad17a4b"
+          "sha256": "4ef57ad67f117fe299c4ac8ef7add26d553008db6a851848fce1055129d8a70f"
         }
       ]
     },
