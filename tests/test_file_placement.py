@@ -27,9 +27,9 @@ class FilePlacementTests(unittest.TestCase):
         self.assertTrue(cells[1] and cells[2])  # owner and retention/rule source
         return re.findall(r'`([^`]+)`', cells[0])[0]
 
-    def query(self, skill, question):
+    def query(self, skill, question, root=hygiene.FIXTURE):
         p = subprocess.run([sys.executable, str(skill / 'scripts/wiki.py'), 'query',
-                            '--root', str(hygiene.FIXTURE), '--json', question],
+                            '--root', str(root), '--json', question],
                            capture_output=True, env={**self.env, 'PYTHONUTF8': '1'}, check=True)
         return json.loads(p.stdout)['matches']
 
@@ -57,6 +57,45 @@ class FilePlacementTests(unittest.TestCase):
         self.assertIn('Shared generated report', self.placement_rows())
         manifest = json.loads((package / '.claude-plugin/plugin.json').read_text(encoding='utf-8'))
         self.assertNotIn('hooks', manifest)
+
+    def test_packaged_skill_reaches_its_own_placement_and_status_owners(self):
+        project = Path(__file__).resolve().parents[1]
+        package = self.root.parent / 'package'
+        package_tests.builder.build(package)
+        skill = package / 'skills/project-wiki'
+        for question in ('Where do development resources go versus design records?',
+                         '开发资源和设计资源应该分开放在哪里？',
+                         'Should a dated plan live in the design wiki?',
+                         '任务草稿和设计文档分别放哪里？'):
+            with self.subTest(question=question):
+                route = self.query(skill, question, project)[0]
+                self.assertEqual(route['id'], 'repository-hygiene')
+                self.assertEqual(route['docs'][0], 'docs/wiki/engineering-entry.md#file-placement')
+
+        for question in ('What exact revision is installed versus only merged?',
+                         '当前实际安装的版本和已经合并的版本分别是什么？'):
+            with self.subTest(question=question):
+                route = self.query(skill, question, project)[0]
+                self.assertEqual(route['id'], 'version-status')
+                self.assertEqual(route['docs'][0], 'docs/wiki/status.md#current-state')
+
+        for typo in ('Correct punctuation in a known README sentence',
+                     '只改 README 一个已知逗号'):
+            self.assertEqual(self.query(skill, typo, project), [])
+        page = (project / 'docs/wiki/engineering-entry.md').read_text(encoding='utf-8')
+        table = page.split('### File placement', 1)[1].split('## Where knowledge lives', 1)[0]
+        rows = {line.split('|')[1].strip(): line for line in table.splitlines() if line.startswith('|')}
+        self.assertIn('`docs/wiki/`', rows['Design record to preserve'])
+        self.assertIn('`PROJECT.md`', rows['Open development work and next action'])
+        evidence = rows['Retained publishable development evidence']
+        self.assertIn('`evals/reports/`', evidence)
+        for needed in ('sanitized', 'public visibility', 'exact revision', 'Independent audit',
+                       'rollback/restore', 'compliance/retention holds', 'even when not cited'):
+            self.assertIn(needed, evidence)
+        raw = rows['Raw evidence, working drafts, disposable output and personal scratch']
+        self.assertIn('No approved universal in-clone location', raw)
+        self.assertIn('otherwise stop', raw)
+        self.assertIn('not permission', raw)
 
     def test_named_report_team_rule_personal_scope_and_required_inputs(self):
         report = self.path_for('Shared generated report')
