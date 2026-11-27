@@ -52,3 +52,5 @@ Root independent verification:397 unit tests (one platform skip),12 fixtures, ch
 - 2026-11-16: Default capture file text and the explicit-JSON attribution correction are returned to [version status](docs/wiki/status.md#current-state); source/package/install/use remain separate.
 
 - 2026-11-17: Saved current-section view source candidate returned to [version status](docs/wiki/status.md#current-state); no release or installation.
+
+- 2026-11-27: Two reference additions from one real feature task (generic observation): reachability as a chain of gates in feature-completeness.md, and sender-asserted versus transport-attested identity fields plus multi-writer ordering in engineering-depth.md. Documentation only; unit suite and maintainer check pass locally; see [the report](evals/reports/trust-and-admission-20261127.md).

@@ -41,6 +41,26 @@ link policy authorities rather than copying a second permissions matrix into the
 dictionary. Diagrams can use readable actor labels linked to this local scope,
 without duplicating every producer/consumer node for every account combination.
 
+### Reachability is a chain of gates
+
+When a page says an actor can reach a capability, name every gate on the real path
+and give each its own outcome: the route or page guard, the interface
+authorization, and any infrastructure or configuration limit that admits or
+refuses (a capacity cap, a quota, a seat count, a feature audience). The
+authoritative check allowing an actor proves one link. A stricter outer layer
+makes the documented capability unreachable, and nothing fails until that actor
+tries. Write "allowed at <layer>; unverified at <layers>" rather than "can".
+
+This matters most when an actor class was added after the feature shipped (an
+invited participant, a delegate, a second approver). Search every layer for code
+that still enumerates only the earlier classes, including defaults that assign a
+role by exclusion ("not the owner, therefore the operator"), and list each such
+layer under Remaining capability. A limit whose unit is people, sessions or seats
+is an access gate: link it from Actors and access as well as from the
+[limits profile](engineering-depth.md#execution-limits-ownership-and-order).
+The claim is accepted only after that actor has completed the path in a real
+client, or the unverified layers are recorded with a tracking destination.
+
 ## Two distinct completion claims
 
 Documentation is usable when it answers the dimensions honestly and exposes all

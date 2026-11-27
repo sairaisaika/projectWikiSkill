@@ -1,6 +1,6 @@
 # Engineering depth: constraints that can be checked
 
-> Reviewed: 2026-11-20 against 6639e41 for the diagnostic workflow; other profiles retain their prior scope.
+> Reviewed: 2026-11-27 for sender-asserted identity fields and multi-writer ordering (2dec093 base); 2026-11-20 against 6639e41 for the diagnostic workflow; other profiles retain their prior scope.
 
 Use this reference when a route involves lifecycle, wire/data contracts, scheduling,
 resources or choices whose rationale is easy to lose. The user's reference material
@@ -112,6 +112,25 @@ Binding to the serializer and running a known byte-vector round trip provides
 stronger evidence than a matching filename. That validation must actually run and
 have a recorded scope; `authority.kind` alone does not prove generated conformance.
 
+#### Who asserts an identity or role field
+
+For every field a consumer uses to decide who may do something (actor, role,
+owner, sender), record in its `constraints` whether the value is asserted by the
+sender inside the payload or attested by the transport or server (a session, a
+signed token, the connection's identity), and name the check that reads it.
+
+A sentence such as "this field is not authorization" records an intent. A boundary
+needs a named enforcement point and the asset that point protects. Then follow the
+unprotected path: if a consumer that trusts the payload value can still write the
+protected asset (for example it persists whatever state the accepted messages
+produced), the boundary named elsewhere does not protect it. Record that as a gap
+with the project's tracking destination; do not leave the disclaimer standing as
+if it were the control.
+
+Ask the same question of lifecycle and control messages (open, close, replace
+state, grant) as of data messages. They are usually fewer, rarely fuzzed, and can
+overwrite everything the data messages built.
+
 ### Lifecycle and recovery
 
 `lifecycle` declares unique `states`, unique `events`, `initial`, explicit `terminal`,
@@ -161,6 +180,18 @@ measured values need an actual workload/environment/revision/method receipt. A f
 that exists does not prove it contains the measurement. The helper only verifies
 reference presence. No inferred global budget from a per-instance counter; no
 performance claim from a constant, synthetic benchmark or diagram annotation.
+
+For state that several actors write at the same time, an `ordering` entry states
+whether the result depends on the order in which different senders' operations
+arrive. "The parties take turns" is a valid design only when it is written down
+together with what each party sees when two act at once. A claim of order
+independence needs a test that replays interleavings with each sender's own order
+kept, and a control showing that test fails when the rule is removed.
+
+A limit can also refuse an authorized actor: a cap of N admits the next one
+nowhere. When its unit is people, sessions or seats, treat it as part of the
+access path described in
+[feature completeness](feature-completeness.md#reachability-is-a-chain-of-gates).
 
 ### Decisions / lightweight ADR
 

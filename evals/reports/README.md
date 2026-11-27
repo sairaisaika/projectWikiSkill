@@ -4,6 +4,7 @@ These reports describe measured runs, not expected scores to copy into a new pro
 
 | Artifact | What it establishes | Limits |
 |---|---|---|
+| [Admission layers and sender-asserted fields](trust-and-admission-20261127.md) | One real feature task where three wiki statements held at one layer only: a page guard and a capacity cap refused an authorized actor, and a self-reported role reached a saved record | One task, one project; no blind-agent trial; documentation change only |
 | [Design versus development](design-development-separation-20261121.md) | Separate homes/retention for design records and development resources inside the existing File placement owner; red/green test and directed queries | Curated aliases and author self-test; no blind reader, downstream adoption or migration of this repository's own plan files |
 | [File placement](file-placement-20261121.md) | Project-owned location table, real synthetic Git checks and cold navigation / typo controls | Curated query coverage; initial Chinese misses retained; no runtime generator, real protected storage or broad adoption claim |
 | [Log-to-contract debugging](log-contract-debugging-20261120.md) | Synthetic source-bound event/contract checks, actual packaged navigation and two cold task controls | No production logger/sink, runtime evidence, deployment, broad adoption or efficiency claim |
