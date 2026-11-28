@@ -194,6 +194,18 @@ for the shared-ID ledger, source discovery, local projections, research rational
 and a reproducible evaluation. A summary workflow diagram is not a complete impact
 inventory. Record unreviewed scope; do not report migration as source completeness.
 
+## Show status, plans and what must be retired
+
+When a page should tell its reader how complete the feature is, what is planned and
+which old implementation is waiting to go, use
+[page status, plans and retirement](references/page-status.md). The status line is
+derived from the page's own completion record, debt ledger, plan rows and retirement
+rows, with counts beside any percentage; nobody types a score, and "not assessed" is a
+valid value. Planned work lives on the owning page; a plan row that replaces something
+names the retirement row it releases, so removal follows delivery. The task entrance
+should surface these rows before an edit. A satisfied condition makes a row removable,
+never removed: removal stays an ordinary reviewed change.
+
 ## Review design as well as facts
 
 For framework audits and consequential feature design, use
